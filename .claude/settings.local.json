@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet build:*)",
+      "Bash(taskkill:*)",
+      "Bash(dir:*)",
+      "Bash(tasklist:*)",
+      "Bash(findstr:*)",
+      "Bash(powershell -Command \"Get-Process | Where-Object { $_ProcessName -match ''iisexpress|dotnet'' } | Select-Object Id, ProcessName\")",
+      "Bash(powershell:*)",
+      "Bash(Get-Process -Name iisexpress -ErrorAction SilentlyContinue)",
+      "Bash(Select-Object Id, ProcessName)"
+    ]
+  }
+}

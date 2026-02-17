@@ -1,0 +1,159 @@
+{
+  "product_id": "individual_stocks",
+  "product_name": {
+    "en": "Individual Stocks",
+    "id": "Saham"
+  },
+  "category": "capital_market",
+  "risk_level": 5,
+  "risk_label": {
+    "en": "High Risk",
+    "id": "Risiko Tinggi"
+  },
+
+  "regulatory_compliance": {
+    "exchange": "IDX (Indonesia Stock Exchange / Bursa Efek Indonesia)",
+    "regulator": "OJK (Otoritas Jasa Keuangan)",
+    "legal_basis": [
+      "UU No. 8 Tahun 1995 tentang Pasar Modal",
+      "UU No. 4 Tahun 2023 (P2SK Law)"
+    ],
+    "investor_protection": {
+      "institution": "SIPF (Securities Investor Protection Fund)",
+      "coverage": "Securities protection (not value)",
+      "max_coverage": 100000000,
+      "note": "Protects against broker failure, NOT market losses"
+    },
+    "requirements": {
+      "securities_account": "Required at licensed broker",
+      "sid": "Single Investor Identification required",
+      "rdn": "Investor Fund Account (Rekening Dana Nasabah)"
+    }
+  },
+
+  "game_mechanics": {
+    "base_stats": {
+      "risk_score": 5,
+      "liquidity_score": 4,
+      "complexity_score": 4,
+      "potential_return_score": 5
+    },
+    "trading_params": {
+      "lot_size": 100,
+      "min_price": 50,
+      "tick_sizes": [
+        { "price_range": [50, 200], "tick": 1 },
+        { "price_range": [200, 500], "tick": 2 },
+        { "price_range": [500, 2000], "tick": 5 },
+        { "price_range": [2000, 5000], "tick": 10 },
+        { "price_range": [5000, null], "tick": 25 }
+      ],
+      "auto_rejection_limit": 0.35
+    },
+    "fees_and_taxes": {
+      "buy_fee": { "min": 0.0010, "max": 0.0025, "typical": 0.0015 },
+      "sell_fee": { "min": 0.0015, "max": 0.0035, "typical": 0.0025 },
+      "sell_tax": 0.001,
+      "dividend_tax": 0.10,
+      "settlement": "T+2"
+    },
+    "trading_hours": {
+      "session_1": { "start": "09:00", "end": "12:00", "timezone": "WIB" },
+      "session_2": { "start": "13:30", "end": "16:00", "timezone": "WIB" }
+    },
+    "indices": [
+      { "code": "IHSG", "name": "IDX Composite" },
+      { "code": "LQ45", "name": "LQ45 Index" },
+      { "code": "IDX30", "name": "IDX30 Index" },
+      { "code": "IDX80", "name": "IDX80 Index" }
+    ],
+    "sample_stocks": [
+      { "code": "BBCA", "name": "Bank Central Asia", "sector": "Financials" },
+      { "code": "BBRI", "name": "Bank Rakyat Indonesia", "sector": "Financials" },
+      { "code": "TLKM", "name": "Telkom Indonesia", "sector": "Communications" },
+      { "code": "ASII", "name": "Astra International", "sector": "Consumer" },
+      { "code": "UNVR", "name": "Unilever Indonesia", "sector": "Consumer Goods" }
+    ],
+    "actions": [
+      {
+        "action": "buy",
+        "order_types": ["market", "limit"],
+        "min_lot": 1
+      },
+      {
+        "action": "sell",
+        "order_types": ["market", "limit"],
+        "min_lot": 1
+      }
+    ]
+  },
+
+  "game_events": [
+    {
+      "event_id": "positive_earnings",
+      "probability": 0.15,
+      "effect": "price_jump",
+      "range": [1.05, 1.15],
+      "message": {
+        "en": "Company reports strong earnings!",
+        "id": "Perusahaan melaporkan laba kuat!"
+      }
+    },
+    {
+      "event_id": "negative_earnings",
+      "probability": 0.15,
+      "effect": "price_drop",
+      "range": [0.85, 0.95],
+      "message": {
+        "en": "Company misses earnings expectations",
+        "id": "Laba perusahaan di bawah ekspektasi"
+      }
+    },
+    {
+      "event_id": "dividend_announcement",
+      "probability": 0.12,
+      "effect": "dividend_event",
+      "yield_range": [0.02, 0.08],
+      "message": {
+        "en": "Dividend announced!",
+        "id": "Dividen diumumkan!"
+      }
+    },
+    {
+      "event_id": "stock_split",
+      "probability": 0.03,
+      "effect": "split",
+      "ratios": ["1:2", "1:5", "1:10"],
+      "message": {
+        "en": "Stock split - more shares, lower price",
+        "id": "Stock split - lebih banyak saham, harga lebih rendah"
+      }
+    },
+    {
+      "event_id": "market_crash",
+      "probability": 0.02,
+      "effect": "market_wide_drop",
+      "range": [-0.20, -0.10],
+      "message": {
+        "en": "Market crashes! All stocks affected.",
+        "id": "Pasar anjlok! Semua saham terpengaruh."
+      }
+    }
+  ],
+
+  "scoring": {
+    "points_per_percent_gain": 10,
+    "penalty_per_percent_loss": -5,
+    "bonus_dividend_received": 25,
+    "bonus_hold_1_year": 50,
+    "achievement_first_dividend": 50
+  },
+
+  "ui_config": {
+    "icon": "trending_up",
+    "color_primary": "#E91E63",
+    "color_secondary": "#F48FB1",
+    "color_gain": "#4CAF50",
+    "color_loss": "#F44336"
+  }
+}

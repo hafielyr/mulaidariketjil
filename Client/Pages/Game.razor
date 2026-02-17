@@ -1,0 +1,2317 @@
+@page "/"
+@using InvestmentGame.Shared.Models
+@inject GameClient GameClient
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+@implements IAsyncDisposable
+
+<PageTitle>Tjoean - Game Edukasi Investasi</PageTitle>
+
+<div class="game-container">
+    @if (!_isConnected)
+    {
+        <div class="loading-screen">
+            <div class="mascot-container">🐔</div>
+            <h1>TJOEAN</h1>
+            <p>Game Edukasi Investasi</p>
+            <p class="loading-text">@_statusMessage</p>
+        </div>
+    }
+    else if (_showTutorial)
+    {
+        <!-- Tutorial Slides Modal -->
+        <div class="modal-overlay tutorial-overlay">
+            <div class="modal-content tutorial-modal">
+                <button class="btn-skip-tutorial" @onclick="SkipTutorial">
+                    @(_selectedLanguage == Language.Indonesian ? "Lewati ⏭️" : "Skip ⏭️")
+                </button>
+
+                @if (_currentTutorialSlide == 0)
+                {
+                    <div class="tutorial-slide">
+                        <h2>🎮 @(_selectedLanguage == Language.Indonesian ? "Selamat Datang di Tjoean!" : "Welcome to Tjoean!")</h2>
+                        <div class="mascot-large">🐔💰</div>
+                        <p class="tutorial-text">
+                            @(_selectedLanguage == Language.Indonesian
+                                ? "Game edukasi investasi yang mengajarkan literasi keuangan melalui simulasi realistis."
+                                : "An educational investment game teaching financial literacy through realistic simulation.")
+                        </p>
+                    </div>
+                }
+                else if (_currentTutorialSlide == 1)
+                {
+                    <div class="tutorial-slide">
+                        <h2>💰 @(_selectedLanguage == Language.Indonesian ? "Kondisi Awal" : "Starting Condition")</h2>
+                        <div class="tutorial-stats">
+                            <div class="tutorial-stat-card">
+                                <span class="stat-icon">💵</span>
+                                <span class="stat-title">@(_selectedLanguage == Language.Indonesian ? "Modal Awal" : "Starting Capital")</span>
+                                <span class="stat-number">Rp 5.000.000</span>
+                            </div>
+                            <div class="tutorial-stat-card">
+                                <span class="stat-icon">📅</span>
+                                <span class="stat-title">@(_selectedLanguage == Language.Indonesian ? "Pendapatan Tahunan" : "Annual Income")</span>
+                                <span class="stat-number">Rp 10.000.000</span>
+                            </div>
+                            <div class="tutorial-stat-card">
+                                <span class="stat-icon">⏱️</span>
+                                <span class="stat-title">@(_selectedLanguage == Language.Indonesian ? "Durasi Simulasi" : "Simulation Duration")</span>
+                                <span class="stat-number">@(_selectedLanguage == Language.Indonesian ? "10 Tahun" : "10 Years")</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else if (_currentTutorialSlide == 2)
+                {
+                    <div class="tutorial-slide">
+                        <h2>📊 @(_selectedLanguage == Language.Indonesian ? "Instrumen Investasi" : "Investment Instruments")</h2>
+                        <div class="tutorial-timeline">
+                            <div class="timeline-item">
+                                <span class="timeline-icon">🐖</span>
+                                <span class="timeline-label">@(_selectedLanguage == Language.Indonesian ? "Tahun 1: Tabungan" : "Year 1: Savings")</span>
+                            </div>
+                            <div class="timeline-item">
+                                <span class="timeline-icon">🏦</span>
+                                <span class="timeline-label">@(_selectedLanguage == Language.Indonesian ? "Tahun 2: Deposito" : "Year 2: CD")</span>
+                            </div>
+                            <div class="timeline-item">
+                                <span class="timeline-icon">📜</span>
+                                <span class="timeline-label">@(_selectedLanguage == Language.Indonesian ? "Tahun 2: Obligasi" : "Year 2: Bonds")</span>
+                            </div>
+                            <div class="timeline-item">
+                                <span class="timeline-icon">📈</span>
+                                <span class="timeline-label">@(_selectedLanguage == Language.Indonesian ? "Tahun 3: Reksa Dana & Emas" : "Year 3: Index Fund & Gold")</span>
+                            </div>
+                            <div class="timeline-item">
+                                <span class="timeline-icon">📊</span>
+                                <span class="timeline-label">@(_selectedLanguage == Language.Indonesian ? "Tahun 4: Saham" : "Year 4: Stocks")</span>
+                            </div>
+                            <div class="timeline-item">
+                                <span class="timeline-icon">🌐</span>
+                                <span class="timeline-label">@(_selectedLanguage == Language.Indonesian ? "Tahun 5: Crypto" : "Year 5: Crypto")</span>
+                            </div>
+                            <div class="timeline-item">
+                                <span class="timeline-icon">🏢</span>
+                                <span class="timeline-label">@(_selectedLanguage == Language.Indonesian ? "Tahun 6: Crowdfunding" : "Year 6: Crowdfunding")</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else if (_currentTutorialSlide == 3)
+                {
+                    <div class="tutorial-slide">
+                        <h2>⚠️ @(_selectedLanguage == Language.Indonesian ? "Event Darurat" : "Emergency Events")</h2>
+                        <div class="tutorial-warning-box">
+                            <p class="tutorial-text">
+                                @(_selectedLanguage == Language.Indonesian
+                                    ? "Mulai tahun ke-2, event darurat akan terjadi di bulan 7-10 yang membutuhkan dana Rp 2-4,5 juta."
+                                    : "Starting from year 2, emergency events occur in months 7-10 requiring Rp 2-4.5 million.")
+                            </p>
+                            <div class="payment-options-preview">
+                                <span>💵 @(_selectedLanguage == Language.Indonesian ? "Bayar dari Kas" : "Pay from Cash")</span>
+                                <span>🐖 @(_selectedLanguage == Language.Indonesian ? "Bayar dari Tabungan" : "Pay from Savings")</span>
+                                <span>📊 @(_selectedLanguage == Language.Indonesian ? "Jual Investasi" : "Sell Investments")</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else if (_currentTutorialSlide == 4)
+                {
+                    <div class="tutorial-slide">
+                        <h2>🎯 @(_selectedLanguage == Language.Indonesian ? "Tujuan Permainan" : "Game Objective")</h2>
+                        <div class="tutorial-objective">
+                            <p class="tutorial-text large">
+                                @(_selectedLanguage == Language.Indonesian
+                                    ? "Maksimalkan Net Worth Anda dalam 10 tahun!"
+                                    : "Maximize your Net Worth in 10 years!")
+                            </p>
+                            <div class="comparison-info">
+                                <span class="comparison-label">@(_selectedLanguage == Language.Indonesian ? "⚖️ Bandingkan dengan Bot" : "⚖️ Compare with Bot")</span>
+                                <p class="small-text">
+                                    @(_selectedLanguage == Language.Indonesian
+                                        ? "Bot menggunakan strategi aman: 5% Tabungan, 25% Deposito, 20% Obligasi, 30% Reksa Dana, 20% Emas"
+                                        : "Bot uses a safe strategy: 5% Savings, 25% CD, 20% Bonds, 30% Index Fund, 20% Gold")
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <div class="tutorial-navigation">
+                    <button class="btn-tutorial-nav" @onclick="PreviousTutorialSlide" disabled="@(_currentTutorialSlide == 0)">
+                        ← @(_selectedLanguage == Language.Indonesian ? "Sebelumnya" : "Previous")
+                    </button>
+                    <div class="tutorial-dots">
+                        @for (int i = 0; i < 5; i++)
+                        {
+                            <span class="tutorial-dot @(i == _currentTutorialSlide ? "active" : "")"></span>
+                        }
+                    </div>
+                    @if (_currentTutorialSlide < 4)
+                    {
+                        <button class="btn-tutorial-nav" @onclick="NextTutorialSlide">
+                            @(_selectedLanguage == Language.Indonesian ? "Selanjutnya" : "Next") →
+                        </button>
+                    }
+                    else
+                    {
+                        <button class="btn-tutorial-start" @onclick="StartGameAfterTutorial">
+                            @(_selectedLanguage == Language.Indonesian ? "🚀 Mulai Permainan!" : "🚀 Start Game!")
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+    else if (_gameState == null)
+    {
+        <div class="start-screen">
+            <div class="mascot-container">🐔💰</div>
+            <h1>TJOEAN</h1>
+            <p class="subtitle">@(_selectedLanguage == Language.Indonesian ? "Simulasi Edukasi Investasi" : "Investment Education Simulation")</p>
+
+            <div class="start-form">
+                <input type="text" @bind="_playerName" @bind:event="oninput" placeholder="@(_selectedLanguage == Language.Indonesian ? "Nama Anda" : "Your Name")" maxlength="20" />
+
+                <div class="light-mode-toggle">
+                    <label class="toggle-switch">
+                        <input type="checkbox" @bind="_isLightMode" />
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <div class="toggle-info">
+                        <span class="toggle-label">@(_selectedLanguage == Language.Indonesian ? "Light Mode" : "Light Mode")</span>
+                        <span class="toggle-desc">@(_selectedLanguage == Language.Indonesian ? "Penjelasan sederhana tanpa detail regulasi" : "Simple explanations without regulatory details")</span>
+                    </div>
+                </div>
+
+                <div class="language-selector">
+                    <label class="lang-option @(_selectedLanguage == Language.Indonesian ? "selected" : "")" @onclick="() => _selectedLanguage = Language.Indonesian">
+                        <span class="flag-icon">🇮🇩</span>
+                        <span class="lang-label">Bahasa Indonesia</span>
+                    </label>
+                    <label class="lang-option @(_selectedLanguage == Language.English ? "selected" : "")" @onclick="() => _selectedLanguage = Language.English">
+                        <span class="flag-icon">🇬🇧</span>
+                        <span class="lang-label">English</span>
+                    </label>
+                </div>
+
+                <button class="btn-primary" @onclick="ShowTutorial" disabled="@string.IsNullOrWhiteSpace(_playerName)">
+                    @(_selectedLanguage == Language.Indonesian ? "📈 Mulai Simulasi" : "📈 Start Simulation")
+                </button>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="game-screen">
+            <!-- Header -->
+            <header class="game-header">
+                <div class="header-left">
+                    <h1>🐔 TJOEAN</h1>
+                    <span class="player-name">👤 @_gameState.PlayerId</span>
+                </div>
+                <div class="header-center">
+                    <div class="time-display">
+                        <span class="year">📅 Tahun @_gameState.CurrentYear / 10</span>
+                        <span class="month">🗓️ Bulan @_gameState.CurrentMonth</span>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-label">Tahun</div>
+                        <div class="progress-bar year-progress">
+                            <div class="progress-fill" style="width: @((_gameState.CurrentYear - 1) * 10 + (_gameState.CurrentMonth - 1) * 0.833)%"></div>
+                        </div>
+                        <div class="progress-label">Bulan</div>
+                        <div class="progress-bar month-progress">
+                            <div class="progress-fill month-fill" style="width: @_gameState.MonthProgress%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <button class="btn-icon pause-play-btn" @onclick="TogglePause"
+                            disabled="@(_gameState.IsEventPending || _gameState.IsGameOver)">
+                        @if (_isPaused)
+                        {
+                            <svg class="icon-play" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                <path d="M8 5v14l11-7z"/>
+                            </svg>
+                            <span class="btn-label">@GetText("Lanjut", "Lanjutkan", "Play", "Resume")</span>
+                        }
+                        else
+                        {
+                            <svg class="icon-pause" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                <path d="M6 4h4v16H6zm8 0h4v16h-4z"/>
+                            </svg>
+                            <span class="btn-label">@GetText("Jeda", "Jeda", "Pause", "Pause")</span>
+                        }
+                    </button>
+                    <button class="btn-icon" @onclick="RestartGame" title="@GetText("Mulai Ulang", "Mulai Ulang", "Restart", "Restart")">
+                        ↻
+                    </button>
+                </div>
+            </header>
+
+            <!-- New Unlock Banner -->
+            @if (!string.IsNullOrEmpty(_gameState.NewUnlockMessage))
+            {
+                <div class="event-banner unlock">
+                    <span class="event-icon">🔓</span>
+                    <span class="event-text">@_gameState.NewUnlockMessage</span>
+                </div>
+            }
+
+            <!-- Main Content -->
+            <main class="game-main">
+                <!-- Left Panel: Balance & Portfolio -->
+                <section class="panel panel-left">
+                    <div class="balance-networth-compact">
+                        <div class="balance-row">
+                            <span class="label">💵 @GetText("Kas", "Cash")</span>
+                            <span class="amount">Rp @_gameState.CashBalance.ToString("N0")</span>
+                        </div>
+                        <div class="balance-row networth-total">
+                            <span class="label">🏆 @GetText("Kekayaan", "Net Worth")</span>
+                            <span class="amount">Rp @_gameState.NetWorth.ToString("N0")</span>
+                        </div>
+                        <div class="breakdown-grid">
+                            <div class="breakdown-item">
+                                <span class="icon">💰</span>
+                                <span class="value">@_gameState.TotalSavingsValue.ToString("N0")</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <span class="icon">📊</span>
+                                <span class="value">@_gameState.TotalPortfolioValue.ToString("N0")</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <span class="icon">🏦</span>
+                                <span class="value">@_gameState.TotalDepositoValue.ToString("N0")</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <span class="icon">📜</span>
+                                <span class="value">@_gameState.TotalBondValue.ToString("N0")</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Savings Account Section -->
+                    @if (_gameState.UnlockedAssets.Contains("tabungan"))
+                    {
+                        <div class="savings-section-compact">
+                            <div class="section-header-compact">
+                                <h4>🐖 @GetText("Tabungan", "Savings")</h4>
+                                <button class="btn-info-mini" @onclick='() => ShowAssetInfo("tabungan")' title="Info">?</button>
+                            </div>
+                            <div class="savings-balance-compact">
+                                Rp @FormatCurrency(_gameState.SavingsAccount?.Balance ?? 0)
+                            </div>
+                            <div class="savings-controls">
+                                <input type="number" @bind="_savingsAmount" placeholder="Rp" step="100000" min="100000" class="savings-input-compact" />
+                                <button class="btn-action-compact deposit" @onclick="DepositToSavings"
+                                        disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || _savingsAmount <= 0 || _savingsAmount > _gameState.CashBalance)">
+                                    @GetText("Setor", "In")
+                                </button>
+                                <button class="btn-action-compact withdraw" @onclick="WithdrawFromSavings"
+                                        disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || _savingsAmount <= 0 || _savingsAmount > (_gameState.SavingsAccount?.Balance ?? 0))">
+                                    @GetText("Tarik", "Out")
+                                </button>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Portfolio Section -->
+                    <div class="portfolio-section">
+                        <h3>@GetText("Investasimu", "Your Portfolio")</h3>
+                        @if (_gameState.Portfolio.Any())
+                        {
+                            <div class="portfolio-list">
+                                @foreach (var item in _gameState.Portfolio.OrderBy(p => p.AssetType == "obligasi" ? 1 : 0))
+                                {
+                                    <div class="portfolio-item">
+                                        <div class="item-header">
+                                            <span class="item-name">@GetAssetIcon(item.AssetType) @item.DisplayName @(string.IsNullOrEmpty(item.Ticker) ? "" : $"({item.Ticker})")</span>
+                                            <span class="item-units">
+                                                @if (item.AssetType == "crypto")
+                                                {
+                                                    @item.Units.ToString("F4") <text> </text> @item.Ticker
+                                                }
+                                                else if (item.AssetType == "saham")
+                                                {
+                                                    @((item.Units / 100).ToString("N0")) <text> lot</text>
+                                                }
+                                                else if (item.AssetType == "emas")
+                                                {
+                                                    @item.Units.ToString("N0") <text> g (gram)</text>
+                                                }
+                                                else
+                                                {
+                                                    @item.Units.ToString("N0") <text> unit</text>
+                                                }
+                                            </span>
+                                        </div>
+                                        <div class="item-values">
+                                            <span class="item-value">Rp @item.TotalValue.ToString("N0")</span>
+                                            <span class="item-profit @(item.ProfitLoss >= 0 ? "positive" : "negative")">
+                                                @(item.ProfitLoss >= 0 ? "📈+" : "📉")@item.ProfitLossPercent.ToString("F1")%
+                                            </span>
+                                        </div>
+                                        @if (item.AssetType == "saham")
+                                        {
+                                            <div class="item-avg-cost">
+                                                <span>@GetText("Harga Rata-rata", "Harga Rata-rata", "Avg. Cost", "Avg. Cost"): Rp @((item.TotalCost / Math.Max(item.Units, 1)).ToString("N0"))/lembar</span>
+                                            </div>
+                                        }
+                                        <div class="item-buttons">
+                                            @if (item.AssetType == "saham")
+                                            {
+                                                <button class="btn-sell" @onclick="() => SellStock(item.Ticker, 1)"
+                                                        disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || item.Units < 100)">
+                                                    @GetText("Jual 1 Lot", "Jual 1 Lot", "Sell 1 Lot", "Sell 1 Lot")
+                                                </button>
+                                                <button class="btn-sell" @onclick="() => SellStock(item.Ticker, 5)"
+                                                        disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || item.Units < 500)">
+                                                    @GetText("Jual 5 Lot", "Jual 5 Lot", "Sell 5 Lot", "Sell 5 Lot")
+                                                </button>
+                                                <button class="btn-sell-all" @onclick="() => SellAllStock(item.Ticker)"
+                                                        disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || item.Units < 100)">
+                                                    @GetText("Jual Semua", "Jual Semua", "Sell All", "Sell All")
+                                                </button>
+                                            }
+                                            else if (item.AssetType == "crypto")
+                                            {
+                                                <button class="btn-sell" @onclick="() => SellCrypto(item.Ticker, 1_000_000)"
+                                                        disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || item.TotalValue < 1_000_000)">
+                                                    @GetText("Jual Rp 1 Juta", "Jual Rp 1 Juta", "Sell Rp 1M", "Sell Rp 1M")
+                                                </button>
+                                                <button class="btn-sell-all" @onclick="() => SellAllCrypto(item.Ticker)"
+                                                        disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending)">
+                                                    @GetText("Jual Semua", "Jual Semua", "Sell All", "Sell All")
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <button class="btn-sell" @onclick="() => SellAsset(item.AssetType)"
+                                                        disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending)">
+                                                    Jual 1
+                                                </button>
+                                                <button class="btn-sell-all" @onclick="() => SellAllAssets(item.AssetType)"
+                                                        disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending)">
+                                                    Jual Semua
+                                                </button>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <p class="empty-portfolio">@GetText("🐣 Belum punya investasi. Ayo mulai nabung!", "Belum ada investasi dalam portofolio.")</p>
+                        }
+                    </div>
+
+                    <!-- Deposito Section -->
+                    @if (_gameState.Depositos.Any())
+                    {
+                        <div class="deposito-section">
+                            <h3>@GetText("Deposito", "Certificate of Deposit")</h3>
+                            <div class="deposito-list">
+                                @foreach (var deposito in _gameState.Depositos)
+                                {
+                                    <div class="deposito-item">
+                                        <div class="deposito-info">
+                                            <div class="item-header">
+                                                <span class="item-name">🏦 Deposito @deposito.PeriodMonths Bulan</span>
+                                                <span class="item-units">@((deposito.InterestRate * 100).ToString("F1"))% /tahun</span>
+                                            </div>
+                                            <div class="item-values">
+                                                <span class="item-value">Rp @deposito.CurrentValue.ToString("N0")</span>
+                                                <span class="deposito-period">⏳ @deposito.MonthsRemaining bulan lagi</span>
+                                            </div>
+                                        </div>
+                                        <div class="deposito-progress">
+                                            <div class="deposito-progress-fill" style="width: @deposito.ProgressPercent%"></div>
+                                        </div>
+                                        <div class="deposito-aro-toggle">
+                                            <label class="aro-checkbox-label" title="@GetText("Otomatis investasi ulang saat jatuh tempo", "Automatically re-invest at maturity")">
+                                                <input type="checkbox" checked="@deposito.AutoRollOver"
+                                                       @onchange="() => ToggleDepositoAutoRollOver(deposito.Id)"
+                                                       disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending)" />
+                                                <span class="aro-label">🔄 @GetText("Roll Over Otomatis", "Auto Roll Over")</span>
+                                            </label>
+                                        </div>
+                                        @if (deposito.IsMatured)
+                                        {
+                                            <div class="deposito-maturity">🎉 Sudah Jatuh Tempo!</div>
+                                            <div class="deposito-buttons">
+                                                <button class="btn-withdraw" @onclick="() => WithdrawDeposito(deposito.Id, false)"
+                                                        disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending)">
+                                                    💰 Ambil Rp @deposito.MaturityValue.ToString("N0")
+                                                </button>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="deposito-buttons">
+                                                <button class="btn-withdraw early" @onclick="() => WithdrawDeposito(deposito.Id, true)"
+                                                        disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending)"
+                                                        title="@GetText("Kena denda 50% bunga karena ambil sebelum waktunya", "Early withdrawal penalty: 50% of accrued interest")">
+                                                    ⚠️ @GetText("Ambil Paksa (Kena Denda!)", "Early Withdrawal (Penalty!)")
+                                                </button>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Bonds Section -->
+                    @if (_gameState.Bonds.Any())
+                    {
+                        <div class="bond-section">
+                            <h3>@GetText("Obligasi Negara", "Government Bonds")</h3>
+                            <div class="bond-list">
+                                @foreach (var bond in _gameState.Bonds)
+                                {
+                                    <div class="bond-item">
+                                        <div class="bond-info">
+                                            <div class="item-header">
+                                                <span class="item-name">📜 @bond.BondName</span>
+                                                <span class="item-units">@((bond.CouponRate * 100).ToString("F1"))% kupon</span>
+                                            </div>
+                                            <div class="item-values">
+                                                <span class="item-value">Rp @bond.CurrentValue.ToString("N0")</span>
+                                                <span class="bond-period">⏳ @bond.MonthsRemaining bulan lagi</span>
+                                            </div>
+                                            <div class="bond-coupon-earned">
+                                                Kupon: +Rp @bond.TotalCouponEarned.ToString("N0")
+                                            </div>
+                                        </div>
+                                        <div class="bond-progress">
+                                            <div class="bond-progress-fill" style="width: @bond.ProgressPercent%"></div>
+                                        </div>
+                                        @if (bond.IsMatured)
+                                        {
+                                            <div class="bond-maturity">🎉 Jatuh Tempo!</div>
+                                            <div class="bond-buttons">
+                                                <button class="btn-withdraw" @onclick="() => WithdrawBond(bond.Id)"
+                                                        disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending)">
+                                                    💰 Ambil Rp @bond.CurrentValue.ToString("N0")
+                                                </button>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </section>
+
+                <!-- Center Panel: Market -->
+                <section class="panel panel-center">
+                    <h2>@GetText("Pasar Investasi", "Investment Market")</h2>
+
+                    <!-- Deposito Purchase Section -->
+                    @if (_gameState.UnlockedAssets.Contains("deposito") && _depositoRates != null && _depositoRates.Any())
+                    {
+                        <div class="deposito-purchase-section">
+                            <div class="section-header">
+                                <h3>@GetText("Buka Deposito Baru", "Open New CD")</h3>
+                                <button class="btn-info-inline" @onclick='() => ShowAssetInfo("deposito")' title="Info">
+                                    ❓
+                                </button>
+                            </div>
+                            <p style="font-size: 0.85rem; color: #636E72; margin-bottom: 0.8rem; text-align: center;">
+                                @GetText("💡 Deposito itu seperti celengan terkunci - uangmu aman dan dapat bonus bunga!", "💡 Certificate of Deposit - fixed interest rate with guaranteed returns")
+                            </p>
+                            <div class="deposito-rates">
+                                @foreach (var rate in _depositoRates)
+                                {
+                                    <div class="deposito-rate-card @(_selectedDepositoPeriod == rate.PeriodMonths ? "selected" : "")"
+                                         @onclick="() => _selectedDepositoPeriod = rate.PeriodMonths">
+                                        <span class="period">@rate.PeriodName</span>
+                                        <span class="rate">@((rate.AnnualRate * 100).ToString("F1"))%</span>
+                                        <span class="min-deposit">Min: Rp @rate.MinimumDeposit.ToString("N0")</span>
+                                    </div>
+                                }
+                            </div>
+                            <div class="deposito-auto-rollover">
+                                <label class="auto-rollover-checkbox" title="@GetText("Otomatis investasi ulang saat jatuh tempo dengan bunga compound", "Otomatis investasi ulang saat jatuh tempo", "Automatically re-invest when matured with compound interest", "Automatically re-invest at maturity")">
+                                    <input type="checkbox" @bind="_depositoAutoRollOver" />
+                                    <span class="checkbox-label">
+                                        🔄 @GetText("Roll Over Otomatis", "Automatic Roll Over")
+                                    </span>
+                                    <span class="info-icon" title="@GetText("Deposito akan otomatis di-investasi ulang dengan nilai jatuh tempo (pokok + bunga) sebagai modal baru. Ini cara terbaik untuk mendapat efek bunga berbunga!", "Deposito akan otomatis di-investasi ulang saat jatuh tempo", "Deposito will automatically re-invest at maturity with compound interest. This gives you the best compound growth!", "Automatically re-invest maturity value as new principal")">ℹ️</span>
+                                </label>
+                            </div>
+                            <div class="deposito-amount-input">
+                                <input type="number" @bind="_depositoAmount" placeholder="Min Rp 1.000.000" step="1000000" min="1000000" />
+                                <button class="btn-buy" @onclick="BuyDeposito"
+                                        disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || _selectedDepositoPeriod == 0 || _depositoAmount < 1000000 || _depositoAmount > _gameState.CashBalance)">
+                                    🔒 @GetText("Kunci Uang", "Lock Funds")
+                                </button>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Bond Purchase Section -->
+                    @if (_gameState.UnlockedAssets.Contains("obligasi") && _bondRates != null && _bondRates.Any())
+                    {
+                        <div class="bond-purchase-section">
+                            <div class="section-header">
+                                <h3>@GetText("Beli Obligasi Negara", "Buy Government Bonds")</h3>
+                                <button class="btn-info-inline" @onclick='() => ShowAssetInfo("obligasi")' title="Info">
+                                    ❓
+                                </button>
+                            </div>
+                            <p style="font-size: 0.85rem; color: #636E72; margin-bottom: 0.8rem; text-align: center;">
+                                @GetText("💡 Obligasi adalah surat utang negara - aman dan dapat kupon tiap bulan!", "💡 Government bonds - low risk with monthly coupon payments")
+                            </p>
+                            <div class="bond-rates">
+                                @foreach (var rate in _bondRates)
+                                {
+                                    <div class="bond-rate-card @(_selectedBondType == rate.BondType ? "selected" : "")"
+                                         @onclick="() => _selectedBondType = rate.BondType">
+                                        <span class="bond-type">@rate.BondType</span>
+                                        <span class="bond-period">@rate.PeriodName</span>
+                                        <span class="bond-coupon">@((rate.CouponRate * 100).ToString("F1"))% kupon</span>
+                                        <span class="min-invest">Min: Rp @rate.MinimumInvestment.ToString("N0")</span>
+                                    </div>
+                                }
+                            </div>
+                            <div class="bond-amount-input">
+                                <input type="number" @bind="_bondAmount" placeholder="Min Rp 1.000.000" step="1000000" min="1000000" />
+                                <button class="btn-buy" @onclick="BuyBond"
+                                        disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || string.IsNullOrEmpty(_selectedBondType) || _bondAmount < 1000000 || _bondAmount > _gameState.CashBalance)">
+                                    📜 @GetText("Beli Obligasi", "Buy Bond")
+                                </button>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Individual Stocks Section -->
+                    @if (_gameState.UnlockedAssets.Contains("saham") && _gameState.AvailableStocks.Any())
+                    {
+                        <div class="stocks-section">
+                            <div class="section-header">
+                                <h3>📈 @GetText("Saham Individual", "Individual Stocks")</h3>
+                                <button class="btn-info-inline" @onclick='() => ShowAssetInfo("saham")' title="Info">
+                                    ❓
+                                </button>
+                            </div>
+                            <p class="section-tip">
+                                @GetText("💡 Harga saham berubah setiap 2 bulan. Dividen dibayar setiap akhir tahun!",
+                                         "💡 Harga saham berubah setiap 2 bulan. Dividen dibayar setiap akhir tahun!",
+                                         "💡 Stock prices update every 2 months. Dividends paid annually!",
+                                         "💡 Stock prices update every 2 months. Dividends paid annually!")
+                            </p>
+                            <div class="stocks-list">
+                                @foreach (var stock in _gameState.AvailableStocks)
+                                {
+                                    <div class="stock-row compact">
+                                        <div class="stock-info">
+                                            <div class="stock-main">
+                                                <span class="stock-ticker-badge">@stock.Ticker</span>
+                                                <div class="stock-details">
+                                                    <span class="stock-name">@stock.CompanyName</span>
+                                                    <span class="stock-meta">@stock.Sector @if(stock.PaysDividend) { <span class="dividend-badge" title="@GetText("Dividen tahunan", "Dividen tahunan", "Annual dividend", "Annual dividend")">💰 @((stock.DividendYield * 100).ToString("F1"))%</span> }</span>
+                                                </div>
+                                            </div>
+                                            <div class="stock-price-info compact">
+                                                <span class="stock-price-value">Rp @stock.CurrentPrice.ToString("N0")</span>
+                                                <span class="stock-change @(stock.Change >= 0 ? "positive" : "negative")">
+                                                    @(stock.Change >= 0 ? "+" : "")@stock.ChangePercent.ToString("F1")%
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="stock-actions-row compact">
+                                            <span class="lot-price">1 Lot = Rp @((stock.CurrentPrice * 100).ToString("N0"))</span>
+                                            <div class="quick-buy-buttons">
+                                                <button class="btn-quick-lot" @onclick="() => BuyStock(stock.Ticker, 5)"
+                                                        disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || (stock.CurrentPrice * 100 * 5) > _gameState.CashBalance)">
+                                                    5 @GetText("Lot", "Lot", "Lot", "Lot")
+                                                </button>
+                                                <button class="btn-quick-lot" @onclick="() => BuyStock(stock.Ticker, 25)"
+                                                        disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || (stock.CurrentPrice * 100 * 25) > _gameState.CashBalance)">
+                                                    25 @GetText("Lot", "Lot", "Lot", "Lot")
+                                                </button>
+                                                <button class="btn-quick-lot" @onclick="() => BuyStock(stock.Ticker, 100)"
+                                                        disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || (stock.CurrentPrice * 100 * 100) > _gameState.CashBalance)">
+                                                    100 @GetText("Lot", "Lot", "Lot", "Lot")
+                                                </button>
+                                                <button class="btn-quick-lot" @onclick="() => BuyStock(stock.Ticker, 500)"
+                                                        disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || (stock.CurrentPrice * 100 * 500) > _gameState.CashBalance)">
+                                                    500 @GetText("Lot", "Lot", "Lot", "Lot")
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    <!-- General Market Grid (Index Fund, Gold, Crypto, Crowdfunding) -->
+                    <div class="market-grid">
+                        @* Regular Assets (Index Fund, Gold, Crowdfunding) *@
+                        @foreach (var price in _gameState.CurrentPrices.Where(p => _gameState.UnlockedAssets.Contains(p.AssetType) && !new[] { "tabungan", "deposito", "obligasi", "saham", "crypto", "crowdfunding" }.Contains(p.AssetType)))
+                        {
+                            var asset = _assets?.GetValueOrDefault(price.AssetType);
+                            var isGold = price.AssetType == "emas";
+                            <div class="market-card @GetRiskClass(asset?.RiskLevel)">
+                                <div class="card-header">
+                                    <span class="asset-name">@GetAssetIcon(price.AssetType) @GetAssetDisplayName(asset, price.DisplayName)</span>
+                                    <div class="card-actions">
+                                        <button class="btn-info" @onclick="() => ShowAssetInfo(price.AssetType)" title="Info">
+                                            &#x2753;
+                                        </button>
+                                        <span class="risk-badge">@(asset?.RiskLevel ?? "?")</span>
+                                    </div>
+                                </div>
+                                <div class="card-price">
+                                    <span class="price">Rp @price.Price.ToString("N0")@(isGold ? "/g" : "")</span>
+                                    @if (price.ShowChange)
+                                    {
+                                        <span class="change @(price.Change >= 0 ? "positive" : "negative")">
+                                            @(price.Change >= 0 ? "+" : "")@price.ChangePercent.ToString("F2")%
+                                        </span>
+                                    }
+                                </div>
+                                @if (asset != null)
+                                {
+                                    <p class="card-desc">@GetAssetDescription(asset)</p>
+                                }
+                                @if (isGold)
+                                {
+                                    <button class="btn-buy btn-buy-1g" @onclick="() => BuyGoldByGrams(1)"
+                                            disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || _gameState.CashBalance < price.Price)">
+                                        🪙 @GetText("Beli 1g", "Buy 1g")
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button class="btn-buy" @onclick="() => BuyAsset(price.AssetType)"
+                                            disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || _gameState.CashBalance < 1_000_000)">
+                                        &#x1F6D2; @GetText("Beli Rp 1 Juta", "Buy Rp 1M")
+                                    </button>
+                                }
+                            </div>
+                        }
+
+                        @* Crypto Assets (BTC, ETH, DOGE) - Grouped with black background *@
+                        @if (_gameState.UnlockedAssets.Contains("crypto") && _gameState.AvailableCryptos.Any())
+                        {
+                            var cryptoAsset = _assets?.GetValueOrDefault("crypto");
+                            <div class="crypto-group-container">
+                                <div class="crypto-group-header">
+                                    <span class="crypto-group-title">🌐 @GetText("Aset Kripto", "Aset Kripto", "Crypto Assets", "Crypto Assets")</span>
+                                    <div class="crypto-group-actions">
+                                        <button class="btn-info crypto-info-btn" @onclick='() => ShowAssetInfo("crypto")' title="Info">
+                                            &#x2753;
+                                        </button>
+                                        <span class="risk-badge extreme">@(cryptoAsset?.RiskLevel ?? "5")</span>
+                                    </div>
+                                </div>
+                                <p class="crypto-group-warning">⚠️ @GetText("SANGAT BERISIKO! Bisa untung besar atau kehilangan segalanya!", "SANGAT BERISIKO!", "EXTREMELY RISKY! Can make huge gains or lose everything!", "EXTREMELY RISKY!")</p>
+                                <div class="crypto-coins-row">
+                                    @foreach (var crypto in _gameState.AvailableCryptos)
+                                    {
+                                        <div class="crypto-coin-card @(crypto.Symbol == "DOGE" ? "doge-crypto" : "")">
+                                            <div class="crypto-coin-header">
+                                                <span class="crypto-symbol">@crypto.Symbol</span>
+                                                <span class="crypto-name">@crypto.Name</span>
+                                            </div>
+                                            <div class="crypto-coin-price">
+                                                <span class="price">Rp @crypto.CurrentPrice.ToString("N0")</span>
+                                                <span class="change @(crypto.Change >= 0 ? "positive" : "negative")">
+                                                    @(crypto.Change >= 0 ? "+" : "")@crypto.ChangePercent.ToString("F1")%
+                                                </span>
+                                            </div>
+                                            <div class="crypto-buy-controls">
+                                                <input type="number" @bind="_cryptoAmounts[crypto.Symbol]" min="1000000" step="1000000"
+                                                       placeholder="Rp" class="crypto-input" />
+                                                <button class="crypto-buy-btn" @onclick="() => BuyCrypto(crypto.Symbol)"
+                                                        disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || GetCryptoAmount(crypto.Symbol) < 1000000 || GetCryptoAmount(crypto.Symbol) > _gameState.CashBalance)">
+                                                    @GetText("Beli", "Buy")
+                                                </button>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+
+                        @* Crowdfunding Projects - Grouped in a row *@
+                        @if (_gameState.UnlockedAssets.Contains("crowdfunding") && _gameState.AvailableCrowdfunding.Any())
+                        {
+                            var cfAsset = _assets?.GetValueOrDefault("crowdfunding");
+                            <div class="crowdfunding-group-container">
+                                <div class="crowdfunding-group-header">
+                                    <span class="crowdfunding-group-title">🤝 @GetText("Urun Dana / Crowdfunding", "Urun Dana", "Crowdfunding", "Securities Crowdfunding")</span>
+                                    <div class="crowdfunding-group-actions">
+                                        <button class="btn-info" @onclick='() => ShowAssetInfo("crowdfunding")' title="Info">
+                                            &#x2753;
+                                        </button>
+                                        <span class="risk-badge high">@(cfAsset?.RiskLevel ?? "4")</span>
+                                    </div>
+                                </div>
+                                <p class="crowdfunding-group-warning">⚠️ @GetText("Uang terkunci selama masa investasi. 20% proyek bisa GAGAL!", "Locked during investment period. 20% projects may FAIL!")</p>
+                                <div class="crowdfunding-projects-row">
+                                    @foreach (var project in _gameState.AvailableCrowdfunding.Where(p => p.IsActive))
+                                    {
+                                        var projectIcon = project.ProjectType switch
+                                        {
+                                            "Commodities" => "☕",
+                                            "Agriculture" => "🌱",
+                                            "Tech Startup" => "💻",
+                                            "F&B" => "🍔",
+                                            "Retail" => "👕",
+                                            _ => "🏢"
+                                        };
+
+                                        <div class="crowdfunding-project-card @GetRiskClass(cfAsset?.RiskLevel)">
+                                            <div class="project-header">
+                                                <span class="project-icon">@projectIcon</span>
+                                                <span class="project-name">@project.ProjectName</span>
+                                            </div>
+                                            <div class="project-type-badge">@project.ProjectType</div>
+                                            <div class="project-stats">
+                                                <div class="stat-row">
+                                                    <span>@GetText("Return", "Return"):</span>
+                                                    <span class="success">@((project.ExpectedReturn * 100).ToString("F0"))%/thn</span>
+                                                </div>
+                                                <div class="stat-row">
+                                                    <span>@GetText("Terkunci", "Lock-up"):</span>
+                                                    <span>@project.LockUpMonths @GetText("bulan", "months")</span>
+                                                </div>
+                                            </div>
+                                            <div class="crowdfunding-buy-controls">
+                                                <input type="number" @bind="_crowdfundingAmounts[project.ProjectId]" min="100000" step="100000"
+                                                       placeholder="Min Rp 100rb" class="cf-input" />
+                                                <button class="cf-buy-btn" @onclick="() => BuyCrowdfunding(project.ProjectId)"
+                                                        disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || GetCrowdfundingAmount(project.ProjectId) < 100000 || GetCrowdfundingAmount(project.ProjectId) > _gameState.CashBalance)">
+                                                    @GetText("Invest", "Invest")
+                                                </button>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+
+                                @* Player's Crowdfunding Investments *@
+                                @if (_gameState.CrowdfundingInvestments.Any())
+                                {
+                                    <div class="crowdfunding-investments">
+                                        <h4>@GetText("Investasi Urun Dana Anda", "Your Crowdfunding Investments")</h4>
+                                        <div class="cf-investments-row">
+                                            @foreach (var inv in _gameState.CrowdfundingInvestments)
+                                            {
+                                                <div class="cf-investment-card @(inv.HasFailed ? "failed" : inv.IsMatured ? "matured" : "active")">
+                                                    <div class="cf-inv-header">
+                                                        <span class="cf-inv-name">@inv.ProjectName</span>
+                                                        @if (inv.HasFailed)
+                                                        {
+                                                            <span class="cf-inv-status failed">❌ @GetText("GAGAL", "FAILED")</span>
+                                                        }
+                                                        else if (inv.IsMatured)
+                                                        {
+                                                            <span class="cf-inv-status matured">✅ @GetText("SELESAI", "MATURED")</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="cf-inv-status active">🔒 @inv.MonthsRemaining @GetText("bln lagi", "mo left")</span>
+                                                        }
+                                                    </div>
+                                                    <div class="cf-inv-details">
+                                                        <span>@GetText("Modal", "Invested"): Rp @inv.InvestedAmount.ToString("N0")</span>
+                                                        @if (!inv.HasFailed)
+                                                        {
+                                                            <span>@GetText("Nilai", "Value"): Rp @inv.CurrentValue.ToString("N0")</span>
+                                                        }
+                                                    </div>
+                                                    @if (inv.HasFailed && !string.IsNullOrEmpty(inv.FailureReason))
+                                                    {
+                                                        <div class="cf-inv-failure">@GetText("Alasan", "Reason"): @inv.FailureReason</div>
+                                                    }
+                                                    <div class="cf-inv-progress">
+                                                        <div class="cf-inv-progress-fill @(inv.HasFailed ? "failed" : "")" style="width: @inv.ProgressPercent%"></div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Locked Assets Section -->
+                    @{
+                        var lockedAssets = _assets?.Values.Where(a => !_gameState.UnlockedAssets.Contains(a.Type)).ToList() ?? new List<AssetDefinition>();
+                    }
+                    @if (lockedAssets.Any())
+                    {
+                        <div class="locked-section">
+                            <h3>@GetText("Investasi Terkunci", "Locked Investments")</h3>
+                            <div class="locked-grid">
+                                @foreach (var asset in lockedAssets)
+                                {
+                                    var unlockMonth = (asset.UnlockYear - 1) * 12 + asset.UnlockMonth;
+                                    var monthsUntilUnlock = unlockMonth - _gameState.TotalGameMonths;
+                                    <div class="locked-card">
+                                        <span class="lock-icon">🔒</span>
+                                        <span class="locked-name">@GetAssetDisplayName(asset, asset.DisplayName)</span>
+                                        <span class="unlock-info">
+                                            @if (monthsUntilUnlock > 12)
+                                            {
+                                                @($"Terbuka Tahun {asset.UnlockYear}")
+                                            }
+                                            else if (monthsUntilUnlock > 0)
+                                            {
+                                                @($"{monthsUntilUnlock} bulan lagi")
+                                            }
+                                        </span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </section>
+
+                <!-- Right Panel: Performance & Log -->
+                <section class="panel panel-right">
+                    <!-- Portfolio Performance -->
+                    <div class="performance-section">
+                        <h3>@GetText("Performa Portofolio", "Portfolio Performance")</h3>
+
+                        <!-- Performance Chart -->
+                        <div class="performance-chart-container">
+                            <div class="chart-label">@GetText("Pertumbuhan Kekayaan", "Pertumbuhan Kekayaan", "Net Worth Growth", "Net Worth Growth")</div>
+                            <div class="performance-chart">
+                                @if (_performanceHistory != null && _performanceHistory.Count > 1)
+                                {
+                                    <svg viewBox="0 0 300 100" preserveAspectRatio="none" class="chart-svg">
+                                        <line x1="0" y1="25" x2="300" y2="25" class="grid-line"/>
+                                        <line x1="0" y1="50" x2="300" y2="50" class="grid-line"/>
+                                        <line x1="0" y1="75" x2="300" y2="75" class="grid-line"/>
+                                        <polyline points="@GetChartPoints()" class="performance-line"/>
+                                    </svg>
+                                    <div class="chart-axis">
+                                        <span class="axis-label">@GetText("Awal", "Awal", "Start", "Start")</span>
+                                        <span class="axis-label">@GetText("Sekarang", "Sekarang", "Now", "Now")</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="no-data">@GetText("Grafik akan muncul seiring waktu...", "Grafik akan muncul seiring waktu...", "Chart will appear over time...", "Chart will appear over time...")</div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="performance-stat">
+                            <span class="perf-label">@GetText("Total Investasi", "Total Invested")</span>
+                            <span class="perf-value">
+                                @{
+                                    var totalCost = _gameState.Portfolio.Sum(p => p.TotalCost);
+                                }
+                                Rp @totalCost.ToString("N0")
+                            </span>
+                        </div>
+                        <div class="performance-stat">
+                            <span class="perf-label">@GetText("Nilai Sekarang", "Current Value")</span>
+                            <span class="perf-value">Rp @_gameState.TotalPortfolioValue.ToString("N0")</span>
+                        </div>
+                        <div class="performance-stat">
+                            <span class="perf-label">@GetText("Untung/Rugi", "Profit/Loss")</span>
+                            <span class="perf-value @(_gameState.TotalPortfolioValue - _gameState.Portfolio.Sum(p => p.TotalCost) >= 0 ? "positive" : "negative")">
+                                @{
+                                    var totalProfitLoss = _gameState.TotalPortfolioValue - _gameState.Portfolio.Sum(p => p.TotalCost);
+                                    var profitPercent = _gameState.Portfolio.Sum(p => p.TotalCost) > 0 ? (totalProfitLoss / _gameState.Portfolio.Sum(p => p.TotalCost)) * 100 : 0;
+                                }
+                                @(totalProfitLoss >= 0 ? "+" : "")Rp @totalProfitLoss.ToString("N0") (@profitPercent.ToString("F1")%)
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <!-- Game History Log -->
+                    <h3>@GetText("Riwayat", "History")</h3>
+                    <div class="log-list">
+                        @foreach (var log in _gameState.GameLog.AsEnumerable().Reverse())
+                        {
+                            <div class="log-item @GetLogClass(log)">@log</div>
+                        }
+                    </div>
+                </section>
+            </main>
+
+            <!-- Paused Indicator -->
+            @if (_isPaused && !_gameState.IsEventPending && !_showAssetInfo && !_gameState.IsGameOver && !_gameState.ShowIntro)
+            {
+                <div class="paused-indicator">JEDA</div>
+            }
+
+            <!-- Intro Modal (shown when new asset unlocked) -->
+            @if (_gameState.ShowIntro && !string.IsNullOrEmpty(_gameState.IntroAssetType))
+            {
+                <div class="modal-overlay">
+                    <div class="modal-content intro-modal">
+                        @{
+                            var introAsset = _assets?.GetValueOrDefault(_gameState.IntroAssetType);
+                        }
+                        @if (introAsset != null)
+                        {
+                            <h2>🔓 @GetText("Investasi Baru Terbuka!", "New Investment Unlocked!")</h2>
+                            <p class="intro-desc">
+                                @GetText($"Selamat {_gameState.PlayerId}! Kamu sekarang bisa menggunakan instrumen investasi baru!",
+                                         $"Congratulations {_gameState.PlayerId}! You now have access to a new investment instrument!")
+                            </p>
+
+                            <div class="intro-cards">
+                                <div class="intro-card @GetRiskClass(introAsset.RiskLevel)">
+                                    <h3>@GetAssetIcon(introAsset.Type) @GetAssetDisplayName(introAsset, introAsset.DisplayName)</h3>
+                                    <p><strong>@GetText("Apa sih ini?", "What is it?")</strong> @GetAssetWhatIsIt(introAsset)</p>
+                                    <p><strong>@GetText("Risikonya:", "Risk Level:")</strong> @GetAssetRiskExplanation(introAsset)</p>
+                                    <p><strong>@GetText("Cocok untuk:", "Best for:")</strong> @GetAssetBestFor(introAsset)</p>
+                                    <p><strong>@GetText("Untungnya:", "Expected Return:")</strong> @GetAssetExpectedReturn(introAsset)</p>
+                                </div>
+                            </div>
+
+                            <button class="btn-primary" @onclick="DismissIntro">
+                                @GetText("Oke, Mengerti!", "Got it!")
+                            </button>
+                        }
+                    </div>
+                </div>
+            }
+
+            <!-- Event Payment Modal -->
+            @if (_gameState.IsEventPending && !string.IsNullOrEmpty(_gameState.ActiveEvent))
+            {
+                <div class="modal-overlay">
+                    <div class="modal-content event-modal">
+                        <h2>@GetText("Kejadian Tak Terduga!", "Unexpected Event!")</h2>
+                        <p class="event-description">@_gameState.ActiveEventDescription</p>
+                        <div class="event-cost-display">
+                            @GetText("Harus Bayar:", "Amount Due:") Rp @(_gameState.EventCost?.ToString("N0") ?? "0")
+                        </div>
+
+                        <div class="payment-instruction">
+                            @GetText("💡 Pilih cara pembayaran:", "💡 Choose payment method:")
+                        </div>
+
+                        <div class="event-options">
+                            <!-- Pay from Cash Option -->
+                            <div class="event-option @(_gameState.CashBalance >= (_gameState.EventCost ?? 0) ? "option-available" : "option-insufficient")">
+                                <span class="event-option-label">💵 @GetText("Bayar Pakai Uang Kas", "Pay from Cash")</span>
+                                <span class="event-option-balance">@GetText("Uangmu:", "Balance:") Rp @_gameState.CashBalance.ToString("N0")</span>
+                                <button class="btn-primary" @onclick="PayEventFromCash"
+                                        disabled="@(_gameState.CashBalance < (_gameState.EventCost ?? 0))">
+                                    @if (_gameState.CashBalance >= (_gameState.EventCost ?? 0))
+                                    {
+                                        <span>✅ @GetText("Bayar dari Kas", "Pay from Cash")</span>
+                                    }
+                                    else
+                                    {
+                                        <span>❌ @GetText("Uang Tidak Cukup", "Insufficient Funds")</span>
+                                    }
+                                </button>
+                            </div>
+
+                            <!-- Pay from Savings Option -->
+                            @if (_gameState.SavingsAccount != null && _gameState.SavingsAccount.Balance > 0)
+                            {
+                                <div class="event-option @(_gameState.SavingsAccount.Balance >= (_gameState.EventCost ?? 0) ? "option-available" : "option-insufficient")">
+                                    <span class="event-option-label">🐖 @GetText("Bayar dari Tabungan", "Pay from Savings")</span>
+                                    <span class="event-option-balance">Tabungan: Rp @_gameState.SavingsAccount.Balance.ToString("N0")</span>
+                                    <button class="btn-primary" @onclick="PayEventFromSavings"
+                                            disabled="@(_gameState.SavingsAccount.Balance < (_gameState.EventCost ?? 0))">
+                                        @if (_gameState.SavingsAccount.Balance >= (_gameState.EventCost ?? 0))
+                                        {
+                                            <span>✅ @GetText("Bayar dari Tabungan", "Pay from Savings")</span>
+                                        }
+                                        else
+                                        {
+                                            <span>❌ @GetText("Tabungan Tidak Cukup", "Insufficient Savings")</span>
+                                        }
+                                    </button>
+                                </div>
+                            }
+
+                            <!-- Pay from Portfolio Option -->
+                            @if (_gameState.Portfolio.Any())
+                            {
+                                <div class="event-option">
+                                    <span class="event-option-label">📊 @GetText("Jual Investasi untuk Bayar", "Sell Investment to Pay")</span>
+                                    <span class="event-option-balance">@GetText("Pilih investasi yang mau dijual (langsung cair):", "Choose investment to sell (instantly liquidated):")</span>
+                                    <div class="portfolio-options">
+                                        @foreach (var item in _gameState.Portfolio)
+                                        {
+                                            var canAfford = item.TotalValue >= (_gameState.EventCost ?? 0);
+                                            <button class="portfolio-option-btn @(canAfford ? "portfolio-sufficient" : "")"
+                                                    @onclick="() => PayEventFromPortfolio(item.AssetType)"
+                                                    disabled="@(!canAfford)">
+                                                @GetAssetIcon(item.AssetType) @item.DisplayName<br/>
+                                                <small>Rp @item.TotalValue.ToString("N0")</small>
+                                                @if (canAfford)
+                                                {
+                                                    <span class="check-badge">✓</span>
+                                                }
+                                            </button>
+                                        }
+                                    </div>
+                                    <p class="portfolio-note">
+                                        @GetText("⚠️ Investasi akan dijual di harga pasar saat ini", "⚠️ Investment will be sold at current market price")
+                                    </p>
+                                </div>
+                            }
+                        </div>
+
+                        @{
+                            var totalAssets = _gameState.CashBalance + _gameState.TotalPortfolioValue + _gameState.TotalSavingsValue;
+                            var canPay = totalAssets >= (_gameState.EventCost ?? 0);
+                        }
+
+                        @if (!canPay)
+                        {
+                            <div class="game-over-warning">
+                                @GetText("😢 Aduh! Kamu tidak punya cukup uang untuk bayar! Game akan berakhir...", "😢 Insufficient funds to pay! Game over...")
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+
+            <!-- Asset Info Modal -->
+            @if (_showAssetInfo && _selectedAsset != null)
+            {
+                <div class="modal-overlay" @onclick="CloseAssetInfo">
+                    <div class="modal-content info-modal" @onclick:stopPropagation="true">
+                        <button class="modal-close" @onclick="CloseAssetInfo">&#x2715;</button>
+                        <h2>@GetAssetIcon(_selectedAsset.Type) @GetAssetDisplayName(_selectedAsset, _selectedAsset.DisplayName)</h2>
+                        <div class="info-section">
+                            <h4>@GetText("Apa sih", "Tentang", "What is", "About") @GetAssetDisplayName(_selectedAsset, _selectedAsset.DisplayName)?</h4>
+                            <p>@GetAssetWhatIsIt(_selectedAsset)</p>
+                        </div>
+                        <div class="info-section">
+                            <h4>@GetText("Tingkat Risiko", "Tingkat Risiko", "Risk Level", "Risk Level")</h4>
+                            <span class="risk-badge large @GetRiskClass(_selectedAsset.RiskLevel)">@_selectedAsset.RiskLevel</span>
+                            <p>@GetAssetRiskExplanation(_selectedAsset)</p>
+                        </div>
+                        <div class="info-section">
+                            <h4>@GetText("Cocok Untuk Siapa?", "Cocok Untuk", "Who's It For?", "Best For")</h4>
+                            <p>@GetAssetBestFor(_selectedAsset)</p>
+                        </div>
+                        <div class="info-section">
+                            <h4>@GetText("Berapa Untungnya?", "Potensi Keuntungan", "How Much Can I Earn?", "Expected Returns")</h4>
+                            <p>@GetAssetExpectedReturn(_selectedAsset)</p>
+                        </div>
+                        @if (!_isLightMode && !string.IsNullOrEmpty(_selectedAsset.RealRules))
+                        {
+                            <div class="info-section">
+                                <h4>@GetText("Aturan di Indonesia", "Aturan & Regulasi", "Indonesian Regulations", "Rules & Regulations")</h4>
+                                <p style="white-space: pre-line;">@_selectedAsset.RealRules</p>
+                            </div>
+                        }
+                        <button class="btn-primary" @onclick="CloseAssetInfo">@GetText("Oke, Mengerti!", "Saya Mengerti", "Got it!", "Understood")</button>
+                    </div>
+                </div>
+            }
+
+            <!-- Game Over Modal -->
+            @if (_gameState.IsGameOver)
+            {
+                <div class="modal-overlay">
+                    <div class="modal-content game-over-modal">
+                        <h2>@GetGameOverTitle(_gameState.NetWorth, _gameState.GameOverReason)</h2>
+                        @if (!string.IsNullOrEmpty(_gameState.GameOverReason))
+                        {
+                            <div class="game-over-reason">😢 @_gameState.GameOverReason</div>
+                        }
+
+                        <!-- Comparison Section -->
+                        <div class="comparison-section">
+                            <h3>@GetText("Perbandingan dengan AI Financial Advisor", "Perbandingan dengan AI Financial Advisor", "Comparison with AI Financial Advisor", "Comparison with AI Financial Advisor")</h3>
+                            <p class="comparison-desc">@GetText(
+                                "AI menggunakan strategi seimbang untuk negara berkembang: 30% Reksa Dana, 25% Deposito, 20% Obligasi, 20% Emas, 5% Tabungan",
+                                "AI menggunakan strategi seimbang untuk negara berkembang: 30% Reksa Dana, 25% Deposito, 20% Obligasi, 20% Emas, 5% Tabungan",
+                                "AI uses emerging market balanced strategy: 30% Index Fund, 25% CD, 20% Bonds, 20% Gold, 5% Savings",
+                                "AI uses emerging market balanced strategy: 30% Index Fund, 25% CD, 20% Bonds, 20% Gold, 5% Savings")</p>
+
+                            <div class="comparison-cards">
+                                <!-- Player Card with Pie Chart -->
+                                <div class="comparison-card player-card">
+                                    <div class="card-header">
+                                        <span class="card-icon">👤</span>
+                                        <span class="card-title">@GetText("Kamu", "Anda", "You", "You")</span>
+                                    </div>
+                                    <div class="card-networth @(GetNetWorthComparisonClass(true))">
+                                        <span class="networth-label">@GetText("Total Kekayaan", "Total Kekayaan", "Net Worth", "Net Worth")</span>
+                                        <span class="networth-value">Rp @_gameState.NetWorth.ToString("N0")</span>
+                                    </div>
+
+                                    <!-- Player Pie Chart -->
+                                    <div class="pie-chart-container">
+                                        <div class="pie-chart" style="@GetPlayerPieChartStyle()"></div>
+                                        <div class="pie-chart-legend">
+                                            @if (_gameState.PlayerCashPercent > 0)
+                                            {
+                                                <div class="legend-item"><span class="legend-color cash"></span>@GetText("Kas", "Cash") @_gameState.PlayerCashPercent.ToString("F1")%</div>
+                                            }
+                                            @if (_gameState.PlayerSavingsPercent > 0)
+                                            {
+                                                <div class="legend-item"><span class="legend-color savings"></span>@GetText("Tabungan", "Savings") @_gameState.PlayerSavingsPercent.ToString("F1")%</div>
+                                            }
+                                            @if (_gameState.PlayerDepositoPercent > 0)
+                                            {
+                                                <div class="legend-item"><span class="legend-color deposito"></span>Deposito @_gameState.PlayerDepositoPercent.ToString("F1")%</div>
+                                            }
+                                            @if (_gameState.PlayerBondPercent > 0)
+                                            {
+                                                <div class="legend-item"><span class="legend-color bonds"></span>@GetText("Obligasi", "Bonds") @_gameState.PlayerBondPercent.ToString("F1")%</div>
+                                            }
+                                            @if (_gameState.PlayerPortfolioPercent > 0)
+                                            {
+                                                <div class="legend-item"><span class="legend-color portfolio"></span>@GetText("Investasi", "Portfolio") @_gameState.PlayerPortfolioPercent.ToString("F1")%</div>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <div class="card-breakdown">
+                                        <div class="breakdown-item">
+                                            <span>💵 @GetText("Kas", "Kas", "Cash", "Cash")</span>
+                                            <span>Rp @_gameState.CashBalance.ToString("N0")</span>
+                                        </div>
+                                        <div class="breakdown-item">
+                                            <span>🐖 @GetText("Tabungan", "Tabungan", "Savings", "Savings")</span>
+                                            <span>Rp @_gameState.TotalSavingsValue.ToString("N0")</span>
+                                        </div>
+                                        <div class="breakdown-item">
+                                            <span>🏦 Deposito</span>
+                                            <span>Rp @_gameState.TotalDepositoValue.ToString("N0")</span>
+                                        </div>
+                                        <div class="breakdown-item">
+                                            <span>📜 @GetText("Obligasi", "Obligasi", "Bonds", "Bonds")</span>
+                                            <span>Rp @_gameState.TotalBondValue.ToString("N0")</span>
+                                        </div>
+                                        <div class="breakdown-item">
+                                            <span>📊 @GetText("Investasi", "Investasi", "Investments", "Investments")</span>
+                                            <span>Rp @_gameState.TotalPortfolioValue.ToString("N0")</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Bot Card with Pie Chart -->
+                                @if (_gameState.BotState != null)
+                                {
+                                    <div class="comparison-card bot-card">
+                                        <div class="card-header">
+                                            <span class="card-icon">🤖</span>
+                                            <span class="card-title">AI Advisor</span>
+                                        </div>
+                                        <div class="card-networth @(GetNetWorthComparisonClass(false))">
+                                            <span class="networth-label">@GetText("Total Kekayaan", "Total Kekayaan", "Net Worth", "Net Worth")</span>
+                                            <span class="networth-value">Rp @_gameState.BotState.NetWorth.ToString("N0")</span>
+                                        </div>
+
+                                        <!-- Bot Pie Chart -->
+                                        <div class="pie-chart-container">
+                                            <div class="pie-chart" style="@GetBotPieChartStyle()"></div>
+                                            <div class="pie-chart-legend">
+                                                @if (_gameState.BotState.CashPercent > 0)
+                                                {
+                                                    <div class="legend-item"><span class="legend-color cash"></span>@GetText("Kas", "Cash") @_gameState.BotState.CashPercent.ToString("F1")%</div>
+                                                }
+                                                @if (_gameState.BotState.SavingsPercent > 0)
+                                                {
+                                                    <div class="legend-item"><span class="legend-color savings"></span>@GetText("Tabungan", "Savings") @_gameState.BotState.SavingsPercent.ToString("F1")%</div>
+                                                }
+                                                @if (_gameState.BotState.DepositoPercent > 0)
+                                                {
+                                                    <div class="legend-item"><span class="legend-color deposito"></span>Deposito @_gameState.BotState.DepositoPercent.ToString("F1")%</div>
+                                                }
+                                                @if (_gameState.BotState.BondPercent > 0)
+                                                {
+                                                    <div class="legend-item"><span class="legend-color bonds"></span>@GetText("Obligasi", "Bonds") @_gameState.BotState.BondPercent.ToString("F1")%</div>
+                                                }
+                                                @if (_gameState.BotState.IndexFundPercent > 0)
+                                                {
+                                                    <div class="legend-item"><span class="legend-color index"></span>@GetText("Reksa Dana", "Index Fund") @_gameState.BotState.IndexFundPercent.ToString("F1")%</div>
+                                                }
+                                                @if (_gameState.BotState.GoldPercent > 0)
+                                                {
+                                                    <div class="legend-item"><span class="legend-color gold"></span>@GetText("Emas", "Gold") @_gameState.BotState.GoldPercent.ToString("F1")%</div>
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <div class="card-breakdown">
+                                            <div class="breakdown-item">
+                                                <span>💵 @GetText("Kas", "Kas", "Cash", "Cash")</span>
+                                                <span>Rp @_gameState.BotState.CashBalance.ToString("N0")</span>
+                                            </div>
+                                            <div class="breakdown-item">
+                                                <span>🐖 @GetText("Tabungan", "Tabungan", "Savings", "Savings")</span>
+                                                <span>Rp @_gameState.BotState.SavingsBalance.ToString("N0")</span>
+                                            </div>
+                                            <div class="breakdown-item">
+                                                <span>🏦 Deposito</span>
+                                                <span>Rp @_gameState.BotState.TotalDepositoValue.ToString("N0")</span>
+                                            </div>
+                                            <div class="breakdown-item">
+                                                <span>📜 @GetText("Obligasi", "Obligasi", "Bonds", "Bonds")</span>
+                                                <span>Rp @_gameState.BotState.TotalBondValue.ToString("N0")</span>
+                                            </div>
+                                            <div class="breakdown-item">
+                                                <span>📈 @GetText("Reksa Dana", "Reksa Dana", "Index Fund", "Index Fund")</span>
+                                                <span>Rp @_gameState.BotState.IndexFundValue.ToString("N0")</span>
+                                            </div>
+                                            <div class="breakdown-item">
+                                                <span>🪙 @GetText("Emas", "Emas", "Gold", "Gold")</span>
+                                                <span>Rp @_gameState.BotState.GoldValue.ToString("N0")</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Earnings Comparison -->
+                            @if (_gameState.BotState != null)
+                            {
+                                <div class="earnings-comparison">
+                                    <h4>@GetText("Perbandingan Pendapatan", "Perbandingan Pendapatan", "Earnings Comparison", "Earnings Comparison")</h4>
+                                    <div class="earnings-grid">
+                                        <div class="earnings-item player-earnings">
+                                            <span class="earnings-label">@GetText("Keuntungan Kamu", "Keuntungan Anda", "Your Profit", "Your Profit")</span>
+                                            <span class="earnings-value @(GetPlayerProfit() >= 0 ? "positive" : "negative")">
+                                                @(GetPlayerProfit() >= 0 ? "+" : "")Rp @GetPlayerProfit().ToString("N0")
+                                            </span>
+                                            <span class="earnings-percent @(GetPlayerProfitPercent() >= 0 ? "positive" : "negative")">
+                                                (@(GetPlayerProfitPercent() >= 0 ? "+" : "")@GetPlayerProfitPercent().ToString("F1")%)
+                                            </span>
+                                        </div>
+                                        <div class="earnings-item bot-earnings">
+                                            <span class="earnings-label">@GetText("Keuntungan AI", "Keuntungan AI", "AI Profit", "AI Profit")</span>
+                                            <span class="earnings-value @(_gameState.BotState.TotalProfit >= 0 ? "positive" : "negative")">
+                                                @(_gameState.BotState.TotalProfit >= 0 ? "+" : "")Rp @_gameState.BotState.TotalProfit.ToString("N0")
+                                            </span>
+                                            <span class="earnings-percent @(_gameState.BotState.ProfitPercent >= 0 ? "positive" : "negative")">
+                                                (@(_gameState.BotState.ProfitPercent >= 0 ? "+" : "")@_gameState.BotState.ProfitPercent.ToString("F1")%)
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                            <!-- Comparison Result -->
+                            @if (_gameState.BotState != null)
+                            {
+                                <div class="comparison-result @(GetComparisonResultClass())">
+                                    @if (_gameState.NetWorth > _gameState.BotState.NetWorth)
+                                    {
+                                        var diff = _gameState.NetWorth - _gameState.BotState.NetWorth;
+                                        var pct = _gameState.BotState.NetWorth > 0 ? (diff / _gameState.BotState.NetWorth * 100) : 0;
+                                        <span class="result-icon">🎉</span>
+                                        <span class="result-text">@GetText(
+                                            $"Selamat! Kamu mengalahkan AI sebesar Rp {diff:N0} (+{pct:F1}%)",
+                                            $"Selamat! Anda mengalahkan AI sebesar Rp {diff:N0} (+{pct:F1}%)",
+                                            $"Congratulations! You beat the AI by Rp {diff:N0} (+{pct:F1}%)",
+                                            $"Congratulations! You beat the AI by Rp {diff:N0} (+{pct:F1}%)")</span>
+                                    }
+                                    else if (_gameState.NetWorth < _gameState.BotState.NetWorth)
+                                    {
+                                        var diff = _gameState.BotState.NetWorth - _gameState.NetWorth;
+                                        var pct = _gameState.NetWorth > 0 ? (diff / _gameState.NetWorth * 100) : 0;
+                                        <span class="result-icon">📉</span>
+                                        <span class="result-text">@GetText(
+                                            $"AI menang! Strategi seimbang unggul Rp {diff:N0} (+{pct:F1}%)",
+                                            $"AI menang! Strategi seimbang unggul Rp {diff:N0} (+{pct:F1}%)",
+                                            $"AI wins! Balanced strategy ahead by Rp {diff:N0} (+{pct:F1}%)",
+                                            $"AI wins! Balanced strategy ahead by Rp {diff:N0} (+{pct:F1}%)")</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="result-icon">🤝</span>
+                                        <span class="result-text">@GetText("Seri! Kamu dan AI sama kaya!", "Seri! Anda dan AI sama kaya!", "Tie! You and AI have equal wealth!", "Tie! You and AI have equal wealth!")</span>
+                                    }
+                                </div>
+                            }
+                        </div>
+
+                        <div class="rating">
+                            @GetRating(_gameState.NetWorth)
+                        </div>
+                        <button class="btn-primary" @onclick="RestartGame">@GetText("Main Lagi!", "Main Lagi", "Play Again!", "Play Again")</button>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@* Crowdfunding Failure Notification *@
+@if (_gameState != null && !string.IsNullOrEmpty(_gameState.CrowdfundingFailureMessage))
+{
+    <div class="modal-overlay">
+        <div class="crowdfunding-failure-notification">
+            <div class="cf-failure-header">
+                <span class="cf-failure-icon">💔</span>
+                <span class="cf-failure-title">@GetText("Proyek Gagal!", "Project Failed!")</span>
+            </div>
+            <div class="cf-failure-message">@_gameState.CrowdfundingFailureMessage</div>
+            <button class="cf-failure-dismiss" @onclick="DismissCrowdfundingFailure">
+                @GetText("Mengerti", "I Understand")
+            </button>
+        </div>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(_errorMessage))
+{
+    <div class="error-toast">@_errorMessage</div>
+}
+
+@code {
+    private string _playerName = "";
+    private string _statusMessage = "Menghubungkan ke server...";
+    private string _errorMessage = "";
+    private bool _isConnected = false;
+    private bool _isPaused = false;
+    private bool _showAssetInfo = false;
+    private AssetDefinition? _selectedAsset;
+    private GameState? _gameState;
+    private Dictionary<string, AssetDefinition>? _assets;
+    private List<DepositoRate>? _depositoRates;
+    private List<BondRate>? _bondRates;
+    private int _selectedDepositoPeriod = 0;
+    private decimal _depositoAmount = 1_000_000;
+    private bool _depositoAutoRollOver = false;
+    private string _selectedBondType = "";
+    private decimal _bondAmount = 1_000_000;
+    private decimal _savingsAmount = 1_000_000;
+    private bool _isLightMode = false;
+    private AgeMode _selectedAgeMode => _isLightMode ? AgeMode.Kids : AgeMode.Adult;
+    private Language _selectedLanguage = Language.Indonesian;
+    private Dictionary<string, int> _stockLots = new();
+    private Dictionary<string, decimal> _cryptoAmounts = new();
+    private Dictionary<string, decimal> _crowdfundingAmounts = new();
+    private List<decimal> _performanceHistory = new();
+
+    // Tutorial state
+    private bool _showTutorial = false;
+    private int _currentTutorialSlide = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        GameClient.OnGameStateUpdated += HandleGameStateUpdated;
+        GameClient.OnGamePaused += HandleGamePaused;
+        GameClient.OnGameResumed += HandleGameResumed;
+        GameClient.OnError += HandleError;
+
+        try
+        {
+            var baseUri = NavigationManager.BaseUri;
+            await GameClient.ConnectAsync(baseUri);
+            _assets = await GameClient.GetAssetDefinitionsAsync();
+            _depositoRates = await GameClient.GetDepositoRatesAsync();
+            _bondRates = await GameClient.GetBondRatesAsync();
+            _isConnected = true;
+            _statusMessage = "Terhubung!";
+        }
+        catch (Exception ex)
+        {
+            _statusMessage = $"Gagal terhubung: {ex.Message}";
+        }
+
+        StateHasChanged();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await ApplyTheme();
+        }
+    }
+
+    private async Task ApplyTheme()
+    {
+        try
+        {
+            var theme = (_gameState?.AgeMode ?? _selectedAgeMode) == AgeMode.Adult ? "adult" : "";
+            await JSRuntime.InvokeVoidAsync("eval", $"document.documentElement.setAttribute('data-theme', '{theme}')");
+        }
+        catch { /* Silently fail if JS isn't available */ }
+    }
+
+    // Full 4-parameter version for complete translations
+    private string GetText(string kidsID, string adultID, string kidsEN, string adultEN)
+    {
+        var mode = _gameState?.AgeMode ?? _selectedAgeMode;
+        var lang = _gameState?.Language ?? _selectedLanguage;
+
+        return (mode, lang) switch
+        {
+            (AgeMode.Kids, Language.Indonesian) => kidsID,
+            (AgeMode.Kids, Language.English) => kidsEN,
+            (AgeMode.Adult, Language.Indonesian) => adultID,
+            (AgeMode.Adult, Language.English) => adultEN,
+            _ => kidsID
+        };
+    }
+
+    // Backward compatibility: 2-parameter version (uses Indonesian adult for English)
+    private string GetText(string kidsText, string adultText)
+    {
+        return GetText(kidsText, adultText, kidsText, adultText);
+    }
+
+    // Currency formatting helper - formats with 2 decimal places
+    private string FormatCurrency(decimal amount)
+    {
+        return amount.ToString("N2");
+    }
+
+    private string GetAssetDisplayName(AssetDefinition? asset, string fallback)
+    {
+        if (asset == null) return fallback;
+        var mode = _gameState?.AgeMode ?? _selectedAgeMode;
+        var lang = _gameState?.Language ?? _selectedLanguage;
+
+        return (mode, lang) switch
+        {
+            (AgeMode.Kids, Language.Indonesian) => asset.DisplayName,
+            (AgeMode.Kids, Language.English) => asset.DisplayNameEN,
+            (AgeMode.Adult, Language.Indonesian) => asset.DisplayNameAdult,
+            (AgeMode.Adult, Language.English) => asset.DisplayNameAdultEN,
+            _ => asset.DisplayName
+        };
+    }
+
+    private string GetAssetDescription(AssetDefinition asset)
+    {
+        var mode = _gameState?.AgeMode ?? _selectedAgeMode;
+        var lang = _gameState?.Language ?? _selectedLanguage;
+
+        return (mode, lang) switch
+        {
+            (AgeMode.Kids, Language.Indonesian) => asset.Description,
+            (AgeMode.Kids, Language.English) => asset.DescriptionEN,
+            (AgeMode.Adult, Language.Indonesian) => asset.DescriptionAdult,
+            (AgeMode.Adult, Language.English) => asset.DescriptionAdultEN,
+            _ => asset.Description
+        };
+    }
+
+    private string GetAssetWhatIsIt(AssetDefinition asset)
+    {
+        var mode = _gameState?.AgeMode ?? _selectedAgeMode;
+        var lang = _gameState?.Language ?? _selectedLanguage;
+
+        return (mode, lang) switch
+        {
+            (AgeMode.Kids, Language.Indonesian) => asset.WhatIsIt,
+            (AgeMode.Kids, Language.English) => asset.WhatIsItEN,
+            (AgeMode.Adult, Language.Indonesian) => asset.WhatIsItAdult,
+            (AgeMode.Adult, Language.English) => asset.WhatIsItAdultEN,
+            _ => asset.WhatIsIt
+        };
+    }
+
+    private string GetAssetRiskExplanation(AssetDefinition asset)
+    {
+        var mode = _gameState?.AgeMode ?? _selectedAgeMode;
+        var lang = _gameState?.Language ?? _selectedLanguage;
+
+        return (mode, lang) switch
+        {
+            (AgeMode.Kids, Language.Indonesian) => asset.RiskExplanation,
+            (AgeMode.Kids, Language.English) => asset.RiskExplanationEN,
+            (AgeMode.Adult, Language.Indonesian) => asset.RiskExplanationAdult,
+            (AgeMode.Adult, Language.English) => asset.RiskExplanationAdultEN,
+            _ => asset.RiskExplanation
+        };
+    }
+
+    private string GetAssetBestFor(AssetDefinition asset)
+    {
+        var mode = _gameState?.AgeMode ?? _selectedAgeMode;
+        var lang = _gameState?.Language ?? _selectedLanguage;
+
+        return (mode, lang) switch
+        {
+            (AgeMode.Kids, Language.Indonesian) => asset.BestFor,
+            (AgeMode.Kids, Language.English) => asset.BestForEN,
+            (AgeMode.Adult, Language.Indonesian) => asset.BestForAdult,
+            (AgeMode.Adult, Language.English) => asset.BestForAdultEN,
+            _ => asset.BestFor
+        };
+    }
+
+    private string GetAssetExpectedReturn(AssetDefinition asset)
+    {
+        var mode = _gameState?.AgeMode ?? _selectedAgeMode;
+        var lang = _gameState?.Language ?? _selectedLanguage;
+
+        return (mode, lang) switch
+        {
+            (AgeMode.Kids, Language.Indonesian) => asset.ExpectedReturn,
+            (AgeMode.Kids, Language.English) => asset.ExpectedReturnEN,
+            (AgeMode.Adult, Language.Indonesian) => asset.ExpectedReturnAdult,
+            (AgeMode.Adult, Language.English) => asset.ExpectedReturnAdultEN,
+            _ => asset.ExpectedReturn
+        };
+    }
+
+    private int GetStockLots(string ticker)
+    {
+        return _stockLots.GetValueOrDefault(ticker, 1);
+    }
+
+    private decimal GetCryptoAmount(string symbol)
+    {
+        return _cryptoAmounts.GetValueOrDefault(symbol, 1_000_000);
+    }
+
+    private decimal GetCrowdfundingAmount(string projectId)
+    {
+        return _crowdfundingAmounts.GetValueOrDefault(projectId, 100_000);
+    }
+
+    private string GetChartPoints()
+    {
+        if (_performanceHistory == null || _performanceHistory.Count < 2)
+            return "";
+
+        var max = _performanceHistory.Max();
+        var min = _performanceHistory.Min();
+        var range = max - min;
+        if (range == 0) range = 1; // Avoid division by zero
+
+        var points = new List<string>();
+        var width = 300;
+        var height = 100;
+
+        for (int i = 0; i < _performanceHistory.Count; i++)
+        {
+            var x = (double)i / (_performanceHistory.Count - 1) * width;
+            var normalizedValue = (double)((_performanceHistory[i] - min) / range);
+            var y = height - (normalizedValue * height * 0.8) - (height * 0.1); // 80% of height with 10% margins
+            points.Add($"{x:F1},{y:F1}");
+        }
+
+        return string.Join(" ", points);
+    }
+
+    private string GetAssetIcon(string assetType)
+    {
+        return assetType switch
+        {
+            "tabungan" => "\U0001F416",
+            "deposito" => "\U0001F3E6",
+            "obligasi" => "\U0001F4DC",
+            "emas" => "\U0001FA99",
+            "reksadana" => "\U0001F4CA",
+            "saham" => "\U0001F4C8",
+            "crypto" => "\U0001F310",
+            "crowdfunding" => "\U0001F91D",
+            _ => "\U0001F4B0"
+        };
+    }
+
+    private string GetGameOverTitle(decimal netWorth, string? reason)
+    {
+        if (!string.IsNullOrEmpty(reason))
+            return GetText("\U0001F622 Game Over!", "\U0001F622 Game Over!");
+        if (netWorth >= 500_000_000)
+            return GetText("\U0001F3C6 LEGENDA!", "\U0001F3C6 LEGENDARY INVESTOR!");
+        if (netWorth >= 300_000_000)
+            return GetText("\U0001F947 KEREN BANGET!", "\U0001F947 EXCELLENT!");
+        if (netWorth >= 200_000_000)
+            return GetText("\U0001F948 HEBAT!", "\U0001F948 GREAT!");
+        if (netWorth >= 100_000_000)
+            return GetText("\U0001F949 BAGUS!", "\U0001F949 GOOD!");
+        return GetText("\U0001F3AE Permainan Selesai!", "\U0001F3AE Game Complete!");
+    }
+
+    // Tutorial methods
+    private void ShowTutorial()
+    {
+        if (string.IsNullOrWhiteSpace(_playerName)) return;
+        _showTutorial = true;
+        _currentTutorialSlide = 0;
+    }
+
+    private void SkipTutorial()
+    {
+        _showTutorial = false;
+        _ = StartGame();
+    }
+
+    private void NextTutorialSlide()
+    {
+        if (_currentTutorialSlide < 4)
+            _currentTutorialSlide++;
+    }
+
+    private void PreviousTutorialSlide()
+    {
+        if (_currentTutorialSlide > 0)
+            _currentTutorialSlide--;
+    }
+
+    private void StartGameAfterTutorial()
+    {
+        _showTutorial = false;
+        _ = StartGame();
+    }
+
+    private async Task StartGame()
+    {
+        if (string.IsNullOrWhiteSpace(_playerName)) return;
+
+        _gameState = await GameClient.StartGameAsync(_playerName, _selectedAgeMode, _selectedLanguage);
+        _isPaused = false;
+        await ApplyTheme();
+
+        // Initialize stock lots dictionary
+        if (_gameState?.AvailableStocks != null)
+        {
+            foreach (var stock in _gameState.AvailableStocks)
+            {
+                _stockLots[stock.Ticker] = 1;
+            }
+        }
+
+        // Initialize crypto amounts dictionary
+        if (_gameState?.AvailableCryptos != null)
+        {
+            foreach (var crypto in _gameState.AvailableCryptos)
+            {
+                _cryptoAmounts[crypto.Symbol] = 1_000_000;
+            }
+        }
+
+        StateHasChanged();
+    }
+
+    private async Task DepositToSavings()
+    {
+        if (_gameState == null || _isPaused || _gameState.IsGameOver || _gameState.IsEventPending) return;
+        if (_savingsAmount <= 0 || _savingsAmount > _gameState.CashBalance) return;
+
+        var result = await GameClient.DepositToSavingsAsync(_savingsAmount);
+        if (!result)
+        {
+            ShowError(GetText("Gagal setor ke tabungan!", "Failed to deposit to savings!"));
+        }
+    }
+
+    private async Task WithdrawFromSavings()
+    {
+        if (_gameState == null || _isPaused || _gameState.IsGameOver || _gameState.IsEventPending) return;
+        if (_savingsAmount <= 0 || _savingsAmount > (_gameState.SavingsAccount?.Balance ?? 0)) return;
+
+        var result = await GameClient.WithdrawFromSavingsAsync(_savingsAmount);
+        if (!result)
+        {
+            ShowError(GetText("Gagal tarik dari tabungan!", "Failed to withdraw from savings!"));
+        }
+    }
+
+    private async Task BuyAsset(string assetType)
+    {
+        if (_gameState == null || _isPaused || _gameState.IsGameOver || _gameState.IsEventPending) return;
+
+        var result = await GameClient.BuyAssetAsync(assetType);
+        if (!result)
+        {
+            ShowError(GetText("Uang tidak cukup! Butuh Rp 1 juta.", "Insufficient funds! Need Rp 1 million."));
+        }
+    }
+
+    private async Task BuyDeposito()
+    {
+        if (_gameState == null || _isPaused || _gameState.IsGameOver || _gameState.IsEventPending) return;
+        if (_selectedDepositoPeriod == 0 || _depositoAmount < 1_000_000) return;
+
+        var result = await GameClient.BuyDepositoAsync(_selectedDepositoPeriod, _depositoAmount, _depositoAutoRollOver);
+        if (result)
+        {
+            _depositoAmount = 1_000_000;
+            _selectedDepositoPeriod = 0;
+            _depositoAutoRollOver = false; // Reset checkbox after purchase
+        }
+        else
+        {
+            ShowError(GetText("Gagal buka deposito. Cek uangmu!", "Failed to open CD. Check your balance!"));
+        }
+    }
+
+    private async Task WithdrawDeposito(string depositoId, bool earlyWithdraw)
+    {
+        if (_gameState == null || _isPaused || _gameState.IsGameOver || _gameState.IsEventPending) return;
+
+        var result = await GameClient.WithdrawDepositoAsync(depositoId, earlyWithdraw);
+        if (!result)
+        {
+            ShowError(GetText("Gagal ambil deposito.", "Failed to withdraw CD."));
+        }
+    }
+
+    private async Task ToggleDepositoAutoRollOver(string depositoId)
+    {
+        if (_gameState == null || _isPaused || _gameState.IsGameOver || _gameState.IsEventPending) return;
+
+        await GameClient.ToggleDepositoAutoRollOverAsync(depositoId);
+    }
+
+    private async Task BuyBond()
+    {
+        if (_gameState == null || _isPaused || _gameState.IsGameOver || _gameState.IsEventPending) return;
+        if (string.IsNullOrEmpty(_selectedBondType) || _bondAmount < 1_000_000) return;
+
+        var result = await GameClient.BuyBondAsync(_selectedBondType, _bondAmount);
+        if (result)
+        {
+            _bondAmount = 1_000_000;
+            _selectedBondType = "";
+        }
+        else
+        {
+            ShowError(GetText("Gagal beli obligasi. Cek uangmu!", "Failed to buy bond. Check your balance!"));
+        }
+    }
+
+    private async Task WithdrawBond(string bondId)
+    {
+        if (_gameState == null || _isPaused || _gameState.IsGameOver || _gameState.IsEventPending) return;
+
+        var result = await GameClient.WithdrawBondAsync(bondId);
+        if (!result)
+        {
+            ShowError(GetText("Gagal ambil obligasi.", "Failed to withdraw bond."));
+        }
+    }
+
+    private async Task BuyStock(string ticker, int lots = 0)
+    {
+        if (_gameState == null || _isPaused || _gameState.IsGameOver || _gameState.IsEventPending) return;
+
+        if (lots == 0)
+            lots = GetStockLots(ticker);
+
+        if (lots < 1) return;
+
+        var result = await GameClient.BuyStockAsync(ticker, lots);
+        if (!result)
+        {
+            ShowError(GetText("Gagal beli saham. Cek uangmu!", "Failed to buy stock. Check your balance!"));
+        }
+    }
+
+    private async Task SellStock(string ticker, int lots)
+    {
+        if (_gameState == null || _isPaused || _gameState.IsGameOver || _gameState.IsEventPending) return;
+
+        var result = await GameClient.SellStockAsync(ticker, lots);
+        if (!result)
+        {
+            ShowError(GetText("Gagal jual saham.", "Failed to sell stock."));
+        }
+    }
+
+    private async Task SellAllStock(string ticker)
+    {
+        if (_gameState == null || _isPaused || _gameState.IsGameOver || _gameState.IsEventPending) return;
+
+        var stockItem = _gameState.Portfolio.FirstOrDefault(p => p.Ticker == ticker && p.AssetType == "saham");
+        if (stockItem == null || stockItem.Units < 100) return;
+
+        var lotsToSell = (int)(stockItem.Units / 100);
+        var result = await GameClient.SellStockAsync(ticker, lotsToSell);
+        if (!result)
+        {
+            ShowError(GetText("Gagal jual saham.", "Failed to sell stock."));
+        }
+    }
+
+    private async Task BuyCrypto(string symbol)
+    {
+        if (_gameState == null || _isPaused || _gameState.IsGameOver || _gameState.IsEventPending) return;
+
+        var amount = GetCryptoAmount(symbol);
+        if (amount < 1_000_000) return;
+
+        var result = await GameClient.BuyCryptoAsync(symbol, amount);
+        if (!result)
+        {
+            ShowError(GetText("Gagal beli crypto. Cek uangmu!", "Failed to buy crypto. Check your balance!"));
+        }
+    }
+
+    private async Task SellCrypto(string symbol, decimal amount)
+    {
+        if (_gameState == null || _isPaused || _gameState.IsGameOver || _gameState.IsEventPending) return;
+
+        var result = await GameClient.SellCryptoAsync(symbol, amount);
+        if (!result)
+        {
+            ShowError(GetText("Gagal jual crypto.", "Failed to sell crypto."));
+        }
+    }
+
+    private async Task SellAllCrypto(string symbol)
+    {
+        if (_gameState == null || _isPaused || _gameState.IsGameOver || _gameState.IsEventPending) return;
+
+        // Find the crypto in portfolio to get total value
+        var cryptoItem = _gameState.Portfolio.FirstOrDefault(p => p.AssetType == "crypto" && p.Ticker == symbol);
+        if (cryptoItem == null) return;
+
+        var result = await GameClient.SellCryptoAsync(symbol, cryptoItem.TotalValue);
+        if (!result)
+        {
+            ShowError(GetText("Gagal jual crypto.", "Failed to sell crypto."));
+        }
+    }
+
+    private async Task BuyCrowdfunding(string projectId)
+    {
+        if (_gameState == null || _isPaused || _gameState.IsGameOver || _gameState.IsEventPending) return;
+
+        var amount = GetCrowdfundingAmount(projectId);
+        if (amount < 100_000) return;
+
+        var result = await GameClient.BuyCrowdfundingAsync(projectId, amount);
+        if (!result)
+        {
+            ShowError(GetText("Gagal invest crowdfunding. Cek uangmu!", "Failed to invest in crowdfunding. Check your balance!"));
+        }
+    }
+
+    private async Task BuyGoldByGrams(decimal grams)
+    {
+        if (_gameState == null || _isPaused || _gameState.IsGameOver || _gameState.IsEventPending) return;
+
+        var result = await GameClient.BuyGoldByGramsAsync(grams);
+        if (!result)
+        {
+            ShowError(GetText("Gagal beli emas. Cek uangmu!", "Failed to buy gold. Check your balance!"));
+        }
+    }
+
+    private async Task SellAsset(string assetType)
+    {
+        if (_gameState == null || _isPaused || _gameState.IsGameOver || _gameState.IsEventPending) return;
+
+        var result = await GameClient.SellAssetAsync(assetType);
+        if (!result)
+        {
+            ShowError(GetText("Gagal jual investasi.", "Failed to sell investment."));
+        }
+    }
+
+    private async Task SellAllAssets(string assetType)
+    {
+        if (_gameState == null || _isPaused || _gameState.IsGameOver || _gameState.IsEventPending) return;
+
+        var result = await GameClient.SellAllAssetsAsync(assetType);
+        if (!result)
+        {
+            ShowError(GetText("Gagal jual semua.", "Failed to sell all."));
+        }
+    }
+
+    private async Task PayEventFromCash()
+    {
+        if (_gameState == null) return;
+
+        var result = await GameClient.PayEventFromCashAsync();
+        if (!result)
+        {
+            ShowError(GetText("Gagal bayar dari kas.", "Failed to pay from cash."));
+        }
+    }
+
+    private async Task PayEventFromSavings()
+    {
+        if (_gameState == null) return;
+
+        var result = await GameClient.PayEventFromSavingsAsync();
+        if (!result)
+        {
+            ShowError(GetText("Gagal bayar dari tabungan.", "Failed to pay from savings."));
+        }
+    }
+
+    private async Task PayEventFromPortfolio(string assetType)
+    {
+        if (_gameState == null) return;
+
+        var result = await GameClient.PayEventFromPortfolioAsync(assetType);
+        if (!result)
+        {
+            ShowError(GetText("Investasi tidak cukup untuk bayar.", "Investment insufficient to pay."));
+        }
+    }
+
+    private async Task DismissIntro()
+    {
+        if (_gameState == null) return;
+        await GameClient.DismissIntroAsync();
+    }
+
+    private void DismissCrowdfundingFailure()
+    {
+        if (_gameState != null)
+        {
+            _gameState.CrowdfundingFailureMessage = null;
+            StateHasChanged();
+        }
+    }
+
+    private async Task ShowAssetInfo(string assetType)
+    {
+        if (_assets == null) return;
+
+        _selectedAsset = _assets.GetValueOrDefault(assetType);
+        if (_selectedAsset != null)
+        {
+            _showAssetInfo = true;
+            if (!_isPaused && _gameState != null && !_gameState.IsGameOver && !_gameState.IsEventPending)
+            {
+                await GameClient.PauseGameAsync();
+            }
+            StateHasChanged();
+        }
+    }
+
+    private async Task CloseAssetInfo()
+    {
+        _showAssetInfo = false;
+        _selectedAsset = null;
+        if (_isPaused && _gameState != null && !_gameState.IsGameOver && !_gameState.IsEventPending)
+        {
+            await GameClient.ResumeGameAsync();
+        }
+        StateHasChanged();
+    }
+
+    private async Task TogglePause()
+    {
+        if (_gameState == null || _gameState.IsGameOver || _gameState.IsEventPending) return;
+
+        if (_isPaused)
+        {
+            await GameClient.ResumeGameAsync();
+        }
+        else
+        {
+            await GameClient.PauseGameAsync();
+        }
+    }
+
+    private async Task RestartGame()
+    {
+        await GameClient.RestartGameAsync();
+        _isPaused = false;
+        _showAssetInfo = false;
+        _selectedAsset = null;
+        _selectedDepositoPeriod = 0;
+        _depositoAmount = 1_000_000;
+        _selectedBondType = "";
+        _bondAmount = 1_000_000;
+        _savingsAmount = 1_000_000;
+    }
+
+    private void HandleGameStateUpdated(GameState state)
+    {
+        _gameState = state;
+
+        // Update stock lots dictionary when stocks change
+        if (state.AvailableStocks != null)
+        {
+            foreach (var stock in state.AvailableStocks)
+            {
+                if (!_stockLots.ContainsKey(stock.Ticker))
+                {
+                    _stockLots[stock.Ticker] = 1;
+                }
+            }
+        }
+
+        // Update crypto amounts dictionary when cryptos change
+        if (state.AvailableCryptos != null)
+        {
+            foreach (var crypto in state.AvailableCryptos)
+            {
+                if (!_cryptoAmounts.ContainsKey(crypto.Symbol))
+                {
+                    _cryptoAmounts[crypto.Symbol] = 1_000_000;
+                }
+            }
+        }
+
+        // Update crowdfunding amounts dictionary when projects change
+        if (state.AvailableCrowdfunding != null)
+        {
+            foreach (var project in state.AvailableCrowdfunding)
+            {
+                if (!_crowdfundingAmounts.ContainsKey(project.ProjectId))
+                {
+                    _crowdfundingAmounts[project.ProjectId] = 100_000;
+                }
+            }
+        }
+
+        // Track performance history (net worth over time)
+        _performanceHistory.Add(state.NetWorth);
+        if (_performanceHistory.Count > 120) // Keep last 120 months (10 years)
+            _performanceHistory.RemoveAt(0);
+
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void HandleGamePaused()
+    {
+        _isPaused = true;
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void HandleGameResumed()
+    {
+        _isPaused = false;
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void HandleError(string error)
+    {
+        ShowError(error);
+    }
+
+    private void ShowError(string message)
+    {
+        _errorMessage = message;
+        InvokeAsync(async () =>
+        {
+            StateHasChanged();
+            await Task.Delay(3000);
+            _errorMessage = "";
+            StateHasChanged();
+        });
+    }
+
+    private string GetRiskClass(string? riskLevel)
+    {
+        return riskLevel switch
+        {
+            "Sangat Rendah" => "risk-very-low",
+            "Rendah" => "risk-low",
+            "Sedang" => "risk-medium",
+            "Tinggi" => "risk-high",
+            "Sangat Tinggi" => "risk-very-high",
+            _ => ""
+        };
+    }
+
+    private string GetRating(decimal netWorth)
+    {
+        if (_selectedAgeMode == AgeMode.Kids)
+        {
+            if (netWorth >= 500_000_000) return "\U0001F3C6 LEGENDA INVESTASI! Kamu luar biasa! Bisa jadi Warren Buffett masa depan!";
+            if (netWorth >= 300_000_000) return "\U0001F947 INVESTOR AHLI! Super keren! Kamu sudah paham banget cara investasi!";
+            if (netWorth >= 200_000_000) return "\U0001F948 INVESTOR HANDAL! Bagus banget! Terus belajar ya!";
+            if (netWorth >= 100_000_000) return "\U0001F949 INVESTOR PEMULA! Lumayan! Kamu di jalan yang benar!";
+            if (netWorth >= 50_000_000) return "\U0001F4DA Masih perlu belajar lagi. Jangan menyerah!";
+            return "\U0001F4AA Yuk coba lagi! Setiap investor sukses pernah gagal!";
+        }
+        else
+        {
+            if (netWorth >= 500_000_000) return "\U0001F3C6 LEGENDARY INVESTOR! Outstanding portfolio management!";
+            if (netWorth >= 300_000_000) return "\U0001F947 EXPERT INVESTOR! Excellent diversification strategy!";
+            if (netWorth >= 200_000_000) return "\U0001F948 SKILLED INVESTOR! Strong financial acumen!";
+            if (netWorth >= 100_000_000) return "\U0001F949 DEVELOPING INVESTOR! Good progress!";
+            if (netWorth >= 50_000_000) return "\U0001F4DA Room for improvement. Review your strategy.";
+            return "\U0001F4AA Try again! Learn from your mistakes.";
+        }
+    }
+
+    private string GetNetWorthComparisonClass(bool isPlayer)
+    {
+        if (_gameState?.BotState == null) return "";
+
+        if (isPlayer)
+        {
+            if (_gameState.NetWorth > _gameState.BotState.NetWorth) return "winner";
+            if (_gameState.NetWorth < _gameState.BotState.NetWorth) return "loser";
+        }
+        else
+        {
+            if (_gameState.BotState.NetWorth > _gameState.NetWorth) return "winner";
+            if (_gameState.BotState.NetWorth < _gameState.NetWorth) return "loser";
+        }
+        return "tie";
+    }
+
+    private string GetComparisonResultClass()
+    {
+        if (_gameState?.BotState == null) return "";
+        if (_gameState.NetWorth > _gameState.BotState.NetWorth) return "player-wins";
+        if (_gameState.NetWorth < _gameState.BotState.NetWorth) return "bot-wins";
+        return "tie-result";
+    }
+
+    private string GetPlayerPieChartStyle()
+    {
+        if (_gameState == null) return "";
+
+        var cash = _gameState.PlayerCashPercent;
+        var savings = _gameState.PlayerSavingsPercent;
+        var deposito = _gameState.PlayerDepositoPercent;
+        var bonds = _gameState.PlayerBondPercent;
+        var portfolio = _gameState.PlayerPortfolioPercent;
+
+        // Build conic gradient for pie chart
+        var segments = new List<string>();
+        decimal cumulative = 0;
+
+        if (cash > 0)
+        {
+            segments.Add($"#4CAF50 {cumulative}% {cumulative + cash}%");
+            cumulative += cash;
+        }
+        if (savings > 0)
+        {
+            segments.Add($"#2196F3 {cumulative}% {cumulative + savings}%");
+            cumulative += savings;
+        }
+        if (deposito > 0)
+        {
+            segments.Add($"#9C27B0 {cumulative}% {cumulative + deposito}%");
+            cumulative += deposito;
+        }
+        if (bonds > 0)
+        {
+            segments.Add($"#FF9800 {cumulative}% {cumulative + bonds}%");
+            cumulative += bonds;
+        }
+        if (portfolio > 0)
+        {
+            segments.Add($"#E91E63 {cumulative}% {cumulative + portfolio}%");
+            cumulative += portfolio;
+        }
+
+        if (!segments.Any()) return "background: #ccc;";
+
+        return $"background: conic-gradient({string.Join(", ", segments)});";
+    }
+
+    private string GetBotPieChartStyle()
+    {
+        if (_gameState?.BotState == null) return "";
+
+        var bot = _gameState.BotState;
+        var cash = bot.CashPercent;
+        var savings = bot.SavingsPercent;
+        var deposito = bot.DepositoPercent;
+        var bonds = bot.BondPercent;
+        var index = bot.IndexFundPercent;
+        var gold = bot.GoldPercent;
+
+        // Build conic gradient for pie chart
+        var segments = new List<string>();
+        decimal cumulative = 0;
+
+        if (cash > 0)
+        {
+            segments.Add($"#4CAF50 {cumulative}% {cumulative + cash}%");
+            cumulative += cash;
+        }
+        if (savings > 0)
+        {
+            segments.Add($"#2196F3 {cumulative}% {cumulative + savings}%");
+            cumulative += savings;
+        }
+        if (deposito > 0)
+        {
+            segments.Add($"#9C27B0 {cumulative}% {cumulative + deposito}%");
+            cumulative += deposito;
+        }
+        if (bonds > 0)
+        {
+            segments.Add($"#FF9800 {cumulative}% {cumulative + bonds}%");
+            cumulative += bonds;
+        }
+        if (index > 0)
+        {
+            segments.Add($"#00BCD4 {cumulative}% {cumulative + index}%");
+            cumulative += index;
+        }
+        if (gold > 0)
+        {
+            segments.Add($"#FFD700 {cumulative}% {cumulative + gold}%");
+            cumulative += gold;
+        }
+
+        if (!segments.Any()) return "background: #ccc;";
+
+        return $"background: conic-gradient({string.Join(", ", segments)});";
+    }
+
+    private decimal GetPlayerProfit()
+    {
+        if (_gameState == null) return 0;
+        var initialCapital = 5_000_000m;
+        var yearlyIncome = 10_000_000m * (_gameState.CurrentYear - 1);
+        var totalInvested = initialCapital + yearlyIncome;
+        return _gameState.NetWorth - totalInvested;
+    }
+
+    private decimal GetPlayerProfitPercent()
+    {
+        if (_gameState == null) return 0;
+        var initialCapital = 5_000_000m;
+        var yearlyIncome = 10_000_000m * (_gameState.CurrentYear - 1);
+        var totalInvested = initialCapital + yearlyIncome;
+        if (totalInvested <= 0) return 0;
+        return ((_gameState.NetWorth - totalInvested) / totalInvested) * 100;
+    }
+
+    private string GetLogClass(string log)
+    {
+        // Salary - dark green
+        if (log.Contains("gaji tahunan") || log.Contains("Annual income received"))
+            return "log-salary";
+
+        // Event payment (deduction) - dark red
+        if (log.Contains("Bayar") || log.Contains("Paid"))
+            return "log-event-payment";
+
+        // Profit from selling - green
+        if (log.Contains("untung") || log.Contains("P/L: +"))
+            return "log-profit";
+
+        // Loss from selling - red
+        if (log.Contains("rugi") || log.Contains("P/L: -"))
+            return "log-loss";
+
+        // Event trigger - default event styling
+        if (log.Contains("EVENT"))
+            return "event";
+
+        // Asset unlock - default unlock styling
+        if (log.Contains("terbuka") || log.Contains("BARU") || log.Contains("unlocked"))
+            return "unlock";
+
+        return "";
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        GameClient.OnGameStateUpdated -= HandleGameStateUpdated;
+        GameClient.OnGamePaused -= HandleGamePaused;
+        GameClient.OnGameResumed -= HandleGameResumed;
+        GameClient.OnError -= HandleError;
+        await GameClient.DisposeAsync();
+    }
+}

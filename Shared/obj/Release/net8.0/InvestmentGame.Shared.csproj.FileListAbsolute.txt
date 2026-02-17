@@ -1,0 +1,11 @@
+D:\projects\tjoean\InvestmentGame\Shared\bin\Release\net8.0\InvestmentGame.Shared.deps.json
+D:\projects\tjoean\InvestmentGame\Shared\bin\Release\net8.0\InvestmentGame.Shared.dll
+D:\projects\tjoean\InvestmentGame\Shared\bin\Release\net8.0\InvestmentGame.Shared.pdb
+D:\projects\tjoean\InvestmentGame\Shared\obj\Release\net8.0\InvestmentGame.Shared.GeneratedMSBuildEditorConfig.editorconfig
+D:\projects\tjoean\InvestmentGame\Shared\obj\Release\net8.0\InvestmentGame.Shared.AssemblyInfoInputs.cache
+D:\projects\tjoean\InvestmentGame\Shared\obj\Release\net8.0\InvestmentGame.Shared.AssemblyInfo.cs
+D:\projects\tjoean\InvestmentGame\Shared\obj\Release\net8.0\InvestmentGame.Shared.csproj.CoreCompileInputs.cache
+D:\projects\tjoean\InvestmentGame\Shared\obj\Release\net8.0\InvestmentGame.Shared.dll
+D:\projects\tjoean\InvestmentGame\Shared\obj\Release\net8.0\refint\InvestmentGame.Shared.dll
+D:\projects\tjoean\InvestmentGame\Shared\obj\Release\net8.0\InvestmentGame.Shared.pdb
+D:\projects\tjoean\InvestmentGame\Shared\obj\Release\net8.0\ref\InvestmentGame.Shared.dll

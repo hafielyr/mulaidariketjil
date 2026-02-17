@@ -1,0 +1,37 @@
+{
+  "Files": [
+    {
+      "Id": "D:\\projects\\tjoean\\InvestmentGame\\Client\\bin\\Release\\net8.0\\wwwroot\\_framework\\blazor.webassembly.js",
+      "PackagePath": "staticwebassets\\_framework\\blazor.webassembly.js"
+    },
+    {
+      "Id": "D:\\projects\\tjoean\\InvestmentGame\\Client\\wwwroot\\css\\app.css",
+      "PackagePath": "staticwebassets\\css\\app.css"
+    },
+    {
+      "Id": "D:\\projects\\tjoean\\InvestmentGame\\Client\\wwwroot\\index.html",
+      "PackagePath": "staticwebassets\\index.html"
+    },
+    {
+      "Id": "obj\\Release\\net8.0\\staticwebassets\\msbuild.InvestmentGame.Client.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssetEndpoints.props"
+    },
+    {
+      "Id": "obj\\Release\\net8.0\\staticwebassets\\msbuild.InvestmentGame.Client.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Release\\net8.0\\staticwebassets\\msbuild.build.InvestmentGame.Client.props",
+      "PackagePath": "build\\InvestmentGame.Client.props"
+    },
+    {
+      "Id": "obj\\Release\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.InvestmentGame.Client.props",
+      "PackagePath": "buildMultiTargeting\\InvestmentGame.Client.props"
+    },
+    {
+      "Id": "obj\\Release\\net8.0\\staticwebassets\\msbuild.buildTransitive.InvestmentGame.Client.props",
+      "PackagePath": "buildTransitive\\InvestmentGame.Client.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

@@ -1,0 +1,160 @@
+{
+  "product_id": "cryptocurrency",
+  "product_name": {
+    "en": "Cryptocurrency",
+    "id": "Aset Kripto"
+  },
+  "category": "digital_financial_asset",
+  "risk_level": 5,
+  "risk_label": {
+    "en": "Very High Risk",
+    "id": "Risiko Sangat Tinggi"
+  },
+
+  "regulatory_compliance": {
+    "regulator": "OJK (since January 2025, transferred from BAPPEBTI)",
+    "legal_basis": [
+      "POJK No. 27/2024 tentang Aset Keuangan Digital",
+      "POJK No. 23/2025 (Amendment)",
+      "UU No. 4 Tahun 2023 (P2SK Law)"
+    ],
+    "classification": "Digital Financial Asset (Aset Keuangan Digital)",
+    "guarantee": {
+      "institution": null,
+      "is_guaranteed": false,
+      "warning": "NO government protection - highly speculative"
+    },
+    "requirements": {
+      "exchange": "Must use OJK-licensed exchange",
+      "approved_assets": "Only assets in approved Crypto Asset List",
+      "custody": "Exchange custody or personal wallet"
+    },
+    "licensed_exchanges": [
+      "Indodax", "Tokocrypto", "Pintu", "Rekeningku", "Zipmex"
+    ]
+  },
+
+  "game_mechanics": {
+    "base_stats": {
+      "risk_score": 5,
+      "liquidity_score": 5,
+      "complexity_score": 4,
+      "potential_return_score": 5
+    },
+    "sample_assets": [
+      { "code": "BTC", "name": "Bitcoin", "volatility": 0.10 },
+      { "code": "ETH", "name": "Ethereum", "volatility": 0.12 },
+      { "code": "BNB", "name": "Binance Coin", "volatility": 0.15 },
+      { "code": "USDT", "name": "Tether", "volatility": 0.001, "type": "stablecoin" },
+      { "code": "SOL", "name": "Solana", "volatility": 0.18 }
+    ],
+    "financial_params": {
+      "min_investment": 10000,
+      "fees": {
+        "trading_fee_range": [0.001, 0.005],
+        "typical_fee": 0.002
+      },
+      "tax": {
+        "transaction_ppn": 0.001,
+        "income_pph": 0.001
+      },
+      "trading_hours": "24/7",
+      "settlement": "instant"
+    },
+    "actions": [
+      {
+        "action": "buy",
+        "min_amount": 10000,
+        "execution": "instant"
+      },
+      {
+        "action": "sell",
+        "execution": "instant"
+      },
+      {
+        "action": "transfer_to_wallet",
+        "fee": "network_dependent"
+      }
+    ]
+  },
+
+  "game_events": [
+    {
+      "event_id": "bull_run",
+      "probability": 0.05,
+      "effect": "price_surge",
+      "range": [1.20, 2.00],
+      "message": {
+        "en": "Crypto bull run! Massive gains!",
+        "id": "Bull run kripto! Keuntungan besar!"
+      }
+    },
+    {
+      "event_id": "crash",
+      "probability": 0.08,
+      "effect": "price_crash",
+      "range": [0.50, 0.80],
+      "message": {
+        "en": "Crypto crashes! Major losses.",
+        "id": "Kripto anjlok! Kerugian besar."
+      }
+    },
+    {
+      "event_id": "regulatory_positive",
+      "probability": 0.05,
+      "effect": "price_boost",
+      "range": [1.10, 1.25],
+      "message": {
+        "en": "Positive regulation news - crypto rallies!",
+        "id": "Berita regulasi positif - kripto naik!"
+      }
+    },
+    {
+      "event_id": "exchange_hack",
+      "probability": 0.01,
+      "effect": "partial_loss",
+      "range": [0.10, 0.50],
+      "message": {
+        "en": "Exchange hacked! Some funds lost.",
+        "id": "Bursa diretas! Sebagian dana hilang."
+      }
+    },
+    {
+      "event_id": "whale_movement",
+      "probability": 0.10,
+      "effect": "volatility_spike",
+      "message": {
+        "en": "Large whale movement - expect volatility",
+        "id": "Pergerakan whale besar - siap volatilitas"
+      }
+    }
+  ],
+
+  "risk_warnings": {
+    "mandatory_display": [
+      {
+        "en": "Cryptocurrency is highly speculative. You may lose your entire investment.",
+        "id": "Aset kripto sangat spekulatif. Anda dapat kehilangan seluruh investasi."
+      },
+      {
+        "en": "No government guarantee exists for crypto investments.",
+        "id": "Tidak ada jaminan pemerintah untuk investasi kripto."
+      }
+    ]
+  },
+
+  "scoring": {
+    "points_per_percent_gain": 5,
+    "penalty_per_percent_loss": -3,
+    "bonus_survive_crash": 100,
+    "penalty_fomo_buy": -20,
+    "achievement_diamond_hands": 100
+  },
+
+  "ui_config": {
+    "icon": "bitcoin",
+    "color_primary": "#FF9800",
+    "color_secondary": "#FFB74D",
+    "warning_icon": true
+  }
+}

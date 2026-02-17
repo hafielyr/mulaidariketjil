@@ -1,0 +1,200 @@
+{
+  "product_id": "equity_crowdfunding",
+  "product_name": {
+    "en": "Equity Crowdfunding (Securities Crowdfunding)",
+    "id": "Urun Dana Efek (Securities Crowdfunding)"
+  },
+  "category": "capital_market",
+  "risk_level": 4,
+  "risk_label": {
+    "en": "High Risk",
+    "id": "Risiko Tinggi"
+  },
+
+  "regulatory_compliance": {
+    "regulator": "OJK (Otoritas Jasa Keuangan)",
+    "legal_basis": [
+      "POJK No. 17/2025 tentang Penawaran Efek melalui Layanan Urun Dana",
+      "Replacing POJK No. 57/POJK.04/2020"
+    ],
+    "guarantee": {
+      "institution": null,
+      "is_guaranteed": false,
+      "warning": "High-risk investment in startups/SMEs"
+    },
+    "investor_limits": {
+      "income_up_to_500m": {
+        "max_percentage": 0.05,
+        "description": { "en": "5% of annual income", "id": "5% dari pendapatan tahunan" }
+      },
+      "income_above_500m": {
+        "max_percentage": 0.10,
+        "description": { "en": "10% of annual income", "id": "10% dari pendapatan tahunan" }
+      },
+      "experienced_investor": {
+        "criteria": "Securities account held for 2+ years",
+        "limit": "No percentage limit"
+      }
+    },
+    "issuer_requirements": {
+      "type": "Indonesian business entity",
+      "restrictions": [
+        "Cannot be controlled by business group/conglomerate",
+        "Cannot be public company or subsidiary"
+      ],
+      "funding_limit_per_year": 10000000000
+    },
+    "platform_requirements": {
+      "min_paid_up_capital": 25000000000,
+      "min_equity": 5000000000,
+      "foreign_ownership_cap": 0.49
+    }
+  },
+
+  "game_mechanics": {
+    "base_stats": {
+      "risk_score": 4,
+      "liquidity_score": 1,
+      "complexity_score": 3,
+      "potential_return_score": 5
+    },
+    "securities_types": [
+      {
+        "type": "equity",
+        "name": { "en": "Equity (Shares)", "id": "Saham" },
+        "features": ["ownership", "dividend_rights", "voting_rights"]
+      },
+      {
+        "type": "debt",
+        "name": { "en": "Debt Securities", "id": "Efek Bersifat Utang" },
+        "features": ["fixed_return", "maturity_date"]
+      },
+      {
+        "type": "sukuk",
+        "name": { "en": "Sukuk (Sharia Bonds)", "id": "Sukuk" },
+        "features": ["sharia_compliant", "profit_sharing"]
+      }
+    ],
+    "financial_params": {
+      "min_investment": 100000,
+      "typical_funding_target": { "min": 100000000, "max": 10000000000 },
+      "platform_fee_to_issuer": { "min": 0.03, "max": 0.08 },
+      "investor_fee": 0,
+      "holding_period_typical_years": 3,
+      "liquidity": "limited_secondary_market"
+    },
+    "actions": [
+      {
+        "action": "invest",
+        "min_amount": 100000,
+        "requirements": ["offering_active", "within_investment_limit"]
+      },
+      {
+        "action": "sell_secondary",
+        "liquidity": "very_limited",
+        "typical_discount": 0.20
+      },
+      {
+        "action": "receive_dividend",
+        "trigger": "company_profit_distribution"
+      },
+      {
+        "action": "exit_event",
+        "types": ["acquisition", "ipo", "buyback"]
+      }
+    ]
+  },
+
+  "game_events": [
+    {
+      "event_id": "funding_success",
+      "probability": 0.60,
+      "effect": "campaign_complete",
+      "message": {
+        "en": "Funding campaign successful!",
+        "id": "Kampanye pendanaan berhasil!"
+      }
+    },
+    {
+      "event_id": "funding_partial",
+      "probability": 0.25,
+      "effect": "partial_funding",
+      "message": {
+        "en": "Partial funding achieved",
+        "id": "Pendanaan sebagian tercapai"
+      }
+    },
+    {
+      "event_id": "funding_fail",
+      "probability": 0.15,
+      "effect": "funds_returned",
+      "message": {
+        "en": "Funding failed - money returned",
+        "id": "Pendanaan gagal - uang dikembalikan"
+      }
+    },
+    {
+      "event_id": "business_profit",
+      "probability": 0.30,
+      "effect": "dividend_distribution",
+      "yield_range": [0.05, 0.20],
+      "message": {
+        "en": "Business profitable - dividend distributed!",
+        "id": "Bisnis untung - dividen dibagikan!"
+      }
+    },
+    {
+      "event_id": "business_loss",
+      "probability": 0.40,
+      "effect": "no_dividend",
+      "message": {
+        "en": "Business not yet profitable",
+        "id": "Bisnis belum untung"
+      }
+    },
+    {
+      "event_id": "bankruptcy",
+      "probability": 0.20,
+      "effect": "total_loss",
+      "message": {
+        "en": "Business fails - investment lost",
+        "id": "Bisnis gagal - investasi hilang"
+      }
+    },
+    {
+      "event_id": "exit_acquisition",
+      "probability": 0.05,
+      "effect": "exit_multiplier",
+      "range": [1.5, 5.0],
+      "message": {
+        "en": "Company acquired! Exit with profit!",
+        "id": "Perusahaan diakuisisi! Exit dengan untung!"
+      }
+    },
+    {
+      "event_id": "exit_ipo",
+      "probability": 0.02,
+      "effect": "exit_multiplier",
+      "range": [3.0, 10.0],
+      "message": {
+        "en": "Company goes IPO! Massive returns!",
+        "id": "Perusahaan IPO! Keuntungan besar!"
+      }
+    }
+  ],
+
+  "scoring": {
+    "points_per_successful_investment": 50,
+    "bonus_exit_event": 200,
+    "penalty_bankruptcy": -50,
+    "bonus_diversification": 100,
+    "achievement_first_crowdfunding": 50,
+    "achievement_successful_exit": 300
+  },
+
+  "ui_config": {
+    "icon": "crowd",
+    "color_primary": "#673AB7",
+    "color_secondary": "#9575CD"
+  }
+}

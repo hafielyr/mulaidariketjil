@@ -1,0 +1,141 @@
+{
+  "product_id": "saving_account",
+  "product_name": {
+    "en": "Saving Account",
+    "id": "Tabungan"
+  },
+  "category": "banking",
+  "risk_level": 1,
+  "risk_label": {
+    "en": "Very Low Risk",
+    "id": "Risiko Sangat Rendah"
+  },
+
+  "regulatory_compliance": {
+    "regulator": "OJK (Otoritas Jasa Keuangan)",
+    "guarantee_institution": "LPS (Lembaga Penjamin Simpanan)",
+    "legal_basis": [
+      "UU No. 24 Tahun 2004 tentang LPS",
+      "UU No. 7 Tahun 2009 (Amendment)",
+      "PP No. 66 Tahun 2008"
+    ],
+    "lps_guarantee": {
+      "max_amount": 2000000000,
+      "max_amount_formatted": "Rp 2.000.000.000",
+      "requirements_3T": {
+        "tercatat": "Deposit must be recorded in bank's books",
+        "tingkat_bunga": "Interest rate must not exceed LPS maximum rate",
+        "tidak_merugikan": "Customer must not have caused losses to the bank"
+      }
+    },
+    "lps_guaranteed_rates": {
+      "commercial_bank_idr": 0.035,
+      "commercial_bank_forex": 0.02,
+      "rural_bank_bpr": 0.06,
+      "effective_period": "Oct 2025 - Jan 2026"
+    }
+  },
+
+  "game_mechanics": {
+    "base_stats": {
+      "risk_score": 1,
+      "liquidity_score": 5,
+      "complexity_score": 1,
+      "potential_return_score": 1
+    },
+    "financial_params": {
+      "min_deposit": 10000,
+      "min_deposit_typical": 100000,
+      "interest_rate_range": {
+        "min": 0.005,
+        "max": 0.06,
+        "typical": 0.025
+      },
+      "interest_calculation": "daily_balance",
+      "interest_payment": "monthly",
+      "tax_on_interest": 0.20,
+      "admin_fee_monthly": {
+        "min": 0,
+        "max": 15000
+      }
+    },
+    "actions": [
+      {
+        "action": "deposit",
+        "min_amount": 10000,
+        "fee": 0,
+        "time": "instant"
+      },
+      {
+        "action": "withdraw",
+        "min_amount": 10000,
+        "fee": 0,
+        "time": "instant"
+      },
+      {
+        "action": "transfer",
+        "fee_same_bank": 0,
+        "fee_different_bank": 6500
+      }
+    ],
+    "monthly_calculation": {
+      "formula": "average_balance * (annual_rate / 12) * (1 - tax_rate)",
+      "deductions": ["admin_fee"]
+    }
+  },
+
+  "game_events": [
+    {
+      "event_id": "bonus_interest",
+      "probability": 0.05,
+      "effect": "interest_multiplier",
+      "multiplier": 1.5,
+      "message": {
+        "en": "Bank promotional period - bonus interest!",
+        "id": "Periode promosi bank - bunga bonus!"
+      }
+    },
+    {
+      "event_id": "rate_increase",
+      "probability": 0.10,
+      "effect": "rate_change",
+      "change": 0.005,
+      "message": {
+        "en": "Bank Indonesia raises benchmark rate",
+        "id": "Bank Indonesia menaikkan suku bunga acuan"
+      }
+    },
+    {
+      "event_id": "rate_decrease",
+      "probability": 0.10,
+      "effect": "rate_change",
+      "change": -0.005,
+      "message": {
+        "en": "Bank Indonesia lowers benchmark rate",
+        "id": "Bank Indonesia menurunkan suku bunga acuan"
+      }
+    },
+    {
+      "event_id": "bank_failure",
+      "probability": 0.001,
+      "effect": "lps_activation",
+      "message": {
+        "en": "Bank fails! LPS guarantee activated.",
+        "id": "Bank gagal! Jaminan LPS diaktifkan."
+      }
+    }
+  ],
+
+  "scoring": {
+    "points_per_1000_interest": 1,
+    "bonus_diversification": 50,
+    "penalty_over_lps_limit": -100,
+    "achievement_first_deposit": 25
+  },
+
+  "ui_config": {
+    "icon": "piggy_bank",
+    "color_primary": "#4CAF50",
+    "color_secondary": "#81C784"
+  }
+}

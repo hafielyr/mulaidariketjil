@@ -1,0 +1,159 @@
+{
+  "product_id": "government_bonds",
+  "product_name": {
+    "en": "Government Bonds (Retail SBN)",
+    "id": "Surat Berharga Negara Ritel"
+  },
+  "category": "capital_market",
+  "risk_level": 1,
+  "risk_label": {
+    "en": "Very Low Risk",
+    "id": "Risiko Sangat Rendah"
+  },
+
+  "regulatory_compliance": {
+    "issuer": "Kementerian Keuangan Republik Indonesia",
+    "regulator": "OJK / DJPPR",
+    "legal_basis": [
+      "UU No. 24 Tahun 2002 tentang Surat Utang Negara",
+      "UU No. 15 Tahun 2017 tentang SBSN"
+    ],
+    "guarantee": {
+      "institution": "Government of Republic of Indonesia",
+      "is_guaranteed": true,
+      "coverage": "100% principal and coupon",
+      "backed_by": "State Budget (APBN)"
+    },
+    "eligible_investors": "Indonesian Citizens (WNI) with e-KTP and SID"
+  },
+
+  "game_mechanics": {
+    "base_stats": {
+      "risk_score": 1,
+      "liquidity_score": 3,
+      "complexity_score": 2,
+      "potential_return_score": 2
+    },
+    "product_variants": {
+      "ORI": {
+        "full_name": { "en": "Retail Government Bonds", "id": "Obligasi Negara Ritel" },
+        "coupon_type": "fixed",
+        "is_tradeable": true,
+        "typical_tenors_years": [3, 6],
+        "typical_coupon_range": [0.055, 0.065]
+      },
+      "SBR": {
+        "full_name": { "en": "Retail Savings Bonds", "id": "Savings Bond Ritel" },
+        "coupon_type": "floating_with_floor",
+        "is_tradeable": false,
+        "early_redemption": true,
+        "early_redemption_max": 0.50,
+        "holding_period_months": 12,
+        "typical_tenors_years": [2, 4]
+      },
+      "SR": {
+        "full_name": { "en": "Retail Sukuk (Sharia)", "id": "Sukuk Ritel" },
+        "coupon_type": "fixed",
+        "is_tradeable": true,
+        "sharia_compliant": true,
+        "typical_tenors_years": [3, 5]
+      },
+      "ST": {
+        "full_name": { "en": "Savings Sukuk (Sharia)", "id": "Sukuk Tabungan" },
+        "coupon_type": "floating_with_floor",
+        "is_tradeable": false,
+        "early_redemption": true,
+        "sharia_compliant": true,
+        "typical_tenors_years": [2, 4]
+      }
+    },
+    "financial_params": {
+      "min_investment": 1000000,
+      "max_investment": 5000000000,
+      "investment_multiples": 1000000,
+      "coupon_payment": "monthly",
+      "coupon_tax": 0.10,
+      "capital_gains_tax": 0.10
+    },
+    "actions": [
+      {
+        "action": "purchase_primary",
+        "requirements": ["offering_period_active", "sid_registered"],
+        "timing": "during_offering"
+      },
+      {
+        "action": "sell_secondary",
+        "applies_to": ["ORI", "SR"],
+        "requirements": ["tradeable_series", "market_open"]
+      },
+      {
+        "action": "early_redemption",
+        "applies_to": ["SBR", "ST"],
+        "requirements": ["holding_period_met"],
+        "max_percentage": 0.50
+      },
+      {
+        "action": "hold_to_maturity",
+        "result": "guaranteed_return_of_principal"
+      }
+    ]
+  },
+
+  "game_events": [
+    {
+      "event_id": "new_series_launch",
+      "probability": 0.25,
+      "trigger": "quarterly",
+      "message": {
+        "en": "New SBN series launched! Time to invest.",
+        "id": "Seri SBN baru diluncurkan! Saatnya investasi."
+      }
+    },
+    {
+      "event_id": "bi_rate_increase",
+      "probability": 0.10,
+      "effect": "floating_coupon_increase",
+      "applies_to": ["SBR", "ST"],
+      "message": {
+        "en": "BI rate up - floating coupon increases!",
+        "id": "BI rate naik - kupon mengambang naik!"
+      }
+    },
+    {
+      "event_id": "bi_rate_decrease",
+      "probability": 0.10,
+      "effect": "floating_coupon_decrease",
+      "applies_to": ["SBR", "ST"],
+      "floor_protection": true,
+      "message": {
+        "en": "BI rate down - coupon protected by floor rate",
+        "id": "BI rate turun - kupon dilindungi floor rate"
+      }
+    },
+    {
+      "event_id": "secondary_market_premium",
+      "probability": 0.08,
+      "applies_to": ["ORI", "SR"],
+      "effect": "price_above_par",
+      "range": [1.01, 1.05],
+      "message": {
+        "en": "Bond trades at premium in secondary market",
+        "id": "Obligasi diperdagangkan premium di pasar sekunder"
+      }
+    }
+  ],
+
+  "scoring": {
+    "points_per_million_invested": 10,
+    "bonus_hold_to_maturity": 100,
+    "bonus_national_contribution": 50,
+    "bonus_sharia_compliant": 25
+  },
+
+  "ui_config": {
+    "icon": "shield_check",
+    "color_primary": "#FF5722",
+    "color_secondary": "#FF8A65",
+    "color_sharia": "#4CAF50"
+  }
+}

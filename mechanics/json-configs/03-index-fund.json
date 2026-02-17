@@ -1,0 +1,182 @@
+{
+  "product_id": "index_fund",
+  "product_name": {
+    "en": "Index Fund (Mutual Fund)",
+    "id": "Reksa Dana Indeks"
+  },
+  "category": "capital_market",
+  "risk_level": 3,
+  "risk_label": {
+    "en": "Medium Risk",
+    "id": "Risiko Menengah"
+  },
+
+  "regulatory_compliance": {
+    "regulator": "OJK (Otoritas Jasa Keuangan)",
+    "legal_basis": [
+      "UU No. 8 Tahun 1995 tentang Pasar Modal",
+      "POJK tentang Reksa Dana"
+    ],
+    "guarantee": {
+      "institution": null,
+      "is_guaranteed": false,
+      "important_note": "NOT covered by LPS - NOT a bank deposit product"
+    },
+    "investor_protection": {
+      "custody": "Assets held by Custodian Bank (separate from Investment Manager)",
+      "supervision": "OJK monitors Investment Managers and Selling Agents",
+      "transparency": "Daily NAV publication required"
+    },
+    "selling_requirements": {
+      "agent": "APERD (Agen Penjual Efek Reksa Dana)",
+      "representative": "WAPERD license required"
+    }
+  },
+
+  "game_mechanics": {
+    "base_stats": {
+      "risk_score": 3,
+      "liquidity_score": 4,
+      "complexity_score": 2,
+      "potential_return_score": 3
+    },
+    "fund_types": [
+      {
+        "type": "money_market",
+        "name": { "en": "Money Market Fund", "id": "Reksa Dana Pasar Uang" },
+        "risk_level": 1,
+        "typical_return": { "min": 0.03, "max": 0.06 },
+        "volatility": 0.005
+      },
+      {
+        "type": "fixed_income",
+        "name": { "en": "Fixed Income Fund", "id": "Reksa Dana Pendapatan Tetap" },
+        "risk_level": 2,
+        "typical_return": { "min": 0.04, "max": 0.10 },
+        "volatility": 0.02
+      },
+      {
+        "type": "balanced",
+        "name": { "en": "Balanced Fund", "id": "Reksa Dana Campuran" },
+        "risk_level": 3,
+        "typical_return": { "min": -0.10, "max": 0.15 },
+        "volatility": 0.04
+      },
+      {
+        "type": "equity",
+        "name": { "en": "Equity Fund", "id": "Reksa Dana Saham" },
+        "risk_level": 4,
+        "typical_return": { "min": -0.25, "max": 0.35 },
+        "volatility": 0.08
+      },
+      {
+        "type": "index",
+        "name": { "en": "Index Fund", "id": "Reksa Dana Indeks" },
+        "risk_level": 4,
+        "typical_return": { "min": -0.20, "max": 0.30 },
+        "volatility": 0.07
+      }
+    ],
+    "available_indices": [
+      { "code": "IHSG", "name": "IDX Composite" },
+      { "code": "LQ45", "name": "LQ45 Index" },
+      { "code": "IDX30", "name": "IDX30 Index" },
+      { "code": "IDX80", "name": "IDX80 Index" }
+    ],
+    "financial_params": {
+      "min_investment": 10000,
+      "min_subsequent": 10000,
+      "fees": {
+        "subscription": { "min": 0, "max": 0.02 },
+        "redemption": { "min": 0, "max": 0.02 },
+        "management": { "min": 0.001, "max": 0.025 }
+      },
+      "tax_on_gains": 0,
+      "nav_calculation": "daily"
+    },
+    "settlement": {
+      "subscription": "T+1",
+      "redemption": "T+7",
+      "switching": "T+7"
+    },
+    "actions": [
+      {
+        "action": "subscribe",
+        "min_amount": 10000,
+        "fee": "subscription_fee",
+        "settlement": "T+1"
+      },
+      {
+        "action": "redeem",
+        "min_units": 1,
+        "fee": "redemption_fee",
+        "settlement": "T+7"
+      },
+      {
+        "action": "switch",
+        "fee": "redemption_fee_only",
+        "settlement": "T+7"
+      }
+    ]
+  },
+
+  "game_events": [
+    {
+      "event_id": "market_rally",
+      "probability": 0.05,
+      "effect": "nav_multiplier",
+      "range": [1.03, 1.08],
+      "message": {
+        "en": "Market rallies on positive economic news!",
+        "id": "Pasar naik karena berita ekonomi positif!"
+      }
+    },
+    {
+      "event_id": "market_correction",
+      "probability": 0.08,
+      "effect": "nav_multiplier",
+      "range": [0.92, 0.98],
+      "message": {
+        "en": "Market corrects - temporary decline",
+        "id": "Koreksi pasar - penurunan sementara"
+      }
+    },
+    {
+      "event_id": "market_crash",
+      "probability": 0.02,
+      "effect": "nav_multiplier",
+      "range": [0.70, 0.85],
+      "message": {
+        "en": "Market crashes! Major decline in asset values.",
+        "id": "Pasar anjlok! Penurunan besar nilai aset."
+      }
+    },
+    {
+      "event_id": "dividend_distribution",
+      "probability": 0.15,
+      "effect": "receive_dividend",
+      "percentage_range": [0.02, 0.05],
+      "message": {
+        "en": "Fund distributes dividends",
+        "id": "Reksa dana membagikan dividen"
+      }
+    }
+  ],
+
+  "scoring": {
+    "points_per_percent_return": 10,
+    "bonus_long_term_hold": {
+      "6_months": 25,
+      "12_months": 50,
+      "24_months": 100
+    },
+    "penalty_panic_sell": -50,
+    "achievement_survivor_crash": 100
+  },
+
+  "ui_config": {
+    "icon": "chart_line",
+    "color_primary": "#9C27B0",
+    "color_secondary": "#BA68C8"
+  }
+}

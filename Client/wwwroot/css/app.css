@@ -1,0 +1,5357 @@
+/* Tjoean - Celengan Ayam Indonesian Investment Game */
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&family=Poppins:wght@400;600;700&display=swap');
+
+:root {
+    /* Celengan Ayam Inspired Colors - Updated to match reference */
+    --ayam-red: #A85A5A;
+    --ayam-red-dark: #8B4949;
+    --ayam-orange: #C87137;
+    --ayam-yellow: #E8D89E;
+    --ayam-gold: #D4C89A;
+    --ayam-cream: #F5F0E8;
+    --ayam-brown: #8B6F47;
+    --ayam-brown-light: #A68968;
+
+    /* Nature/Money Colors */
+    --money-green: #7A9368;
+    --money-green-light: #9DB489;
+    --money-green-dark: #6B8359;
+    --sky-blue: #A8C5D1;
+    --sky-blue-light: #C5D9E0;
+
+    /* UI Colors */
+    --bg-gradient: linear-gradient(180deg, #D9C9A8 0%, #E8DCC4 50%, #D4C8B8 100%);
+    --card-bg: rgba(245, 240, 232, 0.98);
+    --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+
+    /* Risk Colors */
+    --risk-safe: #7A9368;
+    --risk-low: #9DB489;
+    --risk-medium: #C87137;
+    --risk-high: #A85A5A;
+    --risk-extreme: #8B4949;
+
+    /* Text */
+    --text-dark: #5C4033;
+    --text-light: #FFFFFF;
+    --text-muted: #8B7D6B;
+
+    /* Bold Stroke */
+    --stroke-width: 4px;
+    --stroke-color: #5C4033;
+}
+
+/* Adult Mode - Professional Dark Green/Money Theme */
+[data-theme="adult"] {
+    /* Professional Dark Green Palette */
+    --dollar-green: #2C5F2D;
+    --dollar-green-dark: #1A3D1B;
+    --money-green: #4A7C4E;
+    --money-green-light: #6B9B6E;
+    --gold-accent: #D4AF37;
+    --silver-accent: #C0C0C0;
+    --charcoal: #2D3436;
+    --cream-white: #F8F9FA;
+
+    /* Override UI variables */
+    --ayam-red: #2C5F2D;
+    --ayam-orange: #4A7C4E;
+    --ayam-yellow: #D4AF37;
+    --ayam-brown: #1A3D1B;
+
+    --primary-color: var(--dollar-green);
+    --secondary-color: var(--money-green);
+    --accent-color: var(--gold-accent);
+    --bg-gradient: linear-gradient(180deg, #1A3D1B 0%, #2C5F2D 50%, #3A7D3E 100%);
+    --card-bg: rgba(248, 249, 250, 0.95);
+    --text-dark: var(--charcoal);
+    --text-light: var(--cream-white);
+    --stroke-color: var(--charcoal);
+
+    /* Update specific component colors */
+    --money-green: #4A7C4E;
+    --money-green-light: #6B9B6E;
+    --money-green-dark: #3A632E;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    font-family: 'Nunito', 'Segoe UI', sans-serif;
+    background: var(--bg-gradient);
+    color: var(--text-dark);
+    overflow-x: hidden;
+}
+
+#app {
+    height: 100%;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes bounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 5px rgba(230, 57, 70, 0.5); }
+    50% { box-shadow: 0 0 20px rgba(230, 57, 70, 0.8); }
+}
+
+@keyframes coin-drop {
+    0% { transform: translateY(-50px) rotate(0deg); opacity: 0; }
+    50% { opacity: 1; }
+    100% { transform: translateY(0) rotate(360deg); opacity: 1; }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px) rotate(-2deg); }
+    75% { transform: translateX(5px) rotate(2deg); }
+}
+
+@keyframes sparkle {
+    0%, 100% { opacity: 0; transform: scale(0); }
+    50% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slide-up {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slide-in-right {
+    from { transform: translateX(100px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes progress-shine {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+@keyframes wiggle {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-3deg); }
+    75% { transform: rotate(3deg); }
+}
+
+@keyframes pop-in {
+    0% { transform: scale(0.5); opacity: 0; }
+    70% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes money-rain {
+    0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+/* ===== VINTAGE CELENGAN AYAM ICON (CSS Art) ===== */
+/* ===== VINTAGE CELENGAN (CHICKEN) ===== */
+.celengan-icon {
+    width: 80px;
+    height: 70px;
+    position: relative;
+    display: inline-block;
+    animation: float 3s ease-in-out infinite;
+}
+
+/* Chicken body - rounded ceramic shape */
+.celengan-icon::before {
+    content: '';
+    position: absolute;
+    width: 65px;
+    height: 50px;
+    background: linear-gradient(145deg, #C87137 0%, #A85A5A 50%, #8B4949 100%);
+    border-radius: 45% 45% 50% 50% / 55% 55% 45% 45%;
+    top: 15px;
+    left: 7px;
+    border: 4px solid var(--stroke-color);
+    box-shadow:
+        inset -4px -4px 8px rgba(0,0,0,0.25),
+        inset 4px 4px 8px rgba(255,255,255,0.15),
+        6px 6px 0 rgba(0,0,0,0.2);
+}
+
+/* Chicken head/neck */
+.celengan-icon::after {
+    content: '';
+    position: absolute;
+    width: 28px;
+    height: 35px;
+    background: linear-gradient(135deg, #C87137 0%, #A85A5A 100%);
+    border-radius: 50% 50% 40% 40%;
+    top: 0;
+    right: 8px;
+    border: 4px solid var(--stroke-color);
+    border-bottom: none;
+    box-shadow: inset -2px -2px 4px rgba(0,0,0,0.2);
+    transform: rotate(-15deg);
+}
+
+.celengan-large {
+    width: 120px;
+    height: 100px;
+    position: relative;
+    display: inline-block;
+    animation: float 3s ease-in-out infinite;
+}
+
+.celengan-large::before {
+    content: '';
+    position: absolute;
+    width: 100px;
+    height: 75px;
+    background: linear-gradient(145deg, #C87137 0%, #A85A5A 50%, #8B4949 100%);
+    border-radius: 45% 45% 50% 50% / 55% 55% 45% 45%;
+    top: 15px;
+    left: 10px;
+    border: 4px solid var(--stroke-color);
+    box-shadow:
+        inset -5px -5px 10px rgba(0,0,0,0.25),
+        inset 5px 5px 10px rgba(255,255,255,0.15),
+        8px 8px 0 rgba(0,0,0,0.25);
+}
+
+.celengan-large::after {
+    content: '';
+    position: absolute;
+    width: 42px;
+    height: 52px;
+    background: linear-gradient(135deg, #C87137 0%, #A85A5A 100%);
+    border-radius: 50% 50% 40% 40%;
+    top: -5px;
+    right: 12px;
+    border: 4px solid var(--stroke-color);
+    border-bottom: none;
+    box-shadow: inset -3px -3px 6px rgba(0,0,0,0.2);
+    transform: rotate(-15deg);
+}
+
+/* ===== LOADING SCREEN ===== */
+.loading-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    gap: 1.5rem;
+    background: var(--bg-gradient);
+    position: relative;
+    overflow: hidden;
+}
+
+.loading-screen::before {
+    content: '';
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 50%);
+    animation: float 4s ease-in-out infinite;
+}
+
+.loading-screen h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 5rem;
+    color: var(--ayam-red);
+    text-shadow: 4px 4px 0 var(--ayam-yellow), 6px 6px 0 rgba(0,0,0,0.1);
+    animation: bounce 2s ease-in-out infinite;
+    letter-spacing: 0.1em;
+}
+
+.loading-text {
+    font-size: 1.2rem;
+    color: var(--text-light);
+    font-weight: 600;
+    animation: pulse-glow 2s infinite;
+    padding: 0.5rem 1.5rem;
+    background: rgba(0,0,0,0.2);
+    border-radius: 20px;
+}
+
+/* ===== START SCREEN ===== */
+.start-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem;
+    gap: 1.5rem;
+    background: var(--bg-gradient);
+    overflow-y: auto;
+    position: relative;
+}
+
+.start-screen h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 4.5rem;
+    color: var(--ayam-red);
+    text-shadow: 4px 4px 0 var(--ayam-yellow), 6px 6px 0 rgba(0,0,0,0.15);
+    animation: wiggle 2s ease-in-out infinite;
+    letter-spacing: 0.1em;
+}
+
+.subtitle {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.3rem;
+    color: var(--text-light);
+    background: rgba(0,0,0,0.2);
+    padding: 0.5rem 1.5rem;
+    border-radius: 30px;
+    animation: slide-up 0.5s ease-out;
+}
+
+.mascot-container {
+    animation: float 3s ease-in-out infinite;
+    font-size: 5rem;
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2));
+}
+
+.start-form {
+    display: flex;
+    gap: 1rem;
+    animation: slide-up 0.6s ease-out;
+}
+
+.start-form input {
+    padding: 1rem 1.5rem;
+    font-size: 1.1rem;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 600;
+    background: var(--card-bg);
+    border: var(--stroke-width) solid var(--stroke-color);
+    border-radius: 12px;
+    color: var(--text-dark);
+    width: 280px;
+    transition: all 0.3s;
+    box-shadow: 6px 6px 0 rgba(0,0,0,0.12);
+}
+
+.start-form input:focus {
+    outline: none;
+    border-color: var(--ayam-red);
+    transform: scale(1.02);
+    box-shadow: 0 6px 20px rgba(230, 57, 70, 0.3);
+}
+
+.game-info {
+    background: var(--card-bg);
+    padding: 1.5rem 2rem;
+    border-radius: 12px;
+    max-width: 450px;
+    border: 3px solid var(--stroke-color);
+    box-shadow: 8px 8px 0 rgba(0,0,0,0.12);
+    animation: slide-up 0.7s ease-out;
+}
+
+.game-info h3 {
+    font-family: 'Fredoka One', cursive;
+    color: var(--ayam-red);
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.game-info ul {
+    list-style: none;
+    color: var(--text-dark);
+}
+
+.game-info li {
+    margin: 0.6rem 0;
+    padding-left: 1.5rem;
+    position: relative;
+    font-weight: 600;
+}
+
+.game-info li::before {
+    content: '🪙';
+    position: absolute;
+    left: 0;
+    animation: bounce 1s ease-in-out infinite;
+    animation-delay: calc(var(--i, 0) * 0.1s);
+}
+
+.game-info li:nth-child(1) { --i: 0; }
+.game-info li:nth-child(2) { --i: 1; }
+.game-info li:nth-child(3) { --i: 2; }
+.game-info li:nth-child(4) { --i: 3; }
+.game-info li:nth-child(5) { --i: 4; }
+.game-info li:nth-child(6) { --i: 5; }
+
+/* ===== BUTTONS ===== */
+.btn-primary {
+    padding: 1rem 2.5rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+    font-family: 'Fredoka One', cursive;
+    background: linear-gradient(135deg, var(--ayam-orange), var(--ayam-brown));
+    color: white;
+    border: var(--stroke-width) solid var(--stroke-color);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    box-shadow: 8px 8px 0 rgba(0,0,0,0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s;
+}
+
+.btn-primary:hover:not(:disabled)::before {
+    left: 100%;
+}
+
+.btn-primary:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 9px 0 var(--ayam-red-dark), 0 12px 25px rgba(0,0,0,0.25);
+}
+
+.btn-primary:active:not(:disabled) {
+    transform: translateY(2px);
+    box-shadow: 0 3px 0 var(--ayam-red-dark), 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-secondary {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: 'Nunito', sans-serif;
+    background: transparent;
+    color: var(--ayam-yellow);
+    border: 3px solid var(--ayam-yellow);
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-secondary:hover {
+    background: var(--ayam-yellow);
+    color: var(--text-dark);
+    transform: scale(1.05);
+}
+
+.btn-icon {
+    width: 45px;
+    height: 45px;
+    font-size: 1.3rem;
+    background: var(--card-bg);
+    border: var(--stroke-width) solid var(--stroke-color);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.12);
+}
+
+.btn-icon:hover {
+    transform: rotate(15deg) scale(1.1);
+    background: var(--ayam-yellow);
+}
+
+.pause-play-btn {
+    width: auto !important;
+    height: auto !important;
+    padding: 0.6rem 1.2rem !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, var(--ayam-orange), var(--ayam-brown)) !important;
+    border: 3px solid var(--stroke-color) !important;
+    border-radius: 8px !important;
+    color: white;
+    font-weight: 700;
+    font-size: 0.95rem;
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.15) !important;
+}
+
+.pause-play-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 6px 6px 0 rgba(0,0,0,0.2) !important;
+}
+
+.pause-play-btn:active:not(:disabled) {
+    transform: translateY(1px);
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.15) !important;
+}
+
+.pause-play-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+.btn-label {
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+}
+
+.btn-buy {
+    width: 100%;
+    padding: 0.8rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(135deg, var(--money-green), var(--money-green-dark));
+    color: white;
+    border: 3px solid var(--stroke-color);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 5px 5px 0 rgba(0,0,0,0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-buy:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 var(--money-green-dark), 0 8px 15px rgba(0,0,0,0.15);
+}
+
+.btn-buy:active:not(:disabled) {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 var(--money-green-dark);
+}
+
+.btn-buy:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-sell {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--risk-high), var(--ayam-red-dark));
+    color: white;
+    border: 3px solid var(--stroke-color);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.15);
+}
+
+.btn-sell:hover:not(:disabled) {
+    transform: translateY(-2px);
+}
+
+.btn-sell:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-sell-all {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--ayam-orange), var(--ayam-brown));
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 3px 0 var(--ayam-brown);
+}
+
+.btn-sell-all:hover:not(:disabled) {
+    transform: translateY(-2px);
+}
+
+.btn-sell-all:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.item-buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.btn-info {
+    background: var(--sky-blue);
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0.3rem 0.6rem;
+    border-radius: 50%;
+    transition: all 0.3s;
+    color: white;
+    font-weight: 700;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.btn-info:hover {
+    transform: scale(1.2) rotate(15deg);
+    background: var(--ayam-yellow);
+    color: var(--text-dark);
+}
+
+.btn-info-inline {
+    background: var(--sky-blue);
+    border: 2px solid var(--stroke-color);
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 0.3rem 0.5rem;
+    border-radius: 50%;
+    transition: all 0.3s;
+    color: white;
+    font-weight: 700;
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.15);
+    flex-shrink: 0;
+}
+
+.btn-info-inline:hover {
+    transform: scale(1.15) rotate(-10deg);
+    background: var(--ayam-yellow);
+    color: var(--text-dark);
+    box-shadow: 3px 3px 0 rgba(0,0,0,0.2);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+    margin-bottom: 0.8rem;
+}
+
+.section-header h3 {
+    margin: 0;
+    flex: 1;
+}
+
+/* ===== GAME SCREEN ===== */
+.game-container {
+    height: 100vh;
+    overflow: hidden;
+}
+
+.game-screen {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background: linear-gradient(180deg, #48CAE4 0%, #90E0EF 30%, #CAF0F8 100%);
+    position: relative;
+}
+
+/* Decorative clouds */
+.game-screen::before,
+.game-screen::after {
+    content: '☁️';
+    position: absolute;
+    font-size: 3rem;
+    opacity: 0.5;
+    animation: float 6s ease-in-out infinite;
+    z-index: 0;
+}
+
+.game-screen::before {
+    top: 10%;
+    left: 5%;
+    animation-delay: 0s;
+}
+
+.game-screen::after {
+    top: 15%;
+    right: 10%;
+    animation-delay: -3s;
+}
+
+/* ===== HEADER ===== */
+.game-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, var(--ayam-orange), var(--ayam-brown));
+    border-bottom: var(--stroke-width) solid var(--stroke-color);
+    box-shadow: 0 6px 0 rgba(0, 0, 0, 0.15);
+    position: relative;
+    z-index: 10;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.header-left h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.8rem;
+    color: var(--ayam-yellow);
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+    letter-spacing: 0.05em;
+}
+
+.player-name {
+    color: rgba(255,255,255,0.9);
+    font-size: 0.9rem;
+    font-weight: 600;
+    background: rgba(0,0,0,0.2);
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+}
+
+.header-center {
+    text-align: center;
+}
+
+.time-display {
+    display: flex;
+    gap: 1rem;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+}
+
+.year {
+    color: var(--ayam-yellow);
+    background: rgba(0,0,0,0.2);
+    padding: 0.2rem 0.8rem;
+    border-radius: 15px;
+}
+
+.month {
+    color: white;
+    background: rgba(255,255,255,0.2);
+    padding: 0.2rem 0.8rem;
+    border-radius: 15px;
+}
+
+.progress-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.progress-label {
+    font-size: 0.65rem;
+    color: rgba(255,255,255,0.8);
+    min-width: 70px;
+    text-align: right;
+    font-weight: 600;
+}
+
+.progress-bar {
+    width: 100px;
+    height: 10px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-bar.year-progress {
+    width: 130px;
+}
+
+.progress-bar.month-progress {
+    width: 70px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--ayam-yellow), var(--ayam-orange));
+    border-radius: 10px;
+    transition: width 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: progress-shine 2s infinite;
+}
+
+.progress-fill.month-fill {
+    background: linear-gradient(90deg, var(--sky-blue), var(--money-green-light));
+}
+
+.header-right {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* ===== EVENT BANNER ===== */
+.event-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 0.8rem 2rem;
+    font-weight: 700;
+    animation: slide-up 0.3s ease-out;
+    position: relative;
+    z-index: 5;
+}
+
+.event-banner.negative {
+    background: linear-gradient(90deg, var(--risk-extreme), var(--risk-high));
+    color: white;
+    animation: shake 0.5s ease-out;
+}
+
+.event-banner.positive {
+    background: linear-gradient(90deg, var(--money-green), var(--money-green-light));
+    color: white;
+}
+
+.event-banner.unlock {
+    background: linear-gradient(90deg, var(--ayam-yellow), var(--ayam-orange));
+    color: var(--text-dark);
+    animation: pop-in 0.5s ease-out;
+}
+
+.event-icon {
+    font-size: 1.5rem;
+    animation: bounce 1s ease-in-out infinite;
+}
+
+.event-cost {
+    font-size: 1.1rem;
+    padding: 0.3rem 1rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 20px;
+}
+
+/* ===== MAIN CONTENT ===== */
+.game-main {
+    display: grid;
+    grid-template-columns: 280px 1fr 240px;
+    gap: 1rem;
+    padding: 1rem;
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+}
+
+.panel {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 1rem;
+    overflow-y: auto;
+    border: var(--stroke-width) solid var(--stroke-color);
+    box-shadow: 8px 8px 0 rgba(0,0,0,0.15);
+    animation: slide-up 0.5s ease-out;
+}
+
+.panel::-webkit-scrollbar {
+    width: 8px;
+}
+
+.panel::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.1);
+    border-radius: 10px;
+}
+
+.panel::-webkit-scrollbar-thumb {
+    background: var(--ayam-yellow);
+    border-radius: 10px;
+}
+
+/* ===== LEFT PANEL ===== */
+.panel-left {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    animation-delay: 0.1s;
+}
+
+.balance-card, .networth-card {
+    background: linear-gradient(135deg, #FFFFFF, var(--ayam-cream));
+    border-radius: 12px;
+    padding: 1rem;
+    border: var(--stroke-width) solid var(--stroke-color);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s;
+    box-shadow: 6px 6px 0 rgba(0,0,0,0.12);
+}
+
+.balance-card:hover, .networth-card:hover {
+    transform: scale(1.02);
+}
+
+.balance-card::before, .networth-card::before {
+    content: '💰';
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    font-size: 3rem;
+    opacity: 0.2;
+}
+
+.networth-card::before {
+    content: '🏆';
+}
+
+.balance-card h3, .networth-card h3 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 0.3rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.balance-amount {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--money-green);
+    animation: coin-drop 0.5s ease-out;
+}
+
+.networth-amount {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--ayam-red), var(--ayam-orange));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.portfolio-value, .deposito-value {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 0.2rem;
+    font-weight: 600;
+}
+
+.portfolio-section h3, .deposito-section h3 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    margin-bottom: 0.8rem;
+    color: var(--ayam-red);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.portfolio-section h3::before {
+    content: '📊';
+}
+
+.deposito-section h3::before {
+    content: '🏦';
+}
+
+.portfolio-list, .deposito-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.portfolio-item, .deposito-item {
+    background: white;
+    border-radius: 8px;
+    padding: 0.8rem;
+    border: 3px solid var(--stroke-color);
+    transition: all 0.3s;
+    animation: slide-in-right 0.3s ease-out;
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+}
+
+.portfolio-item:hover, .deposito-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.item-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.3rem;
+}
+
+.item-name {
+    font-weight: 700;
+    color: var(--text-dark);
+    font-size: 0.9rem;
+}
+
+.item-units {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.item-values {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.item-value {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.item-profit {
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 10px;
+}
+
+.item-profit.positive {
+    color: var(--money-green);
+    background: rgba(45, 106, 79, 0.1);
+}
+
+.item-profit.negative {
+    color: var(--risk-extreme);
+    background: rgba(230, 57, 70, 0.1);
+}
+
+.empty-portfolio {
+    color: var(--text-muted);
+    text-align: center;
+    padding: 1.5rem;
+    font-style: italic;
+    background: rgba(0,0,0,0.03);
+    border-radius: 10px;
+}
+
+/* ===== DEPOSITO STYLES ===== */
+.deposito-info {
+    margin-bottom: 0.5rem;
+}
+
+.deposito-period {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.deposito-progress {
+    height: 8px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    margin: 0.5rem 0;
+    overflow: hidden;
+}
+
+.deposito-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--money-green), var(--ayam-yellow));
+    border-radius: 10px;
+    transition: width 0.5s ease;
+    position: relative;
+}
+
+.deposito-progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+    animation: progress-shine 2s infinite;
+}
+
+/* Auto Roll Over Toggle in Deposito Item */
+.deposito-aro-toggle {
+    margin: 0.4rem 0;
+    padding: 0.3rem 0.4rem;
+    background: rgba(122, 147, 104, 0.08);
+    border-radius: 6px;
+    border: 1px dashed var(--money-green);
+}
+
+.aro-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    cursor: pointer;
+    user-select: none;
+}
+
+.aro-checkbox-label input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--money-green);
+}
+
+.aro-checkbox-label .aro-label {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--money-green-dark);
+}
+
+.aro-checkbox-label input[type="checkbox"]:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.deposito-maturity {
+    font-size: 0.8rem;
+    color: var(--money-green);
+    font-weight: 700;
+    animation: pulse-glow 1s infinite;
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    background: rgba(45, 106, 79, 0.1);
+    border-radius: 10px;
+}
+
+.deposito-buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.btn-withdraw {
+    flex: 1;
+    padding: 0.4rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--money-green), var(--money-green-dark));
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-withdraw:hover:not(:disabled) {
+    transform: scale(1.05);
+}
+
+.btn-withdraw:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-withdraw.early {
+    background: linear-gradient(135deg, var(--risk-high), var(--risk-extreme));
+}
+
+/* ===== CENTER PANEL - MARKET ===== */
+.panel-center {
+    overflow-y: auto;
+    animation-delay: 0.2s;
+}
+
+.panel-center h2 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--ayam-red);
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.panel-center h2::before {
+    content: '🏪';
+    animation: wiggle 2s ease-in-out infinite;
+}
+
+/* ===== DEPOSITO PURCHASE ===== */
+.deposito-purchase-section {
+    background: linear-gradient(135deg, #FFFFFF, var(--sky-blue-light));
+    border: 3px solid var(--stroke-color);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    animation: pop-in 0.5s ease-out;
+    box-shadow: 6px 6px 0 rgba(0,0,0,0.12);
+}
+
+.deposito-purchase-section h3 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem;
+    color: var(--money-green-dark);
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.deposito-purchase-section h3::before {
+    content: '🏦 ';
+}
+
+.deposito-rates {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 0.6rem;
+}
+
+.deposito-rate-card {
+    background: white;
+    border: 3px solid var(--stroke-color);
+    border-radius: 8px;
+    padding: 0.6rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+}
+
+.deposito-rate-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+}
+
+.deposito-rate-card.selected {
+    border-color: var(--money-green);
+    background: linear-gradient(135deg, var(--money-green-light), var(--money-green));
+    color: white;
+    transform: scale(1.05);
+}
+
+.deposito-rate-card .period {
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.9rem;
+    display: block;
+    margin-bottom: 0.2rem;
+}
+
+.deposito-rate-card .rate {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--money-green);
+}
+
+.deposito-rate-card.selected .rate {
+    color: var(--ayam-yellow);
+}
+
+.deposito-amount-input {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    align-items: center;
+}
+
+.deposito-amount-input input {
+    flex: 1;
+    padding: 0.6rem;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    border: 3px solid var(--stroke-color);
+    border-radius: 6px;
+    background: white;
+    color: var(--text-dark);
+}
+
+.deposito-amount-input button {
+    padding: 0.6rem 1rem;
+}
+
+/* Auto-rollover checkbox */
+.deposito-auto-rollover {
+    margin-top: 0.8rem;
+    padding: 0.6rem;
+    background: rgba(122, 147, 104, 0.08);
+    border-radius: 8px;
+    border: 2px dashed var(--money-green);
+}
+
+.auto-rollover-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    user-select: none;
+}
+
+.auto-rollover-checkbox input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--money-green);
+}
+
+.auto-rollover-checkbox .checkbox-label {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--money-green-dark);
+    flex: 1;
+}
+
+.auto-rollover-checkbox .info-icon {
+    font-size: 0.9rem;
+    color: var(--ayam-orange);
+    cursor: help;
+    transition: transform 0.2s;
+}
+
+.auto-rollover-checkbox .info-icon:hover {
+    transform: scale(1.2);
+}
+
+.auto-rollover-checkbox:hover {
+    background: rgba(122, 147, 104, 0.12);
+}
+
+/* ===== MARKET GRID - GAME-STYLE COMPACT LAYOUT ===== */
+.market-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+/* Row for regular assets (Reksa Dana, Emas) */
+.market-grid > .market-card {
+    flex: 1;
+}
+
+/* Make first two market-cards display side by side */
+.market-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+}
+
+/* Full-width for grouped containers */
+.market-grid > .crypto-group-container,
+.market-grid > .crowdfunding-group-container {
+    grid-column: 1 / -1;
+}
+
+.market-card {
+    background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+    border-radius: 10px;
+    padding: 0.6rem 0.8rem;
+    border: 2px solid var(--stroke-color);
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    animation: pop-in 0.3s ease-out backwards;
+    box-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+}
+
+.market-card:nth-child(1) { animation-delay: 0.05s; }
+.market-card:nth-child(2) { animation-delay: 0.1s; }
+
+.market-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.12);
+}
+
+.market-card:active {
+    transform: translateY(0);
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+}
+
+.market-card.risk-very-low {
+    border-left: 4px solid var(--risk-safe);
+    background: linear-gradient(145deg, #f0fff4 0%, #ffffff 100%);
+}
+
+.market-card.risk-low {
+    border-left: 4px solid var(--risk-low);
+    background: linear-gradient(145deg, #f0fff8 0%, #ffffff 100%);
+}
+
+.market-card.risk-medium {
+    border-left: 4px solid var(--risk-medium);
+    background: linear-gradient(145deg, #fffbf0 0%, #ffffff 100%);
+}
+
+.market-card.risk-high {
+    border-left: 4px solid var(--risk-high);
+    background: linear-gradient(145deg, #fff5f0 0%, #ffffff 100%);
+}
+
+.market-card.risk-very-high {
+    border-left: 4px solid var(--risk-extreme);
+    background: linear-gradient(145deg, #fff0f0 0%, #ffffff 100%);
+}
+
+.market-card .card-header {
+    margin-bottom: 0.3rem;
+}
+
+.market-card .asset-name {
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.85rem;
+    color: var(--text-dark);
+}
+
+.market-card .card-actions {
+    display: flex;
+    gap: 0.3rem;
+    align-items: center;
+}
+
+.market-card .btn-info {
+    padding: 0.15rem 0.4rem;
+    font-size: 0.7rem;
+}
+
+.market-card .risk-badge {
+    font-size: 0.65rem;
+    padding: 0.1rem 0.4rem;
+}
+
+.market-card .card-price {
+    margin-bottom: 0.3rem;
+}
+
+.market-card .card-price .price {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--money-green);
+}
+
+.market-card .card-price .change {
+    font-size: 0.7rem;
+}
+
+.market-card .card-desc {
+    font-size: 0.65rem;
+    margin-bottom: 0.4rem;
+    line-height: 1.3;
+    color: var(--text-muted);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.market-card .btn-buy {
+    padding: 0.5rem 0.6rem;
+    font-size: 0.75rem;
+    border-radius: 8px;
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+}
+
+.btn-buy-1g {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    border-color: #FF8C00;
+    width: 100%;
+}
+
+.btn-buy-1g:hover:not(:disabled) {
+    background: linear-gradient(135deg, #FFE55C, #FFB84D);
+    transform: translateY(-1px);
+}
+
+.crypto-buy-controls {
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+    margin-top: 0.4rem;
+}
+
+.crypto-input {
+    flex: 1;
+    padding: 0.4rem;
+    border: 2px solid var(--stroke-color);
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    min-width: 0;
+}
+
+.crypto-warning {
+    color: var(--risk-extreme);
+    font-weight: 700;
+    font-size: 0.7rem;
+    margin: 0.2rem 0;
+}
+
+/* ===== CROWDFUNDING CARDS ===== */
+.crowdfunding-card {
+    border-left-width: 6px;
+}
+
+.project-type-badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    background: linear-gradient(135deg, var(--ayam-orange), var(--ayam-brown));
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    border-radius: 12px;
+    margin: 0.3rem 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.crowdfunding-desc {
+    font-size: 0.8rem;
+    line-height: 1.4;
+    min-height: 50px;
+    margin: 0.5rem 0;
+}
+
+.crowdfunding-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin: 0.5rem 0;
+    padding: 0.5rem;
+    background: rgba(122, 147, 104, 0.05);
+    border-radius: 8px;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stat-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.stat-value {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.stat-value.success {
+    color: var(--money-green);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.6rem;
+}
+
+.card-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.asset-name {
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.95rem;
+    color: var(--text-dark);
+}
+
+.asset-icon {
+    font-size: 1.5rem;
+    margin-right: 0.3rem;
+}
+
+.risk-badge {
+    font-size: 0.6rem;
+    padding: 0.2rem 0.5rem;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+}
+
+.risk-badge.large {
+    font-size: 0.85rem;
+    padding: 0.5rem 1rem;
+    margin-bottom: 0.5rem;
+    display: inline-block;
+}
+
+.risk-badge.large.risk-very-low { background: rgba(45, 106, 79, 0.2); color: var(--risk-safe); }
+.risk-badge.large.risk-low { background: rgba(82, 183, 136, 0.2); color: var(--risk-low); }
+.risk-badge.large.risk-medium { background: rgba(244, 162, 97, 0.2); color: var(--ayam-brown); }
+.risk-badge.large.risk-high { background: rgba(231, 111, 81, 0.2); color: var(--risk-high); }
+.risk-badge.large.risk-very-high { background: rgba(230, 57, 70, 0.2); color: var(--risk-extreme); }
+
+.card-price {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.price {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.change {
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+    border-radius: 8px;
+}
+
+.change.positive {
+    color: var(--money-green);
+    background: rgba(45, 106, 79, 0.1);
+}
+
+.change.positive::before {
+    content: '📈 ';
+}
+
+.change.negative {
+    color: var(--risk-extreme);
+    background: rgba(230, 57, 70, 0.1);
+}
+
+.change.negative::before {
+    content: '📉 ';
+}
+
+.card-desc {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 0.6rem;
+    line-height: 1.4;
+}
+
+/* ===== LOCKED SECTION ===== */
+.locked-section {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 3px dashed var(--ayam-gold);
+}
+
+.locked-section h3 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.locked-section h3::before {
+    content: '🔒 ';
+}
+
+.locked-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 0.75rem;
+}
+
+.locked-card {
+    background: rgba(0, 0, 0, 0.05);
+    border: 3px dashed var(--stroke-color);
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    opacity: 0.7;
+    transition: all 0.3s;
+    box-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+}
+
+.locked-card:hover {
+    opacity: 1;
+    transform: scale(1.05);
+}
+
+.lock-icon {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 0.3rem;
+    animation: shake 2s infinite;
+}
+
+.locked-name {
+    font-weight: 700;
+    display: block;
+    margin-bottom: 0.2rem;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.unlock-info {
+    font-size: 0.7rem;
+    color: var(--ayam-orange);
+    font-weight: 600;
+}
+
+/* ===== RIGHT PANEL - LOG ===== */
+.panel-right {
+    animation-delay: 0.3s;
+}
+
+.panel-right h3 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    margin-bottom: 0.8rem;
+    color: var(--ayam-red);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.panel-right h3::before {
+    content: '📜';
+}
+
+.log-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.log-item {
+    font-size: 0.75rem;
+    padding: 0.5rem 0.8rem;
+    background: white;
+    border-radius: 10px;
+    color: var(--text-muted);
+    line-height: 1.3;
+    border-left: 3px solid var(--ayam-gold);
+    animation: slide-in-right 0.3s ease-out;
+    font-weight: 600;
+}
+
+.log-item.event {
+    background: rgba(230, 57, 70, 0.1);
+    border-left: 3px solid var(--risk-extreme);
+    color: var(--risk-extreme);
+}
+
+.log-item.unlock {
+    background: rgba(45, 106, 79, 0.1);
+    border-left: 3px solid var(--money-green);
+    color: var(--money-green);
+}
+
+.log-item.log-profit {
+    background: rgba(76, 175, 80, 0.15);
+    border-left: 3px solid #4CAF50;
+    color: #2E7D32;
+    font-weight: 700;
+}
+
+.log-item.log-loss {
+    background: rgba(244, 67, 54, 0.15);
+    border-left: 3px solid #F44336;
+    color: #C62828;
+    font-weight: 700;
+}
+
+.log-item.log-salary {
+    background: rgba(27, 94, 32, 0.1);
+    border-left: 3px solid #1B5E20;
+    color: #1B5E20;
+    font-weight: 700;
+}
+
+.log-item.log-event-payment {
+    background: rgba(183, 28, 28, 0.1);
+    border-left: 3px solid #B71C1C;
+    color: #B71C1C;
+    font-weight: 700;
+}
+
+/* ===== PAUSED INDICATOR ===== */
+.paused-indicator {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: var(--ayam-yellow);
+    padding: 2rem 4rem;
+    border-radius: 20px;
+    border: 4px solid var(--ayam-yellow);
+    font-family: 'Fredoka One', cursive;
+    font-size: 2.5rem;
+    z-index: 100;
+    animation: pulse-glow 1.5s infinite;
+    box-shadow: 0 10px 50px rgba(0,0,0,0.5);
+}
+
+.paused-indicator::before {
+    content: '⏸️ ';
+}
+
+/* ===== MODALS ===== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-content {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    max-width: 500px;
+    width: 90%;
+    border: var(--stroke-width) solid var(--stroke-color);
+    box-shadow: 12px 12px 0 rgba(0, 0, 0, 0.2);
+    animation: pop-in 0.4s ease-out;
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-content.info-modal {
+    max-width: 650px;
+    text-align: left;
+}
+
+.modal-content.event-modal {
+    border-color: var(--risk-extreme);
+    animation: shake 0.5s ease-out, pop-in 0.4s ease-out;
+}
+
+.modal-content.intro-modal {
+    max-width: 800px;
+}
+
+.modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: var(--ayam-red);
+    border: none;
+    font-size: 1.2rem;
+    color: white;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: all 0.3s;
+    font-weight: 700;
+}
+
+.modal-close:hover {
+    transform: rotate(90deg) scale(1.1);
+    background: var(--ayam-red-dark);
+}
+
+/* ===== TUTORIAL MODAL ===== */
+.tutorial-modal {
+    max-width: 700px;
+    min-height: 500px;
+    position: relative;
+    padding: 2rem;
+}
+
+.btn-skip-tutorial {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: var(--text-muted);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    z-index: 10;
+}
+
+.btn-skip-tutorial:hover {
+    background: var(--ayam-orange);
+}
+
+.tutorial-slide {
+    text-align: center;
+    padding: 2rem 1rem;
+    animation: slide-in 0.4s ease-out;
+}
+
+@keyframes slide-in {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.tutorial-slide h2 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.8rem;
+    color: var(--ayam-red);
+    margin-bottom: 1.5rem;
+}
+
+.mascot-large {
+    font-size: 5rem;
+    margin: 1rem 0;
+}
+
+.tutorial-text {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--text-dark);
+    margin: 1rem 0;
+}
+
+.tutorial-text.large {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--money-green);
+}
+
+.tutorial-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+}
+
+.tutorial-stat-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, var(--ayam-cream), white);
+    border: 3px solid var(--stroke-color);
+    border-radius: 12px;
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+}
+
+.stat-title {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.stat-number {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--money-green);
+}
+
+.tutorial-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin: 2rem 0;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.timeline-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.8rem 1rem;
+    background: white;
+    border: 2px solid var(--stroke-color);
+    border-radius: 10px;
+    text-align: left;
+    transition: all 0.3s;
+}
+
+.timeline-item:hover {
+    transform: translateX(5px);
+    border-color: var(--money-green);
+}
+
+.timeline-icon {
+    font-size: 1.8rem;
+}
+
+.timeline-label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.tutorial-warning-box {
+    background: rgba(230, 57, 70, 0.1);
+    border: 3px solid var(--risk-extreme);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.payment-options-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.tutorial-objective {
+    padding: 2rem;
+}
+
+.comparison-info {
+    margin-top: 2rem;
+    padding: 1rem;
+    background: rgba(122, 147, 104, 0.1);
+    border-radius: 10px;
+}
+
+.comparison-label {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--money-green);
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.small-text {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+.tutorial-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid var(--stroke-color);
+}
+
+.btn-tutorial-nav {
+    padding: 0.7rem 1.5rem;
+    background: linear-gradient(135deg, var(--money-green), var(--dollar-green));
+    color: white;
+    border: 2px solid var(--stroke-color);
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+}
+
+.btn-tutorial-nav:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.15);
+}
+
+.btn-tutorial-nav:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.btn-tutorial-start {
+    padding: 0.8rem 2rem;
+    background: linear-gradient(135deg, var(--ayam-orange), var(--ayam-brown));
+    color: white;
+    border: 3px solid var(--stroke-color);
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 5px 5px 0 rgba(0,0,0,0.15);
+    animation: pulse 2s infinite;
+}
+
+.btn-tutorial-start:hover {
+    transform: scale(1.05);
+    box-shadow: 6px 6px 0 rgba(0,0,0,0.2);
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.tutorial-dots {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.tutorial-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    opacity: 0.3;
+    transition: all 0.3s;
+}
+
+.tutorial-dot.active {
+    opacity: 1;
+    background: var(--money-green);
+    transform: scale(1.3);
+}
+
+.modal-content h2 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    color: var(--ayam-red);
+}
+
+.info-modal h2 {
+    color: var(--money-green-dark);
+}
+
+.info-section {
+    margin-bottom: 1.2rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 8px;
+    border-left: 4px solid var(--stroke-color);
+    box-shadow: 3px 3px 0 rgba(0,0,0,0.08);
+}
+
+.info-section h4 {
+    font-family: 'Fredoka One', cursive;
+    color: var(--ayam-red);
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.info-section p {
+    color: var(--text-dark);
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+.info-modal .btn-primary {
+    width: 100%;
+    margin-top: 1rem;
+}
+
+/* ===== EVENT MODAL ===== */
+.event-modal h2 {
+    color: var(--risk-extreme);
+}
+
+.event-modal h2::before {
+    content: '⚠️ ';
+    animation: shake 0.5s infinite;
+}
+
+.event-description {
+    font-size: 1.1rem;
+    color: var(--text-dark);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    padding: 1rem;
+    background: rgba(230, 57, 70, 0.1);
+    border-radius: 12px;
+}
+
+.event-cost-display {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--risk-extreme);
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: white;
+    border: 3px solid var(--risk-extreme);
+    border-radius: 15px;
+    animation: pulse-glow 1s infinite;
+}
+
+.event-cost-display::before {
+    content: '💸 ';
+}
+
+.event-options {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.event-option {
+    padding: 1rem;
+    background: white;
+    border: 3px solid var(--stroke-color);
+    border-radius: 8px;
+    text-align: left;
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.event-option.option-available {
+    border-color: var(--money-green);
+    background: rgba(122, 147, 104, 0.05);
+}
+
+.event-option.option-insufficient {
+    border-color: #DFE6E9;
+    opacity: 0.7;
+}
+
+.event-option-label {
+    font-family: 'Fredoka One', cursive;
+    color: var(--text-dark);
+    margin-bottom: 0.3rem;
+    display: block;
+}
+
+.event-option-balance {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.payment-instruction {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    text-align: center;
+    padding: 0.8rem;
+    background: rgba(255, 193, 7, 0.15);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border: 2px dashed var(--ayam-gold);
+}
+
+.portfolio-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.portfolio-option-btn {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--ayam-orange), var(--ayam-brown));
+    color: white;
+    border: 3px solid var(--stroke-color);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.portfolio-option-btn.portfolio-sufficient {
+    background: linear-gradient(135deg, var(--money-green), var(--dollar-green));
+    border-color: var(--money-green);
+    box-shadow: 0 0 15px rgba(122, 147, 104, 0.4);
+}
+
+.portfolio-option-btn .check-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: var(--money-green);
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    border: 2px solid white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.portfolio-option-btn:hover:not(:disabled) {
+    transform: scale(1.05);
+}
+
+.portfolio-option-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    filter: grayscale(50%);
+}
+
+.portfolio-note {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.5rem;
+    text-align: center;
+    font-style: italic;
+}
+
+.game-over-warning {
+    background: rgba(230, 57, 70, 0.2);
+    border: 2px solid var(--risk-extreme);
+    padding: 1rem;
+    border-radius: 12px;
+    color: var(--risk-extreme);
+    font-weight: 700;
+    margin-top: 1rem;
+    animation: shake 0.5s infinite;
+}
+
+/* ===== INTRO MODAL ===== */
+.intro-desc {
+    font-size: 1.1rem;
+    color: var(--text-dark);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.intro-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+.intro-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.2rem;
+    border: 3px solid var(--stroke-color);
+    transition: all 0.3s;
+    animation: slide-up 0.5s ease-out backwards;
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+}
+
+.intro-card:nth-child(1) { animation-delay: 0.1s; }
+.intro-card:nth-child(2) { animation-delay: 0.2s; }
+.intro-card:nth-child(3) { animation-delay: 0.3s; }
+
+.intro-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.intro-card h3 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.2rem;
+    margin-bottom: 0.8rem;
+    color: var(--ayam-red);
+}
+
+.intro-card p {
+    font-size: 0.9rem;
+    color: var(--text-dark);
+    margin-bottom: 0.6rem;
+    line-height: 1.5;
+}
+
+.intro-card p strong {
+    color: var(--money-green-dark);
+}
+
+.intro-card.risk-very-low { border-left: 6px solid var(--risk-safe); }
+.intro-card.risk-low { border-left: 6px solid var(--risk-low); }
+.intro-card.risk-medium { border-left: 6px solid var(--risk-medium); }
+.intro-card.risk-high { border-left: 6px solid var(--risk-high); }
+.intro-card.risk-very-high { border-left: 6px solid var(--risk-extreme); }
+
+/* ===== GAME OVER MODAL ===== */
+.final-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
+}
+
+.stat {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.8rem 1rem;
+    background: white;
+    border-radius: 8px;
+    border: 3px solid var(--stroke-color);
+    animation: slide-in-right 0.3s ease-out backwards;
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+}
+
+.stat:nth-child(1) { animation-delay: 0.1s; }
+.stat:nth-child(2) { animation-delay: 0.2s; }
+.stat:nth-child(3) { animation-delay: 0.3s; }
+.stat:nth-child(4) { animation-delay: 0.4s; }
+
+.stat-label {
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.stat-value {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    color: var(--money-green);
+}
+
+.rating {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(230, 57, 70, 0.1), rgba(244, 162, 97, 0.1));
+    border-radius: 15px;
+    border: 2px solid var(--ayam-gold);
+    color: var(--ayam-red);
+    animation: bounce 1s ease-in-out infinite;
+}
+
+.game-over-reason {
+    font-size: 1rem;
+    color: var(--risk-extreme);
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: rgba(230, 57, 70, 0.1);
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+/* ===== ERROR TOAST ===== */
+.error-toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--risk-extreme);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    font-weight: 700;
+    z-index: 1001;
+    animation: pop-in 0.3s ease-out, shake 0.5s ease-out;
+    box-shadow: 0 10px 30px rgba(230, 57, 70, 0.4);
+}
+
+.error-toast::before {
+    content: '❌ ';
+}
+
+/* ===== BLAZOR ERROR ===== */
+#blazor-error-ui {
+    display: none;
+    background: var(--risk-extreme);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1rem;
+    text-align: center;
+    z-index: 9999;
+}
+
+#blazor-error-ui .reload {
+    color: white;
+    text-decoration: underline;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+    .game-main {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr auto;
+    }
+
+    .panel-left {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .balance-card, .networth-card {
+        flex: 1;
+        min-width: 180px;
+    }
+
+    .portfolio-section, .deposito-section {
+        width: 100%;
+    }
+
+    .portfolio-list, .deposito-list {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .portfolio-item, .deposito-item {
+        flex: 1;
+        min-width: 180px;
+    }
+
+    /* market-grid handled in dedicated mobile responsive section */
+
+    .panel-right {
+        max-height: 150px;
+    }
+
+    .log-list {
+        flex-direction: row;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+    }
+
+    .log-item {
+        min-width: 220px;
+    }
+
+    .intro-cards {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ===== PORTFOLIO PERFORMANCE SECTION ===== */
+.performance-section {
+    background: linear-gradient(135deg, #FFFFFF, var(--ayam-cream));
+    border-radius: 12px;
+    padding: 0.8rem;
+    border: 3px solid var(--stroke-color);
+    margin-bottom: 1rem;
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+}
+
+.performance-section h3 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.9rem;
+    margin-bottom: 0.6rem;
+    color: var(--ayam-red);
+}
+
+.performance-stat {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.4rem 0;
+    font-size: 0.8rem;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.performance-stat:last-child {
+    border-bottom: none;
+}
+
+.perf-label {
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.perf-value {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.perf-value.positive {
+    color: var(--money-green);
+}
+
+.perf-value.negative {
+    color: var(--risk-extreme);
+}
+
+/* ===== PERFORMANCE CHART ===== */
+.performance-chart-container {
+    margin-bottom: 1rem;
+    background: white;
+    border: 3px solid var(--stroke-color);
+    border-radius: 12px;
+    padding: 0.8rem;
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+}
+
+.chart-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.performance-chart {
+    position: relative;
+    width: 100%;
+    height: 120px;
+    background: linear-gradient(180deg, rgba(122, 147, 104, 0.05) 0%, rgba(122, 147, 104, 0.02) 100%);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.chart-svg {
+    width: 100%;
+    height: 100%;
+}
+
+.grid-line {
+    stroke: var(--ayam-gold);
+    stroke-width: 0.5;
+    opacity: 0.3;
+    stroke-dasharray: 4 4;
+}
+
+.performance-line {
+    fill: none;
+    stroke: var(--money-green);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 2px 4px rgba(122, 147, 104, 0.4));
+}
+
+.chart-axis {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.4rem;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    padding: 0 0.2rem;
+}
+
+.axis-label {
+    font-weight: 600;
+}
+
+.no-data {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--text-muted);
+    font-style: italic;
+    font-size: 0.8rem;
+}
+
+.divider {
+    height: 1px;
+    background: rgba(0,0,0,0.1);
+    margin: 0.8rem 0;
+}
+
+/* ===== QUICK BUY BUTTONS ===== */
+.btn-quick-lot {
+    padding: 0.4rem 0.8rem;
+    background: linear-gradient(135deg, var(--money-green), var(--money-green-dark));
+    color: white;
+    border: 2px solid var(--stroke-color);
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+    white-space: nowrap;
+}
+
+.btn-quick-lot:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 3px 3px 0 rgba(0,0,0,0.15);
+}
+
+.btn-quick-lot:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Mobile responsiveness for stock rows */
+@media (max-width: 768px) {
+    .stock-row {
+        padding: 0.8rem;
+    }
+
+    .stock-info {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .stock-price-info {
+        align-items: flex-start;
+    }
+
+    .stock-actions-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .quick-buy-buttons {
+        justify-content: stretch;
+    }
+
+    .btn-quick-lot {
+        flex: 1;
+        min-width: 60px;
+    }
+}
+
+@media (max-width: 480px) {
+    .stocks-list {
+        gap: 0.6rem;
+    }
+
+    .stock-row {
+        padding: 0.6rem;
+    }
+
+    .stock-main {
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+
+    .stock-ticker-badge {
+        width: 100%;
+    }
+
+    .btn-quick-lot {
+        flex: 1;
+        font-size: 0.75rem;
+        padding: 0.3rem 0.4rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .game-header {
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 0.75rem;
+    }
+
+    .header-left h1 {
+        font-size: 1.5rem;
+    }
+
+    .time-display {
+        font-size: 0.9rem;
+    }
+
+    .progress-container {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .start-screen h1 {
+        font-size: 3rem;
+    }
+
+    .start-form {
+        flex-direction: column;
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .start-form input {
+        width: 100%;
+    }
+
+    /* market-grid kept at 2 columns for game-like layout - handled in dedicated section */
+
+    .modal-content {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+
+    .modal-content h2 {
+        font-size: 1.4rem;
+    }
+
+    .locked-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .deposito-rates {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .paused-indicator {
+        font-size: 1.8rem;
+        padding: 1.5rem 2.5rem;
+    }
+}
+
+/* ===== UTILITY CLASSES ===== */
+.positive {
+    color: var(--money-green);
+}
+
+.negative {
+    color: var(--risk-extreme);
+}
+
+/* ===== LEVEL UP CELEBRATION ===== */
+.level-up-celebration {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 999;
+}
+
+.confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    animation: money-rain 3s linear forwards;
+}
+
+/* ===== LIGHT MODE TOGGLE ===== */
+.light-mode-toggle {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1rem 0;
+    padding: 1rem 1.5rem;
+    background: var(--card-bg);
+    border: 3px solid var(--stroke-color);
+    border-radius: 12px;
+    animation: slide-up 0.5s ease-out;
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 56px;
+    height: 30px;
+    flex-shrink: 0;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--text-muted);
+    transition: 0.3s;
+    border-radius: 30px;
+    border: 2px solid var(--stroke-color);
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background-color: var(--money-green);
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+    transform: translateX(26px);
+}
+
+.toggle-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.toggle-label {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    color: var(--text-dark);
+}
+
+.toggle-desc {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* ===== LANGUAGE SELECTOR ===== */
+.language-selector {
+    display: flex;
+    gap: 0.8rem;
+    margin: 1rem 0;
+    animation: slide-up 0.5s ease-out;
+}
+
+.lang-option {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.8rem 1.5rem;
+    background: var(--card-bg);
+    border: 3px solid var(--stroke-color);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+}
+
+.lang-option:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+}
+
+.lang-option.selected {
+    border-color: var(--ayam-orange);
+    background: linear-gradient(135deg, var(--ayam-cream), rgba(200, 113, 55, 0.1));
+    transform: scale(1.02);
+}
+
+.flag-icon {
+    font-size: 2rem;
+    margin-bottom: 0.3rem;
+}
+
+.lang-label {
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.9rem;
+    color: var(--text-dark);
+    font-weight: 700;
+}
+
+/* ===== SAVINGS SECTION ===== */
+.savings-section {
+    background: linear-gradient(135deg, #FFFFFF, var(--ayam-cream));
+    border-radius: 12px;
+    padding: 1rem;
+    border: 3px solid var(--stroke-color);
+    animation: slide-up 0.4s ease-out;
+    box-shadow: 6px 6px 0 rgba(0,0,0,0.12);
+}
+
+.savings-section h3 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    color: var(--ayam-red);
+    margin-bottom: 0.5rem;
+}
+
+.savings-balance {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--money-green);
+    margin-bottom: 0.8rem;
+}
+
+.savings-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.savings-input-group input {
+    width: 100%;
+    padding: 0.5rem;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    border: 3px solid var(--stroke-color);
+    border-radius: 6px;
+    background: white;
+    color: var(--text-dark);
+}
+
+.savings-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-deposit, .savings-buttons .btn-withdraw {
+    flex: 1;
+    padding: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-deposit {
+    background: linear-gradient(135deg, var(--money-green), var(--money-green-dark));
+    color: white;
+}
+
+.btn-deposit:hover:not(:disabled) {
+    transform: translateY(-2px);
+}
+
+.btn-deposit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ===== NETWORTH BREAKDOWN ===== */
+.networth-breakdown {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.2rem;
+    font-weight: 600;
+}
+
+/* ===== BOND SECTION ===== */
+.bond-section {
+    margin-top: 0.5rem;
+}
+
+.bond-section h3 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    margin-bottom: 0.8rem;
+    color: var(--ayam-red);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.bond-section h3::before {
+    content: '';
+}
+
+.bond-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+/* ===== COMPACT BALANCE & NETWORTH ===== */
+.balance-networth-compact {
+    background: linear-gradient(135deg, #FFFFFF, var(--ayam-cream));
+    border-radius: 10px;
+    padding: 0.8rem;
+    border: 3px solid var(--stroke-color);
+    margin-bottom: 0.8rem;
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+}
+
+.balance-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.4rem 0;
+    border-bottom: 1px dashed var(--ayam-gold);
+}
+
+.balance-row:last-of-type {
+    border-bottom: 2px solid var(--stroke-color);
+    padding-bottom: 0.6rem;
+    margin-bottom: 0.6rem;
+}
+
+.balance-row.networth-total {
+    font-weight: 700;
+}
+
+.balance-row .label {
+    font-size: 0.85rem;
+    color: var(--text-dark);
+    font-weight: 600;
+}
+
+.balance-row .amount {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--money-green);
+}
+
+.balance-row.networth-total .amount {
+    font-size: 1.1rem;
+    color: var(--dollar-green);
+}
+
+.breakdown-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.4rem;
+}
+
+.breakdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.75rem;
+    padding: 0.2rem;
+    background: rgba(122, 147, 104, 0.05);
+    border-radius: 6px;
+}
+
+.breakdown-item .icon {
+    font-size: 1rem;
+}
+
+.breakdown-item .value {
+    font-weight: 600;
+    color: var(--text-dark);
+    font-size: 0.7rem;
+}
+
+/* ===== COMPACT SAVINGS SECTION ===== */
+.savings-section-compact {
+    background: linear-gradient(135deg, #FFFFFF, var(--ayam-cream));
+    border-radius: 10px;
+    padding: 0.8rem;
+    border: 3px solid var(--stroke-color);
+    margin-bottom: 0.8rem;
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+}
+
+.section-header-compact {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.section-header-compact h4 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.9rem;
+    color: var(--ayam-red);
+    margin: 0;
+}
+
+.btn-info-mini {
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    background: var(--sky-blue);
+    border: 2px solid var(--stroke-color);
+    border-radius: 50%;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-info-mini:hover {
+    transform: scale(1.1);
+    background: var(--ayam-orange);
+}
+
+.savings-balance-compact {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--money-green);
+    text-align: center;
+    padding: 0.5rem 0;
+    margin-bottom: 0.5rem;
+    border-bottom: 2px solid var(--stroke-color);
+}
+
+.savings-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    align-items: stretch;
+}
+
+.savings-input-compact {
+    flex: 1 1 100%;
+    min-width: 0;
+    padding: 0.5rem;
+    border: 2px solid var(--stroke-color);
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.btn-action-compact {
+    flex: 1 1 auto;
+    padding: 0.5rem 0.6rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border: 2px solid var(--stroke-color);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+    white-space: nowrap;
+    text-align: center;
+}
+
+.btn-action-compact.deposit {
+    background: linear-gradient(135deg, var(--money-green), var(--dollar-green));
+    color: white;
+}
+
+.btn-action-compact.withdraw {
+    background: linear-gradient(135deg, var(--ayam-orange), var(--ayam-brown));
+    color: white;
+}
+
+.btn-action-compact:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 3px 3px 0 rgba(0,0,0,0.15);
+}
+
+.btn-action-compact:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.bond-item {
+    background: white;
+    border-radius: 8px;
+    padding: 0.8rem;
+    border: 3px solid var(--stroke-color);
+    transition: all 0.3s;
+    animation: slide-in-right 0.3s ease-out;
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+}
+
+.bond-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.bond-info {
+    margin-bottom: 0.5rem;
+}
+
+.bond-period {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.bond-coupon-earned {
+    font-size: 0.8rem;
+    color: var(--money-green);
+    font-weight: 700;
+    margin-top: 0.3rem;
+}
+
+.bond-progress {
+    height: 8px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    margin: 0.5rem 0;
+    overflow: hidden;
+}
+
+.bond-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--sky-blue), var(--money-green));
+    border-radius: 10px;
+    transition: width 0.5s ease;
+    position: relative;
+}
+
+.bond-progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+    animation: progress-shine 2s infinite;
+}
+
+.bond-maturity {
+    font-size: 0.8rem;
+    color: var(--money-green);
+    font-weight: 700;
+    animation: pulse-glow 1s infinite;
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    background: rgba(45, 106, 79, 0.1);
+    border-radius: 10px;
+}
+
+.bond-buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+/* ===== BOND PURCHASE SECTION ===== */
+.bond-purchase-section {
+    background: linear-gradient(135deg, #FFFFFF, var(--sky-blue-light));
+    border: 3px solid var(--stroke-color);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    animation: pop-in 0.5s ease-out;
+    box-shadow: 6px 6px 0 rgba(0,0,0,0.12);
+}
+
+.bond-purchase-section h3 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem;
+    color: var(--money-green-dark);
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.bond-purchase-section h3::before {
+    content: '';
+}
+
+.bond-rates {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.6rem;
+}
+
+.bond-rate-card {
+    background: white;
+    border: 3px solid var(--stroke-color);
+    border-radius: 8px;
+    padding: 0.6rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+}
+
+.bond-rate-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+}
+
+.bond-rate-card.selected {
+    border-color: var(--sky-blue);
+    background: linear-gradient(135deg, var(--sky-blue-light), var(--sky-blue));
+    color: white;
+    transform: scale(1.05);
+}
+
+.bond-rate-card .bond-type {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+}
+
+.bond-rate-card .bond-period {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.bond-rate-card.selected .bond-period {
+    color: rgba(255,255,255,0.8);
+}
+
+.bond-rate-card .bond-coupon {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--money-green);
+}
+
+.bond-rate-card.selected .bond-coupon {
+    color: var(--ayam-yellow);
+}
+
+.bond-rate-card .min-invest {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+}
+
+.bond-rate-card.selected .min-invest {
+    color: rgba(255,255,255,0.7);
+}
+
+.bond-amount-input {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    align-items: center;
+}
+
+.bond-amount-input input {
+    flex: 1;
+    padding: 0.6rem;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    border: 3px solid var(--stroke-color);
+    border-radius: 6px;
+    background: white;
+    color: var(--text-dark);
+}
+
+.bond-amount-input button {
+    padding: 0.6rem 1rem;
+}
+
+/* ===== DEPOSITO MINIMUM DEPOSIT ===== */
+.deposito-rate-card .min-deposit {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    margin-top: 0.2rem;
+}
+
+.deposito-rate-card.selected .min-deposit {
+    color: rgba(255,255,255,0.7);
+}
+
+/* ===== STOCKS SECTION ===== */
+.stocks-section {
+    background: linear-gradient(135deg, #FFFFFF, rgba(233, 196, 106, 0.2));
+    border: 3px solid var(--stroke-color);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    animation: pop-in 0.5s ease-out;
+    box-shadow: 6px 6px 0 rgba(0,0,0,0.12);
+}
+
+.stocks-section h3 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem;
+    color: var(--ayam-red);
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+/* ===== STOCKS LIST (ONE PER ROW) ===== */
+.stocks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.stock-row {
+    background: white;
+    border: 3px solid var(--stroke-color);
+    border-radius: 12px;
+    padding: 1rem;
+    transition: all 0.3s;
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+}
+
+.stock-row:hover {
+    transform: translateX(4px);
+    box-shadow: 6px 6px 0 rgba(0,0,0,0.15);
+}
+
+.stock-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.8rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.stock-main {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    flex: 1;
+    min-width: 200px;
+}
+
+.stock-ticker-badge {
+    background: linear-gradient(135deg, var(--money-green), var(--money-green-dark));
+    color: white;
+    font-weight: 800;
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    border: 2px solid var(--stroke-color);
+    letter-spacing: 0.5px;
+    min-width: 60px;
+    text-align: center;
+}
+
+.stock-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.stock-name {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text-dark);
+}
+
+.stock-sector {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.stock-price-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.2rem;
+}
+
+.stock-price-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stock-price-value {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--text-dark);
+}
+
+.stock-change {
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+}
+
+.stock-change.positive {
+    color: #27AE60;
+    background: rgba(39, 174, 96, 0.1);
+}
+
+.stock-change.negative {
+    color: #E74C3C;
+    background: rgba(231, 76, 60, 0.1);
+}
+
+.stock-actions-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.8rem;
+    border-top: 2px dashed var(--ayam-gold);
+    flex-wrap: wrap;
+    gap: 0.8rem;
+}
+
+.lot-price {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.quick-buy-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.stock-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.3rem;
+}
+
+.stock-ticker {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem;
+    color: var(--ayam-red);
+}
+
+.stock-change {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.2rem 0.4rem;
+    border-radius: 6px;
+}
+
+.stock-change.positive {
+    color: var(--money-green);
+    background: rgba(45, 106, 79, 0.1);
+}
+
+.stock-change.negative {
+    color: var(--risk-extreme);
+    background: rgba(230, 57, 70, 0.1);
+}
+
+.stock-name {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.stock-sector {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    margin-bottom: 0.3rem;
+}
+
+.stock-price {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.stock-lot-price {
+    font-size: 0.7rem;
+    color: var(--money-green);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.stock-actions {
+    display: flex;
+    gap: 0.3rem;
+    align-items: center;
+}
+
+.stock-actions input {
+    padding: 0.4rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: 3px solid var(--stroke-color);
+    border-radius: 4px;
+    background: white;
+}
+
+.btn-buy-small {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--money-green), var(--money-green-dark));
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-buy-small:hover:not(:disabled) {
+    transform: scale(1.05);
+}
+
+.btn-buy-small:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ===== CRYPTO SECTION ===== */
+.crypto-section {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    border: 2px solid var(--ayam-orange);
+    border-radius: 15px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    animation: pop-in 0.5s ease-out;
+}
+
+.crypto-section h3 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem;
+    color: var(--ayam-orange);
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.crypto-section > p {
+    color: rgba(255,255,255,0.7) !important;
+}
+
+.crypto-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 0.8rem;
+}
+
+.crypto-card {
+    background: linear-gradient(135deg, #2d2d44, #1a1a2e);
+    border: 3px solid var(--stroke-color);
+    border-radius: 8px;
+    padding: 0.8rem;
+    transition: all 0.3s;
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.15);
+}
+
+.crypto-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 20px rgba(244, 162, 97, 0.3);
+}
+
+.crypto-card.meme {
+    border-color: var(--risk-extreme);
+    background: linear-gradient(135deg, #3d1a1a, #2d1a2e);
+    animation: pulse-glow 2s infinite;
+}
+
+.crypto-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.3rem;
+}
+
+.crypto-symbol {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem;
+    color: var(--ayam-yellow);
+}
+
+.crypto-card.meme .crypto-symbol {
+    color: var(--risk-extreme);
+}
+
+.crypto-change {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.2rem 0.4rem;
+    border-radius: 6px;
+}
+
+.crypto-change.positive {
+    color: #00ff88;
+    background: rgba(0, 255, 136, 0.2);
+}
+
+.crypto-change.negative {
+    color: #ff4444;
+    background: rgba(255, 68, 68, 0.2);
+}
+
+.crypto-name {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.8);
+    margin-bottom: 0.3rem;
+}
+
+.crypto-price {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 0.5rem;
+}
+
+.crypto-actions {
+    display: flex;
+    gap: 0.3rem;
+    align-items: center;
+}
+
+.crypto-actions input {
+    padding: 0.4rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: 3px solid var(--stroke-color);
+    border-radius: 4px;
+    background: rgba(255,255,255,0.1);
+    color: white;
+}
+
+/* ===== START FORM VERTICAL LAYOUT ===== */
+.start-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    animation: slide-up 0.6s ease-out;
+    max-width: 400px;
+    width: 100%;
+}
+
+@media (max-width: 640px) {
+    .light-mode-toggle {
+        padding: 0.8rem 1rem;
+    }
+
+    .toggle-label {
+        font-size: 0.9rem;
+    }
+
+    .toggle-desc {
+        font-size: 0.7rem;
+    }
+
+    .stocks-grid,
+    .crypto-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .bond-rates {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* === AI COMPARISON STYLES === */
+.game-over-modal {
+    max-width: 800px !important;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.comparison-section {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(122, 147, 104, 0.1), rgba(200, 113, 55, 0.1));
+    border-radius: 12px;
+    border: 2px solid var(--ayam-gold);
+}
+
+.comparison-section h3 {
+    text-align: center;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-dark);
+}
+
+.comparison-desc {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    font-style: italic;
+}
+
+.comparison-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.comparison-card {
+    background: white;
+    border-radius: 12px;
+    border: 3px solid var(--stroke-color);
+    padding: 0.8rem;
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px dashed var(--ayam-gold);
+}
+
+.card-icon {
+    font-size: 1.5rem;
+}
+
+.card-title {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text-dark);
+}
+
+.card-networth {
+    text-align: center;
+    padding: 0.8rem;
+    border-radius: 8px;
+    margin-bottom: 0.8rem;
+    background: linear-gradient(135deg, var(--money-green-light), var(--money-green));
+    color: white;
+}
+
+.card-networth.winner {
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+    animation: pulse-win 1s ease-in-out infinite;
+}
+
+.card-networth.loser {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+.card-networth.tie {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+}
+
+@keyframes pulse-win {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
+
+.networth-label {
+    display: block;
+    font-size: 0.75rem;
+    opacity: 0.9;
+    margin-bottom: 0.3rem;
+}
+
+.networth-value {
+    display: block;
+    font-size: 1.1rem;
+    font-weight: 800;
+    font-family: 'Fredoka One', cursive;
+}
+
+.card-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.breakdown-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    padding: 0.3rem 0.5rem;
+    background: rgba(0,0,0,0.03);
+    border-radius: 6px;
+}
+
+.breakdown-item span:first-child {
+    color: var(--text-muted);
+}
+
+.breakdown-item span:last-child {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.comparison-result {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    padding: 1rem;
+    border-radius: 12px;
+    text-align: center;
+    animation: slide-up 0.5s ease-out;
+}
+
+.comparison-result.player-wins {
+    background: linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(39, 174, 96, 0.2));
+    border: 2px solid #27ae60;
+}
+
+.comparison-result.bot-wins {
+    background: linear-gradient(135deg, rgba(231, 76, 60, 0.2), rgba(192, 57, 43, 0.2));
+    border: 2px solid #c0392b;
+}
+
+.comparison-result.tie-result {
+    background: linear-gradient(135deg, rgba(243, 156, 18, 0.2), rgba(230, 126, 34, 0.2));
+    border: 2px solid #e67e22;
+}
+
+.result-icon {
+    font-size: 1.5rem;
+}
+
+.result-text {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+/* Responsive adjustments for comparison */
+@media (max-width: 600px) {
+    .comparison-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .game-over-modal {
+        padding: 1rem;
+    }
+
+    .comparison-section {
+        padding: 0.8rem;
+    }
+
+    .networth-value {
+        font-size: 1rem;
+    }
+
+    .breakdown-item {
+        font-size: 0.75rem;
+    }
+
+    .result-text {
+        font-size: 0.85rem;
+    }
+}
+
+/* Adult theme adjustments for comparison */
+[data-theme="adult"] .comparison-section {
+    background: linear-gradient(135deg, rgba(44, 95, 45, 0.1), rgba(74, 124, 78, 0.1));
+    border-color: var(--gold-accent);
+}
+
+[data-theme="adult"] .card-networth {
+    background: linear-gradient(135deg, var(--dollar-green), var(--money-green));
+}
+
+[data-theme="adult"] .card-header {
+    border-bottom-color: var(--gold-accent);
+}
+
+/* === PIE CHART STYLES === */
+.pie-chart-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin: 1rem 0;
+    padding: 0.8rem;
+    background: rgba(0,0,0,0.02);
+    border-radius: 8px;
+}
+
+.pie-chart {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    flex-shrink: 0;
+}
+
+.pie-chart-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    font-size: 0.75rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--text-dark);
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+
+.legend-color.cash { background: #4CAF50; }
+.legend-color.savings { background: #2196F3; }
+.legend-color.deposito { background: #9C27B0; }
+.legend-color.bonds { background: #FF9800; }
+.legend-color.portfolio { background: #E91E63; }
+.legend-color.index { background: #00BCD4; }
+.legend-color.gold { background: #FFD700; }
+
+/* === EARNINGS COMPARISON STYLES === */
+.earnings-comparison {
+    margin: 1rem 0;
+    padding: 1rem;
+    background: white;
+    border-radius: 12px;
+    border: 2px solid var(--stroke-color);
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+}
+
+.earnings-comparison h4 {
+    text-align: center;
+    font-size: 1rem;
+    color: var(--text-dark);
+    margin-bottom: 0.8rem;
+}
+
+.earnings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.earnings-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.8rem;
+    border-radius: 8px;
+    background: rgba(0,0,0,0.02);
+}
+
+.earnings-item.player-earnings {
+    border: 2px solid #3498db;
+}
+
+.earnings-item.bot-earnings {
+    border: 2px solid #e74c3c;
+}
+
+.earnings-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.earnings-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.earnings-value.positive {
+    color: #27ae60;
+}
+
+.earnings-value.negative {
+    color: #c0392b;
+}
+
+.earnings-percent {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.earnings-percent.positive {
+    color: #27ae60;
+}
+
+.earnings-percent.negative {
+    color: #c0392b;
+}
+
+/* Responsive pie chart */
+@media (max-width: 600px) {
+    .pie-chart-container {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .pie-chart {
+        width: 80px;
+        height: 80px;
+    }
+
+    .pie-chart-legend {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .earnings-grid {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+
+    .earnings-value {
+        font-size: 1rem;
+    }
+}
+
+/* Adult theme adjustments for pie charts */
+[data-theme="adult"] .pie-chart-container {
+    background: rgba(0,0,0,0.03);
+}
+
+[data-theme="adult"] .earnings-comparison {
+    border-color: var(--charcoal);
+}
+
+/* === COMPACT LAYOUT IMPROVEMENTS === */
+
+/* Fix Uang Kas static height */
+.balance-card {
+    min-height: 90px;
+    height: auto;
+}
+
+.balance-amount {
+    font-size: 1.3rem;
+    white-space: nowrap;
+}
+
+/* Section tips styling */
+.section-tip {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 0.6rem;
+    text-align: center;
+    padding: 0.3rem 0.5rem;
+    background: rgba(0,0,0,0.03);
+    border-radius: 6px;
+}
+
+/* Compact stock rows */
+.stock-row.compact {
+    padding: 0.6rem 0.8rem;
+}
+
+.stock-row.compact .stock-info {
+    margin-bottom: 0.4rem;
+    gap: 0.5rem;
+}
+
+.stock-row.compact .stock-main {
+    gap: 0.5rem;
+}
+
+.stock-row.compact .stock-details {
+    gap: 0.1rem;
+}
+
+.stock-row.compact .stock-name {
+    font-size: 0.85rem;
+}
+
+.stock-meta {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.dividend-badge {
+    background: linear-gradient(135deg, #f1c40f, #e67e22);
+    color: white;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+}
+
+.stock-price-info.compact {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.stock-price-info.compact .stock-price-value {
+    font-size: 0.95rem;
+}
+
+.stock-price-info.compact .stock-change {
+    font-size: 0.75rem;
+}
+
+.stock-actions-row.compact {
+    padding-top: 0.4rem;
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+}
+
+.stock-actions-row.compact .lot-price {
+    font-size: 0.75rem;
+}
+
+.stock-actions-row.compact .quick-buy-buttons {
+    gap: 0.3rem;
+}
+
+.stock-actions-row.compact .btn-quick-lot {
+    padding: 0.3rem 0.5rem;
+    font-size: 0.75rem;
+}
+
+/* Average cost display for portfolio */
+.item-avg-cost {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    padding: 0.2rem 0.4rem;
+    background: rgba(0,0,0,0.03);
+    border-radius: 4px;
+    margin-bottom: 0.3rem;
+}
+
+/* Compact deposito section */
+.deposito-section {
+    margin-bottom: 1rem;
+}
+
+.deposito-item {
+    padding: 0.6rem 0.8rem !important;
+}
+
+.deposito-item .item-header {
+    margin-bottom: 0.3rem;
+}
+
+.deposito-item .item-name {
+    font-size: 0.85rem;
+}
+
+.deposito-item .item-units {
+    font-size: 0.75rem;
+}
+
+.deposito-progress {
+    height: 6px !important;
+    margin: 0.3rem 0 !important;
+}
+
+.deposito-item .item-values {
+    margin-bottom: 0.3rem;
+}
+
+/* Compact bond section */
+.bond-section {
+    margin-bottom: 1rem;
+}
+
+.bond-item {
+    padding: 0.6rem 0.8rem !important;
+}
+
+.bond-item .item-header {
+    margin-bottom: 0.3rem;
+}
+
+.bond-item .item-name {
+    font-size: 0.85rem;
+}
+
+.bond-progress {
+    height: 6px !important;
+    margin: 0.3rem 0 !important;
+}
+
+/* Compact portfolio items */
+.portfolio-item {
+    padding: 0.6rem 0.8rem !important;
+}
+
+.portfolio-item .item-header {
+    margin-bottom: 0.2rem;
+}
+
+.portfolio-item .item-name {
+    font-size: 0.85rem;
+}
+
+.portfolio-item .item-values {
+    margin-bottom: 0.3rem;
+}
+
+.portfolio-item .item-buttons {
+    gap: 0.3rem;
+}
+
+.portfolio-item .btn-sell,
+.portfolio-item .btn-sell-all {
+    padding: 0.3rem 0.5rem;
+    font-size: 0.75rem;
+}
+
+/* Compact crypto cards */
+.crypto-card {
+    padding: 0.6rem !important;
+}
+
+.crypto-card .crypto-header {
+    margin-bottom: 0.2rem;
+}
+
+.crypto-card .crypto-symbol {
+    font-size: 1rem;
+}
+
+.crypto-card .crypto-name {
+    font-size: 0.75rem;
+}
+
+.crypto-card .crypto-price {
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+}
+
+.crypto-card .crypto-actions {
+    gap: 0.3rem;
+}
+
+.crypto-card .crypto-actions input {
+    width: 80px !important;
+    font-size: 0.8rem;
+    padding: 0.3rem;
+}
+
+/* Market card styles now handled in main MARKET GRID section */
+
+/* Compact deposito/bond purchase forms */
+.deposito-section .deposito-rates,
+.bond-section .bond-rates {
+    gap: 0.4rem;
+}
+
+.deposito-section .rate-option,
+.bond-section .rate-option {
+    padding: 0.5rem;
+}
+
+.deposito-section .rate-period,
+.bond-section .rate-period {
+    font-size: 0.85rem;
+}
+
+.deposito-section .rate-value,
+.bond-section .rate-value {
+    font-size: 0.75rem;
+}
+
+/* General compact adjustments */
+.section-header h3 {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Make sure numbers are displayed with proper formatting */
+.currency-value {
+    font-variant-numeric: tabular-nums;
+}
+
+/* ===== CRYPTO GROUP CONTAINER - GAME STYLE ===== */
+.crypto-group-container {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 2px solid var(--ayam-orange);
+    border-radius: 12px;
+    padding: 0.6rem;
+    animation: pop-in 0.3s ease-out;
+    box-shadow: 0 4px 15px rgba(244, 162, 97, 0.2);
+}
+
+.crypto-group-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.3rem;
+    padding: 0 0.2rem;
+}
+
+.crypto-group-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.9rem;
+    color: var(--ayam-orange);
+    text-shadow: 0 0 10px rgba(244, 162, 97, 0.5);
+}
+
+.crypto-group-actions {
+    display: flex;
+    gap: 0.3rem;
+    align-items: center;
+}
+
+.crypto-info-btn {
+    font-size: 0.8rem;
+    padding: 0.2rem 0.4rem;
+    background: rgba(255,255,255,0.1);
+    border-radius: 4px;
+}
+
+.crypto-group-warning {
+    color: #ff6b6b;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 0.4rem;
+    padding: 0.2rem 0.4rem;
+    background: rgba(255, 100, 100, 0.15);
+    border-radius: 6px;
+}
+
+.crypto-coins-row {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: nowrap;
+    justify-content: stretch;
+}
+
+.crypto-coin-card {
+    background: linear-gradient(145deg, #2d2d44 0%, #1a1a2e 100%);
+    border: 2px solid rgba(255,255,255,0.15);
+    border-radius: 8px;
+    padding: 0.8rem;
+    flex: 1;
+    min-width: 0;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+    transition: all 0.2s ease;
+}
+
+.crypto-coin-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(244, 162, 97, 0.25);
+    border-color: var(--ayam-orange);
+}
+
+.crypto-coin-card:active {
+    transform: translateY(0);
+}
+
+.crypto-coin-card.doge-crypto {
+    border-color: var(--risk-extreme);
+    background: linear-gradient(145deg, #3d1a1a 0%, #2d1a2e 100%);
+    animation: pulse-glow 2s infinite;
+}
+
+.crypto-coin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.2rem;
+}
+
+.crypto-coin-card .crypto-symbol {
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.85rem;
+    color: var(--ayam-yellow);
+}
+
+.crypto-coin-card .crypto-name {
+    font-size: 0.55rem;
+    color: rgba(255,255,255,0.6);
+    text-align: right;
+}
+
+.crypto-coin-price {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.15rem;
+}
+
+.crypto-coin-price .price {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: white;
+}
+
+.crypto-coin-price .change {
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 0.15rem 0.3rem;
+    border-radius: 4px;
+}
+
+.crypto-coin-price .change.positive {
+    color: #00ff88;
+    background: rgba(0, 255, 136, 0.2);
+}
+
+.crypto-coin-price .change.negative {
+    color: #ff4444;
+    background: rgba(255, 68, 68, 0.2);
+}
+
+.crypto-volatility {
+    font-size: 0.55rem;
+    color: rgba(255,255,255,0.5);
+    text-align: center;
+    margin-bottom: 0.3rem;
+    padding: 0.1rem 0.2rem;
+    background: rgba(255,255,255,0.05);
+    border-radius: 4px;
+}
+
+.crypto-coin-card .crypto-buy-controls {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    align-items: stretch;
+    margin-top: 0.5rem;
+}
+
+.crypto-coin-card .crypto-input {
+    flex: 1;
+    min-width: 0;
+    padding: 0.75rem 0.5rem;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-align: center;
+    background: rgba(255,255,255,0.15);
+    color: white;
+    min-height: 44px;
+    box-sizing: border-box;
+}
+
+.crypto-coin-card .crypto-input::placeholder {
+    color: rgba(255,255,255,0.5);
+    font-size: 0.85rem;
+}
+
+.crypto-coin-card .crypto-buy-btn {
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    min-width: 60px;
+    border-radius: 6px;
+    white-space: nowrap;
+    background: linear-gradient(135deg, #4CAF50, #388E3C);
+    color: white;
+    border: 2px solid #2E7D32;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 44px;
+}
+
+.crypto-coin-card .crypto-buy-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #66BB6A, #43A047);
+    transform: translateY(-1px);
+}
+
+.crypto-coin-card .crypto-buy-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ===== CROWDFUNDING GROUP CONTAINER - GAME STYLE ===== */
+.crowdfunding-group-container {
+    background: linear-gradient(145deg, #fefefe 0%, #f5f0eb 100%);
+    border: 2px solid var(--ayam-brown);
+    border-radius: 12px;
+    padding: 0.6rem;
+    animation: pop-in 0.3s ease-out;
+    box-shadow: 0 3px 10px rgba(139, 90, 43, 0.15);
+}
+
+.crowdfunding-group-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.3rem;
+    padding: 0 0.2rem;
+}
+
+.crowdfunding-group-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.9rem;
+    color: var(--ayam-brown);
+}
+
+.crowdfunding-group-actions {
+    display: flex;
+    gap: 0.3rem;
+    align-items: center;
+}
+
+.crowdfunding-group-actions .btn-info {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.7rem;
+}
+
+.crowdfunding-group-warning {
+    color: var(--risk-high);
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 0.4rem;
+    padding: 0.15rem 0.3rem;
+    background: rgba(168, 90, 90, 0.08);
+    border-radius: 6px;
+}
+
+.crowdfunding-projects-row {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: nowrap;
+    justify-content: stretch;
+    overflow-x: auto;
+    padding-bottom: 0.2rem;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+}
+
+.crowdfunding-projects-row::-webkit-scrollbar {
+    height: 4px;
+}
+
+.crowdfunding-projects-row::-webkit-scrollbar-thumb {
+    background: var(--ayam-brown);
+    border-radius: 2px;
+}
+
+.crowdfunding-project-card {
+    background: linear-gradient(145deg, #ffffff 0%, #faf8f5 100%);
+    border: 2px solid var(--stroke-color);
+    border-radius: 8px;
+    padding: 0.8rem;
+    flex: 1;
+    min-width: 120px;
+    box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+}
+
+.crowdfunding-project-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    border-color: var(--ayam-brown);
+}
+
+.crowdfunding-project-card:active {
+    transform: translateY(0);
+}
+
+.crowdfunding-project-card.high-risk {
+    border-color: var(--risk-high);
+}
+
+.project-header {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-bottom: 0.2rem;
+}
+
+.project-icon {
+    font-size: 0.9rem;
+}
+
+.project-name {
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.7rem;
+    color: var(--text-dark);
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.project-type-badge {
+    display: inline-block;
+    font-size: 0.5rem;
+    font-weight: 700;
+    color: white;
+    background: var(--ayam-brown);
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+    margin-bottom: 0.25rem;
+}
+
+.project-stats {
+    font-size: 0.6rem;
+    margin-bottom: 0.3rem;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.1rem;
+}
+
+.stat-row .success {
+    color: var(--money-green);
+    font-weight: 700;
+}
+
+.crowdfunding-buy-controls {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    align-items: stretch;
+    margin-top: 0.5rem;
+}
+
+.cf-input {
+    flex: 1;
+    min-width: 0;
+    padding: 0.75rem 0.5rem;
+    border: 2px solid var(--stroke-color);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: center;
+    min-height: 44px;
+    box-sizing: border-box;
+}
+
+.cf-buy-btn {
+    padding: 0.75rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    min-width: 70px;
+    border-radius: 6px;
+    white-space: nowrap;
+    background: linear-gradient(135deg, var(--ayam-brown), var(--ayam-brown-light));
+    color: white;
+    border: 2px solid var(--stroke-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 44px;
+}
+
+.cf-buy-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--ayam-brown-light), var(--ayam-brown));
+    transform: translateY(-1px);
+}
+
+.cf-buy-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ===== CROWDFUNDING INVESTMENTS SECTION ===== */
+.crowdfunding-investments-section {
+    margin-top: 1rem;
+    padding-top: 0.8rem;
+    border-top: 2px dashed var(--stroke-color);
+}
+
+.crowdfunding-investments-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.95rem;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+}
+
+.crowdfunding-investments-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.cf-investment-card {
+    background: white;
+    border: 2px solid var(--stroke-color);
+    border-radius: 8px;
+    padding: 0.6rem;
+    min-width: 140px;
+    flex: 1;
+    max-width: 180px;
+}
+
+.cf-investment-card.cf-failed {
+    background: #ffe6e6;
+    border-color: var(--risk-extreme);
+    opacity: 0.8;
+}
+
+.cf-investment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.3rem;
+}
+
+.cf-investment-name {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--text-dark);
+}
+
+.cf-status-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 0.1rem 0.3rem;
+    border-radius: 4px;
+}
+
+.cf-status-badge.locked {
+    background: var(--ayam-orange);
+    color: white;
+}
+
+.cf-status-badge.matured {
+    background: var(--money-green);
+    color: white;
+}
+
+.cf-status-badge.failed {
+    background: var(--risk-extreme);
+    color: white;
+}
+
+.cf-investment-details {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.cf-investment-value {
+    font-weight: 700;
+    color: var(--text-dark);
+    font-size: 0.85rem;
+    margin-top: 0.2rem;
+}
+
+.cf-investment-value.cf-loss {
+    color: var(--risk-extreme);
+    text-decoration: line-through;
+}
+
+/* ===== CROWDFUNDING INVESTMENTS LIST - COMPACT ===== */
+.crowdfunding-investments {
+    margin-top: 0.5rem;
+    padding-top: 0.4rem;
+    border-top: 1px dashed var(--stroke-color);
+}
+
+.crowdfunding-investments h4 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.75rem;
+    color: var(--text-dark);
+    margin-bottom: 0.4rem;
+}
+
+.cf-investments-row {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.3rem;
+    overflow-x: auto;
+    padding-bottom: 0.2rem;
+    -webkit-overflow-scrolling: touch;
+}
+
+.cf-investments-row::-webkit-scrollbar {
+    height: 3px;
+}
+
+.cf-investments-row::-webkit-scrollbar-thumb {
+    background: var(--ayam-orange);
+    border-radius: 2px;
+}
+
+.cf-investment-card {
+    background: white;
+    border: 1px solid var(--stroke-color);
+    border-radius: 6px;
+    padding: 0.4rem;
+    min-width: 100px;
+    flex-shrink: 0;
+}
+
+.cf-investment-card.active {
+    border-color: var(--ayam-orange);
+}
+
+.cf-investment-card.matured {
+    border-color: var(--money-green);
+    background: rgba(122, 147, 104, 0.08);
+}
+
+.cf-investment-card.failed {
+    border-color: var(--risk-extreme);
+    background: rgba(139, 73, 73, 0.08);
+}
+
+.cf-inv-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.2rem;
+    margin-bottom: 0.2rem;
+}
+
+.cf-inv-name {
+    font-weight: 700;
+    font-size: 0.6rem;
+    color: var(--text-dark);
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 60px;
+}
+
+.cf-inv-status {
+    font-size: 0.5rem;
+    font-weight: 700;
+    padding: 0.08rem 0.2rem;
+    border-radius: 3px;
+    white-space: nowrap;
+}
+
+.cf-inv-status.active {
+    background: var(--ayam-orange);
+    color: white;
+}
+
+.cf-inv-status.matured {
+    background: var(--money-green);
+    color: white;
+}
+
+.cf-inv-status.failed {
+    background: var(--risk-extreme);
+    color: white;
+}
+
+.cf-inv-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    font-size: 0.55rem;
+    color: var(--text-muted);
+    margin-bottom: 0.2rem;
+}
+
+.cf-inv-failure {
+    font-size: 0.5rem;
+    color: var(--risk-extreme);
+    font-style: italic;
+    margin-bottom: 0.2rem;
+}
+
+.cf-inv-progress {
+    height: 3px;
+    background: rgba(0,0,0,0.1);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.cf-inv-progress-fill {
+    height: 100%;
+    background: var(--money-green);
+    transition: width 0.5s ease;
+}
+
+.cf-inv-progress-fill.failed {
+    background: var(--risk-extreme);
+}
+
+/* ===== CROWDFUNDING FAILURE NOTIFICATION ===== */
+.crowdfunding-failure-notification {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, #ffe6e6, #ffcccc);
+    border: 4px solid var(--risk-extreme);
+    border-radius: 15px;
+    padding: 1.5rem;
+    max-width: 400px;
+    z-index: 1000;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    animation: pop-in 0.3s ease-out;
+}
+
+.cf-failure-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.8rem;
+}
+
+.cf-failure-icon {
+    font-size: 2rem;
+}
+
+.cf-failure-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.2rem;
+    color: var(--risk-extreme);
+}
+
+.cf-failure-message {
+    font-size: 0.9rem;
+    color: var(--text-dark);
+    margin-bottom: 1rem;
+    line-height: 1.4;
+}
+
+.cf-failure-dismiss {
+    width: 100%;
+    padding: 0.6rem;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    background: var(--risk-extreme);
+    color: white;
+    border: 3px solid var(--stroke-color);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.cf-failure-dismiss:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(139, 73, 73, 0.3);
+}
+
+/* ===== MOBILE RESPONSIVE - INVESTMENT MARKET ===== */
+/* Tablet landscape and smaller */
+@media (max-width: 1024px) {
+    .market-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.4rem;
+    }
+}
+
+/* Tablet portrait */
+@media (max-width: 768px) {
+    .market-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.4rem;
+    }
+
+    .market-card {
+        padding: 0.5rem;
+    }
+
+    .market-card .asset-name {
+        font-size: 0.75rem;
+    }
+
+    .market-card .card-price .price {
+        font-size: 0.85rem;
+    }
+
+    .market-card .btn-buy {
+        padding: 0.4rem;
+        font-size: 0.7rem;
+    }
+
+    /* Crypto horizontal scroll on mobile */
+    .crypto-group-container {
+        padding: 0.5rem;
+    }
+
+    .crypto-coins-row {
+        overflow-x: auto;
+        justify-content: flex-start;
+        padding-bottom: 0.3rem;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .crypto-coin-card {
+        min-width: 100px;
+        flex-shrink: 0;
+    }
+
+    /* Crowdfunding horizontal scroll on mobile */
+    .crowdfunding-group-container {
+        padding: 0.5rem;
+    }
+
+    .crowdfunding-projects-row {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        justify-content: flex-start;
+    }
+
+    .crowdfunding-project-card {
+        min-width: 100px;
+        flex-shrink: 0;
+    }
+
+    .cf-investments-row {
+        flex-direction: column;
+    }
+
+    .cf-investment-card {
+        max-width: 100%;
+    }
+
+    .crypto-coin-card .crypto-buy-controls,
+    .crowdfunding-buy-controls {
+        flex-direction: row;
+    }
+
+    .crypto-coin-card .crypto-input,
+    .cf-input {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .crypto-coin-card .crypto-buy-btn,
+    .cf-buy-btn {
+        width: auto;
+        flex-shrink: 0;
+    }
+}
+
+/* Mobile portrait - small screens */
+@media (max-width: 480px) {
+    .market-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.3rem;
+    }
+
+    .market-card {
+        padding: 0.4rem;
+        border-radius: 8px;
+    }
+
+    .market-card .asset-name {
+        font-size: 0.7rem;
+    }
+
+    .market-card .card-desc {
+        display: none; /* Hide description on very small screens */
+    }
+
+    .market-card .card-price .price {
+        font-size: 0.8rem;
+    }
+
+    .market-card .card-price .change {
+        font-size: 0.6rem;
+    }
+
+    .market-card .btn-buy {
+        padding: 0.35rem;
+        font-size: 0.65rem;
+    }
+
+    .market-card .btn-info {
+        padding: 0.1rem 0.3rem;
+        font-size: 0.6rem;
+    }
+
+    .market-card .risk-badge {
+        font-size: 0.55rem;
+        padding: 0.05rem 0.3rem;
+    }
+
+    /* Crypto on small mobile */
+    .crypto-group-container {
+        padding: 0.4rem;
+        border-radius: 10px;
+    }
+
+    .crypto-group-title {
+        font-size: 0.8rem;
+    }
+
+    .crypto-group-warning {
+        font-size: 0.55rem;
+        padding: 0.15rem;
+    }
+
+    .crypto-coin-card {
+        min-width: 85px;
+        padding: 0.4rem;
+    }
+
+    .crypto-coin-card .crypto-symbol {
+        font-size: 0.75rem;
+    }
+
+    .crypto-coin-price .price {
+        font-size: 0.65rem;
+    }
+
+    .crypto-coin-price .change {
+        font-size: 0.5rem;
+    }
+
+    .crypto-volatility {
+        font-size: 0.45rem;
+    }
+
+    .crypto-coin-card .crypto-input {
+        padding: 0.2rem;
+        font-size: 0.6rem;
+    }
+
+    .crypto-coin-card .crypto-buy-btn {
+        padding: 0.2rem 0.35rem;
+        font-size: 0.55rem;
+    }
+
+    /* Crowdfunding on small mobile */
+    .crowdfunding-group-container {
+        padding: 0.4rem;
+        border-radius: 10px;
+    }
+
+    .crowdfunding-group-title {
+        font-size: 0.8rem;
+    }
+
+    .crowdfunding-group-warning {
+        font-size: 0.5rem;
+    }
+
+    .crowdfunding-project-card {
+        min-width: 90px;
+        padding: 0.4rem;
+    }
+
+    .project-icon {
+        font-size: 0.8rem;
+    }
+
+    .project-name {
+        font-size: 0.6rem;
+    }
+
+    .project-type-badge {
+        font-size: 0.45rem;
+        padding: 0.08rem 0.2rem;
+    }
+
+    .project-stats {
+        font-size: 0.5rem;
+    }
+
+    .cf-input {
+        padding: 0.2rem;
+        font-size: 0.5rem;
+    }
+
+    .cf-buy-btn {
+        padding: 0.2rem 0.3rem;
+        font-size: 0.5rem;
+    }
+}
+
+/* Touch-friendly buttons for mobile */
+@media (hover: none) and (pointer: coarse) {
+    .market-card .btn-buy,
+    .crypto-coin-card .crypto-buy-btn,
+    .cf-buy-btn {
+        min-height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .crypto-coin-card .crypto-input,
+    .cf-input {
+        min-height: 32px;
+    }
+}

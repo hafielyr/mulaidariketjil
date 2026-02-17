@@ -1,0 +1,31 @@
+{
+  "name": "art-nouveau-anchoring-mcp",
+  "version": "1.0.0",
+  "description": "MCP server providing Art Nouveau visual anchoring references",
+  "type": "module",
+  "main": "build/index.js",
+  "bin": {
+    "art-nouveau-anchoring": "./build/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node build/index.js",
+    "dev": "tsx index.ts"
+  },
+  "keywords": [
+    "mcp",
+    "art-nouveau",
+    "alphonse-mucha",
+    "visual-anchoring"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.0"
+  }
+}

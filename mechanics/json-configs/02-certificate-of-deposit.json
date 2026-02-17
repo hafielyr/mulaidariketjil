@@ -1,0 +1,165 @@
+{
+  "product_id": "certificate_of_deposit",
+  "name": {
+    "en": "Certificate of Deposit (Time Deposit)",
+    "id": "Deposito Berjangka"
+  },
+  "category": "banking",
+  "regulatory": {
+    "regulator": "OJK (Otoritas Jasa Keuangan)",
+    "guarantee_institution": "LPS (Lembaga Penjamin Simpanan)",
+    "legal_basis": [
+      "UU No. 24 Tahun 2004 tentang LPS",
+      "PP No. 66 Tahun 2008"
+    ],
+    "lps_guarantee": {
+      "max_amount": 2000000000,
+      "max_amount_display": "Rp 2.000.000.000",
+      "requirements": [
+        "Tercatat dalam pembukuan bank",
+        "Tingkat bunga tidak melebihi tingkat bunga penjaminan LPS",
+        "Tidak melakukan tindakan yang merugikan bank"
+      ]
+    }
+  },
+  "game_mechanics": {
+    "risk_level": 1,
+    "risk_max": 5,
+    "risk_label": {
+      "en": "Very Low Risk",
+      "id": "Risiko Sangat Rendah"
+    },
+    "liquidity_score": 2,
+    "complexity_score": 2,
+    "min_age": 17,
+    "min_deposit": 1000000,
+    "typical_min_deposit": 8000000,
+    "interest_rate_by_tenor": {
+      "1_month": { "min": 0.025, "max": 0.040 },
+      "3_months": { "min": 0.030, "max": 0.045 },
+      "6_months": { "min": 0.035, "max": 0.050 },
+      "12_months": { "min": 0.040, "max": 0.055 },
+      "24_months": { "min": 0.045, "max": 0.060 }
+    },
+    "tenor_options": [
+      { "months": 1, "label_en": "1 Month", "label_id": "1 Bulan" },
+      { "months": 3, "label_en": "3 Months", "label_id": "3 Bulan" },
+      { "months": 6, "label_en": "6 Months", "label_id": "6 Bulan" },
+      { "months": 12, "label_en": "12 Months", "label_id": "12 Bulan" },
+      { "months": 24, "label_en": "24 Months", "label_id": "24 Bulan" }
+    ],
+    "rollover_options": [
+      {
+        "type": "ARO",
+        "name_en": "Auto Roll Over (Principal Only)",
+        "name_id": "Perpanjangan Otomatis (Pokok Saja)"
+      },
+      {
+        "type": "ARO_INTEREST",
+        "name_en": "Auto Roll Over with Interest",
+        "name_id": "Perpanjangan Otomatis dengan Bunga"
+      },
+      {
+        "type": "NON_ARO",
+        "name_en": "No Auto Roll Over",
+        "name_id": "Tanpa Perpanjangan Otomatis"
+      }
+    ],
+    "tax_on_interest": 0.20,
+    "early_withdrawal": {
+      "allowed": true,
+      "penalty_type": "forfeit_interest_plus_fee",
+      "penalty_percentage": 0.01,
+      "notice_days": 3
+    }
+  },
+  "game_events": [
+    {
+      "id": "maturity_reached",
+      "trigger": "tenor_complete",
+      "options": ["withdraw_all", "rollover", "partial_withdraw"]
+    },
+    {
+      "id": "interest_accrual",
+      "frequency": "daily",
+      "display": "on_maturity"
+    },
+    {
+      "id": "promo_rate",
+      "probability": 0.08,
+      "effect": "bonus_rate_new_deposit",
+      "bonus": 0.01
+    },
+    {
+      "id": "bi_rate_change",
+      "probability": 0.15,
+      "effect": "market_rate_adjustment"
+    },
+    {
+      "id": "bank_failure",
+      "probability": 0.001,
+      "effect": "lps_guarantee_activation"
+    }
+  ],
+  "player_actions": [
+    {
+      "action": "open_deposit",
+      "requirements": ["min_amount", "select_tenor", "select_rollover"]
+    },
+    {
+      "action": "early_withdrawal",
+      "penalty": "forfeit_interest_plus_1_percent",
+      "notice_required": true
+    },
+    {
+      "action": "partial_withdrawal_at_maturity",
+      "min_remaining": 1000000
+    },
+    {
+      "action": "change_rollover_option",
+      "timing": "before_maturity"
+    },
+    {
+      "action": "add_to_deposit",
+      "timing": "at_maturity_only"
+    }
+  ],
+  "scoring": {
+    "points_per_10000_interest": 1,
+    "bonus_longer_tenor": {
+      "6_months": 25,
+      "12_months": 50,
+      "24_months": 100
+    },
+    "penalty_early_withdrawal": -30,
+    "bonus_first_maturity": 50
+  },
+  "achievements": [
+    {
+      "id": "first_deposit",
+      "name_en": "Locked & Loaded",
+      "name_id": "Terkunci & Siap",
+      "condition": "open_first_time_deposit",
+      "points": 30
+    },
+    {
+      "id": "patient_investor",
+      "name_en": "Patient Investor",
+      "name_id": "Investor Sabar",
+      "condition": "hold_12_month_deposit_to_maturity",
+      "points": 75
+    },
+    {
+      "id": "compound_master",
+      "name_en": "Compound Master",
+      "name_id": "Master Bunga Berbunga",
+      "condition": "rollover_with_interest_3_times",
+      "points": 100
+    }
+  ],
+  "ui": {
+    "icon": "lock_clock",
+    "color_primary": "#2196F3",
+    "color_secondary": "#64B5F6"
+  }
+}

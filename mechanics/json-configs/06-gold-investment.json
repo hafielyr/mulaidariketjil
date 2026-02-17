@@ -1,0 +1,150 @@
+{
+  "product_id": "gold_investment",
+  "product_name": {
+    "en": "Gold Investment",
+    "id": "Investasi Emas"
+  },
+  "category": "commodity",
+  "risk_level": 2,
+  "risk_label": {
+    "en": "Low-Medium Risk",
+    "id": "Risiko Rendah-Menengah"
+  },
+
+  "regulatory_compliance": {
+    "regulator": "BAPPEBTI / OJK",
+    "legal_basis": [
+      "Peraturan BAPPEBTI tentang Perdagangan Emas Fisik Secara Digital",
+      "POJK No. 17 Tahun 2024 tentang Kegiatan Usaha Bulion"
+    ],
+    "requirements": {
+      "physical_backing": "1:1 ratio - every gram of digital gold backed by physical gold",
+      "storage": "Licensed depository required",
+      "minimum_gold_trader": "10,000 grams stored before trading"
+    },
+    "guarantee": {
+      "institution": null,
+      "physical_asset_backed": true,
+      "note": "Physical gold held in licensed depository"
+    },
+    "licensed_traders": [
+      "Treasury", "IndoGold", "Pluang", "LakuEmas", "QuantumMetal", "Shariacoin"
+    ]
+  },
+
+  "game_mechanics": {
+    "base_stats": {
+      "risk_score": 2,
+      "liquidity_score": 4,
+      "complexity_score": 2,
+      "potential_return_score": 3
+    },
+    "product_variants": {
+      "digital_gold": {
+        "name": { "en": "Digital Gold", "id": "Emas Digital" },
+        "min_purchase": 5000,
+        "min_gram": 0.0001,
+        "storage_fee": 0,
+        "features": ["buy_anytime", "sell_anytime", "physical_redemption"]
+      },
+      "physical_bars": {
+        "name": { "en": "Physical Gold Bars", "id": "Emas Batangan" },
+        "available_weights": [0.5, 1, 2, 5, 10, 25, 50, 100, 250, 500, 1000],
+        "unit": "gram",
+        "storage": "self_or_bank_safe_deposit"
+      }
+    },
+    "financial_params": {
+      "min_investment_digital": 5000,
+      "price_reference": "London Gold Fix / Antam",
+      "spread": {
+        "buy_sell_difference": 0.02,
+        "typical_range": [0.015, 0.03]
+      },
+      "fees": {
+        "digital_transaction": 0,
+        "physical_redemption": 0.02
+      },
+      "tax": {
+        "purchase_pph22": 0.0025,
+        "sale_pph22_with_npwp": 0.015,
+        "sale_pph22_without_npwp": 0.03
+      }
+    },
+    "actions": [
+      {
+        "action": "buy_digital",
+        "min_amount": 5000,
+        "execution": "instant"
+      },
+      {
+        "action": "sell_digital",
+        "min_amount": 5000,
+        "execution": "instant"
+      },
+      {
+        "action": "redeem_physical",
+        "min_gram": 1,
+        "available_weights": [1, 2, 5, 10, 25, 50, 100],
+        "fee": 0.02
+      }
+    ]
+  },
+
+  "game_events": [
+    {
+      "event_id": "global_crisis",
+      "probability": 0.03,
+      "effect": "price_surge",
+      "range": [1.05, 1.15],
+      "message": {
+        "en": "Global uncertainty - investors flock to gold!",
+        "id": "Ketidakpastian global - investor berbondong-bondong ke emas!"
+      }
+    },
+    {
+      "event_id": "currency_depreciation",
+      "probability": 0.08,
+      "effect": "local_price_increase",
+      "range": [1.02, 1.08],
+      "message": {
+        "en": "Rupiah weakens - gold price in IDR rises",
+        "id": "Rupiah melemah - harga emas dalam IDR naik"
+      }
+    },
+    {
+      "event_id": "gold_rally",
+      "probability": 0.05,
+      "effect": "price_surge",
+      "range": [1.03, 1.08],
+      "message": {
+        "en": "Gold rallies on inflation fears",
+        "id": "Emas naik karena kekhawatiran inflasi"
+      }
+    },
+    {
+      "event_id": "gold_correction",
+      "probability": 0.05,
+      "effect": "price_drop",
+      "range": [0.93, 0.97],
+      "message": {
+        "en": "Gold corrects as risk appetite returns",
+        "id": "Emas terkoreksi karena selera risiko kembali"
+      }
+    }
+  ],
+
+  "scoring": {
+    "points_per_gram_owned": 5,
+    "points_per_percent_gain": 8,
+    "bonus_100_gram_milestone": 100,
+    "achievement_first_gold": 25,
+    "achievement_physical_redemption": 50
+  },
+
+  "ui_config": {
+    "icon": "gold_bar",
+    "color_primary": "#FFC107",
+    "color_secondary": "#FFD54F"
+  }
+}

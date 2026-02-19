@@ -310,40 +310,43 @@
                             <span class="an-toggle-label">@(_selectedLanguage == Language.Indonesian ? "Light Mode" : "Light Mode")</span>
                             <span class="an-toggle-desc">@(_selectedLanguage == Language.Indonesian ? "Penjelasan sederhana tanpa detail regulasi" : "Simple explanations without regulatory details")</span>
                         </div>
-                    </div>
-
-                    <!-- Language Dropdown -->
-                    <div class="an-lang-dropdown-wrapper">
-                        <button class="an-lang-dropdown-btn" @onclick="() => _showLangDropdown = !_showLangDropdown">
-                            @(_selectedLanguage == Language.Indonesian ? "🇮🇩 ID" : "🇬🇧 EN")
-                        </button>
-                        @if (_showLangDropdown)
-                        {
-                            <div class="an-lang-dropdown-menu">
-                                <button class="an-lang-dropdown-item @(_selectedLanguage == Language.Indonesian ? "selected" : "")"
-                                        @onclick="() => { _selectedLanguage = Language.Indonesian; _showLangDropdown = false; }">
-                                    🇮🇩 Bahasa Indonesia
-                                </button>
-                                <button class="an-lang-dropdown-item @(_selectedLanguage == Language.English ? "selected" : "")"
-                                        @onclick="() => { _selectedLanguage = Language.English; _showLangDropdown = false; }">
-                                    🇬🇧 English
-                                </button>
-                            </div>
-                        }
+                        <!-- Language Dropdown -->
+                        <div class="an-lang-dropdown-wrapper">
+                            <button class="an-lang-dropdown-btn" @onclick="() => _showLangDropdown = !_showLangDropdown" title="Change Language">
+                                @(_selectedLanguage == Language.Indonesian ? "🇮🇩" : "🇺🇸")
+                            </button>
+                            @if (_showLangDropdown)
+                            {
+                                <div class="an-lang-dropdown-menu">
+                                    <button class="an-lang-dropdown-item @(_selectedLanguage == Language.Indonesian ? "selected" : "")"
+                                            @onclick="() => { _selectedLanguage = Language.Indonesian; _showLangDropdown = false; }">
+                                        🇮🇩 Bahasa Indonesia
+                                    </button>
+                                    <button class="an-lang-dropdown-item @(_selectedLanguage == Language.English ? "selected" : "")"
+                                            @onclick="() => { _selectedLanguage = Language.English; _showLangDropdown = false; }">
+                                        🇺🇸 English
+                                    </button>
+                                </div>
+                            }
+                        </div>
                     </div>
 
                     <!-- Mode Buttons with Icons -->
                     <div class="an-mode-buttons-icon">
-                        <button class="an-mode-icon-btn" @onclick="ShowTutorial" disabled="@(string.IsNullOrWhiteSpace(_playerName) || !_isConnected)" title="Solo Game">
-                            <span class="an-mode-icon">👤</span>
-                            <span class="an-mode-label">@(_selectedLanguage == Language.Indonesian ? "Solo" : "Solo")</span>
+                        <button class="an-mode-icon-btn solo-btn" @onclick="ShowTutorial" disabled="@(string.IsNullOrWhiteSpace(_playerName) || !_isConnected)" title="Solo Game">
+                            <svg class="an-mode-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+                            </svg>
+                            <span class="an-mode-label">Solo</span>
                             @if (!_isConnected)
                             {
                                 <span class="an-mode-status">@(_selectedLanguage == Language.Indonesian ? "Menghubungkan..." : "Connecting...")</span>
                             }
                         </button>
-                        <button class="an-mode-icon-btn" @onclick='() => _multiplayerScreen = "create-join"' disabled="@(string.IsNullOrWhiteSpace(_playerName) || !_isConnected)" title="Multiplayer Game">
-                            <span class="an-mode-icon">👥</span>
+                        <button class="an-mode-icon-btn multi-btn" @onclick='() => _multiplayerScreen = "create-join"' disabled="@(string.IsNullOrWhiteSpace(_playerName) || !_isConnected)" title="Multiplayer Game">
+                            <svg class="an-mode-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                            </svg>
                             <span class="an-mode-label">@(_selectedLanguage == Language.Indonesian ? "Multiplayer" : "Multiplayer")</span>
                         </button>
                     </div>

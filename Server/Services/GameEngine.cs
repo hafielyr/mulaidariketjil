@@ -3,6 +3,30 @@ using Microsoft.Extensions.Logging;
 
 namespace InvestmentGame.Server.Services;
 
+/// <summary>
+/// Holds shared market state for a multiplayer room so all players see the same prices.
+/// Uses a seeded Random to produce deterministic price sequences per (year, month).
+/// </summary>
+public class RoomMarketState
+{
+    public int SharedSeed { get; set; }
+    public List<StockInfo> AvailableStocks { get; set; } = new();
+    public List<CryptoInfo> AvailableCryptos { get; set; } = new();
+    public List<CrowdfundingProject> AvailableCrowdfunding { get; set; } = new();
+    public Dictionary<string, decimal> InitialPrices { get; set; } = new();
+    public Dictionary<int, int> EventMonthPerYear { get; set; } = new(); // year → month (7-10)
+    public Dictionary<int, int> EventIndexPerYear { get; set; } = new(); // year → event list index
+    public Dictionary<int, decimal> EventCostPerYear { get; set; } = new(); // year → cost
+
+    /// <summary>
+    /// Get a deterministic Random for a given year+month, so all players see the same prices.
+    /// </summary>
+    public Random GetRandomForMonth(int year, int month)
+    {
+        return new Random(SharedSeed ^ (year * 100 + month));
+    }
+}
+
 public class GameEngine
 {
     private readonly Dictionary<string, AssetDefinition> _assets;
@@ -14,6 +38,7 @@ public class GameEngine
     private readonly List<CrowdfundingProject> _allCrowdfundingProjects;
     private readonly Random _random = new();
     private readonly Dictionary<string, GameSession> _sessions = new();
+    private readonly Dictionary<string, RoomMarketState> _roomMarketStates = new(); // roomCode → market state
     private readonly object _lock = new();
     private readonly ILogger<GameEngine> _logger;
 
@@ -713,6 +738,229 @@ public class GameEngine
         lock (_lock)
         {
             _sessions.Remove(connectionId);
+        }
+    }
+
+    // === MULTIPLAYER SESSION MANAGEMENT ===
+
+    public RoomMarketState CreateRoomMarketState(string roomCode)
+    {
+        lock (_lock)
+        {
+            var seed = _random.Next();
+            var rng = new Random(seed);
+
+            var state = new RoomMarketState { SharedSeed = seed };
+
+            // Select 5 random stocks (shared for all room players)
+            state.AvailableStocks = _allStocks.OrderBy(_ => rng.Next()).Take(5).Select(s => new StockInfo
+            {
+                Ticker = s.Ticker,
+                CompanyName = s.CompanyName,
+                Sector = s.Sector,
+                CurrentPrice = s.CurrentPrice,
+                PreviousPrice = s.PreviousPrice,
+                LastPriceUpdateMonth = 0,
+                DividendYield = s.DividendYield
+            }).ToList();
+
+            // Shared cryptos
+            state.AvailableCryptos = _allCryptos.Select(c => new CryptoInfo
+            {
+                Symbol = c.Symbol,
+                Name = c.Name,
+                CurrentPrice = c.CurrentPrice,
+                PreviousPrice = c.PreviousPrice
+            }).ToList();
+
+            // Shared crowdfunding projects
+            state.AvailableCrowdfunding = _allCrowdfundingProjects.OrderBy(_ => rng.Next()).Take(3).Select(p => new CrowdfundingProject
+            {
+                ProjectId = p.ProjectId,
+                ProjectName = p.ProjectName,
+                ProjectType = p.ProjectType,
+                Description = p.Description,
+                FundingGoal = p.FundingGoal,
+                CurrentFunding = 0,
+                MinimumInvestment = p.MinimumInvestment,
+                DaysRemaining = 90 + rng.Next(-30, 30),
+                ExpectedReturn = p.ExpectedReturn,
+                RiskLevel = p.RiskLevel,
+                IsActive = true
+            }).ToList();
+
+            // Pre-generate initial prices
+            foreach (var asset in _assets)
+            {
+                if (!asset.Value.IsFixedIncome && asset.Value.Category != "savings" && asset.Value.Category != "deposito" && asset.Value.Category != "bond")
+                {
+                    state.InitialPrices[asset.Key] = asset.Value.BasePrice;
+                }
+            }
+
+            // Pre-generate event months and types for all years
+            for (int year = 2; year <= GameSession.MAX_YEARS + 1; year++)
+            {
+                state.EventMonthPerYear[year] = rng.Next(7, 11);
+                state.EventIndexPerYear[year] = rng.Next(_events.Count);
+                var costPercent = 0.20m + (decimal)(rng.NextDouble() * 0.25);
+                var cost = Math.Round(GameSession.YEARLY_INCOME * costPercent / 100_000) * 100_000;
+                state.EventCostPerYear[year] = Math.Max(2_000_000, Math.Min(4_500_000, cost));
+            }
+
+            _roomMarketStates[roomCode] = state;
+            return state;
+        }
+    }
+
+    public GameSession CreateMultiplayerSession(string playerId, string connectionId, string roomCode, AgeMode ageMode, Language language)
+    {
+        lock (_lock)
+        {
+            if (!_roomMarketStates.TryGetValue(roomCode, out var marketState))
+                throw new InvalidOperationException($"No market state for room {roomCode}");
+
+            var session = new GameSession
+            {
+                PlayerId = playerId,
+                ConnectionId = connectionId,
+                AgeMode = ageMode,
+                Language = language,
+                RoomCode = roomCode,
+                IsMultiplayer = true,
+                ShowIntro = true,
+                IntroAssetType = "tabungan"
+            };
+
+            // Use shared initial prices
+            foreach (var kvp in marketState.InitialPrices)
+            {
+                session.AssetPrices[kvp.Key] = kvp.Value;
+                session.PreviousPrices[kvp.Key] = kvp.Value;
+            }
+
+            // Use shared event month for year 1
+            if (marketState.EventMonthPerYear.TryGetValue(2, out var eventMonth))
+            {
+                session.EventMonthForYear = eventMonth;
+            }
+            else
+            {
+                session.EventMonthForYear = _random.Next(7, 11);
+            }
+            session.EventOccurredThisYear = false;
+
+            // Clone shared stocks for this player
+            session.InitializeStocks(marketState.AvailableStocks.Select(s => new StockInfo
+            {
+                Ticker = s.Ticker, CompanyName = s.CompanyName, Sector = s.Sector,
+                CurrentPrice = s.CurrentPrice, PreviousPrice = s.PreviousPrice,
+                LastPriceUpdateMonth = 0, DividendYield = s.DividendYield
+            }).ToList());
+
+            // Clone shared cryptos
+            session.InitializeCryptos(marketState.AvailableCryptos.Select(c => new CryptoInfo
+            {
+                Symbol = c.Symbol, Name = c.Name,
+                CurrentPrice = c.CurrentPrice, PreviousPrice = c.PreviousPrice
+            }).ToList());
+
+            // Clone shared crowdfunding
+            session.InitializeCrowdfunding(marketState.AvailableCrowdfunding.Select(p => new CrowdfundingProject
+            {
+                ProjectId = p.ProjectId, ProjectName = p.ProjectName, ProjectType = p.ProjectType,
+                Description = p.Description, FundingGoal = p.FundingGoal, CurrentFunding = 0,
+                MinimumInvestment = p.MinimumInvestment, DaysRemaining = p.DaysRemaining,
+                ExpectedReturn = p.ExpectedReturn, RiskLevel = p.RiskLevel, IsActive = true
+            }).ToList());
+
+            session.UnlockedAssets.Add("tabungan");
+            session.AddLogEntry(ageMode == AgeMode.Kids
+                ? "Selamat datang di Tjoean! Mari belajar investasi!"
+                : "Welcome to Tjoean Investment Simulator. Let's learn to invest wisely.");
+
+            // Initialize bot
+            var initialSavings = session.BotCashBalance * 0.05m;
+            session.BotSavingsBalance = initialSavings;
+            session.BotCashBalance -= initialSavings;
+
+            _sessions[connectionId] = session;
+            return session;
+        }
+    }
+
+    public List<GameSession> GetRoomSessions(string roomCode)
+    {
+        lock (_lock)
+        {
+            return _sessions.Values.Where(s => s.RoomCode == roomCode).ToList();
+        }
+    }
+
+    public List<LeaderboardEntry> GetLeaderboard(string roomCode)
+    {
+        lock (_lock)
+        {
+            var sessions = _sessions.Values.Where(s => s.RoomCode == roomCode).ToList();
+            var entries = new List<LeaderboardEntry>();
+
+            foreach (var s in sessions)
+            {
+                entries.Add(new LeaderboardEntry
+                {
+                    PlayerName = s.PlayerId,
+                    NetWorth = s.NetWorth,
+                    IsBot = false,
+                    TotalProfit = s.NetWorth - 5_000_000 - (s.CurrentYear - 1) * GameSession.YEARLY_INCOME
+                });
+            }
+
+            // Add bot from the first session (all bots have same market conditions)
+            if (sessions.Count > 0)
+            {
+                var firstSession = sessions[0];
+                entries.Add(new LeaderboardEntry
+                {
+                    PlayerName = "Financial Advisor Bot",
+                    NetWorth = firstSession.BotNetWorth,
+                    IsBot = true,
+                    TotalProfit = firstSession.BotNetWorth - 5_000_000 - (firstSession.CurrentYear - 1) * GameSession.YEARLY_INCOME
+                });
+            }
+
+            // Sort and rank
+            entries = entries.OrderByDescending(e => e.NetWorth).ToList();
+            for (int i = 0; i < entries.Count; i++)
+            {
+                entries[i].Rank = i + 1;
+            }
+
+            return entries;
+        }
+    }
+
+    public bool AreAllRoomPlayersFinished(string roomCode)
+    {
+        lock (_lock)
+        {
+            var sessions = _sessions.Values.Where(s => s.RoomCode == roomCode).ToList();
+            return sessions.Count > 0 && sessions.All(s => s.IsGameOver);
+        }
+    }
+
+    public RoomMarketState? GetRoomMarketState(string roomCode)
+    {
+        lock (_lock)
+        {
+            return _roomMarketStates.GetValueOrDefault(roomCode);
+        }
+    }
+
+    public void RemoveRoomMarketState(string roomCode)
+    {
+        lock (_lock)
+        {
+            _roomMarketStates.Remove(roomCode);
         }
     }
 
@@ -1527,7 +1775,15 @@ public class GameEngine
         // Randomize event month at the start of each year (between month 7-10)
         if (session.CurrentMonth == 1 && session.EventMonthForYear == 0)
         {
-            session.EventMonthForYear = _random.Next(7, 11); // 7 to 10 inclusive
+            if (session.IsMultiplayer && session.RoomCode != null &&
+                _roomMarketStates.TryGetValue(session.RoomCode, out var ms))
+            {
+                session.EventMonthForYear = ms.EventMonthPerYear.GetValueOrDefault(session.CurrentYear, _random.Next(7, 11));
+            }
+            else
+            {
+                session.EventMonthForYear = _random.Next(7, 11);
+            }
             session.EventOccurredThisYear = false;
         }
 
@@ -1543,7 +1799,16 @@ public class GameEngine
         {
             session.CurrentMonth = 1;
             session.CurrentYear++;
-            session.EventMonthForYear = _random.Next(7, 11); // Set new random month for next year
+
+            if (session.IsMultiplayer && session.RoomCode != null &&
+                _roomMarketStates.TryGetValue(session.RoomCode, out var rms))
+            {
+                session.EventMonthForYear = rms.EventMonthPerYear.GetValueOrDefault(session.CurrentYear, _random.Next(7, 11));
+            }
+            else
+            {
+                session.EventMonthForYear = _random.Next(7, 11);
+            }
             session.EventOccurredThisYear = false;
 
             session.CashBalance += GameSession.YEARLY_INCOME;
@@ -2065,8 +2330,21 @@ public class GameEngine
         }
     }
 
+    private Random GetRngForSession(GameSession session)
+    {
+        if (session.IsMultiplayer && session.RoomCode != null)
+        {
+            var marketState = _roomMarketStates.GetValueOrDefault(session.RoomCode);
+            if (marketState != null)
+                return marketState.GetRandomForMonth(session.CurrentYear, session.CurrentMonth);
+        }
+        return _random;
+    }
+
     private void UpdateMarketPrices(GameSession session)
     {
+        var rng = GetRngForSession(session);
+
         foreach (var asset in _assets.Where(a => !a.Value.IsFixedIncome && a.Value.Category != "stock" && a.Value.Category != "crypto"))
         {
             if (!session.AssetPrices.ContainsKey(asset.Key)) continue;
@@ -2077,12 +2355,12 @@ public class GameEngine
             decimal changePercent;
             if (asset.Value.AlwaysPositive)
             {
-                changePercent = (decimal)(_random.NextDouble() * (double)(asset.Value.MaxReturn - asset.Value.MinReturn) + (double)asset.Value.MinReturn);
+                changePercent = (decimal)(rng.NextDouble() * (double)(asset.Value.MaxReturn - asset.Value.MinReturn) + (double)asset.Value.MinReturn);
             }
             else
             {
                 var range = asset.Value.MaxReturn - asset.Value.MinReturn;
-                changePercent = asset.Value.MinReturn + (decimal)(_random.NextDouble() * (double)range);
+                changePercent = asset.Value.MinReturn + (decimal)(rng.NextDouble() * (double)range);
             }
 
             var newPrice = prevPrice * (1 + changePercent);
@@ -2096,15 +2374,17 @@ public class GameEngine
 
     private void UpdateStockPrices(GameSession session)
     {
+        var rng = GetRngForSession(session);
+
         foreach (var stock in session.AvailableStocks)
         {
             stock.PreviousPrice = stock.CurrentPrice;
 
             // Random change between -15% to +20%
-            var changePercent = (decimal)(_random.NextDouble() * 0.35 - 0.15);
+            var changePercent = (decimal)(rng.NextDouble() * 0.35 - 0.15);
 
             // 10% chance of big move
-            if (_random.NextDouble() < 0.10)
+            if (rng.NextDouble() < 0.10)
             {
                 changePercent *= 2;
             }
@@ -2117,6 +2397,8 @@ public class GameEngine
 
     private void UpdateCryptoPrices(GameSession session)
     {
+        var rng = GetRngForSession(session);
+
         foreach (var crypto in session.AvailableCryptos)
         {
             crypto.PreviousPrice = crypto.CurrentPrice;
@@ -2127,7 +2409,7 @@ public class GameEngine
 
             // Calculate random change within the volatility range
             var range = maxChange - minChange;
-            var baseChange = minChange + (decimal)(_random.NextDouble() * (double)range);
+            var baseChange = minChange + (decimal)(rng.NextDouble() * (double)range);
 
             var newPrice = crypto.CurrentPrice * (1 + baseChange);
             // Minimum price: 1 IDR
@@ -2138,14 +2420,26 @@ public class GameEngine
 
     private void TriggerMonthlyEvent(GameSession session)
     {
-        var evt = _events[_random.Next(_events.Count)];
-        session.ActiveEvent = evt;
+        RandomEvent evt;
+        decimal randomizedCost;
 
-        // Randomize event cost: 20-45% of yearly income (10M)
-        // Range: 2,000,000 to 4,500,000 - unforeseen expenses are impactful
-        var costPercent = 0.20m + (decimal)(_random.NextDouble() * 0.25); // 20% to 45%
-        var randomizedCost = Math.Round(GameSession.YEARLY_INCOME * costPercent / 100_000) * 100_000; // Round to nearest 100K
-        randomizedCost = Math.Max(2_000_000, Math.Min(4_500_000, randomizedCost)); // Clamp to range
+        if (session.IsMultiplayer && session.RoomCode != null &&
+            _roomMarketStates.TryGetValue(session.RoomCode, out var marketState))
+        {
+            // Use pre-generated event data for multiplayer
+            var eventIdx = marketState.EventIndexPerYear.GetValueOrDefault(session.CurrentYear, _random.Next(_events.Count));
+            evt = _events[eventIdx % _events.Count];
+            randomizedCost = marketState.EventCostPerYear.GetValueOrDefault(session.CurrentYear, 3_000_000);
+        }
+        else
+        {
+            evt = _events[_random.Next(_events.Count)];
+            var costPercent = 0.20m + (decimal)(_random.NextDouble() * 0.25);
+            randomizedCost = Math.Round(GameSession.YEARLY_INCOME * costPercent / 100_000) * 100_000;
+            randomizedCost = Math.Max(2_000_000, Math.Min(4_500_000, randomizedCost));
+        }
+
+        session.ActiveEvent = evt;
         session.EventCost = randomizedCost;
 
         session.IsEventPending = true;

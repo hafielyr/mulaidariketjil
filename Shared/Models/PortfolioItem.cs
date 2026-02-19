@@ -192,6 +192,55 @@ public class BondRate
     public decimal MinimumInvestment { get; set; } = 1_000_000;
 }
 
+// === MULTIPLAYER MODELS ===
+
+public enum RoomStatus
+{
+    Waiting,
+    InProgress,
+    Finished
+}
+
+public class RoomInfo
+{
+    public string RoomCode { get; set; } = string.Empty;
+    public string HostConnectionId { get; set; } = string.Empty;
+    public string HostPlayerName { get; set; } = string.Empty;
+    public AgeMode AgeMode { get; set; } = AgeMode.Adult;
+    public Language Language { get; set; } = Language.Indonesian;
+    public int MaxPlayers { get; set; } = 4;
+    public List<RoomPlayer> Players { get; set; } = new();
+    public RoomStatus Status { get; set; } = RoomStatus.Waiting;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+}
+
+public class RoomPlayer
+{
+    public string ConnectionId { get; set; } = string.Empty;
+    public string PlayerName { get; set; } = string.Empty;
+    public bool IsHost { get; set; }
+    public bool IsReady { get; set; }
+    public bool IsConnected { get; set; } = true;
+}
+
+public class PlayerSummary
+{
+    public string PlayerName { get; set; } = string.Empty;
+    public decimal NetWorth { get; set; }
+    public bool IsConnected { get; set; } = true;
+    public int CurrentYear { get; set; }
+    public int CurrentMonth { get; set; }
+}
+
+public class LeaderboardEntry
+{
+    public int Rank { get; set; }
+    public string PlayerName { get; set; } = string.Empty;
+    public decimal NetWorth { get; set; }
+    public bool IsBot { get; set; }
+    public decimal TotalProfit { get; set; }
+}
+
 public class GameState
 {
     public string PlayerId { get; set; } = string.Empty;
@@ -232,6 +281,14 @@ public class GameState
 
     // Bot state for comparison at game over
     public BotState? BotState { get; set; }
+
+    // Multiplayer fields
+    public string? RoomCode { get; set; }
+    public bool IsMultiplayer { get; set; }
+    public List<PlayerSummary>? PlayerSummaries { get; set; }
+    public bool IsHost { get; set; }
+    public bool AllPlayersFinished { get; set; }
+    public List<LeaderboardEntry>? FinalLeaderboard { get; set; }
 
     // Player portfolio breakdown percentages for pie chart
     public decimal PlayerCashPercent { get; set; }

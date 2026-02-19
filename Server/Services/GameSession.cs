@@ -8,6 +8,10 @@ public class GameSession
     public string ConnectionId { get; set; } = string.Empty;
     public AgeMode AgeMode { get; set; } = AgeMode.Adult;
     public Language Language { get; set; } = Language.Indonesian;
+
+    // Multiplayer
+    public string? RoomCode { get; set; }
+    public bool IsMultiplayer { get; set; }
     public int CurrentYear { get; set; } = 1;
     public int CurrentMonth { get; set; } = 1;
     public int MonthProgress { get; set; } = 0;
@@ -186,7 +190,10 @@ public class GameSession
             PlayerSavingsPercent = playerSavingsPct,
             PlayerDepositoPercent = playerDepositoPct,
             PlayerBondPercent = playerBondPct,
-            PlayerPortfolioPercent = playerPortfolioPct
+            PlayerPortfolioPercent = playerPortfolioPct,
+            // Multiplayer
+            RoomCode = RoomCode,
+            IsMultiplayer = IsMultiplayer
         };
     }
 

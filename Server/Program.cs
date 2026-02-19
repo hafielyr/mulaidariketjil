@@ -8,8 +8,9 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddSignalR();
 
-// Register GameEngine as singleton (in-memory state)
+// Register GameEngine and RoomManager as singletons (in-memory state)
 builder.Services.AddSingleton<GameEngine>();
+builder.Services.AddSingleton<RoomManager>();
 
 // Configure CORS for development
 builder.Services.AddCors(options =>

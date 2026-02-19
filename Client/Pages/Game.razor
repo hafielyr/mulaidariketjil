@@ -8,16 +8,7 @@
 <PageTitle>Tjoean - Game Edukasi Investasi</PageTitle>
 
 <div class="game-container">
-    @if (!_isConnected)
-    {
-        <div class="loading-screen">
-            <div class="mascot-container">🐔</div>
-            <h1>TJOEAN</h1>
-            <p>Game Edukasi Investasi</p>
-            <p class="loading-text">@_statusMessage</p>
-        </div>
-    }
-    else if (_showTutorial)
+    @if (_showTutorial)
     {
         <!-- Tutorial Modal - Art Nouveau themed -->
         <div class="tut-overlay" @onclick="SkipTutorial">
@@ -42,7 +33,7 @@
                     {
                         <div class="tut-slide">
                             <div class="tut-emblem">
-                                <svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="36" stroke="#C5A059" stroke-width="1"/><g transform="translate(40,42)" opacity="0.8"><ellipse cx="0" cy="4" rx="14" ry="12" fill="none" stroke="#C5A059" stroke-width="1"/><line x1="-4" y1="-6" x2="4" y2="-6" stroke="#C5A059" stroke-width="1.2" stroke-linecap="round"/><circle cx="0" cy="-14" r="7" fill="none" stroke="#CD853F" stroke-width="1"/><path d="M-3 -21C-1 -25 1 -25 2 -22C3 -26 5 -25 4 -21C6 -24 8 -23 6 -20" stroke="#8B0000" stroke-width="0.7" fill="#8B0000" opacity="0.4"/><path d="M5 -14L9 -13L5 -11" stroke="#C5A059" stroke-width="0.6" fill="#C5A059" opacity="0.3"/><circle cx="-1" cy="-15" r="1.2" fill="#C5A059" opacity="0.6"/></g></svg>
+                                <img src="images/coin-front.jpg" alt="Orang Utan Capital" />
                             </div>
                             <h2 class="tut-title">Selamat Datang di Tjoean</h2>
                             <p class="tut-text">
@@ -145,7 +136,7 @@
                     {
                         <div class="tut-slide">
                             <div class="tut-emblem">
-                                <svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="36" stroke="#C5A059" stroke-width="1"/><g transform="translate(40,42)" opacity="0.8"><ellipse cx="0" cy="4" rx="14" ry="12" fill="none" stroke="#C5A059" stroke-width="1"/><line x1="-4" y1="-6" x2="4" y2="-6" stroke="#C5A059" stroke-width="1.2" stroke-linecap="round"/><circle cx="0" cy="-14" r="7" fill="none" stroke="#CD853F" stroke-width="1"/><path d="M-3 -21C-1 -25 1 -25 2 -22C3 -26 5 -25 4 -21C6 -24 8 -23 6 -20" stroke="#8B0000" stroke-width="0.7" fill="#8B0000" opacity="0.4"/><path d="M5 -14L9 -13L5 -11" stroke="#C5A059" stroke-width="0.6" fill="#C5A059" opacity="0.3"/><circle cx="-1" cy="-15" r="1.2" fill="#C5A059" opacity="0.6"/></g></svg>
+                                <img src="images/coin-front.jpg" alt="Orang Utan Capital" />
                             </div>
                             <h2 class="tut-title">Welcome to Tjoean</h2>
                             <p class="tut-text">
@@ -263,7 +254,7 @@
             </div>
         </div>
     }
-    else if (_gameState == null)
+    else if (_gameState == null && _multiplayerScreen == "none")
     {
         <div class="start-screen">
             <!-- Background botanical SVG decorations -->
@@ -288,39 +279,9 @@
                 <svg class="an-start-corner an-start-corner--bl" viewBox="0 0 80 80" fill="none"><path d="M4 76C4 76 4 32 12 20C20 8 36 4 76 4" stroke="#C5A059" stroke-width="1.2" stroke-linecap="round"/><path d="M12 20C12 20 6 14 10 8C14 2 20 4 20 8C20 12 14 15 12 20Z" fill="#C5A059" opacity="0.25"/></svg>
                 <svg class="an-start-corner an-start-corner--br" viewBox="0 0 80 80" fill="none"><path d="M4 76C4 76 4 32 12 20C20 8 36 4 76 4" stroke="#C5A059" stroke-width="1.2" stroke-linecap="round"/><path d="M12 20C12 20 6 14 10 8C14 2 20 4 20 8C20 12 14 15 12 20Z" fill="#C5A059" opacity="0.25"/></svg>
 
-                <!-- Celengan Ayam (Rooster Bank) emblem -->
+                <!-- Orangutan emblem -->
                 <div class="an-start-emblem">
-                    <svg viewBox="0 0 100 100" fill="none">
-                        <circle cx="50" cy="50" r="46" stroke="#C5A059" stroke-width="1.2" opacity="0.5"/>
-                        <circle cx="50" cy="50" r="42" stroke="#B87333" stroke-width="0.4" opacity="0.25"/>
-                        <g transform="translate(50,50)" opacity="0.85">
-                            <!-- Rooster body (bank shape - rounded) -->
-                            <ellipse cx="0" cy="8" rx="16" ry="14" fill="none" stroke="#C5A059" stroke-width="1.2"/>
-                            <!-- Coin slot on top -->
-                            <line x1="-5" y1="-5" x2="5" y2="-5" stroke="#C5A059" stroke-width="1.5" stroke-linecap="round"/>
-                            <!-- Rooster head -->
-                            <circle cx="0" cy="-14" r="8" fill="none" stroke="#CD853F" stroke-width="1.1"/>
-                            <!-- Comb (jengger) -->
-                            <path d="M-3 -22C-2 -26 0 -27 1 -24C2 -28 4 -27 4 -23C5 -26 7 -25 6 -22" stroke="#8B0000" stroke-width="0.8" fill="#8B0000" opacity="0.5"/>
-                            <!-- Beak -->
-                            <path d="M5 -14L10 -13L5 -11" stroke="#C5A059" stroke-width="0.8" fill="#C5A059" opacity="0.4"/>
-                            <!-- Eye -->
-                            <circle cx="-1" cy="-15" r="1.5" fill="#C5A059" opacity="0.7"/>
-                            <circle cx="-0.5" cy="-15.3" r="0.6" fill="#1B4D3E"/>
-                            <!-- Wattle (pial) -->
-                            <path d="M3 -11C5 -9 4 -7 2 -8" stroke="#8B0000" stroke-width="0.6" opacity="0.4"/>
-                            <!-- Tail feathers -->
-                            <path d="M-12 0C-18 -8 -20 -16 -16 -20" stroke="#CD853F" stroke-width="0.8" stroke-linecap="round" fill="none"/>
-                            <path d="M-11 2C-19 -4 -22 -12 -19 -18" stroke="#C5A059" stroke-width="0.6" stroke-linecap="round" fill="none" opacity="0.6"/>
-                            <path d="M-10 4C-17 -2 -21 -8 -20 -14" stroke="#B87333" stroke-width="0.5" stroke-linecap="round" fill="none" opacity="0.4"/>
-                            <!-- Legs -->
-                            <path d="M-4 21L-6 28M-6 28L-9 28M-6 28L-3 28" stroke="#C5A059" stroke-width="0.7" stroke-linecap="round"/>
-                            <path d="M4 21L6 28M6 28L3 28M6 28L9 28" stroke="#C5A059" stroke-width="0.7" stroke-linecap="round"/>
-                            <!-- Coin going in -->
-                            <circle cx="0" cy="-9" r="2.5" fill="none" stroke="#FFD700" stroke-width="0.6" opacity="0.5"/>
-                            <text x="0" y="-7.5" text-anchor="middle" font-size="3" fill="#FFD700" opacity="0.5">$</text>
-                        </g>
-                    </svg>
+                    <img src="images/coin-front.jpg" alt="Orang Utan Capital - The Wise Investor" />
                 </div>
 
                 <!-- Title -->
@@ -351,24 +312,218 @@
                         </div>
                     </div>
 
-                    <div class="an-lang-selector">
-                        <label class="an-lang-option @(_selectedLanguage == Language.Indonesian ? "selected" : "")" @onclick="() => _selectedLanguage = Language.Indonesian">
-                            <span class="an-lang-flag">🇮🇩</span>
-                            <span class="an-lang-label">Bahasa Indonesia</span>
-                        </label>
-                        <label class="an-lang-option @(_selectedLanguage == Language.English ? "selected" : "")" @onclick="() => _selectedLanguage = Language.English">
-                            <span class="an-lang-flag">🇬🇧</span>
-                            <span class="an-lang-label">English</span>
-                        </label>
+                    <!-- Language Dropdown -->
+                    <div class="an-lang-dropdown-wrapper">
+                        <button class="an-lang-dropdown-btn" @onclick="() => _showLangDropdown = !_showLangDropdown">
+                            @(_selectedLanguage == Language.Indonesian ? "🇮🇩 ID" : "🇬🇧 EN")
+                        </button>
+                        @if (_showLangDropdown)
+                        {
+                            <div class="an-lang-dropdown-menu">
+                                <button class="an-lang-dropdown-item @(_selectedLanguage == Language.Indonesian ? "selected" : "")"
+                                        @onclick="() => { _selectedLanguage = Language.Indonesian; _showLangDropdown = false; }">
+                                    🇮🇩 Bahasa Indonesia
+                                </button>
+                                <button class="an-lang-dropdown-item @(_selectedLanguage == Language.English ? "selected" : "")"
+                                        @onclick="() => { _selectedLanguage = Language.English; _showLangDropdown = false; }">
+                                    🇬🇧 English
+                                </button>
+                            </div>
+                        }
                     </div>
 
-                    <button class="an-btn-start" @onclick="ShowTutorial" disabled="@string.IsNullOrWhiteSpace(_playerName)">
-                        @(_selectedLanguage == Language.Indonesian ? "Mulai Simulasi" : "Start Simulation")
-                    </button>
+                    <!-- Mode Buttons with Icons -->
+                    <div class="an-mode-buttons-icon">
+                        <button class="an-mode-icon-btn" @onclick="ShowTutorial" disabled="@(string.IsNullOrWhiteSpace(_playerName) || !_isConnected)" title="Solo Game">
+                            <span class="an-mode-icon">👤</span>
+                            <span class="an-mode-label">@(_selectedLanguage == Language.Indonesian ? "Solo" : "Solo")</span>
+                            @if (!_isConnected)
+                            {
+                                <span class="an-mode-status">@(_selectedLanguage == Language.Indonesian ? "Menghubungkan..." : "Connecting...")</span>
+                            }
+                        </button>
+                        <button class="an-mode-icon-btn" @onclick='() => _multiplayerScreen = "create-join"' disabled="@(string.IsNullOrWhiteSpace(_playerName) || !_isConnected)" title="Multiplayer Game">
+                            <span class="an-mode-icon">👥</span>
+                            <span class="an-mode-label">@(_selectedLanguage == Language.Indonesian ? "Multiplayer" : "Multiplayer")</span>
+                        </button>
+                    </div>
+
+                    @if (_connectionError != null)
+                    {
+                        <p style="color: #CD853F; font-size: 0.85rem; text-align: center; margin-top: 0.5rem; opacity: 0.9;">@_connectionError</p>
+                    }
                 </div>
             </div>
 
             <span class="an-start-footer">Orang Utan Capital</span>
+        </div>
+    }
+    else if (_multiplayerScreen == "create-join")
+    {
+        <!-- Create or Join Room choice -->
+        <div class="start-screen">
+            <div class="an-start-frame">
+                <div class="an-start-emblem">
+                    <img src="images/coin-front.jpg" alt="Orang Utan Capital" />
+                </div>
+                <h1 class="an-start-title">Multiplayer</h1>
+                <p class="an-start-subtitle">@(_selectedLanguage == Language.Indonesian ? "Bermain bersama teman!" : "Play with friends!")</p>
+
+                <div class="an-start-form">
+                    <div class="an-mode-buttons">
+                        <button class="an-btn-start" @onclick='() => _multiplayerScreen = "create"'>
+                            @(_selectedLanguage == Language.Indonesian ? "Buat Room" : "Create Room")
+                        </button>
+                        <button class="an-btn-start an-btn-multiplayer" @onclick='() => _multiplayerScreen = "join"'>
+                            @(_selectedLanguage == Language.Indonesian ? "Gabung Room" : "Join Room")
+                        </button>
+                    </div>
+                    <button class="an-btn-back" @onclick='() => _multiplayerScreen = "none"'>
+                        @(_selectedLanguage == Language.Indonesian ? "Kembali" : "Back")
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+    else if (_multiplayerScreen == "create")
+    {
+        <!-- Create Room Screen -->
+        <div class="start-screen">
+            <div class="an-start-frame">
+                <h1 class="an-start-title">@(_selectedLanguage == Language.Indonesian ? "Buat Room" : "Create Room")</h1>
+                <div class="an-start-form">
+                    <div class="an-toggle-row">
+                        <label class="toggle-switch">
+                            <input type="checkbox" @bind="_isLightMode" />
+                            <span class="an-toggle-slider"></span>
+                        </label>
+                        <div class="an-toggle-info">
+                            <span class="an-toggle-label">Light Mode</span>
+                        </div>
+                    </div>
+
+                    <div class="an-lang-selector">
+                        <label class="an-lang-option @(_selectedLanguage == Language.Indonesian ? "selected" : "")" @onclick="() => _selectedLanguage = Language.Indonesian">
+                            <span class="an-lang-flag">ID</span>
+                        </label>
+                        <label class="an-lang-option @(_selectedLanguage == Language.English ? "selected" : "")" @onclick="() => _selectedLanguage = Language.English">
+                            <span class="an-lang-flag">EN</span>
+                        </label>
+                    </div>
+
+                    <div class="an-toggle-row">
+                        <span class="an-toggle-label">@(_selectedLanguage == Language.Indonesian ? "Maks Pemain" : "Max Players"): @_maxPlayers</span>
+                        <input type="range" min="2" max="4" @bind="_maxPlayers" class="an-slider" />
+                    </div>
+
+                    <button class="an-btn-start" @onclick="CreateRoom" disabled="@_isCreatingRoom">
+                        @(_isCreatingRoom
+                            ? (_selectedLanguage == Language.Indonesian ? "Membuat..." : "Creating...")
+                            : (_selectedLanguage == Language.Indonesian ? "Buat Room" : "Create Room"))
+                    </button>
+
+                    @if (_roomError != null)
+                    {
+                        <p class="room-error">@_roomError</p>
+                    }
+
+                    <button class="an-btn-back" @onclick='() => _multiplayerScreen = "create-join"'>
+                        @(_selectedLanguage == Language.Indonesian ? "Kembali" : "Back")
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+    else if (_multiplayerScreen == "join")
+    {
+        <!-- Join Room Screen -->
+        <div class="start-screen">
+            <div class="an-start-frame">
+                <h1 class="an-start-title">@(_selectedLanguage == Language.Indonesian ? "Gabung Room" : "Join Room")</h1>
+                <div class="an-start-form">
+                    <input type="text" @bind="_roomCodeInput" @bind:event="oninput"
+                           placeholder="@(_selectedLanguage == Language.Indonesian ? "Kode Room (6 karakter)" : "Room Code (6 characters)")"
+                           maxlength="6" class="an-input room-code-input" style="text-transform: uppercase; text-align: center; font-size: 1.5rem; letter-spacing: 0.3rem;" />
+
+                    <button class="an-btn-start" @onclick="JoinRoom" disabled="@(_roomCodeInput?.Length != 6 || _isJoiningRoom)">
+                        @(_isJoiningRoom
+                            ? (_selectedLanguage == Language.Indonesian ? "Bergabung..." : "Joining...")
+                            : (_selectedLanguage == Language.Indonesian ? "Gabung" : "Join"))
+                    </button>
+
+                    @if (_roomError != null)
+                    {
+                        <p class="room-error">@_roomError</p>
+                    }
+
+                    <button class="an-btn-back" @onclick='() => _multiplayerScreen = "create-join"'>
+                        @(_selectedLanguage == Language.Indonesian ? "Kembali" : "Back")
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+    else if (_multiplayerScreen == "lobby")
+    {
+        <!-- Room Lobby -->
+        <div class="start-screen">
+            <div class="an-start-frame" style="max-width: 500px;">
+                <h1 class="an-start-title">@(_selectedLanguage == Language.Indonesian ? "Lobby" : "Lobby")</h1>
+
+                @if (_currentRoom != null)
+                {
+                    <div class="room-code-display">
+                        <span class="room-code-label">@(_selectedLanguage == Language.Indonesian ? "Kode Room" : "Room Code")</span>
+                        <span class="room-code-value">@_currentRoom.RoomCode</span>
+                    </div>
+
+                    <div class="room-settings">
+                        <span>@(_currentRoom.AgeMode == AgeMode.Kids ? "Light Mode" : "Normal") | @(_currentRoom.Language == Language.Indonesian ? "ID" : "EN") | @_currentRoom.MaxPlayers @(_selectedLanguage == Language.Indonesian ? "pemain" : "players")</span>
+                    </div>
+
+                    <div class="player-list">
+                        @foreach (var player in _currentRoom.Players)
+                        {
+                            <div class="player-item @(player.IsHost ? "player-host" : "")">
+                                <span class="player-name-lobby">
+                                    @if (player.IsHost) { <span class="host-badge">HOST</span> }
+                                    @player.PlayerName
+                                </span>
+                                <span class="player-ready @(player.IsReady ? "ready" : "not-ready")">
+                                    @(player.IsReady ? "Ready" : "Not Ready")
+                                </span>
+                            </div>
+                        }
+                        @for (int i = _currentRoom.Players.Count; i < _currentRoom.MaxPlayers; i++)
+                        {
+                            <div class="player-item player-empty">
+                                <span class="player-name-lobby">@(_selectedLanguage == Language.Indonesian ? "Menunggu pemain..." : "Waiting for player...")</span>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="lobby-actions">
+                        @if (!_isHost)
+                        {
+                            <button class="an-btn-start @(_isReady ? "btn-ready-active" : "")" @onclick="ToggleReady">
+                                @(_isReady
+                                    ? (_selectedLanguage == Language.Indonesian ? "Batal Ready" : "Unready")
+                                    : (_selectedLanguage == Language.Indonesian ? "Ready" : "Ready"))
+                            </button>
+                        }
+                        @if (_isHost)
+                        {
+                            <button class="an-btn-start" @onclick="StartMultiplayerGame"
+                                    disabled="@(!_currentRoom.Players.All(p => p.IsReady) || _currentRoom.Players.Count < 2)">
+                                @(_selectedLanguage == Language.Indonesian ? "Mulai Permainan" : "Start Game")
+                            </button>
+                        }
+                        <button class="an-btn-back" @onclick="LeaveRoom">
+                            @(_selectedLanguage == Language.Indonesian ? "Keluar Room" : "Leave Room")
+                        </button>
+                    </div>
+                }
+            </div>
         </div>
     }
     else
@@ -377,13 +532,13 @@
             <!-- Header -->
             <header class="game-header">
                 <div class="header-left">
-                    <h1><svg class="header-logo" viewBox="0 0 28 28" fill="none"><g transform="translate(14,15)" opacity="0.9"><ellipse cx="0" cy="2" rx="7" ry="6" fill="none" stroke="currentColor" stroke-width="1.2"/><line x1="-2.5" y1="-3" x2="2.5" y2="-3" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><circle cx="0" cy="-8" r="4" fill="none" stroke="currentColor" stroke-width="1"/><path d="M-1.5 -12C-0.8 -14 0.5 -14 1 -12.5C1.5 -14.5 2.8 -14 2.5 -12C3.5 -13.5 4.5 -13 3.5 -11.5" stroke="#FFD700" stroke-width="0.7" fill="#FFD700" opacity="0.6"/><path d="M3 -8L5.5 -7L3 -6" stroke="currentColor" stroke-width="0.7" fill="currentColor" opacity="0.5"/><circle cx="-0.5" cy="-8.5" r="0.7" fill="currentColor" opacity="0.7"/></g></svg> TJOEAN</h1>
-                    <span class="player-name">👤 @_gameState.PlayerId</span>
+                    <h1><img class="header-logo" src="images/coin-front.jpg" alt="Logo" /> TJOEAN</h1>
+                    <span class="player-name">@UIIcon("user") @_gameState.PlayerId</span>
                 </div>
                 <div class="header-center">
                     <div class="time-display">
-                        <span class="year">📅 Tahun @_gameState.CurrentYear / 10</span>
-                        <span class="month">🗓️ Bulan @_gameState.CurrentMonth</span>
+                        <span class="year">@UIIcon("calendar") Tahun @_gameState.CurrentYear / 10</span>
+                        <span class="month">@UIIcon("month") Bulan @_gameState.CurrentMonth</span>
                     </div>
                     <div class="progress-container">
                         <div class="progress-label">Tahun</div>
@@ -420,11 +575,26 @@
                 </div>
             </header>
 
+            <!-- Multiplayer Leaderboard Bar -->
+            @if (_gameState.IsMultiplayer && _leaderboard != null && _leaderboard.Count > 0)
+            {
+                <div class="mp-leaderboard-bar">
+                    @foreach (var entry in _leaderboard)
+                    {
+                        <div class="mp-lb-entry @(entry.PlayerName == _playerName ? "mp-lb-self" : "") @(entry.IsBot ? "mp-lb-bot" : "")">
+                            <span class="mp-lb-rank">#@entry.Rank</span>
+                            <span class="mp-lb-name">@(entry.IsBot ? "Bot" : entry.PlayerName)</span>
+                            <span class="mp-lb-worth">Rp @entry.NetWorth.ToString("N0")</span>
+                        </div>
+                    }
+                </div>
+            }
+
             <!-- New Unlock Banner -->
             @if (!string.IsNullOrEmpty(_gameState.NewUnlockMessage))
             {
                 <div class="event-banner unlock">
-                    <span class="event-icon">🔓</span>
+                    <span class="event-icon">@UIIcon("unlock")</span>
                     <span class="event-text">@_gameState.NewUnlockMessage</span>
                 </div>
             }
@@ -435,28 +605,28 @@
                 <section class="panel panel-left">
                     <div class="balance-networth-compact">
                         <div class="balance-row">
-                            <span class="label">💵 @GetText("Kas", "Cash")</span>
+                            <span class="label">@UIIcon("cash") @GetText("Kas", "Cash")</span>
                             <span class="amount">Rp @_gameState.CashBalance.ToString("N0")</span>
                         </div>
                         <div class="balance-row networth-total">
-                            <span class="label">🏆 @GetText("Kekayaan", "Net Worth")</span>
+                            <span class="label">@UIIcon("trophy") @GetText("Kekayaan", "Net Worth")</span>
                             <span class="amount">Rp @_gameState.NetWorth.ToString("N0")</span>
                         </div>
                         <div class="breakdown-grid">
                             <div class="breakdown-item">
-                                <span class="icon">💰</span>
+                                <span class="icon">@UIIcon("savings")</span>
                                 <span class="value">@_gameState.TotalSavingsValue.ToString("N0")</span>
                             </div>
                             <div class="breakdown-item">
-                                <span class="icon">📊</span>
+                                <span class="icon">@UIIcon("chart")</span>
                                 <span class="value">@_gameState.TotalPortfolioValue.ToString("N0")</span>
                             </div>
                             <div class="breakdown-item">
-                                <span class="icon">🏦</span>
+                                <span class="icon">@UIIcon("bank")</span>
                                 <span class="value">@_gameState.TotalDepositoValue.ToString("N0")</span>
                             </div>
                             <div class="breakdown-item">
-                                <span class="icon">📜</span>
+                                <span class="icon">@UIIcon("scroll")</span>
                                 <span class="value">@_gameState.TotalBondValue.ToString("N0")</span>
                             </div>
                         </div>
@@ -467,7 +637,7 @@
                     {
                         <div class="savings-section-compact">
                             <div class="section-header-compact">
-                                <h4>🐖 @GetText("Tabungan", "Savings")</h4>
+                                <h4>@Icon("tabungan") @GetText("Tabungan", "Savings")</h4>
                                 <button class="btn-info-mini" @onclick='() => ShowAssetInfo("tabungan")' title="Info">?</button>
                             </div>
                             <div class="savings-balance-compact">
@@ -497,7 +667,7 @@
                                 {
                                     <div class="portfolio-item">
                                         <div class="item-header">
-                                            <span class="item-name">@GetAssetIcon(item.AssetType) @item.DisplayName @(string.IsNullOrEmpty(item.Ticker) ? "" : $"({item.Ticker})")</span>
+                                            <span class="item-name">@Icon(item.AssetType) @item.DisplayName @(string.IsNullOrEmpty(item.Ticker) ? "" : $"({item.Ticker})")</span>
                                             <span class="item-units">
                                                 @if (item.AssetType == "crypto")
                                                 {
@@ -520,7 +690,7 @@
                                         <div class="item-values">
                                             <span class="item-value">Rp @item.TotalValue.ToString("N0")</span>
                                             <span class="item-profit @(item.ProfitLoss >= 0 ? "positive" : "negative")">
-                                                @(item.ProfitLoss >= 0 ? "📈+" : "📉")@item.ProfitLossPercent.ToString("F1")%
+                                                @(item.ProfitLoss >= 0 ? "▲+" : "▼")@item.ProfitLossPercent.ToString("F1")%
                                             </span>
                                         </div>
                                         @if (item.AssetType == "saham")
@@ -589,7 +759,7 @@
                                     <div class="deposito-item">
                                         <div class="deposito-info">
                                             <div class="item-header">
-                                                <span class="item-name">🏦 Deposito @deposito.PeriodMonths Bulan</span>
+                                                <span class="item-name">@Icon("deposito") Deposito @deposito.PeriodMonths Bulan</span>
                                                 <span class="item-units">@((deposito.InterestRate * 100).ToString("F1"))% /tahun</span>
                                             </div>
                                             <div class="item-values">
@@ -605,16 +775,16 @@
                                                 <input type="checkbox" checked="@deposito.AutoRollOver"
                                                        @onchange="() => ToggleDepositoAutoRollOver(deposito.Id)"
                                                        disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending)" />
-                                                <span class="aro-label">🔄 @GetText("Roll Over Otomatis", "Auto Roll Over")</span>
+                                                <span class="aro-label">@UIIcon("coin") @GetText("Roll Over Otomatis", "Auto Roll Over")</span>
                                             </label>
                                         </div>
                                         @if (deposito.IsMatured)
                                         {
-                                            <div class="deposito-maturity">🎉 Sudah Jatuh Tempo!</div>
+                                            <div class="deposito-maturity">@UIIcon("trophy") Sudah Jatuh Tempo!</div>
                                             <div class="deposito-buttons">
                                                 <button class="btn-withdraw" @onclick="() => WithdrawDeposito(deposito.Id, false)"
                                                         disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending)">
-                                                    💰 Ambil Rp @deposito.MaturityValue.ToString("N0")
+                                                    @UIIcon("coin") Ambil Rp @deposito.MaturityValue.ToString("N0")
                                                 </button>
                                             </div>
                                         }
@@ -645,7 +815,7 @@
                                     <div class="bond-item">
                                         <div class="bond-info">
                                             <div class="item-header">
-                                                <span class="item-name">📜 @bond.BondName</span>
+                                                <span class="item-name">@Icon("obligasi") @bond.BondName</span>
                                                 <span class="item-units">@((bond.CouponRate * 100).ToString("F1"))% kupon</span>
                                             </div>
                                             <div class="item-values">
@@ -661,11 +831,11 @@
                                         </div>
                                         @if (bond.IsMatured)
                                         {
-                                            <div class="bond-maturity">🎉 Jatuh Tempo!</div>
+                                            <div class="bond-maturity">@UIIcon("trophy") Jatuh Tempo!</div>
                                             <div class="bond-buttons">
                                                 <button class="btn-withdraw" @onclick="() => WithdrawBond(bond.Id)"
                                                         disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending)">
-                                                    💰 Ambil Rp @bond.CurrentValue.ToString("N0")
+                                                    @UIIcon("coin") Ambil Rp @bond.CurrentValue.ToString("N0")
                                                 </button>
                                             </div>
                                         }
@@ -708,7 +878,7 @@
                                 <label class="auto-rollover-checkbox" title="@GetText("Otomatis investasi ulang saat jatuh tempo dengan bunga compound", "Otomatis investasi ulang saat jatuh tempo", "Automatically re-invest when matured with compound interest", "Automatically re-invest at maturity")">
                                     <input type="checkbox" @bind="_depositoAutoRollOver" />
                                     <span class="checkbox-label">
-                                        🔄 @GetText("Roll Over Otomatis", "Automatic Roll Over")
+                                        @UIIcon("coin") @GetText("Roll Over Otomatis", "Automatic Roll Over")
                                     </span>
                                     <span class="info-icon" title="@GetText("Deposito akan otomatis di-investasi ulang dengan nilai jatuh tempo (pokok + bunga) sebagai modal baru. Ini cara terbaik untuk mendapat efek bunga berbunga!", "Deposito akan otomatis di-investasi ulang saat jatuh tempo", "Deposito will automatically re-invest at maturity with compound interest. This gives you the best compound growth!", "Automatically re-invest maturity value as new principal")">ℹ️</span>
                                 </label>
@@ -717,7 +887,7 @@
                                 <input type="number" @bind="_depositoAmount" placeholder="Min Rp 1.000.000" step="1000000" min="1000000" />
                                 <button class="btn-buy" @onclick="BuyDeposito"
                                         disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || _selectedDepositoPeriod == 0 || _depositoAmount < 1000000 || _depositoAmount > _gameState.CashBalance)">
-                                    🔒 @GetText("Kunci Uang", "Lock Funds")
+                                    @UIIcon("lock") @GetText("Kunci Uang", "Lock Funds")
                                 </button>
                             </div>
                         </div>
@@ -752,7 +922,7 @@
                                 <input type="number" @bind="_bondAmount" placeholder="Min Rp 1.000.000" step="1000000" min="1000000" />
                                 <button class="btn-buy" @onclick="BuyBond"
                                         disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || string.IsNullOrEmpty(_selectedBondType) || _bondAmount < 1000000 || _bondAmount > _gameState.CashBalance)">
-                                    📜 @GetText("Beli Obligasi", "Buy Bond")
+                                    @Icon("obligasi") @GetText("Beli Obligasi", "Buy Bond")
                                 </button>
                             </div>
                         </div>
@@ -763,7 +933,7 @@
                     {
                         <div class="stocks-section">
                             <div class="section-header">
-                                <h3>📈 @GetText("Saham Individual", "Individual Stocks")</h3>
+                                <h3>@Icon("saham") @GetText("Saham Individual", "Individual Stocks")</h3>
                                 <button class="btn-info-inline" @onclick='() => ShowAssetInfo("saham")' title="Info">
                                     ❓
                                 </button>
@@ -783,7 +953,7 @@
                                                 <span class="stock-ticker-badge">@stock.Ticker</span>
                                                 <div class="stock-details">
                                                     <span class="stock-name">@stock.CompanyName</span>
-                                                    <span class="stock-meta">@stock.Sector @if(stock.PaysDividend) { <span class="dividend-badge" title="@GetText("Dividen tahunan", "Dividen tahunan", "Annual dividend", "Annual dividend")">💰 @((stock.DividendYield * 100).ToString("F1"))%</span> }</span>
+                                                    <span class="stock-meta">@stock.Sector @if(stock.PaysDividend) { <span class="dividend-badge" title="@GetText("Dividen tahunan", "Dividen tahunan", "Annual dividend", "Annual dividend")">@UIIcon("coin") @((stock.DividendYield * 100).ToString("F1"))%</span> }</span>
                                                 </div>
                                             </div>
                                             <div class="stock-price-info compact">
@@ -829,7 +999,7 @@
                             var isGold = price.AssetType == "emas";
                             <div class="market-card @GetRiskClass(asset?.RiskLevel)">
                                 <div class="card-header">
-                                    <span class="asset-name">@GetAssetIcon(price.AssetType) @GetAssetDisplayName(asset, price.DisplayName)</span>
+                                    <span class="asset-name">@Icon(price.AssetType) @GetAssetDisplayName(asset, price.DisplayName)</span>
                                     <div class="card-actions">
                                         <button class="btn-info" @onclick="() => ShowAssetInfo(price.AssetType)" title="Info">
                                             &#x2753;
@@ -854,7 +1024,7 @@
                                 {
                                     <button class="btn-buy btn-buy-1g" @onclick="() => BuyGoldByGrams(1)"
                                             disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || _gameState.CashBalance < price.Price)">
-                                        🪙 @GetText("Beli 1g", "Buy 1g")
+                                        @Icon("emas") @GetText("Beli 1g", "Buy 1g")
                                     </button>
                                 }
                                 else
@@ -873,7 +1043,7 @@
                             var cryptoAsset = _assets?.GetValueOrDefault("crypto");
                             <div class="crypto-group-container">
                                 <div class="crypto-group-header">
-                                    <span class="crypto-group-title">🌐 @GetText("Aset Kripto", "Aset Kripto", "Crypto Assets", "Crypto Assets")</span>
+                                    <span class="crypto-group-title">@Icon("crypto") @GetText("Aset Kripto", "Aset Kripto", "Crypto Assets", "Crypto Assets")</span>
                                     <div class="crypto-group-actions">
                                         <button class="btn-info crypto-info-btn" @onclick='() => ShowAssetInfo("crypto")' title="Info">
                                             &#x2753;
@@ -916,7 +1086,7 @@
                             var cfAsset = _assets?.GetValueOrDefault("crowdfunding");
                             <div class="crowdfunding-group-container">
                                 <div class="crowdfunding-group-header">
-                                    <span class="crowdfunding-group-title">🤝 @GetText("Urun Dana / Crowdfunding", "Urun Dana", "Crowdfunding", "Securities Crowdfunding")</span>
+                                    <span class="crowdfunding-group-title">@Icon("crowdfunding") @GetText("Urun Dana / Crowdfunding", "Urun Dana", "Crowdfunding", "Securities Crowdfunding")</span>
                                     <div class="crowdfunding-group-actions">
                                         <button class="btn-info" @onclick='() => ShowAssetInfo("crowdfunding")' title="Info">
                                             &#x2753;
@@ -987,7 +1157,7 @@
                                                         }
                                                         else
                                                         {
-                                                            <span class="cf-inv-status active">🔒 @inv.MonthsRemaining @GetText("bln lagi", "mo left")</span>
+                                                            <span class="cf-inv-status active">@UIIcon("lock") @inv.MonthsRemaining @GetText("bln lagi", "mo left")</span>
                                                         }
                                                     </div>
                                                     <div class="cf-inv-details">
@@ -1027,7 +1197,7 @@
                                     var unlockMonth = (asset.UnlockYear - 1) * 12 + asset.UnlockMonth;
                                     var monthsUntilUnlock = unlockMonth - _gameState.TotalGameMonths;
                                     <div class="locked-card">
-                                        <span class="lock-icon">🔒</span>
+                                        <span class="lock-icon">@UIIcon("lock")</span>
                                         <span class="locked-name">@GetAssetDisplayName(asset, asset.DisplayName)</span>
                                         <span class="unlock-info">
                                             @if (monthsUntilUnlock > 12)
@@ -1130,7 +1300,7 @@
                         }
                         @if (introAsset != null)
                         {
-                            <h2>🔓 @GetText("Investasi Baru Terbuka!", "New Investment Unlocked!")</h2>
+                            <h2>@UIIcon("unlock") @GetText("Investasi Baru Terbuka!", "New Investment Unlocked!")</h2>
                             <p class="intro-desc">
                                 @GetText($"Selamat {_gameState.PlayerId}! Kamu sekarang bisa menggunakan instrumen investasi baru!",
                                          $"Congratulations {_gameState.PlayerId}! You now have access to a new investment instrument!")
@@ -1138,7 +1308,7 @@
 
                             <div class="intro-cards">
                                 <div class="intro-card @GetRiskClass(introAsset.RiskLevel)">
-                                    <h3>@GetAssetIcon(introAsset.Type) @GetAssetDisplayName(introAsset, introAsset.DisplayName)</h3>
+                                    <h3>@Icon(introAsset.Type) @GetAssetDisplayName(introAsset, introAsset.DisplayName)</h3>
                                     <p><strong>@GetText("Apa sih ini?", "What is it?")</strong> @GetAssetWhatIsIt(introAsset)</p>
                                     <p><strong>@GetText("Risikonya:", "Risk Level:")</strong> @GetAssetRiskExplanation(introAsset)</p>
                                     <p><strong>@GetText("Cocok untuk:", "Best for:")</strong> @GetAssetBestFor(introAsset)</p>
@@ -1172,7 +1342,7 @@
                         <div class="event-options">
                             <!-- Pay from Cash Option -->
                             <div class="event-option @(_gameState.CashBalance >= (_gameState.EventCost ?? 0) ? "option-available" : "option-insufficient")">
-                                <span class="event-option-label">💵 @GetText("Bayar Pakai Uang Kas", "Pay from Cash")</span>
+                                <span class="event-option-label">@UIIcon("cash") @GetText("Bayar Pakai Uang Kas", "Pay from Cash")</span>
                                 <span class="event-option-balance">@GetText("Uangmu:", "Balance:") Rp @_gameState.CashBalance.ToString("N0")</span>
                                 <button class="btn-primary" @onclick="PayEventFromCash"
                                         disabled="@(_gameState.CashBalance < (_gameState.EventCost ?? 0))">
@@ -1191,7 +1361,7 @@
                             @if (_gameState.SavingsAccount != null && _gameState.SavingsAccount.Balance > 0)
                             {
                                 <div class="event-option @(_gameState.SavingsAccount.Balance >= (_gameState.EventCost ?? 0) ? "option-available" : "option-insufficient")">
-                                    <span class="event-option-label">🐖 @GetText("Bayar dari Tabungan", "Pay from Savings")</span>
+                                    <span class="event-option-label">@Icon("tabungan") @GetText("Bayar dari Tabungan", "Pay from Savings")</span>
                                     <span class="event-option-balance">Tabungan: Rp @_gameState.SavingsAccount.Balance.ToString("N0")</span>
                                     <button class="btn-primary" @onclick="PayEventFromSavings"
                                             disabled="@(_gameState.SavingsAccount.Balance < (_gameState.EventCost ?? 0))">
@@ -1211,7 +1381,7 @@
                             @if (_gameState.Portfolio.Any())
                             {
                                 <div class="event-option">
-                                    <span class="event-option-label">📊 @GetText("Jual Investasi untuk Bayar", "Sell Investment to Pay")</span>
+                                    <span class="event-option-label">@UIIcon("sell") @GetText("Jual Investasi untuk Bayar", "Sell Investment to Pay")</span>
                                     <span class="event-option-balance">@GetText("Pilih investasi yang mau dijual (langsung cair):", "Choose investment to sell (instantly liquidated):")</span>
                                     <div class="portfolio-options">
                                         @foreach (var item in _gameState.Portfolio)
@@ -1220,7 +1390,7 @@
                                             <button class="portfolio-option-btn @(canAfford ? "portfolio-sufficient" : "")"
                                                     @onclick="() => PayEventFromPortfolio(item.AssetType)"
                                                     disabled="@(!canAfford)">
-                                                @GetAssetIcon(item.AssetType) @item.DisplayName<br/>
+                                                @Icon(item.AssetType) @item.DisplayName<br/>
                                                 <small>Rp @item.TotalValue.ToString("N0")</small>
                                                 @if (canAfford)
                                                 {
@@ -1257,7 +1427,7 @@
                 <div class="modal-overlay" @onclick="CloseAssetInfo">
                     <div class="modal-content info-modal" @onclick:stopPropagation="true">
                         <button class="modal-close" @onclick="CloseAssetInfo">&#x2715;</button>
-                        <h2>@GetAssetIcon(_selectedAsset.Type) @GetAssetDisplayName(_selectedAsset, _selectedAsset.DisplayName)</h2>
+                        <h2>@Icon(_selectedAsset.Type) @GetAssetDisplayName(_selectedAsset, _selectedAsset.DisplayName)</h2>
                         <div class="info-section">
                             <h4>@GetText("Apa sih", "Tentang", "What is", "About") @GetAssetDisplayName(_selectedAsset, _selectedAsset.DisplayName)?</h4>
                             <p>@GetAssetWhatIsIt(_selectedAsset)</p>
@@ -1295,7 +1465,7 @@
                         <h2>@GetGameOverTitle(_gameState.NetWorth, _gameState.GameOverReason)</h2>
                         @if (!string.IsNullOrEmpty(_gameState.GameOverReason))
                         {
-                            <div class="game-over-reason">😢 @_gameState.GameOverReason</div>
+                            <div class="game-over-reason">@_gameState.GameOverReason</div>
                         }
 
                         <!-- Comparison Section -->
@@ -1311,7 +1481,7 @@
                                 <!-- Player Card with Pie Chart -->
                                 <div class="comparison-card player-card">
                                     <div class="card-header">
-                                        <span class="card-icon">👤</span>
+                                        <span class="card-icon">@UIIcon("user")</span>
                                         <span class="card-title">@GetText("Kamu", "Anda", "You", "You")</span>
                                     </div>
                                     <div class="card-networth @(GetNetWorthComparisonClass(true))">
@@ -1348,23 +1518,23 @@
 
                                     <div class="card-breakdown">
                                         <div class="breakdown-item">
-                                            <span>💵 @GetText("Kas", "Kas", "Cash", "Cash")</span>
+                                            <span>@UIIcon("cash") @GetText("Kas", "Kas", "Cash", "Cash")</span>
                                             <span>Rp @_gameState.CashBalance.ToString("N0")</span>
                                         </div>
                                         <div class="breakdown-item">
-                                            <span>🐖 @GetText("Tabungan", "Tabungan", "Savings", "Savings")</span>
+                                            <span>@Icon("tabungan") @GetText("Tabungan", "Tabungan", "Savings", "Savings")</span>
                                             <span>Rp @_gameState.TotalSavingsValue.ToString("N0")</span>
                                         </div>
                                         <div class="breakdown-item">
-                                            <span>🏦 Deposito</span>
+                                            <span>@Icon("deposito") Deposito</span>
                                             <span>Rp @_gameState.TotalDepositoValue.ToString("N0")</span>
                                         </div>
                                         <div class="breakdown-item">
-                                            <span>📜 @GetText("Obligasi", "Obligasi", "Bonds", "Bonds")</span>
+                                            <span>@Icon("obligasi") @GetText("Obligasi", "Obligasi", "Bonds", "Bonds")</span>
                                             <span>Rp @_gameState.TotalBondValue.ToString("N0")</span>
                                         </div>
                                         <div class="breakdown-item">
-                                            <span>📊 @GetText("Investasi", "Investasi", "Investments", "Investments")</span>
+                                            <span>@UIIcon("chart") @GetText("Investasi", "Investasi", "Investments", "Investments")</span>
                                             <span>Rp @_gameState.TotalPortfolioValue.ToString("N0")</span>
                                         </div>
                                     </div>
@@ -1375,7 +1545,7 @@
                                 {
                                     <div class="comparison-card bot-card">
                                         <div class="card-header">
-                                            <span class="card-icon">🤖</span>
+                                            <span class="card-icon">@UIIcon("bot")</span>
                                             <span class="card-title">AI Advisor</span>
                                         </div>
                                         <div class="card-networth @(GetNetWorthComparisonClass(false))">
@@ -1416,27 +1586,27 @@
 
                                         <div class="card-breakdown">
                                             <div class="breakdown-item">
-                                                <span>💵 @GetText("Kas", "Kas", "Cash", "Cash")</span>
+                                                <span>@UIIcon("cash") @GetText("Kas", "Kas", "Cash", "Cash")</span>
                                                 <span>Rp @_gameState.BotState.CashBalance.ToString("N0")</span>
                                             </div>
                                             <div class="breakdown-item">
-                                                <span>🐖 @GetText("Tabungan", "Tabungan", "Savings", "Savings")</span>
+                                                <span>@Icon("tabungan") @GetText("Tabungan", "Tabungan", "Savings", "Savings")</span>
                                                 <span>Rp @_gameState.BotState.SavingsBalance.ToString("N0")</span>
                                             </div>
                                             <div class="breakdown-item">
-                                                <span>🏦 Deposito</span>
+                                                <span>@Icon("deposito") Deposito</span>
                                                 <span>Rp @_gameState.BotState.TotalDepositoValue.ToString("N0")</span>
                                             </div>
                                             <div class="breakdown-item">
-                                                <span>📜 @GetText("Obligasi", "Obligasi", "Bonds", "Bonds")</span>
+                                                <span>@Icon("obligasi") @GetText("Obligasi", "Obligasi", "Bonds", "Bonds")</span>
                                                 <span>Rp @_gameState.BotState.TotalBondValue.ToString("N0")</span>
                                             </div>
                                             <div class="breakdown-item">
-                                                <span>📈 @GetText("Reksa Dana", "Reksa Dana", "Index Fund", "Index Fund")</span>
+                                                <span>@Icon("reksadana") @GetText("Reksa Dana", "Reksa Dana", "Index Fund", "Index Fund")</span>
                                                 <span>Rp @_gameState.BotState.IndexFundValue.ToString("N0")</span>
                                             </div>
                                             <div class="breakdown-item">
-                                                <span>🪙 @GetText("Emas", "Emas", "Gold", "Gold")</span>
+                                                <span>@Icon("emas") @GetText("Emas", "Emas", "Gold", "Gold")</span>
                                                 <span>Rp @_gameState.BotState.GoldValue.ToString("N0")</span>
                                             </div>
                                         </div>
@@ -1480,7 +1650,7 @@
                                     {
                                         var diff = _gameState.NetWorth - _gameState.BotState.NetWorth;
                                         var pct = _gameState.BotState.NetWorth > 0 ? (diff / _gameState.BotState.NetWorth * 100) : 0;
-                                        <span class="result-icon">🎉</span>
+                                        <span class="result-icon">@UIIcon("trophy")</span>
                                         <span class="result-text">@GetText(
                                             $"Selamat! Kamu mengalahkan AI sebesar Rp {diff:N0} (+{pct:F1}%)",
                                             $"Selamat! Anda mengalahkan AI sebesar Rp {diff:N0} (+{pct:F1}%)",
@@ -1491,7 +1661,7 @@
                                     {
                                         var diff = _gameState.BotState.NetWorth - _gameState.NetWorth;
                                         var pct = _gameState.NetWorth > 0 ? (diff / _gameState.NetWorth * 100) : 0;
-                                        <span class="result-icon">📉</span>
+                                        <span class="result-icon">@UIIcon("down")</span>
                                         <span class="result-text">@GetText(
                                             $"AI menang! Strategi seimbang unggul Rp {diff:N0} (+{pct:F1}%)",
                                             $"AI menang! Strategi seimbang unggul Rp {diff:N0} (+{pct:F1}%)",
@@ -1500,17 +1670,51 @@
                                     }
                                     else
                                     {
-                                        <span class="result-icon">🤝</span>
+                                        <span class="result-icon">@Icon("crowdfunding")</span>
                                         <span class="result-text">@GetText("Seri! Kamu dan AI sama kaya!", "Seri! Anda dan AI sama kaya!", "Tie! You and AI have equal wealth!", "Tie! You and AI have equal wealth!")</span>
                                     }
                                 </div>
                             }
                         </div>
 
+                        @if (_gameState.IsMultiplayer && _gameState.FinalLeaderboard != null)
+                        {
+                            <div class="mp-final-leaderboard">
+                                <h3>@GetText("Peringkat Akhir", "Peringkat Akhir", "Final Rankings", "Final Rankings")</h3>
+                                @foreach (var entry in _gameState.FinalLeaderboard)
+                                {
+                                    <div class="mp-final-entry @(entry.Rank == 1 ? "mp-winner" : "") @(entry.PlayerName == _playerName ? "mp-self" : "") @(entry.IsBot ? "mp-bot" : "")">
+                                        <span class="mp-final-rank">
+                                            @if (entry.Rank == 1) { <span>&#x1F3C6;</span> }
+                                            else if (entry.Rank == 2) { <span>&#x1F948;</span> }
+                                            else if (entry.Rank == 3) { <span>&#x1F949;</span> }
+                                            else { <span>#@entry.Rank</span> }
+                                        </span>
+                                        <span class="mp-final-name">@(entry.IsBot ? "Bot" : entry.PlayerName)</span>
+                                        <span class="mp-final-worth">Rp @entry.NetWorth.ToString("N0")</span>
+                                    </div>
+                                }
+                            </div>
+
+                            @if (!_gameState.AllPlayersFinished)
+                            {
+                                <div class="mp-waiting">
+                                    @GetText("Menunggu pemain lain selesai...", "Menunggu pemain lain selesai...", "Waiting for other players to finish...", "Waiting for other players to finish...")
+                                </div>
+                            }
+                        }
+
                         <div class="rating">
                             @GetRating(_gameState.NetWorth)
                         </div>
-                        <button class="btn-primary" @onclick="RestartGame">@GetText("Main Lagi!", "Main Lagi", "Play Again!", "Play Again")</button>
+                        @if (_gameState.IsMultiplayer)
+                        {
+                            <button class="btn-primary" @onclick="BackToMenu">@GetText("Kembali ke Menu", "Kembali ke Menu", "Back to Menu", "Back to Menu")</button>
+                        }
+                        else
+                        {
+                            <button class="btn-primary" @onclick="RestartGame">@GetText("Main Lagi!", "Main Lagi", "Play Again!", "Play Again")</button>
+                        }
                     </div>
                 </div>
             }
@@ -1524,7 +1728,7 @@
     <div class="modal-overlay">
         <div class="crowdfunding-failure-notification">
             <div class="cf-failure-header">
-                <span class="cf-failure-icon">💔</span>
+                <span class="cf-failure-icon">@UIIcon("down")</span>
                 <span class="cf-failure-title">@GetText("Proyek Gagal!", "Project Failed!")</span>
             </div>
             <div class="cf-failure-message">@_gameState.CrowdfundingFailureMessage</div>
@@ -1542,7 +1746,7 @@
 
 @code {
     private string _playerName = "";
-    private string _statusMessage = "Menghubungkan ke server...";
+    private string? _connectionError = null;
     private string _errorMessage = "";
     private bool _isConnected = false;
     private bool _isPaused = false;
@@ -1561,6 +1765,7 @@
     private bool _isLightMode = false;
     private AgeMode _selectedAgeMode => _isLightMode ? AgeMode.Kids : AgeMode.Adult;
     private Language _selectedLanguage = Language.Indonesian;
+    private bool _showLangDropdown = false;
     private Dictionary<string, int> _stockLots = new();
     private Dictionary<string, decimal> _cryptoAmounts = new();
     private Dictionary<string, decimal> _crowdfundingAmounts = new();
@@ -1570,12 +1775,34 @@
     private bool _showTutorial = false;
     private int _currentTutorialSlide = 0;
 
+    // Multiplayer state
+    private string _multiplayerScreen = "none"; // none, create-join, create, join, lobby
+    private RoomInfo? _currentRoom;
+    private string _roomCodeInput = "";
+    private string? _roomError;
+    private bool _isCreatingRoom;
+    private bool _isJoiningRoom;
+    private bool _isHost;
+    private bool _isReady;
+    private int _maxPlayers = 4;
+    private List<LeaderboardEntry>? _leaderboard;
+
     protected override async Task OnInitializedAsync()
     {
         GameClient.OnGameStateUpdated += HandleGameStateUpdated;
         GameClient.OnGamePaused += HandleGamePaused;
         GameClient.OnGameResumed += HandleGameResumed;
         GameClient.OnError += HandleError;
+
+        // Multiplayer event handlers
+        GameClient.OnRoomUpdated += HandleRoomUpdated;
+        GameClient.OnRoomGameStarted += HandleRoomGameStarted;
+        GameClient.OnLeaderboardUpdated += HandleLeaderboardUpdated;
+        GameClient.OnAllPlayersFinished += HandleAllPlayersFinished;
+        GameClient.OnRoomClosed += HandleRoomClosed;
+        GameClient.OnRoomError += HandleRoomError;
+        GameClient.OnLeftRoom += HandleLeftRoom;
+        GameClient.OnHostChanged += HandleHostChanged;
 
         try
         {
@@ -1585,11 +1812,10 @@
             _depositoRates = await GameClient.GetDepositoRatesAsync();
             _bondRates = await GameClient.GetBondRatesAsync();
             _isConnected = true;
-            _statusMessage = "Terhubung!";
         }
         catch (Exception ex)
         {
-            _statusMessage = $"Gagal terhubung: {ex.Message}";
+            _connectionError = $"Gagal terhubung: {ex.Message}";
         }
 
         StateHasChanged();
@@ -1774,18 +2000,50 @@
 
     private string GetAssetIcon(string assetType)
     {
-        return assetType switch
+        // Returns CSS class name for the coin-style SVG icon
+        var iconPath = assetType switch
         {
-            "tabungan" => "\U0001F416",
-            "deposito" => "\U0001F3E6",
-            "obligasi" => "\U0001F4DC",
-            "emas" => "\U0001FA99",
-            "reksadana" => "\U0001F4CA",
-            "saham" => "\U0001F4C8",
-            "crypto" => "\U0001F310",
-            "crowdfunding" => "\U0001F91D",
-            _ => "\U0001F4B0"
+            "tabungan" => "M12 3C7 3 3 5.7 3 9v3c0 3.3 4 6 9 6s9-2.7 9-6V9c0-3.3-4-6-9-6zm0 2c4.4 0 7 2 7 4s-2.6 4-7 4-7-2-7-4 2.6-4 7-4zm0 14c-4.4 0-7-2-7-4v-1.5c1.8 1.4 4.3 2.2 7 2.2s5.2-.8 7-2.2V15c0 2-2.6 4-7 4z", // coin/savings
+            "deposito" => "M4 4h16v2H4zm0 4h16v10H4zm2 2v6h12V10zm2 1h3v1H8zm5 0h3v1h-3zM8 13h3v1H8zm5 0h3v1h-3z", // bank vault
+            "obligasi" => "M4 3h16v18H4zm2 2v14h12V5zm2 2h8v2H8zm0 4h8v1H8zm0 2h5v1H8z", // bond document
+            "emas" => "M12 2l3 6h-2l1 5h-1l1 5H10l1-5H10l1-5H9z", // gold bar/ingot
+            "reksadana" => "M3 20h18v1H3zm2-1V10l3-3 3 4 4-6 4 5v10z", // chart area
+            "saham" => "M3 17l5-5 3 3 7-8 2 2-9 10-3-3z M17 6h4v4", // stock arrow up
+            "crypto" => "M12 2a10 10 0 100 20 10 10 0 000-20zm0 2a8 8 0 110 16 8 8 0 010-16zm-1 3v1.5C9.8 9 9 9.9 9 11s.8 2 2 2.5V15h2v-1.5c1.2-.5 2-1.4 2-2.5h-2c0 .6-.4 1-1 1s-1-.4-1-1 .4-1 1-1h0c1.2-.5 2-1.4 2-2.5S13.2 6 12 5.5V4h-1z", // crypto coin
+            "crowdfunding" => "M12 4c-2 0-3.5 1.5-3.5 3.5S10 11 12 11s3.5-1.5 3.5-3.5S14 4 12 4zm-7 14c0-2.3 3.1-4 7-4s7 1.7 7 4v1H5z", // people
+            _ => "M12 2a10 10 0 100 20 10 10 0 000-20zm1 5v2h2l-3 4-3-4h2V7z" // generic coin
         };
+        return $"<svg class=\"an-icon\" viewBox=\"0 0 24 24\"><path d=\"{iconPath}\"/></svg>";
+    }
+
+    private MarkupString Icon(string assetType) => new MarkupString(GetAssetIcon(assetType));
+
+    // UI icons (non-asset) - stroke-based outlines
+    private static MarkupString UIIcon(string name)
+    {
+        var path = name switch
+        {
+            "cash" => "M2 6h20v12H2zM6 12a3 3 0 106 0 3 3 0 00-6 0M2 9h2M20 9h2M2 15h2M20 15h2",
+            "trophy" => "M6 2h12v6a6 6 0 01-12 0zm0 0H3v3a3 3 0 003 3m6-6h6v3a3 3 0 01-3 3M8 21h8M12 17v4",
+            "calendar" => "M4 4h16v16H4zM4 9h16M8 2v4M16 2v4",
+            "month" => "M4 4h16v16H4zM4 9h16M9 13h2v2H9z",
+            "user" => "M12 4a4 4 0 100 8 4 4 0 000-8zM4 20c0-3.3 3.6-6 8-6s8 2.7 8 6",
+            "unlock" => "M7 11V7a5 5 0 0110 0M5 11h14v10H5z",
+            "lock" => "M7 11V7a5 5 0 0110 0v4M5 11h14v10H5z",
+            "chart" => "M3 20h18M6 16v4M10 12v8M14 8v12M18 4v16",
+            "bank" => "M3 21h18M4 17h16M5 13h14M12 3l9 6H3z",
+            "scroll" => "M5 3h14v18H5zM8 7h8M8 11h8M8 15h5",
+            "coin" => "M12 2a10 10 0 100 20 10 10 0 000-20zm0 4a6 6 0 110 12 6 6 0 010-12",
+            "up" => "M12 20V4M5 11l7-7 7 7",
+            "down" => "M12 4v16M5 13l7 7 7-7",
+            "savings" => "M19 10V7a2 2 0 00-2-2H7a2 2 0 00-2 2v3m14 0H5a2 2 0 00-2 2v5a2 2 0 002 2h14a2 2 0 002-2v-5a2 2 0 00-2-2zm-7 5a2 2 0 100-4 2 2 0 000 4z",
+            "bot" => "M12 2a2 2 0 012 2v1h3a2 2 0 012 2v10a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h3V4a2 2 0 012-2zM9 11a1 1 0 100 2 1 1 0 000-2zm6 0a1 1 0 100 2 1 1 0 000-2z",
+            "sell" => "M3 3l18 18M9 9l-6 6h6v6l6-6",
+            "buy" => "M12 3v18M3 12l9 9 9-9",
+            "gold" => "M4 18h16l-3-10H7z M8 8h8l1-4H7z",
+            _ => "M12 2a10 10 0 100 20 10 10 0 000-20"
+        };
+        return new MarkupString($"<svg class=\"an-ui-icon\" viewBox=\"0 0 24 24\"><path d=\"{path}\"/></svg>");
     }
 
     private string GetGameOverTitle(decimal netWorth, string? reason)
@@ -2476,12 +2734,211 @@
         return "";
     }
 
+    // === MULTIPLAYER METHODS ===
+
+    private async Task CreateRoom()
+    {
+        _isCreatingRoom = true;
+        _roomError = null;
+        StateHasChanged();
+
+        try
+        {
+            var room = await GameClient.CreateRoomAsync(_playerName, _selectedAgeMode, _selectedLanguage, _maxPlayers);
+            if (room != null)
+            {
+                _currentRoom = room;
+                _isHost = true;
+                _isReady = true;
+                _multiplayerScreen = "lobby";
+            }
+            else
+            {
+                _roomError = _selectedLanguage == Language.Indonesian ? "Gagal membuat room" : "Failed to create room";
+            }
+        }
+        catch (Exception ex)
+        {
+            _roomError = ex.Message;
+        }
+        finally
+        {
+            _isCreatingRoom = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task JoinRoom()
+    {
+        if (string.IsNullOrWhiteSpace(_roomCodeInput) || _roomCodeInput.Length != 6) return;
+
+        _isJoiningRoom = true;
+        _roomError = null;
+        StateHasChanged();
+
+        try
+        {
+            var room = await GameClient.JoinRoomAsync(_roomCodeInput.ToUpper(), _playerName);
+            if (room != null)
+            {
+                _currentRoom = room;
+                _isHost = false;
+                _isReady = false;
+                _selectedLanguage = room.Language;
+                _isLightMode = room.AgeMode == AgeMode.Kids;
+                _multiplayerScreen = "lobby";
+            }
+            // Error is handled via OnRoomError callback
+        }
+        catch (Exception ex)
+        {
+            _roomError = ex.Message;
+        }
+        finally
+        {
+            _isJoiningRoom = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task LeaveRoom()
+    {
+        await GameClient.LeaveRoomAsync();
+        _currentRoom = null;
+        _isHost = false;
+        _isReady = false;
+        _multiplayerScreen = "none";
+        _gameState = null;
+        _leaderboard = null;
+        StateHasChanged();
+    }
+
+    private async Task ToggleReady()
+    {
+        _isReady = !_isReady;
+        await GameClient.SetReadyAsync(_isReady);
+    }
+
+    private async Task StartMultiplayerGame()
+    {
+        var success = await GameClient.StartMultiplayerGameAsync();
+        if (!success)
+        {
+            // Error handled via OnRoomError callback
+        }
+    }
+
+    private void BackToMenu()
+    {
+        _gameState = null;
+        _currentRoom = null;
+        _isHost = false;
+        _isReady = false;
+        _multiplayerScreen = "none";
+        _leaderboard = null;
+        _performanceHistory.Clear();
+        StateHasChanged();
+    }
+
+    // === MULTIPLAYER EVENT HANDLERS ===
+
+    private void HandleRoomUpdated(RoomInfo room)
+    {
+        _currentRoom = room;
+        _isHost = room.HostConnectionId == room.Players.FirstOrDefault(p => p.PlayerName == _playerName)?.ConnectionId;
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void HandleRoomGameStarted(GameState state)
+    {
+        _gameState = state;
+        _isHost = state.IsHost;
+        _multiplayerScreen = "playing";
+        _isPaused = false;
+        _performanceHistory.Clear();
+
+        // Initialize stock/crypto/crowdfunding dictionaries
+        if (state.AvailableStocks != null)
+        {
+            foreach (var stock in state.AvailableStocks)
+                _stockLots[stock.Ticker] = 1;
+        }
+        if (state.AvailableCryptos != null)
+        {
+            foreach (var crypto in state.AvailableCryptos)
+                _cryptoAmounts[crypto.Symbol] = 1_000_000;
+        }
+
+        InvokeAsync(async () =>
+        {
+            await ApplyTheme();
+            StateHasChanged();
+        });
+    }
+
+    private void HandleLeaderboardUpdated(List<LeaderboardEntry> entries)
+    {
+        _leaderboard = entries;
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void HandleAllPlayersFinished(List<LeaderboardEntry> entries)
+    {
+        _leaderboard = entries;
+        if (_gameState != null)
+        {
+            _gameState.AllPlayersFinished = true;
+            _gameState.FinalLeaderboard = entries;
+        }
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void HandleRoomClosed()
+    {
+        _currentRoom = null;
+        _multiplayerScreen = "none";
+        _gameState = null;
+        _leaderboard = null;
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void HandleRoomError(string error)
+    {
+        _roomError = error;
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void HandleLeftRoom()
+    {
+        _currentRoom = null;
+        _multiplayerScreen = "none";
+        _leaderboard = null;
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void HandleHostChanged(string newHostName)
+    {
+        _isHost = newHostName == _playerName;
+        InvokeAsync(StateHasChanged);
+    }
+
     public async ValueTask DisposeAsync()
     {
         GameClient.OnGameStateUpdated -= HandleGameStateUpdated;
         GameClient.OnGamePaused -= HandleGamePaused;
         GameClient.OnGameResumed -= HandleGameResumed;
         GameClient.OnError -= HandleError;
+
+        // Multiplayer cleanup
+        GameClient.OnRoomUpdated -= HandleRoomUpdated;
+        GameClient.OnRoomGameStarted -= HandleRoomGameStarted;
+        GameClient.OnLeaderboardUpdated -= HandleLeaderboardUpdated;
+        GameClient.OnAllPlayersFinished -= HandleAllPlayersFinished;
+        GameClient.OnRoomClosed -= HandleRoomClosed;
+        GameClient.OnRoomError -= HandleRoomError;
+        GameClient.OnLeftRoom -= HandleLeftRoom;
+        GameClient.OnHostChanged -= HandleHostChanged;
+
         await GameClient.DisposeAsync();
     }
 }

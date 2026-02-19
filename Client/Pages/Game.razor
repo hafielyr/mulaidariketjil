@@ -19,144 +19,244 @@
     }
     else if (_showTutorial)
     {
-        <!-- Tutorial Slides Modal -->
-        <div class="modal-overlay tutorial-overlay">
-            <div class="modal-content tutorial-modal">
-                <button class="btn-skip-tutorial" @onclick="SkipTutorial">
-                    @(_selectedLanguage == Language.Indonesian ? "Lewati ⏭️" : "Skip ⏭️")
+        <!-- Tutorial Modal - Art Nouveau themed -->
+        <div class="tut-overlay" @onclick="SkipTutorial">
+            <div class="tut-modal" @onclick:stopPropagation="true">
+                <!-- Skip button -->
+                <button class="tut-skip" @onclick="SkipTutorial">
+                    @(_selectedLanguage == Language.Indonesian ? "Lewati" : "Skip")
                 </button>
 
-                @if (_currentTutorialSlide == 0)
+                <!-- Progress bar -->
+                <div class="tut-progress">
+                    <div class="tut-progress-fill" style="width: @((_currentTutorialSlide + 1) * 20)%"></div>
+                </div>
+
+                <!-- Step indicator -->
+                <span class="tut-step">@(_currentTutorialSlide + 1) / 5</span>
+
+                @if (_selectedLanguage == Language.Indonesian)
                 {
-                    <div class="tutorial-slide">
-                        <h2>🎮 @(_selectedLanguage == Language.Indonesian ? "Selamat Datang di Tjoean!" : "Welcome to Tjoean!")</h2>
-                        <div class="mascot-large">🐔💰</div>
-                        <p class="tutorial-text">
-                            @(_selectedLanguage == Language.Indonesian
-                                ? "Game edukasi investasi yang mengajarkan literasi keuangan melalui simulasi realistis."
-                                : "An educational investment game teaching financial literacy through realistic simulation.")
-                        </p>
-                    </div>
-                }
-                else if (_currentTutorialSlide == 1)
-                {
-                    <div class="tutorial-slide">
-                        <h2>💰 @(_selectedLanguage == Language.Indonesian ? "Kondisi Awal" : "Starting Condition")</h2>
-                        <div class="tutorial-stats">
-                            <div class="tutorial-stat-card">
-                                <span class="stat-icon">💵</span>
-                                <span class="stat-title">@(_selectedLanguage == Language.Indonesian ? "Modal Awal" : "Starting Capital")</span>
-                                <span class="stat-number">Rp 5.000.000</span>
+                    @* ===== BAHASA INDONESIA TUTORIAL ===== *@
+                    @if (_currentTutorialSlide == 0)
+                    {
+                        <div class="tut-slide">
+                            <div class="tut-emblem">
+                                <svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="36" stroke="#C5A059" stroke-width="1"/><g transform="translate(40,42)" opacity="0.8"><ellipse cx="0" cy="4" rx="14" ry="12" fill="none" stroke="#C5A059" stroke-width="1"/><line x1="-4" y1="-6" x2="4" y2="-6" stroke="#C5A059" stroke-width="1.2" stroke-linecap="round"/><circle cx="0" cy="-14" r="7" fill="none" stroke="#CD853F" stroke-width="1"/><path d="M-3 -21C-1 -25 1 -25 2 -22C3 -26 5 -25 4 -21C6 -24 8 -23 6 -20" stroke="#8B0000" stroke-width="0.7" fill="#8B0000" opacity="0.4"/><path d="M5 -14L9 -13L5 -11" stroke="#C5A059" stroke-width="0.6" fill="#C5A059" opacity="0.3"/><circle cx="-1" cy="-15" r="1.2" fill="#C5A059" opacity="0.6"/></g></svg>
                             </div>
-                            <div class="tutorial-stat-card">
-                                <span class="stat-icon">📅</span>
-                                <span class="stat-title">@(_selectedLanguage == Language.Indonesian ? "Pendapatan Tahunan" : "Annual Income")</span>
-                                <span class="stat-number">Rp 10.000.000</span>
-                            </div>
-                            <div class="tutorial-stat-card">
-                                <span class="stat-icon">⏱️</span>
-                                <span class="stat-title">@(_selectedLanguage == Language.Indonesian ? "Durasi Simulasi" : "Simulation Duration")</span>
-                                <span class="stat-number">@(_selectedLanguage == Language.Indonesian ? "10 Tahun" : "10 Years")</span>
-                            </div>
-                        </div>
-                    </div>
-                }
-                else if (_currentTutorialSlide == 2)
-                {
-                    <div class="tutorial-slide">
-                        <h2>📊 @(_selectedLanguage == Language.Indonesian ? "Instrumen Investasi" : "Investment Instruments")</h2>
-                        <div class="tutorial-timeline">
-                            <div class="timeline-item">
-                                <span class="timeline-icon">🐖</span>
-                                <span class="timeline-label">@(_selectedLanguage == Language.Indonesian ? "Tahun 1: Tabungan" : "Year 1: Savings")</span>
-                            </div>
-                            <div class="timeline-item">
-                                <span class="timeline-icon">🏦</span>
-                                <span class="timeline-label">@(_selectedLanguage == Language.Indonesian ? "Tahun 2: Deposito" : "Year 2: CD")</span>
-                            </div>
-                            <div class="timeline-item">
-                                <span class="timeline-icon">📜</span>
-                                <span class="timeline-label">@(_selectedLanguage == Language.Indonesian ? "Tahun 2: Obligasi" : "Year 2: Bonds")</span>
-                            </div>
-                            <div class="timeline-item">
-                                <span class="timeline-icon">📈</span>
-                                <span class="timeline-label">@(_selectedLanguage == Language.Indonesian ? "Tahun 3: Reksa Dana & Emas" : "Year 3: Index Fund & Gold")</span>
-                            </div>
-                            <div class="timeline-item">
-                                <span class="timeline-icon">📊</span>
-                                <span class="timeline-label">@(_selectedLanguage == Language.Indonesian ? "Tahun 4: Saham" : "Year 4: Stocks")</span>
-                            </div>
-                            <div class="timeline-item">
-                                <span class="timeline-icon">🌐</span>
-                                <span class="timeline-label">@(_selectedLanguage == Language.Indonesian ? "Tahun 5: Crypto" : "Year 5: Crypto")</span>
-                            </div>
-                            <div class="timeline-item">
-                                <span class="timeline-icon">🏢</span>
-                                <span class="timeline-label">@(_selectedLanguage == Language.Indonesian ? "Tahun 6: Crowdfunding" : "Year 6: Crowdfunding")</span>
-                            </div>
-                        </div>
-                    </div>
-                }
-                else if (_currentTutorialSlide == 3)
-                {
-                    <div class="tutorial-slide">
-                        <h2>⚠️ @(_selectedLanguage == Language.Indonesian ? "Event Darurat" : "Emergency Events")</h2>
-                        <div class="tutorial-warning-box">
-                            <p class="tutorial-text">
-                                @(_selectedLanguage == Language.Indonesian
-                                    ? "Mulai tahun ke-2, event darurat akan terjadi di bulan 7-10 yang membutuhkan dana Rp 2-4,5 juta."
-                                    : "Starting from year 2, emergency events occur in months 7-10 requiring Rp 2-4.5 million.")
+                            <h2 class="tut-title">Selamat Datang di Tjoean</h2>
+                            <p class="tut-text">
+                                Tjoean adalah permainan edukasi yang mengajarkan literasi keuangan
+                                dan investasi melalui simulasi yang realistis. Anda akan mengelola
+                                keuangan selama 10 tahun dan mempelajari berbagai instrumen investasi
+                                yang tersedia di Indonesia.
                             </p>
-                            <div class="payment-options-preview">
-                                <span>💵 @(_selectedLanguage == Language.Indonesian ? "Bayar dari Kas" : "Pay from Cash")</span>
-                                <span>🐖 @(_selectedLanguage == Language.Indonesian ? "Bayar dari Tabungan" : "Pay from Savings")</span>
-                                <span>📊 @(_selectedLanguage == Language.Indonesian ? "Jual Investasi" : "Sell Investments")</span>
+                        </div>
+                    }
+                    else if (_currentTutorialSlide == 1)
+                    {
+                        <div class="tut-slide">
+                            <h2 class="tut-title">Kondisi Awal Anda</h2>
+                            <div class="tut-cards">
+                                <div class="tut-card">
+                                    <span class="tut-card-label">Modal Awal</span>
+                                    <span class="tut-card-value">Rp 5.000.000</span>
+                                </div>
+                                <div class="tut-card">
+                                    <span class="tut-card-label">Pendapatan Tahunan</span>
+                                    <span class="tut-card-value">Rp 10.000.000</span>
+                                </div>
+                                <div class="tut-card">
+                                    <span class="tut-card-label">Durasi Simulasi</span>
+                                    <span class="tut-card-value">10 Tahun</span>
+                                </div>
+                            </div>
+                            <p class="tut-hint">
+                                Pendapatan Anda akan diterima secara bertahap setiap bulan.
+                                Alokasikan dana tersebut dengan bijak ke berbagai instrumen investasi.
+                            </p>
+                        </div>
+                    }
+                    else if (_currentTutorialSlide == 2)
+                    {
+                        <div class="tut-slide">
+                            <h2 class="tut-title">Instrumen Investasi</h2>
+                            <p class="tut-text-sm">Instrumen baru akan terbuka seiring waktu:</p>
+                            <div class="tut-timeline">
+                                <div class="tut-tl-item"><span class="tut-tl-year">Tahun 1</span><span class="tut-tl-label">Tabungan</span></div>
+                                <div class="tut-tl-item"><span class="tut-tl-year">Tahun 1, Bulan 6</span><span class="tut-tl-label">Deposito Berjangka</span></div>
+                                <div class="tut-tl-item"><span class="tut-tl-year">Tahun 2</span><span class="tut-tl-label">Reksa Dana Indeks</span></div>
+                                <div class="tut-tl-item"><span class="tut-tl-year">Tahun 3</span><span class="tut-tl-label">Obligasi Negara</span></div>
+                                <div class="tut-tl-item"><span class="tut-tl-year">Tahun 4</span><span class="tut-tl-label">Saham</span></div>
+                                <div class="tut-tl-item"><span class="tut-tl-year">Tahun 5</span><span class="tut-tl-label">Emas</span></div>
+                                <div class="tut-tl-item"><span class="tut-tl-year">Tahun 6</span><span class="tut-tl-label">Kripto dan Urun Dana</span></div>
                             </div>
                         </div>
-                    </div>
-                }
-                else if (_currentTutorialSlide == 4)
-                {
-                    <div class="tutorial-slide">
-                        <h2>🎯 @(_selectedLanguage == Language.Indonesian ? "Tujuan Permainan" : "Game Objective")</h2>
-                        <div class="tutorial-objective">
-                            <p class="tutorial-text large">
-                                @(_selectedLanguage == Language.Indonesian
-                                    ? "Maksimalkan Net Worth Anda dalam 10 tahun!"
-                                    : "Maximize your Net Worth in 10 years!")
+                    }
+                    else if (_currentTutorialSlide == 3)
+                    {
+                        <div class="tut-slide">
+                            <h2 class="tut-title">Kejadian Darurat</h2>
+                            <div class="tut-alert">
+                                <p class="tut-text">
+                                    Mulai tahun kedua, kejadian darurat akan muncul antara bulan ketujuh
+                                    hingga bulan kesepuluh setiap tahunnya. Anda akan membutuhkan dana
+                                    sebesar Rp 2.000.000 hingga Rp 4.500.000 untuk mengatasinya.
+                                </p>
+                            </div>
+                            <div class="tut-options">
+                                <div class="tut-option">
+                                    <span class="tut-option-label">Bayar dari Kas</span>
+                                    <span class="tut-option-desc">Gunakan uang tunai yang tersedia</span>
+                                </div>
+                                <div class="tut-option">
+                                    <span class="tut-option-label">Bayar dari Tabungan</span>
+                                    <span class="tut-option-desc">Tarik dana dari rekening tabungan</span>
+                                </div>
+                                <div class="tut-option">
+                                    <span class="tut-option-label">Jual Investasi</span>
+                                    <span class="tut-option-desc">Cairkan sebagian portofolio Anda</span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else if (_currentTutorialSlide == 4)
+                    {
+                        <div class="tut-slide">
+                            <h2 class="tut-title">Tujuan Permainan</h2>
+                            <p class="tut-text tut-text--highlight">
+                                Maksimalkan total kekayaan bersih Anda dalam waktu 10 tahun.
                             </p>
-                            <div class="comparison-info">
-                                <span class="comparison-label">@(_selectedLanguage == Language.Indonesian ? "⚖️ Bandingkan dengan Bot" : "⚖️ Compare with Bot")</span>
-                                <p class="small-text">
-                                    @(_selectedLanguage == Language.Indonesian
-                                        ? "Bot menggunakan strategi aman: 5% Tabungan, 25% Deposito, 20% Obligasi, 30% Reksa Dana, 20% Emas"
-                                        : "Bot uses a safe strategy: 5% Savings, 25% CD, 20% Bonds, 30% Index Fund, 20% Gold")
+                            <div class="tut-comparison">
+                                <span class="tut-comparison-title">Bandingkan dengan Bot</span>
+                                <p class="tut-text-sm">
+                                    Bot akan bermain bersama Anda menggunakan strategi konservatif:
+                                    5% Tabungan, 25% Deposito, 20% Obligasi, 30% Reksa Dana, dan 20% Emas.
+                                    Bisakah Anda mengalahkan strategi tersebut?
                                 </p>
                             </div>
                         </div>
-                    </div>
+                    }
+                }
+                else
+                {
+                    @* ===== ENGLISH TUTORIAL ===== *@
+                    @if (_currentTutorialSlide == 0)
+                    {
+                        <div class="tut-slide">
+                            <div class="tut-emblem">
+                                <svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="36" stroke="#C5A059" stroke-width="1"/><g transform="translate(40,42)" opacity="0.8"><ellipse cx="0" cy="4" rx="14" ry="12" fill="none" stroke="#C5A059" stroke-width="1"/><line x1="-4" y1="-6" x2="4" y2="-6" stroke="#C5A059" stroke-width="1.2" stroke-linecap="round"/><circle cx="0" cy="-14" r="7" fill="none" stroke="#CD853F" stroke-width="1"/><path d="M-3 -21C-1 -25 1 -25 2 -22C3 -26 5 -25 4 -21C6 -24 8 -23 6 -20" stroke="#8B0000" stroke-width="0.7" fill="#8B0000" opacity="0.4"/><path d="M5 -14L9 -13L5 -11" stroke="#C5A059" stroke-width="0.6" fill="#C5A059" opacity="0.3"/><circle cx="-1" cy="-15" r="1.2" fill="#C5A059" opacity="0.6"/></g></svg>
+                            </div>
+                            <h2 class="tut-title">Welcome to Tjoean</h2>
+                            <p class="tut-text">
+                                Tjoean is an educational game that teaches financial literacy
+                                and investment through realistic simulation. You will manage
+                                your finances over 10 years and learn about various investment
+                                instruments available in Indonesia.
+                            </p>
+                        </div>
+                    }
+                    else if (_currentTutorialSlide == 1)
+                    {
+                        <div class="tut-slide">
+                            <h2 class="tut-title">Your Starting Condition</h2>
+                            <div class="tut-cards">
+                                <div class="tut-card">
+                                    <span class="tut-card-label">Starting Capital</span>
+                                    <span class="tut-card-value">Rp 5,000,000</span>
+                                </div>
+                                <div class="tut-card">
+                                    <span class="tut-card-label">Annual Income</span>
+                                    <span class="tut-card-value">Rp 10,000,000</span>
+                                </div>
+                                <div class="tut-card">
+                                    <span class="tut-card-label">Simulation Duration</span>
+                                    <span class="tut-card-value">10 Years</span>
+                                </div>
+                            </div>
+                            <p class="tut-hint">
+                                Your income will be received gradually each month.
+                                Allocate your funds wisely across different investment instruments.
+                            </p>
+                        </div>
+                    }
+                    else if (_currentTutorialSlide == 2)
+                    {
+                        <div class="tut-slide">
+                            <h2 class="tut-title">Investment Instruments</h2>
+                            <p class="tut-text-sm">New instruments unlock over time:</p>
+                            <div class="tut-timeline">
+                                <div class="tut-tl-item"><span class="tut-tl-year">Year 1</span><span class="tut-tl-label">Savings Account</span></div>
+                                <div class="tut-tl-item"><span class="tut-tl-year">Year 1, Month 6</span><span class="tut-tl-label">Fixed Deposit</span></div>
+                                <div class="tut-tl-item"><span class="tut-tl-year">Year 2</span><span class="tut-tl-label">Index Fund</span></div>
+                                <div class="tut-tl-item"><span class="tut-tl-year">Year 3</span><span class="tut-tl-label">Government Bonds</span></div>
+                                <div class="tut-tl-item"><span class="tut-tl-year">Year 4</span><span class="tut-tl-label">Stocks</span></div>
+                                <div class="tut-tl-item"><span class="tut-tl-year">Year 5</span><span class="tut-tl-label">Gold</span></div>
+                                <div class="tut-tl-item"><span class="tut-tl-year">Year 6</span><span class="tut-tl-label">Cryptocurrency and Crowdfunding</span></div>
+                            </div>
+                        </div>
+                    }
+                    else if (_currentTutorialSlide == 3)
+                    {
+                        <div class="tut-slide">
+                            <h2 class="tut-title">Emergency Events</h2>
+                            <div class="tut-alert">
+                                <p class="tut-text">
+                                    Starting from the second year, emergency events will occur between
+                                    the seventh and tenth month of each year. You will need between
+                                    Rp 2,000,000 and Rp 4,500,000 to handle them.
+                                </p>
+                            </div>
+                            <div class="tut-options">
+                                <div class="tut-option">
+                                    <span class="tut-option-label">Pay from Cash</span>
+                                    <span class="tut-option-desc">Use your available cash on hand</span>
+                                </div>
+                                <div class="tut-option">
+                                    <span class="tut-option-label">Pay from Savings</span>
+                                    <span class="tut-option-desc">Withdraw from your savings account</span>
+                                </div>
+                                <div class="tut-option">
+                                    <span class="tut-option-label">Sell Investments</span>
+                                    <span class="tut-option-desc">Liquidate part of your portfolio</span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else if (_currentTutorialSlide == 4)
+                    {
+                        <div class="tut-slide">
+                            <h2 class="tut-title">Game Objective</h2>
+                            <p class="tut-text tut-text--highlight">
+                                Maximize your total net worth over 10 years.
+                            </p>
+                            <div class="tut-comparison">
+                                <span class="tut-comparison-title">Compare with the Bot</span>
+                                <p class="tut-text-sm">
+                                    A bot will play alongside you using a conservative strategy:
+                                    5% Savings, 25% Fixed Deposit, 20% Government Bonds, 30% Index Fund,
+                                    and 20% Gold. Can you outperform this strategy?
+                                </p>
+                            </div>
+                        </div>
+                    }
                 }
 
-                <div class="tutorial-navigation">
-                    <button class="btn-tutorial-nav" @onclick="PreviousTutorialSlide" disabled="@(_currentTutorialSlide == 0)">
-                        ← @(_selectedLanguage == Language.Indonesian ? "Sebelumnya" : "Previous")
+                <!-- Navigation -->
+                <div class="tut-nav">
+                    <button class="tut-nav-btn" @onclick="PreviousTutorialSlide" disabled="@(_currentTutorialSlide == 0)">
+                        @(_selectedLanguage == Language.Indonesian ? "Sebelumnya" : "Previous")
                     </button>
-                    <div class="tutorial-dots">
-                        @for (int i = 0; i < 5; i++)
-                        {
-                            <span class="tutorial-dot @(i == _currentTutorialSlide ? "active" : "")"></span>
-                        }
-                    </div>
                     @if (_currentTutorialSlide < 4)
                     {
-                        <button class="btn-tutorial-nav" @onclick="NextTutorialSlide">
-                            @(_selectedLanguage == Language.Indonesian ? "Selanjutnya" : "Next") →
+                        <button class="tut-nav-btn tut-nav-btn--next" @onclick="NextTutorialSlide">
+                            @(_selectedLanguage == Language.Indonesian ? "Selanjutnya" : "Next")
                         </button>
                     }
                     else
                     {
-                        <button class="btn-tutorial-start" @onclick="StartGameAfterTutorial">
-                            @(_selectedLanguage == Language.Indonesian ? "🚀 Mulai Permainan!" : "🚀 Start Game!")
+                        <button class="tut-nav-btn tut-nav-btn--start" @onclick="StartGameAfterTutorial">
+                            @(_selectedLanguage == Language.Indonesian ? "Mulai Permainan" : "Start Game")
                         </button>
                     }
                 </div>
@@ -166,39 +266,109 @@
     else if (_gameState == null)
     {
         <div class="start-screen">
-            <div class="mascot-container">🐔💰</div>
-            <h1>TJOEAN</h1>
-            <p class="subtitle">@(_selectedLanguage == Language.Indonesian ? "Simulasi Edukasi Investasi" : "Investment Education Simulation")</p>
-
-            <div class="start-form">
-                <input type="text" @bind="_playerName" @bind:event="oninput" placeholder="@(_selectedLanguage == Language.Indonesian ? "Nama Anda" : "Your Name")" maxlength="20" />
-
-                <div class="light-mode-toggle">
-                    <label class="toggle-switch">
-                        <input type="checkbox" @bind="_isLightMode" />
-                        <span class="toggle-slider"></span>
-                    </label>
-                    <div class="toggle-info">
-                        <span class="toggle-label">@(_selectedLanguage == Language.Indonesian ? "Light Mode" : "Light Mode")</span>
-                        <span class="toggle-desc">@(_selectedLanguage == Language.Indonesian ? "Penjelasan sederhana tanpa detail regulasi" : "Simple explanations without regulatory details")</span>
-                    </div>
-                </div>
-
-                <div class="language-selector">
-                    <label class="lang-option @(_selectedLanguage == Language.Indonesian ? "selected" : "")" @onclick="() => _selectedLanguage = Language.Indonesian">
-                        <span class="flag-icon">🇮🇩</span>
-                        <span class="lang-label">Bahasa Indonesia</span>
-                    </label>
-                    <label class="lang-option @(_selectedLanguage == Language.English ? "selected" : "")" @onclick="() => _selectedLanguage = Language.English">
-                        <span class="flag-icon">🇬🇧</span>
-                        <span class="lang-label">English</span>
-                    </label>
-                </div>
-
-                <button class="btn-primary" @onclick="ShowTutorial" disabled="@string.IsNullOrWhiteSpace(_playerName)">
-                    @(_selectedLanguage == Language.Indonesian ? "📈 Mulai Simulasi" : "📈 Start Simulation")
-                </button>
+            <!-- Background botanical SVG decorations -->
+            <div class="an-bg-botanicals">
+                <svg class="an-bg-vine an-bg-vine--left" viewBox="0 0 60 400" fill="none"><path d="M30 0C20 50 10 100 15 150C20 200 10 250 15 300C20 350 15 380 20 400" stroke="currentColor" stroke-width="1"/><path d="M15 80C8 70 4 60 8 50" stroke="currentColor" stroke-width="0.6"/><path d="M15 150C5 145 2 135 6 125" stroke="currentColor" stroke-width="0.6"/><circle cx="15" cy="80" r="3" fill="currentColor" opacity="0.3"/><circle cx="15" cy="150" r="2.5" fill="currentColor" opacity="0.25"/><circle cx="18" cy="220" r="3" fill="currentColor" opacity="0.2"/><path d="M15 280C8 275 3 265 5 255" stroke="currentColor" stroke-width="0.6"/><circle cx="15" cy="280" r="2.5" fill="currentColor" opacity="0.2"/></svg>
+                <svg class="an-bg-vine an-bg-vine--right" viewBox="0 0 60 400" fill="none"><path d="M30 0C40 50 50 100 45 150C40 200 50 250 45 300C40 350 45 380 40 400" stroke="currentColor" stroke-width="1"/><path d="M45 80C52 70 56 60 52 50" stroke="currentColor" stroke-width="0.6"/><path d="M45 150C55 145 58 135 54 125" stroke="currentColor" stroke-width="0.6"/><circle cx="45" cy="80" r="3" fill="currentColor" opacity="0.3"/><circle cx="45" cy="150" r="2.5" fill="currentColor" opacity="0.25"/><circle cx="42" cy="220" r="3" fill="currentColor" opacity="0.2"/></svg>
             </div>
+
+            <!-- Art Nouveau framed content -->
+            <div class="an-start-frame">
+                <!-- Ornate border -->
+                <svg class="an-start-border" viewBox="0 0 440 620" fill="none" preserveAspectRatio="none">
+                    <rect x="6" y="6" width="428" height="608" rx="12" stroke="#C5A059" stroke-width="1.2" opacity="0.45"/>
+                    <rect x="16" y="16" width="408" height="588" rx="6" stroke="#C5A059" stroke-width="0.6" opacity="0.25"/>
+                    <path d="M130 16C130 16 170 2 220 2C270 2 310 16 310 16" stroke="#C5A059" stroke-width="0.8" opacity="0.35"/>
+                    <path d="M130 604C130 604 170 618 220 618C270 618 310 604 310 604" stroke="#C5A059" stroke-width="0.8" opacity="0.35"/>
+                </svg>
+
+                <!-- Corner ornaments -->
+                <svg class="an-start-corner an-start-corner--tl" viewBox="0 0 80 80" fill="none"><path d="M4 76C4 76 4 32 12 20C20 8 36 4 76 4" stroke="#C5A059" stroke-width="1.2" stroke-linecap="round"/><path d="M12 20C12 20 6 14 10 8C14 2 20 4 20 8C20 12 14 15 12 20Z" fill="#C5A059" opacity="0.25"/><circle cx="24" cy="9" r="2" fill="#C5A059" opacity="0.2"/></svg>
+                <svg class="an-start-corner an-start-corner--tr" viewBox="0 0 80 80" fill="none"><path d="M4 76C4 76 4 32 12 20C20 8 36 4 76 4" stroke="#C5A059" stroke-width="1.2" stroke-linecap="round"/><path d="M12 20C12 20 6 14 10 8C14 2 20 4 20 8C20 12 14 15 12 20Z" fill="#C5A059" opacity="0.25"/><circle cx="24" cy="9" r="2" fill="#C5A059" opacity="0.2"/></svg>
+                <svg class="an-start-corner an-start-corner--bl" viewBox="0 0 80 80" fill="none"><path d="M4 76C4 76 4 32 12 20C20 8 36 4 76 4" stroke="#C5A059" stroke-width="1.2" stroke-linecap="round"/><path d="M12 20C12 20 6 14 10 8C14 2 20 4 20 8C20 12 14 15 12 20Z" fill="#C5A059" opacity="0.25"/></svg>
+                <svg class="an-start-corner an-start-corner--br" viewBox="0 0 80 80" fill="none"><path d="M4 76C4 76 4 32 12 20C20 8 36 4 76 4" stroke="#C5A059" stroke-width="1.2" stroke-linecap="round"/><path d="M12 20C12 20 6 14 10 8C14 2 20 4 20 8C20 12 14 15 12 20Z" fill="#C5A059" opacity="0.25"/></svg>
+
+                <!-- Celengan Ayam (Rooster Bank) emblem -->
+                <div class="an-start-emblem">
+                    <svg viewBox="0 0 100 100" fill="none">
+                        <circle cx="50" cy="50" r="46" stroke="#C5A059" stroke-width="1.2" opacity="0.5"/>
+                        <circle cx="50" cy="50" r="42" stroke="#B87333" stroke-width="0.4" opacity="0.25"/>
+                        <g transform="translate(50,50)" opacity="0.85">
+                            <!-- Rooster body (bank shape - rounded) -->
+                            <ellipse cx="0" cy="8" rx="16" ry="14" fill="none" stroke="#C5A059" stroke-width="1.2"/>
+                            <!-- Coin slot on top -->
+                            <line x1="-5" y1="-5" x2="5" y2="-5" stroke="#C5A059" stroke-width="1.5" stroke-linecap="round"/>
+                            <!-- Rooster head -->
+                            <circle cx="0" cy="-14" r="8" fill="none" stroke="#CD853F" stroke-width="1.1"/>
+                            <!-- Comb (jengger) -->
+                            <path d="M-3 -22C-2 -26 0 -27 1 -24C2 -28 4 -27 4 -23C5 -26 7 -25 6 -22" stroke="#8B0000" stroke-width="0.8" fill="#8B0000" opacity="0.5"/>
+                            <!-- Beak -->
+                            <path d="M5 -14L10 -13L5 -11" stroke="#C5A059" stroke-width="0.8" fill="#C5A059" opacity="0.4"/>
+                            <!-- Eye -->
+                            <circle cx="-1" cy="-15" r="1.5" fill="#C5A059" opacity="0.7"/>
+                            <circle cx="-0.5" cy="-15.3" r="0.6" fill="#1B4D3E"/>
+                            <!-- Wattle (pial) -->
+                            <path d="M3 -11C5 -9 4 -7 2 -8" stroke="#8B0000" stroke-width="0.6" opacity="0.4"/>
+                            <!-- Tail feathers -->
+                            <path d="M-12 0C-18 -8 -20 -16 -16 -20" stroke="#CD853F" stroke-width="0.8" stroke-linecap="round" fill="none"/>
+                            <path d="M-11 2C-19 -4 -22 -12 -19 -18" stroke="#C5A059" stroke-width="0.6" stroke-linecap="round" fill="none" opacity="0.6"/>
+                            <path d="M-10 4C-17 -2 -21 -8 -20 -14" stroke="#B87333" stroke-width="0.5" stroke-linecap="round" fill="none" opacity="0.4"/>
+                            <!-- Legs -->
+                            <path d="M-4 21L-6 28M-6 28L-9 28M-6 28L-3 28" stroke="#C5A059" stroke-width="0.7" stroke-linecap="round"/>
+                            <path d="M4 21L6 28M6 28L3 28M6 28L9 28" stroke="#C5A059" stroke-width="0.7" stroke-linecap="round"/>
+                            <!-- Coin going in -->
+                            <circle cx="0" cy="-9" r="2.5" fill="none" stroke="#FFD700" stroke-width="0.6" opacity="0.5"/>
+                            <text x="0" y="-7.5" text-anchor="middle" font-size="3" fill="#FFD700" opacity="0.5">$</text>
+                        </g>
+                    </svg>
+                </div>
+
+                <!-- Title -->
+                <h1 class="an-start-title">Tjoean</h1>
+
+                <!-- Flourish -->
+                <svg class="an-start-flourish" viewBox="0 0 240 20" fill="none">
+                    <path d="M15 10C15 10 50 3 85 9C120 15 120 5 155 9C190 13 225 10 225 10" stroke="#C5A059" stroke-width="0.8" stroke-linecap="round"/>
+                    <path d="M116 10L120 6L124 10L120 14Z" fill="#C5A059" opacity="0.5"/>
+                    <circle cx="15" cy="10" r="1.5" fill="#C5A059" opacity="0.4"/>
+                    <circle cx="225" cy="10" r="1.5" fill="#C5A059" opacity="0.4"/>
+                </svg>
+
+                <p class="an-start-subtitle">@(_selectedLanguage == Language.Indonesian ? "Simulasi Edukasi Investasi" : "Investment Education Simulation")</p>
+
+                <!-- Form -->
+                <div class="an-start-form">
+                    <input type="text" @bind="_playerName" @bind:event="oninput" placeholder="@(_selectedLanguage == Language.Indonesian ? "Nama Anda" : "Your Name")" maxlength="20" class="an-input" />
+
+                    <div class="an-toggle-row">
+                        <label class="toggle-switch">
+                            <input type="checkbox" @bind="_isLightMode" />
+                            <span class="an-toggle-slider"></span>
+                        </label>
+                        <div class="an-toggle-info">
+                            <span class="an-toggle-label">@(_selectedLanguage == Language.Indonesian ? "Light Mode" : "Light Mode")</span>
+                            <span class="an-toggle-desc">@(_selectedLanguage == Language.Indonesian ? "Penjelasan sederhana tanpa detail regulasi" : "Simple explanations without regulatory details")</span>
+                        </div>
+                    </div>
+
+                    <div class="an-lang-selector">
+                        <label class="an-lang-option @(_selectedLanguage == Language.Indonesian ? "selected" : "")" @onclick="() => _selectedLanguage = Language.Indonesian">
+                            <span class="an-lang-flag">🇮🇩</span>
+                            <span class="an-lang-label">Bahasa Indonesia</span>
+                        </label>
+                        <label class="an-lang-option @(_selectedLanguage == Language.English ? "selected" : "")" @onclick="() => _selectedLanguage = Language.English">
+                            <span class="an-lang-flag">🇬🇧</span>
+                            <span class="an-lang-label">English</span>
+                        </label>
+                    </div>
+
+                    <button class="an-btn-start" @onclick="ShowTutorial" disabled="@string.IsNullOrWhiteSpace(_playerName)">
+                        @(_selectedLanguage == Language.Indonesian ? "Mulai Simulasi" : "Start Simulation")
+                    </button>
+                </div>
+            </div>
+
+            <span class="an-start-footer">Orang Utan Capital</span>
         </div>
     }
     else
@@ -207,7 +377,7 @@
             <!-- Header -->
             <header class="game-header">
                 <div class="header-left">
-                    <h1>🐔 TJOEAN</h1>
+                    <h1><svg class="header-logo" viewBox="0 0 28 28" fill="none"><g transform="translate(14,15)" opacity="0.9"><ellipse cx="0" cy="2" rx="7" ry="6" fill="none" stroke="currentColor" stroke-width="1.2"/><line x1="-2.5" y1="-3" x2="2.5" y2="-3" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><circle cx="0" cy="-8" r="4" fill="none" stroke="currentColor" stroke-width="1"/><path d="M-1.5 -12C-0.8 -14 0.5 -14 1 -12.5C1.5 -14.5 2.8 -14 2.5 -12C3.5 -13.5 4.5 -13 3.5 -11.5" stroke="#FFD700" stroke-width="0.7" fill="#FFD700" opacity="0.6"/><path d="M3 -8L5.5 -7L3 -6" stroke="currentColor" stroke-width="0.7" fill="currentColor" opacity="0.5"/><circle cx="-0.5" cy="-8.5" r="0.7" fill="currentColor" opacity="0.7"/></g></svg> TJOEAN</h1>
                     <span class="player-name">👤 @_gameState.PlayerId</span>
                 </div>
                 <div class="header-center">

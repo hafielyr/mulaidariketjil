@@ -296,6 +296,18 @@ public class GameState
     public decimal PlayerDepositoPercent { get; set; }
     public decimal PlayerBondPercent { get; set; }
     public decimal PlayerPortfolioPercent { get; set; }
+
+    // Player event cost tracking (for excluding from investment performance)
+    public decimal PlayerTotalEventCostPaid { get; set; }
+
+    // Investment performance breakdown for summary
+    public decimal SavingsInterestEarned { get; set; }
+    public decimal DepositoInterestEarned { get; set; }
+    public decimal BondCouponEarned { get; set; }
+    public decimal DividendEarned { get; set; }
+    public decimal PortfolioGainLoss { get; set; } // Realized + unrealized P/L from Stocks, Index, Gold, Crypto
+    public decimal CrowdfundingGainLoss { get; set; } // Realized + unrealized P/L from Crowdfunding
+    public decimal TotalInvestmentGainLoss { get; set; }
 }
 
 public class AssetPrice
@@ -318,27 +330,53 @@ public class MarketUpdate
 
 public class RandomEvent
 {
-    public string Title { get; set; } = string.Empty;
-    public string TitleAdult { get; set; } = string.Empty;
-    public string Description { get; set; } = string.Empty;
-    public string DescriptionAdult { get; set; } = string.Empty;
+    // Indonesian
+    public string Title { get; set; } = string.Empty; // Kids ID
+    public string TitleAdult { get; set; } = string.Empty; // Adult ID
+    public string Description { get; set; } = string.Empty; // Kids ID
+    public string DescriptionAdult { get; set; } = string.Empty; // Adult ID
+
+    // English
+    public string TitleEN { get; set; } = string.Empty; // Kids EN
+    public string TitleAdultEN { get; set; } = string.Empty; // Adult EN
+    public string DescriptionEN { get; set; } = string.Empty; // Kids EN
+    public string DescriptionAdultEN { get; set; } = string.Empty; // Adult EN
+
     public decimal Cost { get; set; }
     public string Impact { get; set; } = string.Empty;
+
+    public string GetTitle(AgeMode mode, Language lang) => (mode, lang) switch
+    {
+        (AgeMode.Kids, Language.Indonesian) => Title,
+        (AgeMode.Adult, Language.Indonesian) => TitleAdult,
+        (AgeMode.Kids, Language.English) => TitleEN,
+        (AgeMode.Adult, Language.English) => TitleAdultEN,
+        _ => Title
+    };
+
+    public string GetDescription(AgeMode mode, Language lang) => (mode, lang) switch
+    {
+        (AgeMode.Kids, Language.Indonesian) => Description,
+        (AgeMode.Adult, Language.Indonesian) => DescriptionAdult,
+        (AgeMode.Kids, Language.English) => DescriptionEN,
+        (AgeMode.Adult, Language.English) => DescriptionAdultEN,
+        _ => Description
+    };
 }
 
 /// <summary>
-/// Bot state for comparing player performance against emerging market investment strategy.
-/// Based on typical financial advisor recommendations for emerging markets:
-/// - 5% Emergency Fund (Savings)
-/// - 25% Fixed Income - Deposito
-/// - 20% Fixed Income - Government Bonds
-/// - 30% Equities (Index Fund)
-/// - 20% Commodities (Gold)
+/// Bot state for comparing player performance against balanced investment strategy.
+/// - 10% Emergency Fund (Savings)
+/// - 10% Fixed Income - Deposito
+/// - 15% Fixed Income - Government Bonds (ST)
+/// - 30% Equities (Index Fund / Reksa Dana)
+/// - 15% Individual Stocks
+/// - 20% Commodities (Gold / Emas)
 /// </summary>
 public class BotState
 {
     public string BotName { get; set; } = "Financial Advisor Bot";
-    public string Strategy { get; set; } = "Emerging Market Balanced";
+    public string Strategy { get; set; } = "Balanced";
 
     public decimal CashBalance { get; set; }
     public decimal SavingsBalance { get; set; }
@@ -348,6 +386,9 @@ public class BotState
     public decimal IndexFundCost { get; set; }
     public decimal GoldUnits { get; set; }
     public decimal GoldCost { get; set; }
+    public decimal StockCost { get; set; }
+    public decimal StockValue { get; set; }
+    public string StockTicker { get; set; } = string.Empty;
 
     // Calculated values (set by server)
     public decimal IndexFundValue { get; set; }
@@ -355,6 +396,8 @@ public class BotState
     public decimal TotalDepositoValue { get; set; }
     public decimal TotalBondValue { get; set; }
     public decimal NetWorth { get; set; }
+    public decimal DisplayNetWorth { get; set; } // NetWorth after player event deduction
+    public decimal PlayerEventDeduction { get; set; } // Amount deducted to match player events
 
     // For comparison display
     public decimal TotalInvested { get; set; }
@@ -368,6 +411,7 @@ public class BotState
     public decimal BondPercent { get; set; }
     public decimal IndexFundPercent { get; set; }
     public decimal GoldPercent { get; set; }
+    public decimal StockPercent { get; set; }
 
     // Event tracking
     public int EventsPaidFromCash { get; set; }
@@ -376,5 +420,5 @@ public class BotState
     public decimal TotalEventCostPaid { get; set; }
 
     // Target allocation for display
-    public string TargetAllocation { get; set; } = "5% Savings, 25% Deposito, 20% Bonds, 30% Index Fund, 20% Gold";
+    public string TargetAllocation { get; set; } = "10% Savings, 10% Deposito, 15% Bonds, 30% Index Fund, 15% Stocks, 20% Gold";
 }

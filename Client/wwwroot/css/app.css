@@ -1,5 +1,5 @@
 /* Tjoean - Celengan Ayam Indonesian Investment Game */
-@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&family=Poppins:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:wght@400;500;600;700;800;900&family=IM+Fell+English+SC&display=swap');
 
 :root {
     /* Celengan Ayam Inspired Colors - Updated to match reference */
@@ -126,7 +126,7 @@ h2 .an-icon, h3 .an-icon { fill: #C5A059; width: 1.2em; height: 1.2em; }
 
 html, body {
     height: 100%;
-    font-family: 'Nunito', 'Segoe UI', sans-serif;
+    font-family: 'Lora', 'Georgia', serif;
     background: var(--bg-gradient);
     color: var(--text-dark);
     overflow-x: hidden;
@@ -291,7 +291,8 @@ html, body {
     justify-content: center;
     height: 100vh;
     gap: 1.5rem;
-    background: var(--bg-gradient);
+    background:
+        radial-gradient(ellipse at center, #1B4D3E 0%, #0F2E25 60%, #091A14 100%);
     position: relative;
     overflow: hidden;
 }
@@ -299,15 +300,60 @@ html, body {
 .loading-screen::before {
     content: '';
     position: absolute;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 50%);
-    animation: float 4s ease-in-out infinite;
+    inset: 0;
+    background:
+        repeating-linear-gradient(
+            1deg,
+            transparent, transparent 2px,
+            rgba(245,245,220,0.028) 2px, rgba(245,245,220,0.028) 3px
+        ),
+        repeating-linear-gradient(
+            91deg,
+            transparent, transparent 2px,
+            rgba(197,160,89,0.018) 2px, rgba(197,160,89,0.018) 3px
+        ),
+        repeating-linear-gradient(
+            -38deg,
+            transparent, transparent 60px,
+            rgba(184,115,51,0.055) 60px, rgba(184,115,51,0.055) 62px,
+            transparent 62px, transparent 80px,
+            rgba(184,115,51,0.03) 80px, rgba(184,115,51,0.03) 81px
+        ),
+        repeating-linear-gradient(
+            0deg,
+            transparent, transparent 8px,
+            rgba(197,160,89,0.04) 8px, rgba(197,160,89,0.04) 9px,
+            transparent 9px, transparent 16px,
+            rgba(197,160,89,0.022) 16px, rgba(197,160,89,0.022) 17px
+        ),
+        repeating-linear-gradient(
+            0deg,
+            transparent, transparent 28px,
+            rgba(197,160,89,0.03) 28px, rgba(197,160,89,0.03) 29px
+        ),
+        repeating-linear-gradient(
+            90deg,
+            transparent, transparent 28px,
+            rgba(197,160,89,0.03) 28px, rgba(197,160,89,0.03) 29px
+        ),
+        radial-gradient(ellipse at 50% 50%, rgba(197,160,89,0.07) 0%, transparent 55%),
+        radial-gradient(circle at 15% 20%, rgba(197,160,89,0.05) 0%, transparent 18%),
+        radial-gradient(circle at 85% 80%, rgba(184,115,51,0.045) 0%, transparent 18%),
+        radial-gradient(circle at 80% 18%, rgba(197,160,89,0.04) 0%, transparent 14%),
+        radial-gradient(circle at 18% 82%, rgba(184,115,51,0.04) 0%, transparent 14%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.loading-screen > * {
+    position: relative;
+    z-index: 1;
 }
 
 .loading-screen h1 {
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
     font-size: 5rem;
+    font-weight: 700;
     color: var(--ayam-red);
     text-shadow: 4px 4px 0 var(--ayam-yellow), 6px 6px 0 rgba(0,0,0,0.1);
     animation: bounce 2s ease-in-out infinite;
@@ -341,55 +387,71 @@ html, body {
     font-family: 'Cormorant Garamond', 'Georgia', serif;
 }
 
-/* Banknote paper texture overlay */
+/* Money paper texture — layered banknote effect */
 .start-screen::before {
     content: '';
     position: absolute;
     inset: 0;
     background:
-        /* Paper fiber noise - fine horizontal fibers */
+        /* Fine horizontal paper fibers */
         repeating-linear-gradient(
-            2deg,
-            transparent, transparent 1px,
-            rgba(245,245,220,0.012) 1px, rgba(245,245,220,0.012) 2px
-        ),
-        /* Paper fiber noise - cross fibers */
-        repeating-linear-gradient(
-            88deg,
+            1deg,
             transparent, transparent 2px,
-            rgba(197,160,89,0.008) 2px, rgba(197,160,89,0.008) 3px
+            rgba(245,245,220,0.028) 2px, rgba(245,245,220,0.028) 3px
         ),
-        /* Security thread diagonal lines */
+        /* Cross-grain fibers */
         repeating-linear-gradient(
-            -35deg,
-            transparent, transparent 18px,
-            rgba(184,115,51,0.025) 18px, rgba(184,115,51,0.025) 19px
+            91deg,
+            transparent, transparent 2px,
+            rgba(197,160,89,0.018) 2px, rgba(197,160,89,0.018) 3px
         ),
-        /* Banknote micro-pattern grid */
+        /* Security thread — bold diagonal stripes */
+        repeating-linear-gradient(
+            -38deg,
+            transparent, transparent 60px,
+            rgba(184,115,51,0.055) 60px, rgba(184,115,51,0.055) 62px,
+            transparent 62px, transparent 80px,
+            rgba(184,115,51,0.03) 80px, rgba(184,115,51,0.03) 81px
+        ),
+        /* Guilloche wave bands — horizontal */
         repeating-linear-gradient(
             0deg,
-            transparent, transparent 40px,
-            rgba(197,160,89,0.015) 40px, rgba(197,160,89,0.015) 41px
+            transparent, transparent 8px,
+            rgba(197,160,89,0.04) 8px, rgba(197,160,89,0.04) 9px,
+            transparent 9px, transparent 16px,
+            rgba(197,160,89,0.022) 16px, rgba(197,160,89,0.022) 17px
+        ),
+        /* Micro-grid intaglio */
+        repeating-linear-gradient(
+            0deg,
+            transparent, transparent 28px,
+            rgba(197,160,89,0.03) 28px, rgba(197,160,89,0.03) 29px
         ),
         repeating-linear-gradient(
             90deg,
-            transparent, transparent 40px,
-            rgba(197,160,89,0.015) 40px, rgba(197,160,89,0.015) 41px
+            transparent, transparent 28px,
+            rgba(197,160,89,0.03) 28px, rgba(197,160,89,0.03) 29px
         ),
-        /* Organic watermark pattern - concentric circles */
-        radial-gradient(circle at 30% 40%, rgba(197,160,89,0.03) 0%, transparent 25%),
-        radial-gradient(circle at 70% 60%, rgba(184,115,51,0.025) 0%, transparent 20%),
-        radial-gradient(circle at 50% 20%, rgba(245,245,220,0.015) 0%, transparent 30%);
+        /* Watermark center glow */
+        radial-gradient(ellipse at 50% 50%, rgba(197,160,89,0.07) 0%, transparent 55%),
+        /* Corner watermarks */
+        radial-gradient(circle at 15% 20%, rgba(197,160,89,0.05) 0%, transparent 18%),
+        radial-gradient(circle at 85% 80%, rgba(184,115,51,0.045) 0%, transparent 18%),
+        radial-gradient(circle at 80% 18%, rgba(197,160,89,0.04) 0%, transparent 14%),
+        radial-gradient(circle at 18% 82%, rgba(184,115,51,0.04) 0%, transparent 14%);
     pointer-events: none;
     z-index: 1;
 }
 
-/* Vignette effect */
+/* Vignette + surface sheen */
 .start-screen::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(ellipse at center, transparent 40%, rgba(9,26,20,0.6) 100%);
+    background:
+        radial-gradient(ellipse at center, transparent 35%, rgba(9,26,20,0.65) 100%),
+        /* Subtle top-light sheen like paper under a lamp */
+        linear-gradient(160deg, rgba(197,160,89,0.04) 0%, transparent 40%, rgba(9,26,20,0.1) 100%);
     pointer-events: none;
     z-index: 1;
 }
@@ -461,7 +523,7 @@ html, body {
 .an-start-corner--bl { bottom: -6px; left: -6px; transform: scaleY(-1); }
 .an-start-corner--br { bottom: -6px; right: -6px; transform: scale(-1, -1); }
 
-/* Orangutan emblem */
+/* Orangutan emblem (legacy, kept for fallback) */
 .an-start-emblem {
     width: 140px;
     height: 140px;
@@ -479,13 +541,125 @@ html, body {
     object-fit: cover;
 }
 
+/* 3D Spinning Coin */
+.an-coin-scene {
+    width: 160px;
+    height: 160px;
+    position: relative;
+    margin-bottom: 1.5rem;
+    flex-shrink: 0;
+}
+
+.an-coin-scene--small {
+    width: 110px;
+    height: 110px;
+}
+
+.an-coin {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    animation: an-coin-spin 4s ease-in-out infinite;
+    border-radius: 50%;
+    box-shadow:
+        0 0 25px rgba(197,160,89,0.3),
+        0 4px 12px rgba(0,0,0,0.3);
+}
+
+.an-coin-face {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid #B8943E;
+    box-sizing: border-box;
+}
+
+.an-coin-face img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.an-coin-rim {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    box-shadow:
+        inset 0 0 8px rgba(0,0,0,0.4),
+        inset 0 0 2px 1px rgba(197,160,89,0.5),
+        0 0 4px rgba(197,160,89,0.3);
+    pointer-events: none;
+    z-index: 4;
+}
+
+.an-coin-front {
+    animation: an-coin-front-vis 4s ease-in-out infinite;
+}
+
+.an-coin-back {
+    animation: an-coin-back-vis 4s ease-in-out infinite;
+}
+
+.an-coin-edge {
+    display: none;
+}
+
+.an-coin-shadow {
+    position: absolute;
+    bottom: -14px;
+    left: 50%;
+    width: 110px;
+    height: 14px;
+    margin-left: -55px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(0,0,0,0.3) 0%, transparent 70%);
+    animation: an-coin-shadow 4s ease-in-out infinite;
+}
+
+@keyframes an-coin-spin {
+    0%   { transform: scaleX(1); }
+    20%  { transform: scaleX(1); }
+    25%  { transform: scaleX(0); box-shadow: 0 0 10px rgba(197,160,89,0.1), 0 4px 8px rgba(0,0,0,0.2); }
+    30%  { transform: scaleX(1); }
+    70%  { transform: scaleX(1); }
+    75%  { transform: scaleX(0); box-shadow: 0 0 10px rgba(197,160,89,0.1), 0 4px 8px rgba(0,0,0,0.2); }
+    80%  { transform: scaleX(1); }
+    100% { transform: scaleX(1); }
+}
+
+@keyframes an-coin-front-vis {
+    0%, 24.9%  { visibility: visible; }
+    25%, 74.9% { visibility: hidden; }
+    75%, 100%  { visibility: visible; }
+}
+
+@keyframes an-coin-back-vis {
+    0%, 24.9%  { visibility: hidden; }
+    25%, 74.9% { visibility: visible; }
+    75%, 100%  { visibility: hidden; }
+}
+
+@keyframes an-coin-shadow {
+    0%   { transform: scaleX(1);   opacity: 0.5; }
+    20%  { transform: scaleX(1);   opacity: 0.5; }
+    25%  { transform: scaleX(0.2); opacity: 0.2; }
+    30%  { transform: scaleX(1);   opacity: 0.5; }
+    70%  { transform: scaleX(1);   opacity: 0.5; }
+    75%  { transform: scaleX(0.2); opacity: 0.2; }
+    80%  { transform: scaleX(1);   opacity: 0.5; }
+    100% { transform: scaleX(1);   opacity: 0.5; }
+}
+
 /* Title */
 .an-start-title {
-    font-family: 'Playfair Display', 'Georgia', serif;
-    font-size: 3.8rem;
-    font-weight: 900;
+    font-family: 'IM Fell English SC', 'Playfair Display', 'Georgia', serif;
+    font-size: 4rem;
+    font-weight: 400;
+    font-style: italic;
     color: #C5A059;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.08em;
     text-align: center;
     line-height: 1;
     margin-bottom: 0.2rem;
@@ -884,7 +1058,8 @@ html, body {
 }
 
 .game-info h3 {
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
+    font-weight: 700;
     color: var(--ayam-red);
     margin-bottom: 1rem;
     font-size: 1.3rem;
@@ -922,7 +1097,7 @@ html, body {
     padding: 1rem 2.5rem;
     font-size: 1.2rem;
     font-weight: 700;
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
     background: linear-gradient(135deg, var(--ayam-orange), var(--ayam-brown));
     color: white;
     border: var(--stroke-width) solid var(--stroke-color);
@@ -971,7 +1146,7 @@ html, body {
     padding: 0.8rem 1.5rem;
     font-size: 1rem;
     font-weight: 700;
-    font-family: 'Nunito', sans-serif;
+    font-family: 'Lora', 'Georgia', serif;
     background: transparent;
     color: var(--ayam-yellow);
     border: 3px solid var(--ayam-yellow);
@@ -1047,7 +1222,7 @@ html, body {
     padding: 0.8rem;
     font-size: 0.95rem;
     font-weight: 700;
-    font-family: 'Nunito', sans-serif;
+    font-family: 'Lora', 'Georgia', serif;
     background: linear-gradient(135deg, var(--money-green), var(--money-green-dark));
     color: white;
     border: 3px solid var(--stroke-color);
@@ -1236,8 +1411,9 @@ html, body {
 }
 
 .header-left h1 {
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
     font-size: 1.8rem;
+    font-weight: 700;
     color: var(--ayam-yellow);
     text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
     letter-spacing: 0.05em;
@@ -1465,7 +1641,7 @@ html, body {
 }
 
 .balance-card h3, .networth-card h3 {
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
     font-size: 0.9rem;
     color: var(--text-muted);
     margin-bottom: 0.3rem;
@@ -1474,7 +1650,7 @@ html, body {
 }
 
 .balance-amount {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Cormorant Garamond', 'Georgia', serif;
     font-size: 1.4rem;
     font-weight: 700;
     color: var(--money-green);
@@ -1482,7 +1658,7 @@ html, body {
 }
 
 .networth-amount {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Cormorant Garamond', 'Georgia', serif;
     font-size: 1.6rem;
     font-weight: 700;
     background: linear-gradient(135deg, var(--ayam-red), var(--ayam-orange));
@@ -1499,8 +1675,9 @@ html, body {
 }
 
 .portfolio-section h3, .deposito-section h3 {
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
     font-size: 1rem;
+    font-weight: 700;
     margin-bottom: 0.8rem;
     color: var(--ayam-red);
     display: flex;
@@ -1509,7 +1686,13 @@ html, body {
 }
 
 .portfolio-section h3::before {
-    content: '📊';
+    content: '';
+    display: inline-block;
+    width: 1.2em;
+    height: 1.2em;
+    background: var(--ayam-red);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath d='M3 20h18v1H3zM5 17V10h3v7zM10 17V6h3v11zM15 17V9h3v8z'/%3E%3C/svg%3E") no-repeat center;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath d='M3 20h18v1H3zM5 17V10h3v7zM10 17V6h3v11zM15 17V9h3v8z'/%3E%3C/svg%3E") no-repeat center;
 }
 
 .deposito-section h3::before {
@@ -1562,7 +1745,7 @@ html, body {
 }
 
 .item-value {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Cormorant Garamond', 'Georgia', serif;
     font-size: 0.9rem;
     font-weight: 700;
     color: var(--text-dark);
@@ -1657,7 +1840,7 @@ html, body {
 }
 
 .aro-checkbox-label .aro-label {
-    font-family: 'Nunito', sans-serif;
+    font-family: 'Lora', 'Georgia', serif;
     font-size: 0.75rem;
     font-weight: 700;
     color: var(--money-green-dark);
@@ -1718,8 +1901,9 @@ html, body {
 }
 
 .panel-center h2 {
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
     font-size: 1.5rem;
+    font-weight: 700;
     margin-bottom: 1rem;
     color: var(--ayam-red);
     text-align: center;
@@ -1727,10 +1911,17 @@ html, body {
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
+    letter-spacing: 0.05em;
 }
 
 .panel-center h2::before {
-    content: '🏪';
+    content: '';
+    display: inline-block;
+    width: 1.4em;
+    height: 1.4em;
+    background: var(--ayam-red);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath d='M3 17l5-5 3 3 7-8 2 2-9 10-3-3z'/%3E%3Cpath d='M17 6h4v4'/%3E%3Cpath d='M12 22V10M4 22h16M4 10h16l-2-6H6z'/%3E%3C/svg%3E") no-repeat center;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath d='M3 17l5-5 3 3 7-8 2 2-9 10-3-3z'/%3E%3Cpath d='M17 6h4v4'/%3E%3Cpath d='M12 22V10M4 22h16M4 10h16l-2-6H6z'/%3E%3C/svg%3E") no-repeat center;
     animation: wiggle 2s ease-in-out infinite;
 }
 
@@ -1746,8 +1937,9 @@ html, body {
 }
 
 .deposito-purchase-section h3 {
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
     font-size: 1.1rem;
+    font-weight: 700;
     color: var(--money-green-dark);
     margin-bottom: 1rem;
     text-align: center;
@@ -1787,14 +1979,15 @@ html, body {
 }
 
 .deposito-rate-card .period {
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
     font-size: 0.9rem;
+    font-weight: 600;
     display: block;
     margin-bottom: 0.2rem;
 }
 
 .deposito-rate-card .rate {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Cormorant Garamond', 'Georgia', serif;
     font-size: 1.1rem;
     font-weight: 700;
     color: var(--money-green);
@@ -1814,7 +2007,8 @@ html, body {
 .deposito-amount-input input {
     flex: 1;
     padding: 0.6rem;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Cormorant Garamond', 'Georgia', serif;
+    font-size: 1.3rem;
     font-weight: 600;
     border: 3px solid var(--stroke-color);
     border-radius: 6px;
@@ -1851,7 +2045,7 @@ html, body {
 }
 
 .auto-rollover-checkbox .checkbox-label {
-    font-family: 'Nunito', sans-serif;
+    font-family: 'Lora', 'Georgia', serif;
     font-size: 0.9rem;
     font-weight: 700;
     color: var(--money-green-dark);
@@ -1861,12 +2055,13 @@ html, body {
 .auto-rollover-checkbox .info-icon {
     font-size: 0.9rem;
     color: var(--ayam-orange);
-    cursor: help;
+    cursor: pointer;
     transition: transform 0.2s;
 }
 
 .auto-rollover-checkbox .info-icon:hover {
-    transform: scale(1.2);
+    transform: scale(1.3);
+    filter: brightness(1.3);
 }
 
 .auto-rollover-checkbox:hover {
@@ -1953,8 +2148,9 @@ html, body {
 }
 
 .market-card .asset-name {
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
     font-size: 0.85rem;
+    font-weight: 600;
     color: var(--text-dark);
 }
 
@@ -2112,8 +2308,9 @@ html, body {
 }
 
 .asset-name {
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
     font-size: 0.95rem;
+    font-weight: 600;
     color: var(--text-dark);
 }
 
@@ -2154,7 +2351,7 @@ html, body {
 }
 
 .price {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Cormorant Garamond', 'Georgia', serif;
     font-size: 1.05rem;
     font-weight: 700;
     color: var(--text-dark);
@@ -2200,8 +2397,9 @@ html, body {
 }
 
 .locked-section h3 {
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
     font-size: 1rem;
+    font-weight: 700;
     color: var(--text-muted);
     margin-bottom: 1rem;
     text-align: center;
@@ -2260,8 +2458,9 @@ html, body {
 }
 
 .panel-right h3 {
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
     font-size: 1rem;
+    font-weight: 700;
     margin-bottom: 0.8rem;
     color: var(--ayam-red);
     display: flex;
@@ -2342,8 +2541,9 @@ html, body {
     padding: 2rem 4rem;
     border-radius: 20px;
     border: 4px solid var(--ayam-yellow);
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
     font-size: 2.5rem;
+    font-weight: 700;
     z-index: 100;
     animation: pulse-glow 1.5s infinite;
     box-shadow: 0 10px 50px rgba(0,0,0,0.5);
@@ -2460,21 +2660,23 @@ html, body {
     position: absolute;
     top: 1rem;
     right: 1rem;
-    background: none;
-    color: rgba(197, 160, 89, 0.45);
-    border: 1px solid rgba(197, 160, 89, 0.2);
-    padding: 0.3rem 0.8rem;
+    background: rgba(197, 160, 89, 0.12);
+    color: #C5A059;
+    border: 1.5px solid rgba(197, 160, 89, 0.6);
+    padding: 0.35rem 1rem;
     border-radius: 4px;
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     font-family: 'Cormorant Garamond', serif;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.12em;
     cursor: pointer;
     transition: all 0.3s;
+    font-weight: 700;
 }
 
 .tut-skip:hover {
-    color: #C5A059;
-    border-color: rgba(197, 160, 89, 0.5);
+    background: rgba(197, 160, 89, 0.25);
+    color: #E8D89E;
+    border-color: #C5A059;
 }
 
 /* Progress bar */
@@ -2628,9 +2830,10 @@ html, body {
 
 .tut-tl-year {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 0.75rem;
-    color: rgba(197, 160, 89, 0.5);
-    min-width: 110px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #C5A059;
+    min-width: 70px;
     flex-shrink: 0;
     letter-spacing: 0.03em;
 }
@@ -2781,8 +2984,9 @@ html, body {
 }
 
 .modal-content h2 {
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
     font-size: 1.8rem;
+    font-weight: 700;
     margin-bottom: 1rem;
     color: var(--ayam-red);
 }
@@ -2801,7 +3005,7 @@ html, body {
 }
 
 .info-section h4 {
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
     color: var(--ayam-red);
     margin-bottom: 0.5rem;
     font-size: 1rem;
@@ -2839,7 +3043,7 @@ html, body {
 }
 
 .event-cost-display {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Cormorant Garamond', 'Georgia', serif;
     font-size: 2rem;
     font-weight: 700;
     color: var(--risk-extreme);
@@ -2883,7 +3087,8 @@ html, body {
 }
 
 .event-option-label {
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
+    font-weight: 600;
     color: var(--text-dark);
     margin-bottom: 0.3rem;
     display: block;
@@ -3016,8 +3221,9 @@ html, body {
 }
 
 .intro-card h3 {
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
     font-size: 1.2rem;
+    font-weight: 700;
     margin-bottom: 0.8rem;
     color: var(--ayam-red);
 }
@@ -3069,14 +3275,15 @@ html, body {
 }
 
 .stat-value {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Cormorant Garamond', 'Georgia', serif;
     font-weight: 700;
     color: var(--money-green);
 }
 
 .rating {
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
     font-size: 1.3rem;
+    font-weight: 700;
     margin-bottom: 1.5rem;
     padding: 1rem;
     background: linear-gradient(135deg, rgba(230, 57, 70, 0.1), rgba(244, 162, 97, 0.1));
@@ -3197,7 +3404,7 @@ html, body {
 }
 
 .performance-section h3 {
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
     font-size: 0.9rem;
     margin-bottom: 0.6rem;
     color: var(--ayam-red);
@@ -3215,13 +3422,19 @@ html, body {
     border-bottom: none;
 }
 
+.performance-stat.sub-stat {
+    padding-left: 0.8rem;
+    font-size: 0.75rem;
+    opacity: 0.85;
+}
+
 .perf-label {
     color: var(--text-muted);
     font-weight: 600;
 }
 
 .perf-value {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Cormorant Garamond', 'Georgia', serif;
     font-weight: 700;
     color: var(--text-dark);
 }
@@ -3422,7 +3635,8 @@ html, body {
         font-size: 2.8rem;
     }
 
-    .an-start-emblem {
+    .an-start-emblem,
+    .an-coin-scene {
         width: 110px;
         height: 110px;
     }
@@ -3562,7 +3776,7 @@ html, body {
 }
 
 .toggle-label {
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
     font-size: 1rem;
     color: var(--text-dark);
 }
@@ -3611,7 +3825,7 @@ html, body {
 }
 
 .lang-label {
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
     font-size: 0.9rem;
     color: var(--text-dark);
     font-weight: 700;
@@ -3628,14 +3842,14 @@ html, body {
 }
 
 .savings-section h3 {
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
     font-size: 1rem;
     color: var(--ayam-red);
     margin-bottom: 0.5rem;
 }
 
 .savings-balance {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Cormorant Garamond', 'Georgia', serif;
     font-size: 1.3rem;
     font-weight: 700;
     color: var(--money-green);
@@ -3651,7 +3865,8 @@ html, body {
 .savings-input-group input {
     width: 100%;
     padding: 0.5rem;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Cormorant Garamond', 'Georgia', serif;
+    font-size: 1.1rem;
     font-weight: 600;
     border: 3px solid var(--stroke-color);
     border-radius: 6px;
@@ -3703,7 +3918,7 @@ html, body {
 }
 
 .bond-section h3 {
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
     font-size: 1rem;
     margin-bottom: 0.8rem;
     color: var(--ayam-red);
@@ -3811,7 +4026,7 @@ html, body {
 }
 
 .section-header-compact h4 {
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
     font-size: 0.9rem;
     color: var(--ayam-red);
     margin: 0;
@@ -3858,7 +4073,7 @@ html, body {
     padding: 0.5rem;
     border: 2px solid var(--stroke-color);
     border-radius: 8px;
-    font-size: 0.85rem;
+    font-size: 1.1rem;
     font-weight: 600;
 }
 
@@ -3984,7 +4199,7 @@ html, body {
 }
 
 .bond-purchase-section h3 {
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
     font-size: 1.1rem;
     color: var(--money-green-dark);
     margin-bottom: 1rem;
@@ -4028,7 +4243,7 @@ html, body {
 }
 
 .bond-rate-card .bond-type {
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
     font-size: 1rem;
 }
 
@@ -4042,7 +4257,7 @@ html, body {
 }
 
 .bond-rate-card .bond-coupon {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Cormorant Garamond', 'Georgia', serif;
     font-size: 0.9rem;
     font-weight: 700;
     color: var(--money-green);
@@ -4071,7 +4286,8 @@ html, body {
 .bond-amount-input input {
     flex: 1;
     padding: 0.6rem;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Cormorant Garamond', 'Georgia', serif;
+    font-size: 1.3rem;
     font-weight: 600;
     border: 3px solid var(--stroke-color);
     border-radius: 6px;
@@ -4106,7 +4322,7 @@ html, body {
 }
 
 .stocks-section h3 {
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
     font-size: 1.1rem;
     color: var(--ayam-red);
     margin-bottom: 0.5rem;
@@ -4249,7 +4465,7 @@ html, body {
 }
 
 .stock-ticker {
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
     font-size: 1.1rem;
     color: var(--ayam-red);
 }
@@ -4287,7 +4503,7 @@ html, body {
 }
 
 .stock-price {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Cormorant Garamond', 'Georgia', serif;
     font-size: 0.85rem;
     font-weight: 700;
     color: var(--text-dark);
@@ -4308,7 +4524,7 @@ html, body {
 
 .stock-actions input {
     padding: 0.4rem;
-    font-size: 0.8rem;
+    font-size: 1rem;
     font-weight: 600;
     border: 3px solid var(--stroke-color);
     border-radius: 4px;
@@ -4347,7 +4563,7 @@ html, body {
 }
 
 .crypto-section h3 {
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
     font-size: 1.1rem;
     color: var(--ayam-orange);
     margin-bottom: 0.5rem;
@@ -4392,7 +4608,7 @@ html, body {
 }
 
 .crypto-symbol {
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
     font-size: 1.1rem;
     color: var(--ayam-yellow);
 }
@@ -4426,7 +4642,7 @@ html, body {
 }
 
 .crypto-price {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Cormorant Garamond', 'Georgia', serif;
     font-size: 0.9rem;
     font-weight: 700;
     color: white;
@@ -4441,7 +4657,7 @@ html, body {
 
 .crypto-actions input {
     padding: 0.4rem;
-    font-size: 0.8rem;
+    font-size: 1rem;
     font-weight: 600;
     border: 3px solid var(--stroke-color);
     border-radius: 4px;
@@ -4580,11 +4796,19 @@ html, body {
     margin-bottom: 0.3rem;
 }
 
+.event-deduction {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 400;
+    opacity: 0.85;
+    margin-top: 0.2rem;
+}
+
 .networth-value {
     display: block;
     font-size: 1.1rem;
     font-weight: 800;
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
 }
 
 .card-breakdown {
@@ -4808,6 +5032,54 @@ html, body {
 
 .earnings-percent.negative {
     color: #c0392b;
+}
+
+/* Investment breakdown in game over */
+.investment-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.4rem 0.5rem;
+    font-size: 0.8rem;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.breakdown-row span:first-child {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.breakdown-row span:last-child {
+    font-weight: 700;
+    font-family: 'Cormorant Garamond', 'Georgia', serif;
+}
+
+.breakdown-row.total-row {
+    border-top: 2px solid var(--stroke-color);
+    border-bottom: none;
+    padding-top: 0.6rem;
+    margin-top: 0.3rem;
+    font-size: 0.9rem;
+}
+
+.breakdown-row.total-row span:first-child {
+    color: var(--text-dark);
+    font-weight: 700;
+}
+
+.breakdown-row.event-row {
+    border-bottom: none;
+    opacity: 0.8;
+    font-style: italic;
 }
 
 /* Responsive pie chart */
@@ -5118,7 +5390,7 @@ html, body {
 }
 
 .crypto-group-title {
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
     font-size: 0.9rem;
     color: var(--ayam-orange);
     text-shadow: 0 0 10px rgba(244, 162, 97, 0.5);
@@ -5190,7 +5462,7 @@ html, body {
 }
 
 .crypto-coin-card .crypto-symbol {
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
     font-size: 0.85rem;
     color: var(--ayam-yellow);
 }
@@ -5209,14 +5481,14 @@ html, body {
 }
 
 .crypto-coin-price .price {
-    font-family: 'Poppins', sans-serif;
-    font-size: 0.75rem;
+    font-family: 'Cormorant Garamond', 'Georgia', serif;
+    font-size: 0.95rem;
     font-weight: 700;
     color: white;
 }
 
 .crypto-coin-price .change {
-    font-size: 0.6rem;
+    font-size: 0.75rem;
     font-weight: 700;
     padding: 0.15rem 0.3rem;
     border-radius: 4px;
@@ -5256,7 +5528,7 @@ html, body {
     padding: 0.75rem 0.5rem;
     border: 2px solid rgba(255,255,255,0.3);
     border-radius: 6px;
-    font-size: 0.95rem;
+    font-size: 1.1rem;
     font-weight: 600;
     text-align: center;
     background: rgba(255,255,255,0.15);
@@ -5314,7 +5586,7 @@ html, body {
 }
 
 .crowdfunding-group-title {
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
     font-size: 0.9rem;
     color: var(--ayam-brown);
 }
@@ -5398,7 +5670,7 @@ html, body {
 }
 
 .project-name {
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
     font-size: 0.7rem;
     color: var(--text-dark);
     line-height: 1.1;
@@ -5419,7 +5691,7 @@ html, body {
 }
 
 .project-stats {
-    font-size: 0.6rem;
+    font-size: 0.8rem;
     margin-bottom: 0.3rem;
 }
 
@@ -5448,7 +5720,7 @@ html, body {
     padding: 0.75rem 0.5rem;
     border: 2px solid var(--stroke-color);
     border-radius: 6px;
-    font-size: 0.9rem;
+    font-size: 1.1rem;
     font-weight: 600;
     text-align: center;
     min-height: 44px;
@@ -5488,7 +5760,7 @@ html, body {
 }
 
 .crowdfunding-investments-title {
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
     font-size: 0.95rem;
     color: var(--text-dark);
     margin-bottom: 0.5rem;
@@ -5576,7 +5848,7 @@ html, body {
 }
 
 .crowdfunding-investments h4 {
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
     font-size: 0.75rem;
     color: var(--text-dark);
     margin-bottom: 0.4rem;
@@ -5726,8 +5998,9 @@ html, body {
 }
 
 .cf-failure-title {
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
     font-size: 1.2rem;
+    font-weight: 700;
     color: var(--risk-extreme);
 }
 
@@ -5741,7 +6014,7 @@ html, body {
 .cf-failure-dismiss {
     width: 100%;
     padding: 0.6rem;
-    font-family: 'Fredoka One', cursive;
+    font-family: 'Cinzel', 'Georgia', serif;
     font-size: 1rem;
     background: var(--risk-extreme);
     color: white;
@@ -6052,7 +6325,17 @@ html, body {
 
 .an-slider {
     width: 100%;
-    accent-color: var(--ayam-brown, #8B6F47);
+    accent-color: #C5A059;
+}
+
+.an-lang-select {
+    cursor: pointer;
+    appearance: auto;
+}
+
+.an-lang-select option {
+    background: #0F2E25;
+    color: #F5F5DC;
 }
 
 .room-code-input {
@@ -6204,17 +6487,17 @@ html, body {
 
 .mp-lb-rank {
     font-weight: 700;
-    color: var(--ayam-gold, #D4C89A);
+    color: rgba(212, 200, 154, 0.2);
     min-width: 1.5rem;
 }
 
 .mp-lb-name {
-    color: rgba(245, 240, 232, 0.85);
+    color: rgba(212, 200, 154, 0.2);
 }
 
 .mp-lb-worth {
     font-weight: 600;
-    color: var(--money-green-light, #9DB489);
+    color: rgba(212, 200, 154, 0.2);
 }
 
 /* Final Leaderboard (game over) */

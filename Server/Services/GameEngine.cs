@@ -312,8 +312,8 @@ public class GameEngine
                 ExpectedReturnAdultEN = "Historical return: 8-15%/year in IDR, can range -10% to +25%. Buy-sell spread 1.5-3%. Tax: PPh22 buy 0.25%, sell 1.5% (with NPWP).",
                 RealRules = "Diawasi BAPPEBTI/OJK. Emas digital minimal Rp 5.000 (0.0001 gram). Didukung 1:1 emas fisik. Bisa ditebus jadi emas batangan (min 1 gram, fee 2%).",
                 BasePrice = 1_200_000, // Current real gold price ~Rp 1.2M per gram (as of 2024)
-                MinReturn = -0.02m,
-                MaxReturn = 0.03m,
+                MinReturn = -0.002m, // ~-2% annual / 12
+                MaxReturn = 0.012m, // ~15% annual / 12
                 AlwaysPositive = false,
                 RiskLevel = "Sedang",
                 UnlockYear = 5,
@@ -573,72 +573,104 @@ public class GameEngine
             new RandomEvent
             {
                 Title = "Ada yang Sakit!",
-                TitleAdult = "Medical Emergency",
+                TitleAdult = "Darurat Medis",
                 Description = "Wah, ada keluarga yang sakit dan harus ke rumah sakit! Harus bayar biaya dokter dan obat!",
-                DescriptionAdult = "A family member requires hospitalization. Medical expenses not fully covered by insurance.",
+                DescriptionAdult = "Anggota keluarga membutuhkan rawat inap. Biaya medis tidak sepenuhnya ditanggung asuransi.",
+                TitleEN = "Someone is Sick!",
+                TitleAdultEN = "Medical Emergency",
+                DescriptionEN = "Oh no, a family member is sick and needs to go to the hospital! You have to pay for the doctor and medicine!",
+                DescriptionAdultEN = "A family member requires hospitalization. Medical expenses not fully covered by insurance.",
                 Cost = 5_000_000,
                 Impact = "Kesehatan"
             },
             new RandomEvent
             {
                 Title = "Motor/Mobil Rewel!",
-                TitleAdult = "Vehicle Repair",
+                TitleAdult = "Perbaikan Kendaraan",
                 Description = "Waduh, motor atau mobil tiba-tiba mogok! Harus ke bengkel dan ganti suku cadang!",
-                DescriptionAdult = "Major vehicle breakdown requiring significant repair costs.",
+                DescriptionAdult = "Kerusakan besar pada kendaraan yang membutuhkan biaya perbaikan signifikan.",
+                TitleEN = "Vehicle Trouble!",
+                TitleAdultEN = "Vehicle Repair",
+                DescriptionEN = "Oh no, your vehicle suddenly broke down! You need to go to the mechanic and replace parts!",
+                DescriptionAdultEN = "Major vehicle breakdown requiring significant repair costs.",
                 Cost = 3_000_000,
                 Impact = "Transportasi"
             },
             new RandomEvent
             {
                 Title = "Atap Bocor!",
-                TitleAdult = "Home Repair",
+                TitleAdult = "Perbaikan Rumah",
                 Description = "Hujan deres dan atap rumah bocor! Harus cepat diperbaiki!",
-                DescriptionAdult = "Roof damage requiring immediate repair during rainy season.",
+                DescriptionAdult = "Kerusakan atap yang membutuhkan perbaikan segera saat musim hujan.",
+                TitleEN = "Leaky Roof!",
+                TitleAdultEN = "Home Repair",
+                DescriptionEN = "Heavy rain and the roof is leaking! It needs to be fixed right away!",
+                DescriptionAdultEN = "Roof damage requiring immediate repair during rainy season.",
                 Cost = 7_000_000,
                 Impact = "Rumah"
             },
             new RandomEvent
             {
                 Title = "Waktunya Sekolah!",
-                TitleAdult = "Education Expenses",
+                TitleAdult = "Biaya Pendidikan",
                 Description = "Naik kelas! Tapi harus bayar uang pangkal dan beli seragam baru!",
-                DescriptionAdult = "School fees and new uniform costs for new academic year.",
+                DescriptionAdult = "Biaya sekolah dan seragam baru untuk tahun ajaran baru.",
+                TitleEN = "School Time!",
+                TitleAdultEN = "Education Expenses",
+                DescriptionEN = "Moving up a grade! But you need to pay school fees and buy new uniforms!",
+                DescriptionAdultEN = "School fees and new uniform costs for new academic year.",
                 Cost = 4_000_000,
                 Impact = "Pendidikan"
             },
             new RandomEvent
             {
                 Title = "Bayar Pajak!",
-                TitleAdult = "Tax Payment",
+                TitleAdult = "Pembayaran Pajak",
                 Description = "Waktunya bayar pajak tahunan! Sebagai warga negara yang baik!",
-                DescriptionAdult = "Annual tax underpayment discovered during filing.",
+                DescriptionAdult = "Ditemukan kekurangan bayar pajak tahunan saat pelaporan.",
+                TitleEN = "Tax Time!",
+                TitleAdultEN = "Tax Payment",
+                DescriptionEN = "Time to pay annual taxes! Being a good citizen!",
+                DescriptionAdultEN = "Annual tax underpayment discovered during filing.",
                 Cost = 2_500_000,
                 Impact = "Pajak"
             },
             new RandomEvent
             {
                 Title = "Banyak Kondangan!",
-                TitleAdult = "Social Obligations",
+                TitleAdult = "Kewajiban Sosial",
                 Description = "Wow ada 3 teman nikahan bulan ini! Harus beli kado dan kasih amplop!",
-                DescriptionAdult = "Multiple wedding invitations requiring gifts and cash contributions.",
+                DescriptionAdult = "Banyak undangan pernikahan yang membutuhkan kado dan sumbangan.",
+                TitleEN = "Wedding Season!",
+                TitleAdultEN = "Social Obligations",
+                DescriptionEN = "Wow, 3 friends are getting married this month! You need to buy gifts and give cash envelopes!",
+                DescriptionAdultEN = "Multiple wedding invitations requiring gifts and cash contributions.",
                 Cost = 2_000_000,
                 Impact = "Sosial"
             },
             new RandomEvent
             {
                 Title = "HP Rusak!",
-                TitleAdult = "Device Replacement",
+                TitleAdult = "Penggantian Perangkat",
                 Description = "Yah HP jatuh dan rusak parah! Harus beli baru!",
-                DescriptionAdult = "Essential smartphone damaged beyond repair, needs replacement.",
+                DescriptionAdult = "Smartphone rusak total dan tidak bisa diperbaiki, perlu diganti.",
+                TitleEN = "Phone Broken!",
+                TitleAdultEN = "Device Replacement",
+                DescriptionEN = "Oh no, your phone fell and is badly damaged! You need to buy a new one!",
+                DescriptionAdultEN = "Essential smartphone damaged beyond repair, needs replacement.",
                 Cost = 3_500_000,
                 Impact = "Elektronik"
             },
             new RandomEvent
             {
                 Title = "Iuran Komplek!",
-                TitleAdult = "Community Fees",
+                TitleAdult = "Iuran Lingkungan",
                 Description = "Waktunya bayar iuran RT, keamanan, dan kebersihan!",
-                DescriptionAdult = "Annual neighborhood security and maintenance fees due.",
+                DescriptionAdult = "Iuran tahunan keamanan dan pemeliharaan lingkungan jatuh tempo.",
+                TitleEN = "Community Fees!",
+                TitleAdultEN = "Community Fees",
+                DescriptionEN = "Time to pay neighborhood, security, and cleaning fees!",
+                DescriptionAdultEN = "Annual neighborhood security and maintenance fees due.",
                 Cost = 1_500_000,
                 Impact = "Lingkungan"
             }
@@ -713,10 +745,10 @@ public class GameEngine
                 ? "Selamat datang di Tjoean! Mari belajar investasi!"
                 : "Welcome to Tjoean Investment Simulator. Let's learn to invest wisely.");
 
-            // Initialize bot with emerging market balanced strategy
-            // Target allocation: 5% Savings, 25% Deposito, 20% Bonds, 30% Index Fund, 20% Gold
-            // Bot starts with 5% in savings as emergency fund (always available)
-            var initialSavings = session.BotCashBalance * 0.05m; // 250K
+            // Initialize bot with balanced strategy
+            // Target: 10% Savings, 10% Deposito, 15% Bonds, 30% Index Fund, 15% Stocks, 20% Gold
+            // Bot starts with 10% in savings (always available)
+            var initialSavings = session.BotCashBalance * 0.10m; // 500K
             session.BotSavingsBalance = initialSavings;
             session.BotCashBalance -= initialSavings;
 
@@ -919,12 +951,14 @@ public class GameEngine
             if (sessions.Count > 0)
             {
                 var firstSession = sessions[0];
+                // Use bot net worth minus player event deduction for fair comparison
+                var botDisplayNW = firstSession.BotNetWorth - firstSession.PlayerTotalEventCostPaid;
                 entries.Add(new LeaderboardEntry
                 {
                     PlayerName = "Financial Advisor Bot",
-                    NetWorth = firstSession.BotNetWorth,
+                    NetWorth = botDisplayNW,
                     IsBot = true,
-                    TotalProfit = firstSession.BotNetWorth - 5_000_000 - (firstSession.CurrentYear - 1) * GameSession.YEARLY_INCOME
+                    TotalProfit = botDisplayNW - 5_000_000 - (firstSession.CurrentYear - 1) * GameSession.YEARLY_INCOME
                 });
             }
 
@@ -1002,7 +1036,7 @@ public class GameEngine
                 session.SavingsAccount.Balance += amount;
             }
 
-            session.AddLogEntry(session.AgeMode == AgeMode.Kids
+            session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Taruh uang ke tabungan Rp {amount:N0}"
                 : $"Deposited Rp {amount:N0} to savings account");
             return true;
@@ -1026,7 +1060,7 @@ public class GameEngine
             if (session.SavingsAccount.Balance <= 0)
                 session.SavingsAccount = null;
 
-            session.AddLogEntry(session.AgeMode == AgeMode.Kids
+            session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Ambil uang dari tabungan Rp {amount:N0}"
                 : $"Withdrew Rp {amount:N0} from savings account");
             return true;
@@ -1062,7 +1096,7 @@ public class GameEngine
             };
 
             session.Depositos.Add(deposito);
-            session.AddLogEntry(session.AgeMode == AgeMode.Kids
+            session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Buka Deposito {rate.PeriodName} Rp {amount:N0} (bunga {rate.AnnualRate * 100}%/tahun)"
                 : $"Opened {rate.PeriodName} CD of Rp {amount:N0} at {rate.AnnualRate * 100}% p.a.");
             return true;
@@ -1084,7 +1118,8 @@ public class GameEngine
             if (deposito.IsMatured || !earlyWithdraw)
             {
                 withdrawAmount = deposito.MaturityValue;
-                session.AddLogEntry(session.AgeMode == AgeMode.Kids
+                session.TotalDepositoInterestEarned += withdrawAmount - deposito.Principal;
+                session.AddLogEntry(session.Language == Language.Indonesian
                     ? $"Deposito jatuh tempo! Terima Rp {withdrawAmount:N0}"
                     : $"CD matured! Received Rp {withdrawAmount:N0}");
             }
@@ -1095,7 +1130,8 @@ public class GameEngine
                 var earnedInterest = deposito.CurrentValue - deposito.Principal;
                 var penalty = earnedInterest * penaltyRate;
                 withdrawAmount = deposito.Principal + earnedInterest - penalty;
-                session.AddLogEntry(session.AgeMode == AgeMode.Kids
+                session.TotalDepositoInterestEarned += withdrawAmount - deposito.Principal;
+                session.AddLogEntry(session.Language == Language.Indonesian
                     ? $"Cairkan deposito lebih awal, kena denda. Terima Rp {withdrawAmount:N0}"
                     : $"Early CD withdrawal with {penaltyRate * 100}% penalty. Received Rp {withdrawAmount:N0}");
             }
@@ -1119,7 +1155,7 @@ public class GameEngine
 
             deposito.AutoRollOver = !deposito.AutoRollOver;
 
-            session.AddLogEntry(session.AgeMode == AgeMode.Kids
+            session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Roll Over Otomatis: {(deposito.AutoRollOver ? "AKTIF" : "NONAKTIF")} untuk deposito {deposito.PeriodMonths} bulan"
                 : $"Auto Roll Over: {(deposito.AutoRollOver ? "ENABLED" : "DISABLED")} for {deposito.PeriodMonths}-month CD");
 
@@ -1156,7 +1192,7 @@ public class GameEngine
             };
 
             session.Bonds.Add(bond);
-            session.AddLogEntry(session.AgeMode == AgeMode.Kids
+            session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Beli {rate.PeriodName} Rp {amount:N0} (kupon {rate.CouponRate * 100}%/tahun)"
                 : $"Purchased {rate.PeriodName} bond of Rp {amount:N0} at {rate.CouponRate * 100}% coupon");
             return true;
@@ -1178,7 +1214,7 @@ public class GameEngine
             session.CashBalance += totalReturn;
             session.Bonds.Remove(bond);
 
-            session.AddLogEntry(session.AgeMode == AgeMode.Kids
+            session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Obligasi jatuh tempo! Terima Rp {totalReturn:N0}"
                 : $"Bond matured! Received Rp {totalReturn:N0}");
             return true;
@@ -1221,7 +1257,7 @@ public class GameEngine
             session.Portfolio[key].TotalCost += totalCost;
             session.Portfolio[key].PricePerUnit = stock.CurrentPrice;
 
-            session.AddLogEntry(session.AgeMode == AgeMode.Kids
+            session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Beli {lots} lot saham {ticker}"
                 : $"Purchased {lots} lot(s) of {ticker}");
             return true;
@@ -1259,8 +1295,9 @@ public class GameEngine
                 session.Portfolio.Remove(key);
 
             var profit = saleValue - costBasis;
+            session.TotalRealizedPortfolioGainLoss += profit;
             var profitText = profit >= 0 ? $"untung Rp {profit:N0}" : $"rugi Rp {Math.Abs(profit):N0}";
-            session.AddLogEntry(session.AgeMode == AgeMode.Kids
+            session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Jual {lots} lot saham {ticker} ({profitText})"
                 : $"Sold {lots} lot(s) of {ticker} (P/L: {(profit >= 0 ? "+" : "")}Rp {profit:N0})");
             return true;
@@ -1297,7 +1334,7 @@ public class GameEngine
                 session.Portfolio[assetType] = new PortfolioItem
                 {
                     AssetType = assetType,
-                    DisplayName = session.AgeMode == AgeMode.Kids ? asset.DisplayName : asset.DisplayNameAdult,
+                    DisplayName = (session.AgeMode, session.Language) switch { (AgeMode.Kids, Language.Indonesian) => asset.DisplayName, (AgeMode.Kids, Language.English) => asset.DisplayNameEN, (AgeMode.Adult, Language.Indonesian) => asset.DisplayNameAdult, _ => asset.DisplayNameAdultEN },
                     Units = 0,
                     PricePerUnit = currentPrice,
                     TotalCost = 0
@@ -1308,7 +1345,7 @@ public class GameEngine
             session.Portfolio[assetType].TotalCost += GameSession.UNIT_COST;
             session.Portfolio[assetType].PricePerUnit = currentPrice;
 
-            session.AddLogEntry(session.AgeMode == AgeMode.Kids
+            session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Beli {asset.DisplayName} Rp 1.000.000"
                 : $"Purchased {asset.DisplayNameAdult} Rp 1,000,000");
             return true;
@@ -1341,7 +1378,7 @@ public class GameEngine
                 session.Portfolio[assetType] = new PortfolioItem
                 {
                     AssetType = assetType,
-                    DisplayName = session.AgeMode == AgeMode.Kids ? asset.DisplayName : asset.DisplayNameAdult,
+                    DisplayName = (session.AgeMode, session.Language) switch { (AgeMode.Kids, Language.Indonesian) => asset.DisplayName, (AgeMode.Kids, Language.English) => asset.DisplayNameEN, (AgeMode.Adult, Language.Indonesian) => asset.DisplayNameAdult, _ => asset.DisplayNameAdultEN },
                     Units = 0,
                     PricePerUnit = currentPrice,
                     TotalCost = 0
@@ -1352,7 +1389,7 @@ public class GameEngine
             session.Portfolio[assetType].TotalCost += totalCost;
             session.Portfolio[assetType].PricePerUnit = currentPrice;
 
-            session.AddLogEntry(session.AgeMode == AgeMode.Kids
+            session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Beli {grams}g Emas (Rp {totalCost:N0})"
                 : $"Purchased {grams}g Gold for Rp {totalCost:N0}");
             return true;
@@ -1390,9 +1427,10 @@ public class GameEngine
                 session.Portfolio.Remove(assetType);
 
             var profit = saleValue - costBasis;
+            session.TotalRealizedPortfolioGainLoss += profit;
             var asset = _assets[assetType];
             var profitText = profit >= 0 ? $"untung Rp {profit:N0}" : $"rugi Rp {Math.Abs(profit):N0}";
-            session.AddLogEntry(session.AgeMode == AgeMode.Kids
+            session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Jual {asset.DisplayName} ({profitText})"
                 : $"Sold {asset.DisplayNameAdult} (P/L: {(profit >= 0 ? "+" : "")}Rp {profit:N0})");
             return true;
@@ -1421,9 +1459,10 @@ public class GameEngine
             session.CashBalance += saleValue;
 
             var profit = saleValue - costBasis;
+            session.TotalRealizedPortfolioGainLoss += profit;
             var asset = _assets[assetType];
             var profitText = profit >= 0 ? $"untung Rp {profit:N0}" : $"rugi Rp {Math.Abs(profit):N0}";
-            session.AddLogEntry(session.AgeMode == AgeMode.Kids
+            session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Jual semua {asset.DisplayName} ({profitText})"
                 : $"Sold all {asset.DisplayNameAdult} (P/L: {(profit >= 0 ? "+" : "")}Rp {profit:N0})");
 
@@ -1467,8 +1506,9 @@ public class GameEngine
             };
 
             session.CrowdfundingInvestments.Add(investment);
+            session.TotalCrowdfundingInvested += amount;
 
-            session.AddLogEntry(session.AgeMode == AgeMode.Kids
+            session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Investasi di {project.ProjectName} Rp {amount:N0} (terkunci {project.LockUpMonths} bulan)"
                 : $"Invested in {project.ProjectName} Rp {amount:N0} (locked for {project.LockUpMonths} months)");
             return true;
@@ -1515,7 +1555,7 @@ public class GameEngine
             session.Portfolio[key].TotalCost += amount;
             session.Portfolio[key].PricePerUnit = crypto.CurrentPrice;
 
-            session.AddLogEntry(session.AgeMode == AgeMode.Kids
+            session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Beli {units:F4} {crypto.Symbol} (Rp {amount:N0})"
                 : $"Bought {units:F4} {crypto.Symbol} for Rp {amount:N0}");
             return true;
@@ -1553,7 +1593,8 @@ public class GameEngine
                 session.Portfolio.Remove(key);
 
             var profit = amount - costBasis;
-            session.AddLogEntry(session.AgeMode == AgeMode.Kids
+            session.TotalRealizedPortfolioGainLoss += profit;
+            session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Jual {unitsToSell:F4} {crypto.Symbol} ({(profit >= 0 ? "untung" : "rugi")} Rp {Math.Abs(profit):N0})"
                 : $"Sold {unitsToSell:F4} {crypto.Symbol} (P/L: {(profit >= 0 ? "+" : "")}Rp {profit:N0})");
             return true;
@@ -1574,9 +1615,11 @@ public class GameEngine
                 return false;
 
             session.CashBalance -= cost;
-            session.AddLogEntry(session.AgeMode == AgeMode.Kids
-                ? $"Bayar {session.ActiveEvent.Title} dari kas: Rp {cost:N0}"
-                : $"Paid {session.ActiveEvent.TitleAdult} from cash: Rp {cost:N0}");
+            session.PlayerTotalEventCostPaid += cost;
+            var eventTitle = session.ActiveEvent.GetTitle(session.AgeMode, session.Language);
+            session.AddLogEntry(session.Language == Language.Indonesian
+                ? $"Bayar {eventTitle} dari kas: Rp {cost:N0}"
+                : $"Paid {eventTitle} from cash: Rp {cost:N0}");
             ClearEvent(session);
             return true;
         }
@@ -1598,9 +1641,11 @@ public class GameEngine
             if (session.SavingsAccount.Balance <= 0)
                 session.SavingsAccount = null;
 
-            session.AddLogEntry(session.AgeMode == AgeMode.Kids
-                ? $"Bayar {session.ActiveEvent.Title} dari tabungan: Rp {cost:N0}"
-                : $"Paid {session.ActiveEvent.TitleAdult} from savings: Rp {cost:N0}");
+            session.PlayerTotalEventCostPaid += cost;
+            var eventTitle = session.ActiveEvent.GetTitle(session.AgeMode, session.Language);
+            session.AddLogEntry(session.Language == Language.Indonesian
+                ? $"Bayar {eventTitle} dari tabungan: Rp {cost:N0}"
+                : $"Paid {eventTitle} from savings: Rp {cost:N0}");
             ClearEvent(session);
             return true;
         }
@@ -1628,8 +1673,10 @@ public class GameEngine
                     if (unitsNeeded > (int)portfolio.Units) unitsNeeded = (int)portfolio.Units;
 
                     var saleValue = unitsNeeded * currentPrice;
+                    var costBasis = (portfolio.TotalCost / (portfolio.Units + unitsNeeded)) * unitsNeeded;
+                    var saleProfit = saleValue - costBasis;
                     portfolio.Units -= unitsNeeded;
-                    portfolio.TotalCost -= (portfolio.TotalCost / (portfolio.Units + unitsNeeded)) * unitsNeeded;
+                    portfolio.TotalCost -= costBasis;
 
                     if (portfolio.Units <= 0)
                         session.Portfolio.Remove(assetType);
@@ -1637,10 +1684,13 @@ public class GameEngine
                     if (saleValue > cost)
                         session.CashBalance += (saleValue - cost);
 
+                    session.TotalRealizedPortfolioGainLoss += saleProfit;
+                    session.PlayerTotalEventCostPaid += cost;
                     var displayName = _assets.GetValueOrDefault(assetType)?.DisplayName ?? assetType;
-                    session.AddLogEntry(session.AgeMode == AgeMode.Kids
-                        ? $"Bayar {session.ActiveEvent.Title} dari {displayName}: Rp {cost:N0}"
-                        : $"Paid {session.ActiveEvent.TitleAdult} from portfolio: Rp {cost:N0}");
+                    var evtTitle = session.ActiveEvent.GetTitle(session.AgeMode, session.Language);
+                    session.AddLogEntry(session.Language == Language.Indonesian
+                        ? $"Bayar {evtTitle} dari {displayName}: Rp {cost:N0}"
+                        : $"Paid {evtTitle} from portfolio: Rp {cost:N0}");
                     ClearEvent(session);
                     return true;
                 }
@@ -1687,6 +1737,7 @@ public class GameEngine
         {
             var monthlyInterest = session.SavingsAccount.Balance * (session.SavingsAccount.InterestRate / 12);
             session.SavingsAccount.Balance += monthlyInterest;
+            session.TotalSavingsInterestEarned += monthlyInterest;
         }
 
         // Update depositos
@@ -1699,6 +1750,7 @@ public class GameEngine
                 {
                     // Automatically re-invest the maturity value
                     var maturityValue = deposito.MaturityValue;
+                    session.TotalDepositoInterestEarned += maturityValue - deposito.Principal;
                     var rate = _depositoRates.FirstOrDefault(r => r.PeriodMonths == deposito.PeriodMonths);
                     if (rate != null)
                     {
@@ -1709,7 +1761,7 @@ public class GameEngine
                         deposito.StartMonth = session.CurrentMonth;
                         deposito.MonthsRemaining = deposito.PeriodMonths;
 
-                        session.AddLogEntry(session.AgeMode == AgeMode.Kids
+                        session.AddLogEntry(session.Language == Language.Indonesian
                             ? $"🔄 Deposito di-roll over otomatis! Principal baru: Rp {maturityValue:N0}"
                             : $"🔄 CD automatically rolled over! New principal: Rp {maturityValue:N0}");
                     }
@@ -1717,7 +1769,7 @@ public class GameEngine
                     {
                         // If rate not found, treat as normal maturity
                         session.CashBalance += maturityValue;
-                        session.AddLogEntry(session.AgeMode == AgeMode.Kids
+                        session.AddLogEntry(session.Language == Language.Indonesian
                             ? $"Deposito jatuh tempo! +Rp {maturityValue:N0}"
                             : $"CD matured! +Rp {maturityValue:N0}");
                         session.Depositos.Remove(deposito);
@@ -1726,8 +1778,9 @@ public class GameEngine
                 else
                 {
                     // Normal maturity - return to cash
+                    session.TotalDepositoInterestEarned += deposito.MaturityValue - deposito.Principal;
                     session.CashBalance += deposito.MaturityValue;
-                    session.AddLogEntry(session.AgeMode == AgeMode.Kids
+                    session.AddLogEntry(session.Language == Language.Indonesian
                         ? $"Deposito jatuh tempo! +Rp {deposito.MaturityValue:N0}"
                         : $"CD matured! +Rp {deposito.MaturityValue:N0}");
                     session.Depositos.Remove(deposito);
@@ -1740,12 +1793,13 @@ public class GameEngine
         {
             var monthlyCoupon = bond.Principal * bond.CouponRate / 12;
             session.CashBalance += monthlyCoupon;
+            session.TotalBondCouponEarned += monthlyCoupon;
 
             bond.MonthsRemaining--;
             if (bond.IsMatured)
             {
                 session.CashBalance += bond.Principal;
-                session.AddLogEntry(session.AgeMode == AgeMode.Kids
+                session.AddLogEntry(session.Language == Language.Indonesian
                     ? $"Obligasi jatuh tempo! Pokok kembali Rp {bond.Principal:N0}"
                     : $"Bond matured! Principal returned: Rp {bond.Principal:N0}");
                 session.Bonds.Remove(bond);
@@ -1787,8 +1841,8 @@ public class GameEngine
             session.EventOccurredThisYear = false;
         }
 
-        // Check for random event (month 7-10, starting from year 2)
-        if (session.CurrentYear >= 2 && session.CurrentMonth == session.EventMonthForYear && !session.EventOccurredThisYear)
+        // Check for random event (specific event years only)
+        if (GameSession.EventYears.Contains(session.CurrentYear) && session.CurrentMonth == session.EventMonthForYear && !session.EventOccurredThisYear)
         {
             TriggerMonthlyEvent(session);
             session.EventOccurredThisYear = true;
@@ -1812,7 +1866,7 @@ public class GameEngine
             session.EventOccurredThisYear = false;
 
             session.CashBalance += GameSession.YEARLY_INCOME;
-            session.AddLogEntry(session.AgeMode == AgeMode.Kids
+            session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Terima gaji tahunan: Rp {GameSession.YEARLY_INCOME:N0}"
                 : $"Annual income received: Rp {GameSession.YEARLY_INCOME:N0}");
 
@@ -1831,7 +1885,7 @@ public class GameEngine
         if (session.CurrentYear > GameSession.MAX_YEARS)
         {
             session.IsGameOver = true;
-            session.AddLogEntry(session.AgeMode == AgeMode.Kids
+            session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Permainan selesai! Kekayaan akhir: Rp {session.NetWorth:N0}"
                 : $"Game complete! Final net worth: Rp {session.NetWorth:N0}");
         }
@@ -1901,10 +1955,11 @@ public class GameEngine
                     "penipuan oleh pengelola"
                 };
                 investment.FailureReason = failureReasons[_random.Next(failureReasons.Length)];
+                session.TotalRealizedCrowdfundingGainLoss -= investment.InvestedAmount; // Total loss
 
                 failedProjects.Add(investment.ProjectName);
 
-                session.AddLogEntry(session.AgeMode == AgeMode.Kids
+                session.AddLogEntry(session.Language == Language.Indonesian
                     ? $"😢 GAGAL! Proyek {investment.ProjectName} bangkrut! Investasi Rp {investment.InvestedAmount:N0} hilang!"
                     : $"❌ FAILURE! {investment.ProjectName} failed due to {investment.FailureReason}. Investment of Rp {investment.InvestedAmount:N0} lost!");
             }
@@ -1913,8 +1968,9 @@ public class GameEngine
                 // Investment matured successfully - return with profit
                 var totalReturn = investment.InvestedAmount * (1 + investment.ExpectedReturn * investment.LockUpMonths / 12);
                 session.CashBalance += totalReturn;
+                session.TotalRealizedCrowdfundingGainLoss += totalReturn - investment.InvestedAmount;
 
-                session.AddLogEntry(session.AgeMode == AgeMode.Kids
+                session.AddLogEntry(session.Language == Language.Indonesian
                     ? $"🎉 Sukses! Investasi {investment.ProjectName} jatuh tempo! +Rp {totalReturn:N0}"
                     : $"✅ SUCCESS! {investment.ProjectName} matured! +Rp {totalReturn:N0}");
 
@@ -1925,7 +1981,7 @@ public class GameEngine
         // Set failure message for UI notification
         if (failedProjects.Any())
         {
-            session.CrowdfundingFailureMessage = session.AgeMode == AgeMode.Kids
+            session.CrowdfundingFailureMessage = session.Language == Language.Indonesian
                 ? $"😢 Oh tidak! Proyek {string.Join(", ", failedProjects)} GAGAL! Uangmu hilang!"
                 : $"❌ Project failure: {string.Join(", ", failedProjects)}. Your investment is lost.";
         }
@@ -1958,7 +2014,8 @@ public class GameEngine
         if (totalDividends > 0)
         {
             session.CashBalance += totalDividends;
-            session.AddLogEntry(session.AgeMode == AgeMode.Kids
+            session.TotalDividendEarned += totalDividends;
+            session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Terima dividen saham! +Rp {totalDividends:N0}"
                 : $"Stock dividends received: +Rp {totalDividends:N0}");
         }
@@ -1971,8 +2028,8 @@ public class GameEngine
     /// - Bond maturity and coupon payments
     /// - Investment rebalancing when assets unlock
     /// - Yearly income allocation
-    /// Bot uses emerging market balanced strategy recommended by financial advisors:
-    /// 5% Savings, 25% Deposito, 20% Bonds, 30% Index Fund, 20% Gold
+    /// Bot uses balanced strategy:
+    /// 10% Savings, 10% Deposito, 15% Bonds, 30% Index Fund, 15% Stocks, 20% Gold
     /// </summary>
     private void ProcessBotMonthEnd(GameSession session)
     {
@@ -1983,7 +2040,21 @@ public class GameEngine
             session.BotSavingsBalance += monthlyInterest;
         }
 
-        // Process bot depositos - check maturity
+        // Grow bot stock value (steady upward trend targeting ~200% profit over holding period)
+        // ~1.5% monthly growth = ~19.6% annual compound, over 11 years (month 37-180) = ~7x = ~600% total
+        // We cap at 200% profit (3x cost) to match the requirement
+        if (session.BotStockValue > 0)
+        {
+            var monthlyGrowth = 0.015m + (decimal)(_random.NextDouble() * 0.005); // 1.5%-2.0% monthly
+            session.BotStockValue *= (1 + monthlyGrowth);
+            // Cap at 200% profit (3x cost basis)
+            var maxValue = session.BotStockCost * 3.0m;
+            if (session.BotStockValue > maxValue)
+                session.BotStockValue = maxValue;
+        }
+
+        // Process bot depositos - check maturity (reinvest immediately)
+        bool hadMaturity = false;
         foreach (var deposito in session.BotDepositos.ToList())
         {
             deposito.MonthsRemaining--;
@@ -1991,30 +2062,49 @@ public class GameEngine
             {
                 session.BotCashBalance += deposito.MaturityValue;
                 session.BotDepositos.Remove(deposito);
+                hadMaturity = true;
             }
         }
 
-        // Process bot bonds - check maturity
+        // Process bot bonds - check maturity (reinvest immediately)
         foreach (var bond in session.BotBonds.ToList())
         {
             bond.MonthsRemaining--;
             if (bond.IsMatured)
             {
-                // Return principal + final coupon payment
                 session.BotCashBalance += bond.CurrentValue;
                 session.BotBonds.Remove(bond);
+                hadMaturity = true;
             }
         }
 
-        // Bot investment logic based on game progression
         var totalMonths = session.TotalGameMonths;
 
-        // Month 6: Deposito unlocks - invest 25% allocation in 12-month CD
+        // Month 1 (game start): Park cash in savings immediately (earns ~3% avg)
+        if (totalMonths == 1 && session.BotSavingsBalance == 0)
+        {
+            var savingsAmount = session.BotCashBalance - 500_000m; // Keep 500K cash
+            if (savingsAmount > 0)
+            {
+                session.BotSavingsBalance += savingsAmount;
+                session.BotCashBalance -= savingsAmount;
+            }
+        }
+
+        // Month 6: Deposito unlocks - invest ~10% allocation in 12-month CD
         if (totalMonths == 6 && session.BotDepositos.Count == 0)
         {
-            var depositoAmount = Math.Min(session.BotCashBalance, 2_500_000m);
-            if (depositoAmount >= 1_000_000m)
+            var available = session.BotCashBalance + session.BotSavingsBalance - 500_000m;
+            var depositoAmount = Math.Min(available * 0.10m, 1_000_000m);
+            depositoAmount = Math.Max(depositoAmount, 1_000_000m); // Min 1M
+            if (depositoAmount >= 1_000_000m && available >= depositoAmount)
             {
+                if (session.BotCashBalance < depositoAmount)
+                {
+                    var fromSavings = Math.Min(session.BotSavingsBalance, depositoAmount - session.BotCashBalance);
+                    session.BotSavingsBalance -= fromSavings;
+                    session.BotCashBalance += fromSavings;
+                }
                 var rate = _depositoRates.FirstOrDefault(r => r.PeriodMonths == 12);
                 if (rate != null)
                 {
@@ -2032,10 +2122,12 @@ public class GameEngine
             }
         }
 
-        // Year 2 (Month 13): Index Fund unlocks - invest 30% of available funds
+        // Month 13: Index Fund unlocks - 30% target allocation (largest)
         if (totalMonths == 13 && session.BotIndexFundUnits == 0)
         {
-            var indexAmount = Math.Min(session.BotCashBalance, 3_000_000m);
+            var reserve = GetBotDynamicReserve(session);
+            var indexAmount = Math.Max(0, session.BotCashBalance - reserve);
+            indexAmount = Math.Min(indexAmount, 5_000_000m);
             if (indexAmount >= 100_000m)
             {
                 var price = session.AssetPrices.GetValueOrDefault("reksadana", 1_000_000m);
@@ -2046,13 +2138,15 @@ public class GameEngine
             }
         }
 
-        // Year 3 (Month 25): Bonds unlock - invest 20% allocation in SBR (2 year)
+        // Month 25: Bonds unlock - 15% target, invest in ST (6.7%)
         if (totalMonths == 25 && session.BotBonds.Count == 0)
         {
-            var bondAmount = Math.Min(session.BotCashBalance, 2_000_000m);
+            var reserve = GetBotDynamicReserve(session);
+            var available = Math.Max(0, session.BotCashBalance - reserve);
+            var bondAmount = Math.Min(available * 0.50m, 2_000_000m);
             if (bondAmount >= 1_000_000m)
             {
-                var rate = _bondRates.FirstOrDefault(r => r.BondType == "SBR");
+                var rate = _bondRates.FirstOrDefault(r => r.BondType == "ST");
                 if (rate != null)
                 {
                     session.BotBonds.Add(new BondItem
@@ -2070,13 +2164,32 @@ public class GameEngine
             }
         }
 
-        // Year 5 (Month 49): Gold unlocks - invest 20% allocation
+        // Month 37 (Year 4): Stocks unlock - 15% target, bot picks high-dividend stock
+        if (totalMonths == 37 && session.BotStockCost == 0)
+        {
+            var reserve = GetBotDynamicReserve(session);
+            var stockAmount = Math.Max(0, session.BotCashBalance - reserve);
+            stockAmount = Math.Min(stockAmount, 3_000_000m);
+            if (stockAmount >= 100_000m && session.AvailableStocks.Count > 0)
+            {
+                // Pick the highest dividend yield stock (bot is smart)
+                var bestStock = session.AvailableStocks.OrderByDescending(s => s.DividendYield).First();
+                session.BotStockTicker = bestStock.Ticker;
+                session.BotStockCost = stockAmount;
+                session.BotStockValue = stockAmount; // Starts at cost basis
+                session.BotCashBalance -= stockAmount;
+            }
+        }
+
+        // Month 49: Gold unlocks - 20% target allocation
         if (totalMonths == 49 && session.BotGoldUnits == 0)
         {
-            var goldAmount = Math.Min(session.BotCashBalance, 2_000_000m);
+            var reserve = GetBotDynamicReserve(session);
+            var goldAmount = Math.Max(0, session.BotCashBalance - reserve);
+            goldAmount = Math.Min(goldAmount, 4_000_000m);
             if (goldAmount >= 50_000m)
             {
-                var price = session.AssetPrices.GetValueOrDefault("emas", 1_000_000m);
+                var price = session.AssetPrices.GetValueOrDefault("emas", 1_200_000m);
                 var units = goldAmount / price;
                 session.BotGoldUnits = units;
                 session.BotGoldCost = goldAmount;
@@ -2090,47 +2203,88 @@ public class GameEngine
             session.BotCashBalance += GameSession.YEARLY_INCOME;
             RebalanceBotPortfolio(session);
         }
+        // Continuous deployment: if maturity freed up cash or excess cash accumulated
+        else if (hadMaturity || session.BotCashBalance > GetBotDynamicReserve(session) + 1_000_000m)
+        {
+            RebalanceBotPortfolio(session);
+        }
     }
 
     /// <summary>
-    /// Rebalance bot portfolio to maintain target allocation
-    /// Emerging market balanced strategy: 5% Savings, 25% Deposito, 20% Bonds, 30% Index, 20% Gold
+    /// Calculate dynamic cash reserve based on event timing.
+    /// Keep more liquid before events, minimal otherwise.
+    /// </summary>
+    private decimal GetBotDynamicReserve(GameSession session)
+    {
+        var isEventYear = GameSession.EventYears.Contains(session.CurrentYear);
+
+        if (!isEventYear)
+            return 500_000m;
+
+        // Event already occurred this year - minimal reserve
+        if (session.EventOccurredThisYear)
+            return 500_000m;
+
+        // Pre-event months (1-6): keep reserve for upcoming event
+        if (session.CurrentMonth <= 6)
+            return 3_000_000m;
+
+        // Event window (7-10) but not yet occurred: keep reserve
+        if (session.CurrentMonth <= 10)
+            return 3_000_000m;
+
+        // Post-event window (11-12): event should have occurred, minimal reserve
+        return 500_000m;
+    }
+
+    /// <summary>
+    /// Rebalance bot portfolio with balanced strategy.
+    /// Target: 30% Index Fund, 20% Gold, 15% Bonds (ST), 10% Deposito, 15% Stocks, 10% Savings
+    /// Uses dynamic event-aware reserve and redistributes locked allocations.
     /// </summary>
     private void RebalanceBotPortfolio(GameSession session)
     {
         var availableCash = session.BotCashBalance;
-        if (availableCash < 1_000_000m) return;
-
         var totalMonths = session.TotalGameMonths;
+        var monthsRemaining = (GameSession.MAX_YEARS * 12) - totalMonths;
 
-        // Maintain reserve for potential events (5M covers most event costs)
-        var reserveAmount = 5_000_000m;
+        // Dynamic reserve based on event timing
+        var reserveAmount = GetBotDynamicReserve(session);
         var investableAmount = Math.Max(0, availableCash - reserveAmount);
 
-        if (investableAmount < 1_000_000m) return;
+        if (investableAmount < 500_000m) return;
 
-        // Allocate based on what's unlocked
-        // Target: 30% Index Fund, 25% Deposito, 20% Bonds, 20% Gold, 5% Savings
+        // Calculate effective allocation percentages based on what's unlocked
+        // Target: 10% Savings, 10% Deposito, 15% Bonds, 30% Index Fund, 15% Stocks, 20% Gold
+        bool indexUnlocked = totalMonths >= 13;
+        bool stocksUnlocked = totalMonths >= 37;
+        bool goldUnlocked = totalMonths >= 49;
+        bool bondsUnlocked = totalMonths >= 25;
+        bool depositoUnlocked = totalMonths >= 6;
 
-        // If Gold is unlocked (Month 49+) - 20% allocation
-        if (totalMonths >= 49 && investableAmount >= 100_000m)
+        decimal indexPct = indexUnlocked ? 0.30m : 0;
+        decimal stockPct = stocksUnlocked ? 0.15m : 0;
+        decimal goldPct = goldUnlocked ? 0.20m : 0;
+        decimal bondsPct = bondsUnlocked ? 0.15m : 0;
+        decimal depositoPct = depositoUnlocked ? 0.10m : 0;
+        decimal savingsPct = 0.10m;
+
+        // Redistribute locked allocations to best available asset
+        decimal unallocated = 1.0m - indexPct - stockPct - goldPct - bondsPct - depositoPct - savingsPct;
+        if (unallocated > 0)
         {
-            var goldInvestment = Math.Min(investableAmount * 0.20m, investableAmount);
-            if (goldInvestment >= 100_000m)
-            {
-                var price = session.AssetPrices.GetValueOrDefault("emas", 1_000_000m);
-                var units = goldInvestment / price;
-                session.BotGoldUnits += units;
-                session.BotGoldCost += goldInvestment;
-                session.BotCashBalance -= goldInvestment;
-                investableAmount -= goldInvestment;
-            }
+            if (indexUnlocked)
+                indexPct += unallocated; // Index Fund gets priority for redistribution
+            else if (depositoUnlocked)
+                depositoPct += unallocated;
+            else
+                savingsPct += unallocated; // Pre-month-6: everything to savings
         }
 
-        // If Index Fund is unlocked (Month 13+) - 30% allocation (largest for growth)
-        if (totalMonths >= 13 && investableAmount >= 100_000m)
+        // 1. Index Fund (highest priority for growth)
+        if (indexUnlocked && investableAmount >= 100_000m)
         {
-            var indexInvestment = Math.Min(investableAmount * 0.30m, investableAmount);
+            var indexInvestment = investableAmount * indexPct;
             if (indexInvestment >= 100_000m)
             {
                 var price = session.AssetPrices.GetValueOrDefault("reksadana", 1_000_000m);
@@ -2142,13 +2296,45 @@ public class GameEngine
             }
         }
 
-        // If Bonds are unlocked (Month 25+) - 20% allocation
-        if (totalMonths >= 25 && investableAmount >= 1_000_000m)
+        // 2. Stocks (high growth, bot gets favorable returns)
+        if (stocksUnlocked && investableAmount >= 100_000m && session.BotStockCost > 0)
         {
-            var bondAmount = Math.Min(investableAmount * 0.20m, investableAmount);
+            var stockInvestment = investableAmount * stockPct;
+            if (stockInvestment >= 100_000m)
+            {
+                // Add to existing stock position (value grows via monthly ProcessBotMonthEnd)
+                session.BotStockCost += stockInvestment;
+                session.BotStockValue += stockInvestment;
+                session.BotCashBalance -= stockInvestment;
+                investableAmount -= stockInvestment;
+            }
+        }
+
+        // 3. Gold (stable growth, lower variance)
+        if (goldUnlocked && investableAmount >= 50_000m)
+        {
+            var goldInvestment = investableAmount * (goldPct / Math.Max(0.01m, 1 - indexPct - stockPct));
+            goldInvestment = Math.Min(goldInvestment, investableAmount);
+            if (goldInvestment >= 50_000m)
+            {
+                var price = session.AssetPrices.GetValueOrDefault("emas", 1_200_000m);
+                var units = goldInvestment / price;
+                session.BotGoldUnits += units;
+                session.BotGoldCost += goldInvestment;
+                session.BotCashBalance -= goldInvestment;
+                investableAmount -= goldInvestment;
+            }
+        }
+
+        // 4. Bonds - use ST (6.7%) for best coupon, skip if < 24 months remaining (won't mature)
+        if (bondsUnlocked && investableAmount >= 1_000_000m && monthsRemaining >= 24)
+        {
+            var bondAmount = investableAmount * (bondsPct / Math.Max(0.01m, 1 - indexPct - stockPct - goldPct));
+            bondAmount = Math.Min(bondAmount, investableAmount);
             if (bondAmount >= 1_000_000m)
             {
-                var rate = _bondRates.FirstOrDefault(r => r.BondType == "SBR");
+                var rate = _bondRates.FirstOrDefault(r => r.BondType == "ST")
+                        ?? _bondRates.FirstOrDefault(r => r.BondType == "SBR");
                 if (rate != null)
                 {
                     session.BotBonds.Add(new BondItem
@@ -2167,23 +2353,27 @@ public class GameEngine
             }
         }
 
-        // If Deposito is unlocked (Month 6+) - 25% allocation
-        if (totalMonths >= 6 && investableAmount >= 1_000_000m)
+        // 5. Deposito - prefer 24-month (7%) when enough time remains, else 12-month (6%)
+        if (depositoUnlocked && investableAmount >= 1_000_000m)
         {
-            var depositoAmount = Math.Min(investableAmount * 0.25m, investableAmount);
+            var depositoAmount = investableAmount * (depositoPct / Math.Max(0.01m, 1 - indexPct - stockPct - goldPct - bondsPct));
+            depositoAmount = Math.Min(depositoAmount, investableAmount);
             if (depositoAmount >= 1_000_000m)
             {
-                var rate = _depositoRates.FirstOrDefault(r => r.PeriodMonths == 12);
+                int tenor = monthsRemaining >= 24 ? 24 : 12;
+                if (monthsRemaining < 12) tenor = Math.Max(1, monthsRemaining); // Use shortest if near end
+                var rate = _depositoRates.FirstOrDefault(r => r.PeriodMonths == tenor)
+                        ?? _depositoRates.FirstOrDefault(r => r.PeriodMonths == 12);
                 if (rate != null)
                 {
                     session.BotDepositos.Add(new DepositoItem
                     {
                         Principal = depositoAmount,
-                        PeriodMonths = 12,
+                        PeriodMonths = tenor,
                         InterestRate = rate.AnnualRate,
                         StartYear = session.CurrentYear,
                         StartMonth = session.CurrentMonth,
-                        MonthsRemaining = 12
+                        MonthsRemaining = tenor
                     });
                     session.BotCashBalance -= depositoAmount;
                     investableAmount -= depositoAmount;
@@ -2191,10 +2381,10 @@ public class GameEngine
             }
         }
 
-        // Put remaining 5% into savings for emergency fund
+        // 6. Savings - put small remainder as emergency buffer
         if (investableAmount >= 100_000m)
         {
-            var savingsAmount = investableAmount * 0.05m;
+            var savingsAmount = investableAmount * 0.50m; // Put half remainder in savings
             if (savingsAmount >= 100_000m)
             {
                 session.BotSavingsBalance += savingsAmount;
@@ -2254,7 +2444,23 @@ public class GameEngine
             session.BotIndexFundUnits = 0;
         }
 
-        // 4. Try gold (liquid commodity)
+        // 4. Try stocks (liquid asset)
+        if (session.BotStockValue >= remaining)
+        {
+            var ratio = remaining / session.BotStockValue;
+            session.BotStockValue -= remaining;
+            session.BotStockCost -= session.BotStockCost * ratio;
+            session.BotEventsPaidFromPortfolio++;
+            return;
+        }
+        else if (session.BotStockValue > 0)
+        {
+            remaining -= session.BotStockValue;
+            session.BotStockValue = 0;
+            session.BotStockCost = 0;
+        }
+
+        // 5. Try gold (liquid commodity)
         var goldValue = session.BotGoldValue;
         if (goldValue >= remaining)
         {
@@ -2270,7 +2476,7 @@ public class GameEngine
             session.BotGoldUnits = 0;
         }
 
-        // 5. Try bonds (early redemption with partial penalty)
+        // 6. Try bonds (early redemption with partial penalty)
         foreach (var bond in session.BotBonds.ToList())
         {
             if (remaining <= 0) break;
@@ -2284,7 +2490,7 @@ public class GameEngine
             session.BotEventsPaidFromPortfolio++;
         }
 
-        // 6. Last resort - liquidate depositos (early withdrawal with penalty)
+        // 7. Last resort - liquidate depositos (early withdrawal with penalty)
         foreach (var deposito in session.BotDepositos.ToList())
         {
             if (remaining <= 0) break;
@@ -2312,7 +2518,12 @@ public class GameEngine
             if (totalMonths >= unlockMonth && !session.UnlockedAssets.Contains(asset.Key))
             {
                 session.UnlockedAssets.Add(asset.Key);
-                newUnlocks.Add(session.AgeMode == AgeMode.Kids ? asset.Value.DisplayName : asset.Value.DisplayNameAdult);
+                newUnlocks.Add((session.AgeMode, session.Language) switch {
+                    (AgeMode.Kids, Language.Indonesian) => asset.Value.DisplayName,
+                    (AgeMode.Kids, Language.English) => asset.Value.DisplayNameEN,
+                    (AgeMode.Adult, Language.Indonesian) => asset.Value.DisplayNameAdult,
+                    _ => asset.Value.DisplayNameAdultEN
+                });
 
                 // Show intro for newly unlocked asset
                 session.ShowIntro = true;
@@ -2322,7 +2533,7 @@ public class GameEngine
 
         if (newUnlocks.Any())
         {
-            var message = session.AgeMode == AgeMode.Kids
+            var message = session.Language == Language.Indonesian
                 ? $"BARU! Investasi terbuka: {string.Join(", ", newUnlocks)}"
                 : $"NEW! Unlocked: {string.Join(", ", newUnlocks)}";
             session.NewUnlockMessage = message;
@@ -2445,9 +2656,10 @@ public class GameEngine
         session.IsEventPending = true;
         session.IsPaused = true;
 
-        session.AddLogEntry(session.AgeMode == AgeMode.Kids
-            ? $"EVENT BULAN {session.CurrentMonth}: {evt.Title}"
-            : $"MONTH {session.CurrentMonth} EVENT: {evt.TitleAdult}");
+        var evtLogTitle = evt.GetTitle(session.AgeMode, session.Language);
+        session.AddLogEntry(session.Language == Language.Indonesian
+            ? $"EVENT BULAN {session.CurrentMonth}: {evtLogTitle}"
+            : $"MONTH {session.CurrentMonth} EVENT: {evtLogTitle}");
 
         // Bot experiences the same event and pays automatically
         ProcessBotEventPayment(session, randomizedCost);
@@ -2456,9 +2668,9 @@ public class GameEngine
         if (totalAssets < randomizedCost)
         {
             session.IsGameOver = true;
-            session.GameOverReason = session.AgeMode == AgeMode.Kids
-                ? $"Tidak mampu membayar {evt.Title}. Total aset Rp {totalAssets:N0} tidak cukup untuk Rp {randomizedCost:N0}."
-                : $"Unable to pay {evt.TitleAdult}. Total assets Rp {totalAssets:N0} insufficient for Rp {randomizedCost:N0}.";
+            session.GameOverReason = session.Language == Language.Indonesian
+                ? $"Tidak mampu membayar {evtLogTitle}. Total aset Rp {totalAssets:N0} tidak cukup untuk Rp {randomizedCost:N0}."
+                : $"Unable to pay {evtLogTitle}. Total assets Rp {totalAssets:N0} insufficient for Rp {randomizedCost:N0}.";
             session.AddLogEntry($"GAME OVER: {session.GameOverReason}");
         }
     }
@@ -2574,6 +2786,9 @@ public class GameEngine
                 session.BotIndexFundCost = 0;
                 session.BotGoldUnits = 0;
                 session.BotGoldCost = 0;
+                session.BotStockCost = 0;
+                session.BotStockValue = 0;
+                session.BotStockTicker = string.Empty;
                 session.BotEventsPaidFromCash = 0;
                 session.BotEventsPaidFromSavings = 0;
                 session.BotEventsPaidFromPortfolio = 0;

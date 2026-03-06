@@ -14,6 +14,7 @@ public enum Language
 
 public class PortfolioItem
 {
+    public string Key { get; set; } = string.Empty; // Portfolio dictionary key (e.g. "stock_TLKM", "index_IHSG")
     public string AssetType { get; set; } = string.Empty;
     public string DisplayName { get; set; } = string.Empty;
     public string Ticker { get; set; } = string.Empty; // For stocks
@@ -43,6 +44,8 @@ public class DepositoItem
     public int StartMonth { get; set; }
     public int MonthsRemaining { get; set; }
     public bool AutoRollOver { get; set; } = false; // Automatically re-invest when matured
+    public bool IsShariah { get; set; } // Shariah (Muamalat Mudharabah) or conventional (BRI)
+    public string? NisbahRatio { get; set; } // e.g. "55:45" (shariah only, for display)
     public decimal MaturityValue => Principal * (1 + (InterestRate * PeriodMonths / 12));
     public decimal CurrentValue => Principal + (Principal * InterestRate * (PeriodMonths - MonthsRemaining) / 12);
     public int ProgressPercent => PeriodMonths > 0 ? (int)(((PeriodMonths - MonthsRemaining) / (decimal)PeriodMonths) * 100) : 0;
@@ -59,6 +62,9 @@ public class BondItem
     public int StartYear { get; set; }
     public int StartMonth { get; set; }
     public int MonthsRemaining { get; set; }
+    public bool IsShariah { get; set; } // SR (Sukuk Ritel) or ORI (conventional)
+    public string? SeriesName { get; set; } // e.g. "ORI001", "SR005"
+    public string? AkadType { get; set; } // e.g. "Ijarah" (shariah only)
     public decimal MaturityValue => Principal; // Bonds return principal at maturity
     public decimal TotalCouponEarned => Principal * CouponRate * (PeriodMonths - MonthsRemaining) / 12;
     public decimal CurrentValue => Principal + TotalCouponEarned;
@@ -76,8 +82,23 @@ public class StockInfo
     public decimal Change => CurrentPrice - PreviousPrice;
     public decimal ChangePercent => PreviousPrice > 0 ? (Change / PreviousPrice) * 100 : 0;
     public int LastPriceUpdateMonth { get; set; } // Track when price was last updated
-    public decimal DividendYield { get; set; } // Annual dividend yield (e.g., 0.03 = 3%)
-    public bool PaysDividend => DividendYield > 0;
+    public decimal AnnualDividendPerShare { get; set; } // Total dividend per share for current game year (from real data)
+    public string DividendType { get; set; } = "None"; // "Final", "Interim", "Final+Interim", or "None"
+    public bool PaysDividend => AnnualDividendPerShare > 0;
+    public bool IsShariahCompliant { get; set; } // Whether the stock is shariah-compliant
+    public List<decimal> PriceHistory { get; set; } = new(); // Last 7 prices for mini chart
+}
+
+public class IndexInfo
+{
+    public string IndexId { get; set; } = string.Empty;       // e.g. "IHSG", "JII"
+    public string DisplayName { get; set; } = string.Empty;   // e.g. "IHSG (JCI)", "Jakarta Islamic Index"
+    public bool IsShariah { get; set; }
+    public decimal CurrentPrice { get; set; }  // NAV / index value
+    public decimal PreviousPrice { get; set; }
+    public decimal Change => CurrentPrice - PreviousPrice;
+    public decimal ChangePercent => PreviousPrice > 0 ? (Change / PreviousPrice) * 100 : 0;
+    public List<decimal> PriceHistory { get; set; } = new();
 }
 
 public class CryptoInfo
@@ -88,6 +109,7 @@ public class CryptoInfo
     public decimal PreviousPrice { get; set; }
     public decimal Change => CurrentPrice - PreviousPrice;
     public decimal ChangePercent => PreviousPrice > 0 ? (Change / PreviousPrice) * 100 : 0;
+    public List<decimal> PriceHistory { get; set; } = new();
 }
 
 public class CrowdfundingProject
@@ -181,15 +203,21 @@ public class DepositoRate
     public decimal AnnualRate { get; set; }
     public decimal PenaltyRate { get; set; }
     public decimal MinimumDeposit { get; set; } = 1_000_000;
+    public bool IsShariah { get; set; }
+    public string? NisbahRatio { get; set; } // e.g. "55:45" (shariah only)
+    public string? BankName { get; set; } // "BRI" or "Bank Muamalat"
 }
 
 public class BondRate
 {
     public int PeriodMonths { get; set; }
     public string PeriodName { get; set; } = string.Empty;
-    public string BondType { get; set; } = string.Empty; // ORI, SR, SBR
+    public string BondType { get; set; } = string.Empty; // ORI, SR
     public decimal CouponRate { get; set; }
     public decimal MinimumInvestment { get; set; } = 1_000_000;
+    public bool IsShariah { get; set; }
+    public string? SeriesName { get; set; } // e.g. "ORI004", "SR001"
+    public string? AkadType { get; set; } // e.g. "Ijarah" (shariah only)
 }
 
 // === MULTIPLAYER MODELS ===
@@ -208,8 +236,7 @@ public class RoomInfo
     public string HostPlayerName { get; set; } = string.Empty;
     public AgeMode AgeMode { get; set; } = AgeMode.Adult;
     public Language Language { get; set; } = Language.Indonesian;
-    public int MaxPlayers { get; set; } = 4;
-    public List<RoomPlayer> Players { get; set; } = new();
+    public List<RoomPlayer> Players { get; set; } = new();  // excludes host
     public RoomStatus Status { get; set; } = RoomStatus.Waiting;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }
@@ -218,18 +245,21 @@ public class RoomPlayer
 {
     public string ConnectionId { get; set; } = string.Empty;
     public string PlayerName { get; set; } = string.Empty;
-    public bool IsHost { get; set; }
     public bool IsReady { get; set; }
     public bool IsConnected { get; set; } = true;
+    public bool IsUnlockReady { get; set; } = false;  // for unlock-sync flow
 }
 
 public class PlayerSummary
 {
+    public string ConnectionId { get; set; } = string.Empty;
     public string PlayerName { get; set; } = string.Empty;
     public decimal NetWorth { get; set; }
     public bool IsConnected { get; set; } = true;
     public int CurrentYear { get; set; }
     public int CurrentMonth { get; set; }
+    public Dictionary<string, decimal> PortfolioBreakdown { get; set; } = new();  // % per asset type
+    public decimal TotalGainLoss { get; set; }
 }
 
 public class LeaderboardEntry
@@ -239,6 +269,7 @@ public class LeaderboardEntry
     public decimal NetWorth { get; set; }
     public bool IsBot { get; set; }
     public decimal TotalProfit { get; set; }
+    public bool IsConnected { get; set; } = true;
 }
 
 public class GameState
@@ -255,6 +286,7 @@ public class GameState
     public List<DepositoItem> Depositos { get; set; } = new();
     public List<BondItem> Bonds { get; set; } = new();
     public List<StockInfo> AvailableStocks { get; set; } = new();
+    public List<IndexInfo> AvailableIndices { get; set; } = new();
     public List<CryptoInfo> AvailableCryptos { get; set; } = new();
     public List<CrowdfundingProject> AvailableCrowdfunding { get; set; } = new();
     public List<CrowdfundingInvestment> CrowdfundingInvestments { get; set; } = new();
@@ -279,6 +311,11 @@ public class GameState
     public string? IntroAssetType { get; set; }
     public int TotalGameMonths { get; set; } // Total months played (Year-1)*12 + Month
 
+    // Gold real price data
+    public decimal GoldCurrentPrice { get; set; }
+    public decimal GoldPreviousPrice { get; set; }
+    public List<decimal> GoldPriceHistory { get; set; } = new();
+
     // Bot state for comparison at game over
     public BotState? BotState { get; set; }
 
@@ -289,6 +326,11 @@ public class GameState
     public bool IsHost { get; set; }
     public bool AllPlayersFinished { get; set; }
     public List<LeaderboardEntry>? FinalLeaderboard { get; set; }
+    public int? EventAutoPaySecondsRemaining { get; set; }  // server sets remaining seconds for client countdown
+
+    // Available rates (refreshed per-session each game year)
+    public List<DepositoRate> AvailableDepositoRates { get; set; } = new();
+    public List<BondRate> AvailableBondRates { get; set; } = new();
 
     // Player portfolio breakdown percentages for pie chart
     public decimal PlayerCashPercent { get; set; }

@@ -32,6 +32,12 @@ public class GameSession
     // Available stocks (5 random, prices change every 2 months)
     public List<StockInfo> AvailableStocks { get; set; } = new();
 
+    // Available index funds (1 conventional + 1 shariah, real prices)
+    public List<IndexInfo> AvailableIndices { get; set; } = new();
+
+    // Gold price history for mini chart
+    public List<decimal> GoldPriceHistory { get; set; } = new();
+
     // Available cryptos (Bitcoin, ETH, Memecoin)
     public List<CryptoInfo> AvailableCryptos { get; set; } = new();
 
@@ -52,6 +58,7 @@ public class GameSession
     public string? GameOverReason { get; set; }
     public bool IsPaused { get; set; } = false;
     public bool IsEventPending { get; set; } = false;
+    public DateTime? EventPendingAt { get; set; }  // set when IsEventPending becomes true (multiplayer auto-pay)
     public DateTime LastTick { get; set; } = DateTime.UtcNow;
     public List<string> GameLog { get; set; } = new();
     public RandomEvent? ActiveEvent { get; set; }
@@ -62,6 +69,10 @@ public class GameSession
     public string? NewUnlockMessage { get; set; }
     public bool ShowIntro { get; set; } = false;
     public string? IntroAssetType { get; set; }
+
+    // Per-session deposito and bond rates (refreshed each game year)
+    public List<DepositoRate> CurrentDepositoRates { get; set; } = new();
+    public List<BondRate> CurrentBondRates { get; set; } = new();
 
     // === BOT STATE ===
     // Bot uses aggressive balanced strategy optimized for growth:
@@ -111,8 +122,15 @@ public class GameSession
     public decimal NetWorth => CashBalance + TotalSavingsValue + TotalPortfolioValue + TotalDepositoValue + TotalBondValue + TotalCrowdfundingValue;
 
     // Bot calculated values
-    public decimal BotIndexFundValue => BotIndexFundUnits * AssetPrices.GetValueOrDefault("reksadana", UNIT_COST);
+    public decimal BotIndexFundValue => BotIndexFundUnits * GetBotIndexPrice();
     public decimal BotGoldValue => BotGoldUnits * AssetPrices.GetValueOrDefault("emas", UNIT_COST);
+
+    private decimal GetBotIndexPrice()
+    {
+        // Bot uses the first conventional index's price for its index fund value
+        var convIdx = AvailableIndices.FirstOrDefault(i => !i.IsShariah);
+        return convIdx?.CurrentPrice ?? AssetPrices.GetValueOrDefault("reksadana", UNIT_COST);
+    }
     public decimal BotTotalDepositoValue => BotDepositos.Sum(d => d.CurrentValue);
     public decimal BotTotalBondValue => BotBonds.Sum(b => b.CurrentValue);
     public decimal BotNetWorth => BotCashBalance + BotSavingsBalance + BotIndexFundValue + BotGoldValue + BotTotalDepositoValue + BotTotalBondValue + BotStockValue;
@@ -164,11 +182,16 @@ public class GameSession
             MonthProgress = MonthProgress,
             CashBalance = CashBalance,
             SavingsAccount = SavingsAccount,
-            Portfolio = Portfolio.Values.ToList(),
+            Portfolio = Portfolio.Select(kvp => { kvp.Value.Key = kvp.Key; return kvp.Value; }).ToList(),
             Depositos = Depositos.ToList(),
             Bonds = Bonds.ToList(),
             AvailableStocks = AvailableStocks.ToList(),
+            AvailableIndices = AvailableIndices.ToList(),
             AvailableCryptos = AvailableCryptos.ToList(),
+            // Gold real price data
+            GoldCurrentPrice = AssetPrices.GetValueOrDefault("emas", 0),
+            GoldPreviousPrice = PreviousPrices.GetValueOrDefault("emas", 0),
+            GoldPriceHistory = GoldPriceHistory.ToList(),
             AvailableCrowdfunding = AvailableCrowdfunding.ToList(),
             CrowdfundingInvestments = CrowdfundingInvestments.ToList(),
             CurrentPrices = AssetPrices.Select(p => new AssetPrice
@@ -227,7 +250,13 @@ public class GameSession
                 + CrowdfundingInvestments.Where(c => !c.HasFailed).Sum(c => c.CurrentValue - c.InvestedAmount),
             // Multiplayer
             RoomCode = RoomCode,
-            IsMultiplayer = IsMultiplayer
+            IsMultiplayer = IsMultiplayer,
+            EventAutoPaySecondsRemaining = (IsMultiplayer && IsEventPending && EventPendingAt != null)
+                ? Math.Max(0, 10 - (int)(DateTime.UtcNow - EventPendingAt.Value).TotalSeconds)
+                : null,
+            // Per-session rates
+            AvailableDepositoRates = CurrentDepositoRates.ToList(),
+            AvailableBondRates = CurrentBondRates.ToList()
         };
     }
 

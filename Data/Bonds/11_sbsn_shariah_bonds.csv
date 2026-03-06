@@ -1,0 +1,24 @@
+series,type,year,issue_date,coupon_pct,tenor_years,coupon_type,tradable,akad
+SR001,Sukuk Ritel,2009,2009-02-25,12.0,3,Fixed,True,Ijarah - Sale and Lease Back
+SR002,Sukuk Ritel,2010,2010-02-10,8.7,3,Fixed,True,Ijarah - Sale and Lease Back
+SR003,Sukuk Ritel,2011,2011-02-23,8.15,3,Fixed,True,Ijarah - Sale and Lease Back
+SR004,Sukuk Ritel,2012,2012-02-21,6.25,3,Fixed,True,Ijarah - Sale and Lease Back
+SR005,Sukuk Ritel,2013,2013-02-27,6.0,3,Fixed,True,Ijarah - Sale and Lease Back
+SR006,Sukuk Ritel,2014,2014-03-05,8.75,3,Fixed,True,Ijarah - Sale and Lease Back
+SR007,Sukuk Ritel,2015,2015-03-11,8.25,3,Fixed,True,Ijarah - Sale and Lease Back
+SR008,Sukuk Ritel,2016,2016-03-10,8.3,3,Fixed,True,Ijarah - Asset to be Leased
+SR009,Sukuk Ritel,2017,2017-03-22,6.9,3,Fixed,True,Ijarah - Asset to be Leased
+SR010,Sukuk Ritel,2018,2018-03-21,5.9,3,Fixed,True,Ijarah - Asset to be Leased
+SR011,Sukuk Ritel,2019,2019-03-28,8.05,3,Fixed,True,Ijarah - Asset to be Leased
+SR012,Sukuk Ritel,2020,2020-03-25,6.3,3,Fixed,True,Ijarah - Asset to be Leased
+SR013,Sukuk Ritel,2021,2021-03-10,5.47,3,Fixed,True,Ijarah - Asset to be Leased
+SR014,Sukuk Ritel,2021,2021-03-26,5.47,3,Fixed,True,Ijarah - Asset to be Leased
+SR015,Sukuk Ritel,2021,2021-09-22,5.1,3,Fixed,True,Ijarah - Asset to be Leased
+ST001,Sukuk Tabungan,2016,2016-09-05,6.9,2,Floating (floor rate),False,Wakalah
+ST002,Sukuk Tabungan,2018,2018-11-01,8.3,2,Floating (floor rate),False,Wakalah
+ST003,Sukuk Tabungan,2019,2019-02-01,8.15,2,Floating (floor rate),False,Wakalah
+ST004,Sukuk Tabungan,2019,2019-05-03,7.95,2,Floating (floor rate),False,Wakalah
+ST005,Sukuk Tabungan,2019,2019-08-08,7.4,2,Floating (floor rate),False,Wakalah
+ST006,Sukuk Tabungan,2019,2019-11-01,6.75,2,Floating (floor rate),False,Wakalah
+ST007,Sukuk Tabungan,2020,2020-11-04,5.5,2,Floating (floor rate),False,Wakalah
+ST008,Sukuk Tabungan,2021,2021-11-01,4.8,2,Floating (floor rate),False,Wakalah

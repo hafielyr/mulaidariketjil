@@ -1,0 +1,71 @@
+{
+  "description": "Top 3 Indonesia Reksadana Index benchmarks - Year-end values",
+  "indices": {
+    "IHSG_JCI": {
+      "name": "Indeks Harga Saham Gabungan (Jakarta Composite Index)",
+      "description": "Broadest market index, tracked by most reksadana indeks saham",
+      "yearly_values": {
+        "2006": 1805.52,
+        "2007": 2745.83,
+        "2008": 1355.41,
+        "2009": 2534.36,
+        "2010": 3703.51,
+        "2011": 3821.99,
+        "2012": 4316.69,
+        "2013": 4274.18,
+        "2014": 5226.95,
+        "2015": 4593.01,
+        "2016": 5296.71,
+        "2017": 6355.65,
+        "2018": 6194.5,
+        "2019": 6299.54,
+        "2020": 5979.07,
+        "2021": 6581.48
+      }
+    },
+    "LQ45": {
+      "name": "LQ45 Index",
+      "description": "Top 45 most liquid stocks, tracked by many equity index funds",
+      "yearly_values": {
+        "2006": 393.11,
+        "2007": 599.82,
+        "2008": 270.23,
+        "2009": 498.29,
+        "2010": 661.38,
+        "2011": 673.51,
+        "2012": 735.04,
+        "2013": 711.14,
+        "2014": 898.58,
+        "2015": 792.03,
+        "2016": 884.62,
+        "2017": 1079.39,
+        "2018": 982.73,
+        "2019": 1015.67,
+        "2020": 918.36,
+        "2021": 971.52
+      }
+    },
+    "BISNIS27": {
+      "name": "Bisnis-27 Index",
+      "description": "27 stocks selected by Bisnis Indonesia daily, popular benchmark",
+      "yearly_values": {
+        "2006": null,
+        "2007": null,
+        "2008": null,
+        "2009": 252.09,
+        "2010": 349.17,
+        "2011": 359.29,
+        "2012": 399.87,
+        "2013": 388.89,
+        "2014": 487.59,
+        "2015": 423.12,
+        "2016": 479.12,
+        "2017": 569.01,
+        "2018": 523.49,
+        "2019": 536.45,
+        "2020": 487.38,
+        "2021": 524.76
+      }
+    }
+  }
+}

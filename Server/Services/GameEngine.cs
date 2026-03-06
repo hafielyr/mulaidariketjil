@@ -11,6 +11,7 @@ public class RoomMarketState
 {
     public int SharedSeed { get; set; }
     public List<StockInfo> AvailableStocks { get; set; } = new();
+    public List<IndexInfo> AvailableIndices { get; set; } = new();
     public List<CryptoInfo> AvailableCryptos { get; set; } = new();
     public List<CrowdfundingProject> AvailableCrowdfunding { get; set; } = new();
     public Dictionary<string, decimal> InitialPrices { get; set; } = new();
@@ -31,8 +32,8 @@ public class GameEngine
 {
     private readonly Dictionary<string, AssetDefinition> _assets;
     private readonly List<RandomEvent> _events;
-    private readonly List<DepositoRate> _depositoRates;
-    private readonly List<BondRate> _bondRates;
+    private List<DepositoRate> _depositoRates;
+    private List<BondRate> _bondRates;
     private readonly List<StockInfo> _allStocks;
     private readonly List<CryptoInfo> _allCryptos;
     private readonly List<CrowdfundingProject> _allCrowdfundingProjects;
@@ -41,14 +42,26 @@ public class GameEngine
     private readonly Dictionary<string, RoomMarketState> _roomMarketStates = new(); // roomCode → market state
     private readonly object _lock = new();
     private readonly ILogger<GameEngine> _logger;
+    private readonly StockDataService _stockData;
+    private readonly GoldDataService _goldData;
+    private readonly IndexDataService _indexData;
+    private readonly DepositoDataService _depositoData;
+    private readonly BondDataService _bondData;
+    private readonly CryptoDataService _cryptoData;
 
-    public GameEngine(ILogger<GameEngine> logger)
+    public GameEngine(ILogger<GameEngine> logger, StockDataService stockData, GoldDataService goldData, IndexDataService indexData, DepositoDataService depositoData, BondDataService bondData, CryptoDataService cryptoData)
     {
         _logger = logger;
+        _stockData = stockData;
+        _goldData = goldData;
+        _indexData = indexData;
+        _depositoData = depositoData;
+        _bondData = bondData;
+        _cryptoData = cryptoData;
         _assets = InitializeAssets();
         _events = InitializeEvents();
-        _depositoRates = InitializeDepositoRates();
-        _bondRates = InitializeBondRates();
+        _depositoRates = RefreshDepositoRates(1); // Game year 1 = 2006
+        _bondRates = RefreshBondRates(1);
         _allStocks = InitializeStocks();
         _allCryptos = InitializeCryptos();
         _allCrowdfundingProjects = InitializeCrowdfundingProjects();
@@ -115,8 +128,8 @@ public class GameEngine
                 // Light Mode (Kids) - Simple, no regulatory references
                 Description = "Tabungan terkunci dengan bunga lebih tinggi!",
                 DescriptionEN = "A locked savings account that earns more interest!",
-                WhatIsIt = "Deposito itu kayak menabung tapi dikunci! Kamu taruh uang untuk waktu tertentu (1-24 bulan), dan dapat bunga lebih besar dari tabungan biasa! Makin lama dikunci, makin besar hadiahnya!",
-                WhatIsItEN = "A fixed deposit is like saving in a locked box! You put money in for a specific time (1-24 months), and you get bigger bonuses than regular savings! The longer you lock it, the bigger the reward!",
+                WhatIsIt = "Deposito itu kayak menabung tapi dikunci! Kamu taruh uang untuk waktu tertentu (1-24 bulan), dan dapat bunga lebih besar dari tabungan biasa! Makin lama dikunci, makin besar hadiahnya! Ada juga Deposito Syariah yang pakai sistem bagi hasil (nisbah), bukan bunga!",
+                WhatIsItEN = "A fixed deposit is like saving in a locked box! You put money in for a specific time (1-24 months), and you get bigger bonuses than regular savings! The longer you lock it, the bigger the reward! There's also Shariah Deposits that use profit-sharing (nisbah), not interest!",
                 RiskExplanation = "AMAN! Tapi uangmu dikunci. Kalau diambil sebelum waktunya, bonus bunganya berkurang!",
                 RiskExplanationEN = "Safe! But your money is locked. If you take it early, you lose some of your bonus!",
                 BestFor = "Uang yang nggak akan dipakai dalam beberapa bulan!",
@@ -126,15 +139,15 @@ public class GameEngine
                 // Normal Mode (Adult) - Full details with regulations
                 DescriptionAdult = "Deposito berjangka dengan bunga tetap yang dijamin",
                 DescriptionAdultEN = "Fixed-term deposit offering guaranteed interest returns",
-                WhatIsItAdult = "Deposito Berjangka adalah simpanan berjangka dengan bunga tetap untuk tenor tertentu (1-24 bulan). Dijamin LPS hingga Rp 2 miliar. Bunga lebih tinggi dari tabungan, namun dana terkunci hingga jatuh tempo.",
-                WhatIsItAdultEN = "A Certificate of Deposit (CD) is a time deposit offering fixed interest for specified terms (1-24 months). Guaranteed by LPS up to Rp 2 billion. Higher rates than savings but funds are locked until maturity.",
+                WhatIsItAdult = "Deposito Berjangka adalah simpanan berjangka dengan bunga tetap untuk tenor tertentu (1-24 bulan). Dijamin LPS hingga Rp 2 miliar. Tersedia dalam dua jenis:\n\n• Konvensional (BRI): Menggunakan sistem bunga tetap.\n• Syariah (Bank Muamalat): Menggunakan akad Mudharabah Mutlaqah — bukan bunga, melainkan bagi hasil (nisbah) antara nasabah dan bank. Disertifikasi halal oleh DSN-MUI. Diawasi OJK.",
+                WhatIsItAdultEN = "A Certificate of Deposit (CD) is a time deposit for specified terms (1-24 months). Guaranteed by LPS up to Rp 2 billion. Available in two types:\n\n• Conventional (BRI): Fixed interest rate system.\n• Shariah (Bank Muamalat): Uses Mudharabah Mutlaqah contract — profit-sharing (nisbah) between depositor and bank, NOT interest. The nisbah ratio determines the depositor's share of bank profits. Certified halal by DSN-MUI. Supervised by OJK.",
                 RiskExplanationAdult = "Risiko sangat rendah. Pokok dan bunga dijamin LPS. Pencairan dini dikenakan penalti (kehilangan bunga + 1% dari pokok). Bunga dipotong pajak 20%.",
                 RiskExplanationAdultEN = "Very low risk. Principal and interest guaranteed by LPS. Early withdrawal incurs penalty (forfeited interest + 1% of principal). Interest taxed at 20%.",
                 BestForAdult = "Tabungan jangka menengah dengan return yang pasti. Ideal untuk dana yang tidak akan digunakan dalam periode tertentu.",
                 BestForAdultEN = "Medium-term savings with predictable returns. Ideal for planned expenses.",
                 ExpectedReturnAdult = "Bunga: 2.5% - 6% per tahun tergantung tenor (setelah pajak 20%)",
                 ExpectedReturnAdultEN = "Interest: 2.5% - 6% p.a. depending on term (after 20% tax)",
-                RealRules = "Diawasi OJK. Dijamin LPS. Tenor: 1, 3, 6, 12, 24 bulan. Minimum Rp 1 juta. Pajak bunga 20%. Opsi ARO (perpanjangan otomatis) tersedia.",
+                RealRules = "Diawasi OJK. Dijamin LPS. Tenor: 1, 3, 6, 12, 24 bulan (Syariah: 1, 3, 6, 12 bulan). Minimum Rp 1 juta. Pajak bunga/bagi hasil 20%. Opsi ARO tersedia. Syariah: akad Mudharabah Mutlaqah, nisbah bervariasi per tenor, disertifikasi DSN-MUI.",
                 BasePrice = 1_000_000,
                 MinReturn = 0,
                 MaxReturn = 0,
@@ -203,8 +216,8 @@ public class GameEngine
                 // Light Mode (Kids) - Simple, no regulatory references
                 Description = "Pinjamkan uangmu ke negara, dapat bunga tiap bulan!",
                 DescriptionEN = "Lend money to the government, earn interest every month!",
-                WhatIsIt = "Bayangin kamu minjemin uang ke Pak Presiden buat bangun jalan & sekolah! Tiap bulan, negara kasih kamu uang terima kasih (namanya kupon)! Seperti jadi pahlawan yang membantu membangun Indonesia!",
-                WhatIsItEN = "Imagine lending money to the President to build roads and schools! Every month, the government gives you thank-you money (called coupons)! You become a hero helping to build Indonesia!",
+                WhatIsIt = "Bayangin kamu minjemin uang ke Pak Presiden buat bangun jalan & sekolah! Tiap bulan, negara kasih kamu uang terima kasih (namanya kupon)! Ada juga Sukuk (obligasi syariah) yang pakai aset nyata, bukan utang — jadi halal!",
+                WhatIsItEN = "Imagine lending money to the President to build roads and schools! Every month, the government gives you thank-you money (called coupons)! There's also Sukuk (shariah bonds) that use real assets, not debt — so it's halal!",
                 RiskExplanation = "AMAN BANGET! Pemerintah Indonesia yang bayar, dan pemerintah SELALU membayar kembali!",
                 RiskExplanationEN = "Super safe! The Indonesian government pays it, and the government ALWAYS pays back!",
                 BestFor = "Kamu yang mau dapat uang jajan bulanan dari investasi!",
@@ -214,15 +227,15 @@ public class GameEngine
                 // Normal Mode (Adult) - Full details with regulations
                 DescriptionAdult = "Surat utang negara dengan kupon tetap yang dijamin 100% oleh pemerintah",
                 DescriptionAdultEN = "Government debt securities with fixed coupons, 100% government guaranteed",
-                WhatIsItAdult = "Surat Berharga Negara (SBN) Ritel adalah surat utang yang diterbitkan Kementerian Keuangan RI. Jenis: ORI (tradeable), SBR (non-tradeable, early redemption 50%), SR (Sukuk, sharia), ST (Sukuk Tabungan). Dijamin 100% APBN.",
-                WhatIsItAdultEN = "Retail Government Bonds (SBN) are debt securities issued by the Ministry of Finance. Types: ORI (tradeable), SBR (non-tradeable, 50% early redemption), SR (Sukuk, sharia), ST (Savings Sukuk). 100% backed by state budget (APBN).",
+                WhatIsItAdult = "Surat Berharga Negara (SBN) Ritel diterbitkan Kementerian Keuangan RI. Tersedia dua jenis:\n\n• ORI (Konvensional): Obligasi ritel dengan kupon tetap, tradeable di pasar sekunder.\n• SR/Sukuk Ritel (Syariah): Surat berharga berbasis aset (akad Ijarah — sale and leaseback). Bukan utang berbunga, melainkan imbal hasil dari aset yang mendasari. Disertifikasi DSN-MUI. Dijamin 100% APBN sama seperti ORI.",
+                WhatIsItAdultEN = "Retail Government Bonds (SBN) are issued by the Ministry of Finance. Available in two types:\n\n• ORI (Conventional): Retail bonds with fixed coupons, tradeable in secondary market.\n• SR/Sukuk Ritel (Shariah): Asset-backed securities using Ijarah (sale and leaseback) contract. NOT interest-based debt — returns come from underlying assets. Certified by DSN-MUI. 100% backed by APBN same as ORI.",
                 RiskExplanationAdult = "Risiko sangat rendah. Dijamin 100% oleh Pemerintah RI (APBN). Kupon tetap (ORI/SR) atau mengambang dengan floor (SBR/ST). Kupon dipotong pajak 10%.",
                 RiskExplanationAdultEN = "Very low risk. 100% guaranteed by Indonesian Government (APBN). Fixed coupon (ORI/SR) or floating with floor (SBR/ST). Coupon taxed at 10%.",
                 BestForAdult = "Investor konservatif yang mencari pendapatan rutin bulanan dengan jaminan pemerintah. Harus WNI dengan e-KTP dan SID.",
                 BestForAdultEN = "Conservative investors seeking regular monthly income with government guarantee. Must be Indonesian citizen with e-KTP and SID.",
                 ExpectedReturnAdult = "Kupon: 5.5% - 7% per tahun, dibayar bulanan (setelah pajak 10%). Tenor: 2-6 tahun.",
                 ExpectedReturnAdultEN = "Coupon: 5.5% - 7% p.a., paid monthly (after 10% tax). Tenor: 2-6 years.",
-                RealRules = "Diawasi OJK/DJPPR. Dijamin 100% Pemerintah RI. Minimum Rp 1 juta, maksimum Rp 5 miliar. Kupon bulanan. Pajak kupon 10%, capital gain 10%.",
+                RealRules = "Diawasi OJK/DJPPR. Dijamin 100% Pemerintah RI. Minimum Rp 1 juta, maksimum Rp 5 miliar. Kupon bulanan. ORI: pajak kupon 10%. SR (Sukuk): akad Ijarah, pajak kupon 15%, fatwa DSN-MUI.",
                 BasePrice = 1_000_000,
                 MinReturn = 0,
                 MaxReturn = 0,
@@ -322,7 +335,7 @@ public class GameEngine
                 IsFixedIncome = false
             },
 
-            // === CRYPTO - Unlocked at year 6 ===
+            // === CRYPTO - Unlocked at year 12 (calendar 2017, when real data begins) ===
             // Based on mechanics: risk_level=5, OJK regulated since Jan 2025, NO guarantee, 24/7 trading
             ["crypto"] = new AssetDefinition
             {
@@ -360,7 +373,7 @@ public class GameEngine
                 MaxReturn = 0.30m,
                 AlwaysPositive = false,
                 RiskLevel = "Sangat Tinggi",
-                UnlockYear = 6,
+                UnlockYear = 12,
                 UnlockMonth = 1,
                 MinimumInvestment = 50_000,
                 IsFixedIncome = false
@@ -412,157 +425,266 @@ public class GameEngine
         };
     }
 
-    private List<DepositoRate> InitializeDepositoRates()
+    private List<DepositoRate> RefreshDepositoRates(int gameYear)
     {
-        // Balanced rates: longer tenors offer better compound returns than rolling over shorter tenors
-        // 1 month: 3.0% annual baseline
-        // 3 months: 4.2% annual (better than 3x 1-month rollover)
-        // 6 months: 5.0% annual (better than 6x 1-month or 2x 3-month)
-        // 12 months: 6.0% annual (significantly better for 1-year commitment)
-        // 24 months: 7.0% annual (premium for 2-year lock-in)
-        return new List<DepositoRate>
+        var rates = new List<DepositoRate>();
+
+        // Conventional (BRI): 5 tenors
+        int[] convTenors = { 1, 3, 6, 12, 24 };
+        foreach (var tenor in convTenors)
         {
-            new DepositoRate { PeriodMonths = 1, PeriodName = "1 Bulan", AnnualRate = 0.030m, PenaltyRate = 0.50m, MinimumDeposit = 1_000_000 },
-            new DepositoRate { PeriodMonths = 3, PeriodName = "3 Bulan", AnnualRate = 0.042m, PenaltyRate = 0.50m, MinimumDeposit = 1_000_000 },
-            new DepositoRate { PeriodMonths = 6, PeriodName = "6 Bulan", AnnualRate = 0.050m, PenaltyRate = 0.50m, MinimumDeposit = 1_000_000 },
-            new DepositoRate { PeriodMonths = 12, PeriodName = "12 Bulan", AnnualRate = 0.060m, PenaltyRate = 0.50m, MinimumDeposit = 1_000_000 },
-            new DepositoRate { PeriodMonths = 24, PeriodName = "24 Bulan", AnnualRate = 0.070m, PenaltyRate = 0.50m, MinimumDeposit = 1_000_000 },
-        };
+            var rate = _depositoData.GetConventionalRate(gameYear, tenor);
+            if (rate == null) continue;
+            rates.Add(new DepositoRate
+            {
+                PeriodMonths = tenor,
+                PeriodName = $"{tenor} Bulan",
+                AnnualRate = rate.Value,
+                PenaltyRate = 0.50m,
+                MinimumDeposit = 1_000_000,
+                IsShariah = false,
+                BankName = "BRI"
+            });
+        }
+
+        // Shariah (Bank Muamalat): 4 tenors (no 24m)
+        int[] shariahTenors = { 1, 3, 6, 12 };
+        foreach (var tenor in shariahTenors)
+        {
+            var rate = _depositoData.GetShariahRate(gameYear, tenor);
+            var nisbah = _depositoData.GetShariahNisbah(gameYear, tenor);
+            if (rate == null) continue;
+            rates.Add(new DepositoRate
+            {
+                PeriodMonths = tenor,
+                PeriodName = $"{tenor} Bulan",
+                AnnualRate = rate.Value,
+                PenaltyRate = 0.50m,
+                MinimumDeposit = 1_000_000,
+                IsShariah = true,
+                NisbahRatio = nisbah,
+                BankName = "Bank Muamalat"
+            });
+        }
+
+        // Fallback if no data loaded (shouldn't happen with valid JSON)
+        if (rates.Count == 0)
+        {
+            rates.Add(new DepositoRate { PeriodMonths = 12, PeriodName = "12 Bulan", AnnualRate = 0.060m, PenaltyRate = 0.50m, MinimumDeposit = 1_000_000, BankName = "BRI" });
+        }
+
+        return rates;
     }
 
-    private List<BondRate> InitializeBondRates()
+    private List<BondRate> RefreshBondRates(int gameYear)
     {
-        // Based on mechanics: ORI/SR tradeable fixed coupon, SBR/ST non-tradeable floating with floor, 50% early redemption
-        return new List<BondRate>
+        var rates = new List<BondRate>();
+
+        // ORI (conventional) - available from Y1 (2006)
+        var ori = _bondData.GetORI(gameYear);
+        if (ori != null)
         {
-            new BondRate { PeriodMonths = 36, PeriodName = "ORI (3 Tahun)", BondType = "ORI", CouponRate = 0.060m, MinimumInvestment = 1_000_000 },
-            new BondRate { PeriodMonths = 36, PeriodName = "SR (3 Tahun Syariah)", BondType = "SR", CouponRate = 0.062m, MinimumInvestment = 1_000_000 },
-            new BondRate { PeriodMonths = 24, PeriodName = "SBR (2 Tahun)", BondType = "SBR", CouponRate = 0.065m, MinimumInvestment = 1_000_000 },
-            new BondRate { PeriodMonths = 24, PeriodName = "ST (2 Tahun Syariah)", BondType = "ST", CouponRate = 0.067m, MinimumInvestment = 1_000_000 },
-        };
+            rates.Add(new BondRate
+            {
+                PeriodMonths = ori.Value.tenorYears * 12,
+                PeriodName = $"ORI ({ori.Value.tenorYears} Tahun)",
+                BondType = "ORI",
+                CouponRate = ori.Value.couponRate,
+                MinimumInvestment = 1_000_000,
+                IsShariah = false,
+                SeriesName = ori.Value.series
+            });
+        }
+
+        // SR (shariah Sukuk Ritel) - available from Y4 (2009)
+        var sr = _bondData.GetSR(gameYear);
+        if (sr != null)
+        {
+            rates.Add(new BondRate
+            {
+                PeriodMonths = sr.Value.tenorYears * 12,
+                PeriodName = $"SR ({sr.Value.tenorYears} Tahun Syariah)",
+                BondType = "SR",
+                CouponRate = sr.Value.couponRate,
+                MinimumInvestment = 1_000_000,
+                IsShariah = true,
+                SeriesName = sr.Value.series,
+                AkadType = sr.Value.akad
+            });
+        }
+
+        // Fallback if no data
+        if (rates.Count == 0)
+        {
+            rates.Add(new BondRate { PeriodMonths = 36, PeriodName = "ORI (3 Tahun)", BondType = "ORI", CouponRate = 0.060m, MinimumInvestment = 1_000_000, SeriesName = "ORI" });
+        }
+
+        return rates;
     }
 
     private List<StockInfo> InitializeStocks()
     {
-        // Pool of Indonesian stocks with dividend yields (annual percentage)
-        // Dividend is paid once per year (at year end) if player holds the stock
-        // Prices designed for game balance: cheap stocks accessible early, expensive stocks for late game
-        // 1 lot = 100 shares, so per-lot cost = price × 100
-        return new List<StockInfo>
+        // Full pool of Indonesian stocks with real historical prices from CSV
+        // Each game session randomly picks 3 shariah + 1 non-shariah from this pool
+        // Game Y4M1 = Calendar Jan 2009 (stocks unlock at Y4)
+        // ICBP excluded: data only starts Oct 2010
+        var y = 4;
+        var m = 1;
+
+        var stocks = new List<(string ticker, string name, string sector, decimal fallback, bool shariah)>
         {
-            // === CHEAP STOCKS (under 2000/share = under 200K/lot) - accessible early game ===
-            new StockInfo { Ticker = "HMSP", CompanyName = "HM Sampoerna", Sector = "Consumer", CurrentPrice = 850, PreviousPrice = 850, DividendYield = 0.08m }, // 85K/lot, 8% div
-            new StockInfo { Ticker = "PGAS", CompanyName = "Perusahaan Gas Negara", Sector = "Energy", CurrentPrice = 1_200, PreviousPrice = 1_200, DividendYield = 0.09m }, // 120K/lot, 9% div
-            new StockInfo { Ticker = "KLBF", CompanyName = "Kalbe Farma", Sector = "Pharma", CurrentPrice = 1_450, PreviousPrice = 1_450, DividendYield = 0.025m }, // 145K/lot, 2.5% div
-            new StockInfo { Ticker = "ANTM", CompanyName = "Aneka Tambang", Sector = "Mining", CurrentPrice = 1_650, PreviousPrice = 1_650, DividendYield = 0.05m }, // 165K/lot, 5% div
-            new StockInfo { Ticker = "PTBA", CompanyName = "Bukit Asam", Sector = "Mining", CurrentPrice = 1_950, PreviousPrice = 1_950, DividendYield = 0.12m }, // 195K/lot, 12% div (high)
-
-            // === MID-RANGE STOCKS (2000-5000/share = 200K-500K/lot) - mid game ===
-            new StockInfo { Ticker = "ADRO", CompanyName = "Adaro Energy", Sector = "Mining", CurrentPrice = 2_400, PreviousPrice = 2_400, DividendYield = 0.10m }, // 240K/lot, 10% div
-            new StockInfo { Ticker = "TLKM", CompanyName = "Telkom Indonesia", Sector = "Telecom", CurrentPrice = 3_200, PreviousPrice = 3_200, DividendYield = 0.05m }, // 320K/lot, 5% div
-            new StockInfo { Ticker = "UNVR", CompanyName = "Unilever Indonesia", Sector = "Consumer", CurrentPrice = 3_800, PreviousPrice = 3_800, DividendYield = 0.04m }, // 380K/lot, 4% div
-            new StockInfo { Ticker = "ASII", CompanyName = "Astra International", Sector = "Automotive", CurrentPrice = 4_500, PreviousPrice = 4_500, DividendYield = 0.06m }, // 450K/lot, 6% div
-            new StockInfo { Ticker = "BBRI", CompanyName = "Bank Rakyat Indonesia", Sector = "Banking", CurrentPrice = 4_800, PreviousPrice = 4_800, DividendYield = 0.045m }, // 480K/lot, 4.5% div
-
-            // === EXPENSIVE STOCKS (5000+/share = 500K+/lot) - late game, blue chips ===
-            new StockInfo { Ticker = "BMRI", CompanyName = "Bank Mandiri", Sector = "Banking", CurrentPrice = 5_500, PreviousPrice = 5_500, DividendYield = 0.05m }, // 550K/lot, 5% div
-            new StockInfo { Ticker = "INDF", CompanyName = "Indofood Sukses", Sector = "Consumer", CurrentPrice = 6_200, PreviousPrice = 6_200, DividendYield = 0.04m }, // 620K/lot, 4% div
-            new StockInfo { Ticker = "SMGR", CompanyName = "Semen Indonesia", Sector = "Materials", CurrentPrice = 7_500, PreviousPrice = 7_500, DividendYield = 0.035m }, // 750K/lot, 3.5% div
-            new StockInfo { Ticker = "BBCA", CompanyName = "Bank Central Asia", Sector = "Banking", CurrentPrice = 9_200, PreviousPrice = 9_200, DividendYield = 0.03m }, // 920K/lot, 3% div
-            new StockInfo { Ticker = "ICBP", CompanyName = "Indofood CBP", Sector = "Consumer", CurrentPrice = 10_500, PreviousPrice = 10_500, DividendYield = 0.03m }, // 1.05M/lot, 3% div
+            // Non-shariah
+            ("BBCA", "Bank Central Asia", "Banking", 1_700, false),
+            ("BBRI", "Bank Rakyat Indonesia", "Banking", 2_200, false),
+            ("BMRI", "Bank Mandiri", "Banking", 1_150, false),
+            ("BBNI", "Bank Negara Indonesia", "Banking", 460, false),
+            ("HMSP", "HM Sampoerna", "Tobacco", 4_000, false),
+            ("GGRM", "Gudang Garam", "Tobacco", 2_475, false),
+            // Shariah
+            ("TLKM", "Telkom Indonesia", "Telecom", 3_100, true),
+            ("ASII", "Astra International", "Automotive", 5_600, true),
+            ("UNVR", "Unilever Indonesia", "Consumer", 3_750, true),
+            ("INDF", "Indofood Sukses", "Consumer", 650, true),
+            ("KLBF", "Kalbe Farma", "Pharma", 225, true),
+            ("SMGR", "Semen Indonesia", "Materials", 2_400, true),
+            ("UNTR", "United Tractors", "Heavy Equipment", 2_550, true),
+            ("PGAS", "Perusahaan Gas Negara", "Energy", 1_700, true),
+            ("INTP", "Indocement Tunggal", "Materials", 2_425, true),
+            ("PTBA", "Bukit Asam", "Mining", 3_050, true),
+            ("ADRO", "Adaro Energy", "Mining", 600, true),
+            ("JSMR", "Jasa Marga", "Infrastructure", 525, true),
+            ("ANTM", "Aneka Tambang", "Mining", 575, true),
         };
+
+        return stocks.Select(s =>
+        {
+            var price = _stockData.GetPrice(s.ticker, y, m) ?? s.fallback;
+            var div = _stockData.GetDividend(s.ticker, y);
+            return new StockInfo
+            {
+                Ticker = s.ticker,
+                CompanyName = s.name,
+                Sector = s.sector,
+                CurrentPrice = price,
+                PreviousPrice = price,
+                AnnualDividendPerShare = div?.amount ?? 0,
+                DividendType = div?.type ?? "None",
+                IsShariahCompliant = s.shariah
+            };
+        }).ToList();
+    }
+
+    /// <summary>
+    /// Randomly select 4 stocks from the pool: 3 shariah + 1 non-shariah.
+    /// Clones the StockInfo objects so each session has its own copies.
+    /// </summary>
+    private List<StockInfo> SelectRandomStocks(Random rng)
+    {
+        var shariah = _allStocks.Where(s => s.IsShariahCompliant).OrderBy(_ => rng.Next()).Take(3);
+        var nonShariah = _allStocks.Where(s => !s.IsShariahCompliant).OrderBy(_ => rng.Next()).Take(1);
+
+        return shariah.Concat(nonShariah).Select(s => new StockInfo
+        {
+            Ticker = s.Ticker,
+            CompanyName = s.CompanyName,
+            Sector = s.Sector,
+            CurrentPrice = s.CurrentPrice,
+            PreviousPrice = s.PreviousPrice,
+            LastPriceUpdateMonth = 0,
+            AnnualDividendPerShare = s.AnnualDividendPerShare,
+            DividendType = s.DividendType,
+            IsShariahCompliant = s.IsShariahCompliant
+        }).ToList();
+    }
+
+    /// <summary>
+    /// Randomly select 2 index funds: 1 conventional (from IHSG/LQ45) + 1 shariah (JII).
+    /// Index prices start from game year 2 (calendar 2007) when reksadana unlocks.
+    /// </summary>
+    private List<IndexInfo> SelectRandomIndices(Random rng)
+    {
+        var conventional = _indexData.GetConventionalIndices();
+        var shariah = _indexData.GetShariahIndices();
+
+        var selectedConv = conventional[rng.Next(conventional.Count)];
+        var selectedShariah = shariah[rng.Next(shariah.Count)];
+
+        // Reksadana unlocks at Y2M1 = calendar 2007 January
+        var initYear = 2;
+        var initMonth = 1;
+
+        var indices = new List<IndexInfo>();
+
+        var convPrice = _indexData.GetPrice(selectedConv, initYear, initMonth) ?? 1000m;
+        indices.Add(new IndexInfo
+        {
+            IndexId = selectedConv,
+            DisplayName = selectedConv switch
+            {
+                "IHSG" => "IHSG (IDX Composite)",
+                "LQ45" => "LQ45 (45 Most Liquid)",
+                _ => selectedConv
+            },
+            IsShariah = false,
+            CurrentPrice = convPrice,
+            PreviousPrice = convPrice,
+            PriceHistory = _indexData.GetPriceHistory(selectedConv, initYear, initMonth)
+        });
+
+        var shariahPrice = _indexData.GetPrice(selectedShariah, initYear, initMonth) ?? 300m;
+        indices.Add(new IndexInfo
+        {
+            IndexId = selectedShariah,
+            DisplayName = selectedShariah switch
+            {
+                "JII" => "JII (Jakarta Islamic Index)",
+                _ => selectedShariah
+            },
+            IsShariah = true,
+            CurrentPrice = shariahPrice,
+            PreviousPrice = shariahPrice,
+            PriceHistory = _indexData.GetPriceHistory(selectedShariah, initYear, initMonth)
+        });
+
+        return indices;
     }
 
     private List<CryptoInfo> InitializeCryptos()
     {
-        // Crypto starting prices for game balance
-        // BTC: Rp 1,106,989,703
-        // ETH: Rp 32,594,446
-        // DOGE: Rp 10,536
-        return new List<CryptoInfo>
+        // Real historical crypto prices from JSON data (USD→IDR converted)
+        // Data starts at game year 12 (calendar 2017)
+        var symbols = new[] { "BTC", "XRP", "XLM" };
+        var cryptos = new List<CryptoInfo>();
+        foreach (var symbol in symbols)
         {
-            new CryptoInfo { Symbol = "BTC", Name = "Bitcoin", CurrentPrice = 1_106_989_703, PreviousPrice = 1_106_989_703 },
-            new CryptoInfo { Symbol = "ETH", Name = "Ethereum", CurrentPrice = 32_594_446, PreviousPrice = 32_594_446 },
-            new CryptoInfo { Symbol = "DOGE", Name = "Dogecoin", CurrentPrice = 10_536, PreviousPrice = 10_536 },
-        };
+            var price = _cryptoData.GetPrice(symbol, 12, 1) ?? 0; // Y12M1 = Jan 2017
+            cryptos.Add(new CryptoInfo
+            {
+                Symbol = symbol,
+                Name = _cryptoData.GetCoinName(symbol),
+                CurrentPrice = price,
+                PreviousPrice = price
+            });
+        }
+        return cryptos;
     }
 
     private List<CrowdfundingProject> InitializeCrowdfundingProjects()
     {
-        // Diverse crowdfunding projects representing different business sectors
-        // Each has a lock-up period (12-24 months) where funds cannot be withdrawn
+        // Real crowdfunding projects from CSV data (Data/CrowdFunding/indonesia_crowdfunding_projects.csv)
+        // ROI is annualized, RiskLevel is 1-10 score mapped to failure probability 5%-25%
         return new List<CrowdfundingProject>
         {
-            new CrowdfundingProject
-            {
-                ProjectId = "CF001",
-                ProjectName = "Kopi Nusantara Export",
-                ProjectType = "Commodities",
-                Description = "Ekspor kopi specialty dari petani lokal ke pasar internasional",
-                FundingGoal = 500_000_000,
-                CurrentFunding = 0,
-                MinimumInvestment = 100_000,
-                DaysRemaining = 90,
-                ExpectedReturn = 0.15m, // 15% annual if successful
-                RiskLevel = 3,
-                LockUpMonths = 12 // 1 year lock-up
-            },
-            new CrowdfundingProject
-            {
-                ProjectId = "CF002",
-                ProjectName = "Urban Vertical Farm",
-                ProjectType = "Agriculture",
-                Description = "Pertanian vertikal sayuran organik di perkotaan menggunakan teknologi hidroponik",
-                FundingGoal = 800_000_000,
-                CurrentFunding = 0,
-                MinimumInvestment = 100_000,
-                DaysRemaining = 90,
-                ExpectedReturn = 0.25m, // 25% annual if successful (18 months)
-                RiskLevel = 4,
-                LockUpMonths = 18 // 1.5 year lock-up
-            },
-            new CrowdfundingProject
-            {
-                ProjectId = "CF003",
-                ProjectName = "EdTech Learning Platform",
-                ProjectType = "Tech Startup",
-                Description = "Platform pembelajaran online untuk siswa SMA dengan AI tutor",
-                FundingGoal = 1_200_000_000,
-                CurrentFunding = 0,
-                MinimumInvestment = 100_000,
-                DaysRemaining = 90,
-                ExpectedReturn = 0.35m, // 35% potential but higher risk (24 months)
-                RiskLevel = 5,
-                LockUpMonths = 24 // 2 year lock-up (tech startups take longer)
-            },
-            new CrowdfundingProject
-            {
-                ProjectId = "CF004",
-                ProjectName = "Warung Makan Franchise",
-                ProjectType = "F&B",
-                Description = "Franchise waralaba makanan cepat saji dengan menu lokal",
-                FundingGoal = 600_000_000,
-                CurrentFunding = 0,
-                MinimumInvestment = 100_000,
-                DaysRemaining = 90,
-                ExpectedReturn = 0.15m, // 15% stable return (12 months)
-                RiskLevel = 2,
-                LockUpMonths = 12 // 1 year lock-up
-            },
-            new CrowdfundingProject
-            {
-                ProjectId = "CF005",
-                ProjectName = "Fashion Retail Store",
-                ProjectType = "Retail",
-                Description = "Toko fashion lokal dengan desain unik untuk pasar millennial",
-                FundingGoal = 400_000_000,
-                CurrentFunding = 0,
-                MinimumInvestment = 100_000,
-                DaysRemaining = 90,
-                ExpectedReturn = 0.15m, // 15% modest return (12 months)
-                RiskLevel = 3,
-                LockUpMonths = 12 // 1 year lock-up
-            }
+            new() { ProjectId = "URD-001", ProjectName = "Proyek Agriculture Modal Kerja 1", ProjectType = "Agriculture", ExpectedReturn = 0.2025m, RiskLevel = 6, LockUpMonths = 6, MinimumInvestment = 100_000, IsActive = true },
+            new() { ProjectId = "URD-002", ProjectName = "Proyek Food & Beverage Modal Kerja 2", ProjectType = "Food & Beverage", ExpectedReturn = 0.0993m, RiskLevel = 1, LockUpMonths = 6, MinimumInvestment = 100_000, IsActive = true },
+            new() { ProjectId = "URD-003", ProjectName = "Proyek Retail Pengembangan 3", ProjectType = "Retail", ExpectedReturn = 0.1952m, RiskLevel = 4, LockUpMonths = 10, MinimumInvestment = 100_000, IsActive = true },
+            new() { ProjectId = "URD-004", ProjectName = "Proyek Manufacturing Ekspansi 4", ProjectType = "Manufacturing", ExpectedReturn = 0.0991m, RiskLevel = 2, LockUpMonths = 5, MinimumInvestment = 100_000, IsActive = true },
+            new() { ProjectId = "URD-005", ProjectName = "Proyek Technology Pengembangan 5", ProjectType = "Technology", ExpectedReturn = 0.1717m, RiskLevel = 4, LockUpMonths = 9, MinimumInvestment = 100_000, IsActive = true },
+            new() { ProjectId = "URD-006", ProjectName = "Proyek Logistics Investasi 6", ProjectType = "Logistics", ExpectedReturn = 0.2093m, RiskLevel = 5, LockUpMonths = 6, MinimumInvestment = 100_000, IsActive = true },
+            new() { ProjectId = "URD-007", ProjectName = "Proyek Education Modal Kerja 7", ProjectType = "Education", ExpectedReturn = 0.1231m, RiskLevel = 3, LockUpMonths = 5, MinimumInvestment = 100_000, IsActive = true },
+            new() { ProjectId = "URD-008", ProjectName = "Proyek Healthcare Modal Kerja 8", ProjectType = "Healthcare", ExpectedReturn = 0.1194m, RiskLevel = 1, LockUpMonths = 4, MinimumInvestment = 100_000, IsActive = true },
+            new() { ProjectId = "URD-009", ProjectName = "Proyek Renewable Energy Modal Kerja 9", ProjectType = "Renewable Energy", ExpectedReturn = 0.3531m, RiskLevel = 10, LockUpMonths = 21, MinimumInvestment = 100_000, IsActive = true },
+            new() { ProjectId = "URD-010", ProjectName = "Proyek Property Pengembangan 10", ProjectType = "Property", ExpectedReturn = 0.1218m, RiskLevel = 3, LockUpMonths = 4, MinimumInvestment = 100_000, IsActive = true },
         };
     }
 
@@ -696,21 +818,18 @@ public class GameEngine
             };
             session.InitializePrices(_assets);
 
+            // Set per-session rates for game year 1
+            session.CurrentDepositoRates = RefreshDepositoRates(1);
+            session.CurrentBondRates = RefreshBondRates(1);
+
             session.EventMonthForYear = _random.Next(7, 11);
             session.EventOccurredThisYear = false;
 
-            // Select 5 random stocks for this session (include dividend yield)
-            var selectedStocks = _allStocks.OrderBy(_ => _random.Next()).Take(5).Select(s => new StockInfo
-            {
-                Ticker = s.Ticker,
-                CompanyName = s.CompanyName,
-                Sector = s.Sector,
-                CurrentPrice = s.CurrentPrice,
-                PreviousPrice = s.PreviousPrice,
-                LastPriceUpdateMonth = 0,
-                DividendYield = s.DividendYield
-            }).ToList();
-            session.InitializeStocks(selectedStocks);
+            // Randomly select 4 stocks: 3 shariah + 1 non-shariah
+            session.InitializeStocks(SelectRandomStocks(_random));
+
+            // Randomly select 2 indices: 1 conventional + 1 shariah
+            session.AvailableIndices = SelectRandomIndices(_random);
 
             // Initialize cryptos
             var cryptos = _allCryptos.Select(c => new CryptoInfo
@@ -728,13 +847,10 @@ public class GameEngine
                 ProjectId = p.ProjectId,
                 ProjectName = p.ProjectName,
                 ProjectType = p.ProjectType,
-                Description = p.Description,
-                FundingGoal = p.FundingGoal,
-                CurrentFunding = 0,
                 MinimumInvestment = p.MinimumInvestment,
-                DaysRemaining = 90 + _random.Next(-30, 30), // 60-120 days
                 ExpectedReturn = p.ExpectedReturn,
                 RiskLevel = p.RiskLevel,
+                LockUpMonths = p.LockUpMonths,
                 IsActive = true
             }).ToList();
             session.InitializeCrowdfunding(crowdfunding);
@@ -784,17 +900,11 @@ public class GameEngine
 
             var state = new RoomMarketState { SharedSeed = seed };
 
-            // Select 5 random stocks (shared for all room players)
-            state.AvailableStocks = _allStocks.OrderBy(_ => rng.Next()).Take(5).Select(s => new StockInfo
-            {
-                Ticker = s.Ticker,
-                CompanyName = s.CompanyName,
-                Sector = s.Sector,
-                CurrentPrice = s.CurrentPrice,
-                PreviousPrice = s.PreviousPrice,
-                LastPriceUpdateMonth = 0,
-                DividendYield = s.DividendYield
-            }).ToList();
+            // Randomly select 4 stocks: 3 shariah + 1 non-shariah (shared for all room players)
+            state.AvailableStocks = SelectRandomStocks(rng);
+
+            // Shared index funds (1 conventional + 1 shariah)
+            state.AvailableIndices = SelectRandomIndices(rng);
 
             // Shared cryptos
             state.AvailableCryptos = _allCryptos.Select(c => new CryptoInfo
@@ -811,13 +921,10 @@ public class GameEngine
                 ProjectId = p.ProjectId,
                 ProjectName = p.ProjectName,
                 ProjectType = p.ProjectType,
-                Description = p.Description,
-                FundingGoal = p.FundingGoal,
-                CurrentFunding = 0,
                 MinimumInvestment = p.MinimumInvestment,
-                DaysRemaining = 90 + rng.Next(-30, 30),
                 ExpectedReturn = p.ExpectedReturn,
                 RiskLevel = p.RiskLevel,
+                LockUpMonths = p.LockUpMonths,
                 IsActive = true
             }).ToList();
 
@@ -860,8 +967,7 @@ public class GameEngine
                 Language = language,
                 RoomCode = roomCode,
                 IsMultiplayer = true,
-                ShowIntro = true,
-                IntroAssetType = "tabungan"
+                IsPaused = true  // Start paused — MP unlock popup for tabungan will sync all players
             };
 
             // Use shared initial prices
@@ -887,14 +993,24 @@ public class GameEngine
             {
                 Ticker = s.Ticker, CompanyName = s.CompanyName, Sector = s.Sector,
                 CurrentPrice = s.CurrentPrice, PreviousPrice = s.PreviousPrice,
-                LastPriceUpdateMonth = 0, DividendYield = s.DividendYield
+                LastPriceUpdateMonth = 0, AnnualDividendPerShare = s.AnnualDividendPerShare,
+                DividendType = s.DividendType, IsShariahCompliant = s.IsShariahCompliant
             }).ToList());
+
+            // Clone shared indices
+            session.AvailableIndices = marketState.AvailableIndices.Select(i => new IndexInfo
+            {
+                IndexId = i.IndexId, DisplayName = i.DisplayName, IsShariah = i.IsShariah,
+                CurrentPrice = i.CurrentPrice, PreviousPrice = i.PreviousPrice,
+                PriceHistory = new List<decimal>(i.PriceHistory)
+            }).ToList();
 
             // Clone shared cryptos
             session.InitializeCryptos(marketState.AvailableCryptos.Select(c => new CryptoInfo
             {
                 Symbol = c.Symbol, Name = c.Name,
-                CurrentPrice = c.CurrentPrice, PreviousPrice = c.PreviousPrice
+                CurrentPrice = c.CurrentPrice, PreviousPrice = c.PreviousPrice,
+                PriceHistory = new List<decimal>(c.PriceHistory)
             }).ToList());
 
             // Clone shared crowdfunding
@@ -1068,7 +1184,7 @@ public class GameEngine
     }
 
     // === DEPOSITO OPERATIONS ===
-    public bool BuyDeposito(string connectionId, int periodMonths, decimal amount, bool autoRollOver = false)
+    public bool BuyDeposito(string connectionId, int periodMonths, decimal amount, bool autoRollOver = false, bool isShariah = false)
     {
         lock (_lock)
         {
@@ -1076,7 +1192,7 @@ public class GameEngine
             if (session == null || session.IsGameOver || session.IsPaused || session.IsEventPending)
                 return false;
 
-            var rate = _depositoRates.FirstOrDefault(r => r.PeriodMonths == periodMonths);
+            var rate = session.CurrentDepositoRates.FirstOrDefault(r => r.PeriodMonths == periodMonths && r.IsShariah == isShariah);
             if (rate == null) return false;
 
             if (amount < rate.MinimumDeposit || session.CashBalance < amount)
@@ -1092,13 +1208,16 @@ public class GameEngine
                 StartYear = session.CurrentYear,
                 StartMonth = session.CurrentMonth,
                 MonthsRemaining = periodMonths,
-                AutoRollOver = autoRollOver
+                AutoRollOver = autoRollOver,
+                IsShariah = rate.IsShariah,
+                NisbahRatio = rate.NisbahRatio
             };
 
             session.Depositos.Add(deposito);
+            var bankLabel = rate.IsShariah ? "Syariah" : "Konvensional";
             session.AddLogEntry(session.Language == Language.Indonesian
-                ? $"Buka Deposito {rate.PeriodName} Rp {amount:N0} (bunga {rate.AnnualRate * 100}%/tahun)"
-                : $"Opened {rate.PeriodName} CD of Rp {amount:N0} at {rate.AnnualRate * 100}% p.a.");
+                ? $"Buka Deposito {bankLabel} {rate.PeriodName} Rp {amount:N0} ({(rate.IsShariah ? "bagi hasil" : "bunga")} {rate.AnnualRate * 100:F2}%/tahun)"
+                : $"Opened {(rate.IsShariah ? "Shariah" : "Conventional")} {rate.PeriodName} CD of Rp {amount:N0} at {rate.AnnualRate * 100:F2}% p.a.");
             return true;
         }
     }
@@ -1125,7 +1244,7 @@ public class GameEngine
             }
             else
             {
-                var rate = _depositoRates.FirstOrDefault(r => r.PeriodMonths == deposito.PeriodMonths);
+                var rate = session.CurrentDepositoRates.FirstOrDefault(r => r.PeriodMonths == deposito.PeriodMonths);
                 var penaltyRate = rate?.PenaltyRate ?? 0.5m;
                 var earnedInterest = deposito.CurrentValue - deposito.Principal;
                 var penalty = earnedInterest * penaltyRate;
@@ -1172,7 +1291,7 @@ public class GameEngine
             if (session == null || session.IsGameOver || session.IsPaused || session.IsEventPending)
                 return false;
 
-            var rate = _bondRates.FirstOrDefault(r => r.BondType == bondType);
+            var rate = session.CurrentBondRates.FirstOrDefault(r => r.BondType == bondType);
             if (rate == null) return false;
 
             if (amount < rate.MinimumInvestment || session.CashBalance < amount)
@@ -1188,13 +1307,17 @@ public class GameEngine
                 CouponRate = rate.CouponRate,
                 StartYear = session.CurrentYear,
                 StartMonth = session.CurrentMonth,
-                MonthsRemaining = rate.PeriodMonths
+                MonthsRemaining = rate.PeriodMonths,
+                IsShariah = rate.IsShariah,
+                SeriesName = rate.SeriesName,
+                AkadType = rate.AkadType
             };
 
             session.Bonds.Add(bond);
+            var seriesLabel = rate.SeriesName != null ? $" ({rate.SeriesName})" : "";
             session.AddLogEntry(session.Language == Language.Indonesian
-                ? $"Beli {rate.PeriodName} Rp {amount:N0} (kupon {rate.CouponRate * 100}%/tahun)"
-                : $"Purchased {rate.PeriodName} bond of Rp {amount:N0} at {rate.CouponRate * 100}% coupon");
+                ? $"Beli {rate.PeriodName}{seriesLabel} Rp {amount:N0} (kupon {rate.CouponRate * 100:F2}%/tahun)"
+                : $"Purchased {rate.PeriodName}{seriesLabel} bond of Rp {amount:N0} at {rate.CouponRate * 100:F2}% coupon");
             return true;
         }
     }
@@ -1393,6 +1516,108 @@ public class GameEngine
                 ? $"Beli {grams}g Emas (Rp {totalCost:N0})"
                 : $"Purchased {grams}g Gold for Rp {totalCost:N0}");
             return true;
+        }
+    }
+
+    // === INDEX FUND OPERATIONS ===
+
+    public bool BuyIndex(string connectionId, string indexId, decimal amount)
+    {
+        lock (_lock)
+        {
+            var session = GetSession(connectionId);
+            if (session == null || session.IsGameOver || session.IsPaused || session.IsEventPending)
+                return false;
+
+            if (!session.UnlockedAssets.Contains("reksadana"))
+                return false;
+
+            var idx = session.AvailableIndices.FirstOrDefault(i => i.IndexId == indexId);
+            if (idx == null || idx.CurrentPrice <= 0)
+                return false;
+
+            if (amount < 100_000m || session.CashBalance < amount)
+                return false;
+
+            var units = amount / idx.CurrentPrice;
+            session.CashBalance -= amount;
+
+            var portfolioKey = $"index_{indexId}";
+            if (!session.Portfolio.ContainsKey(portfolioKey))
+            {
+                session.Portfolio[portfolioKey] = new PortfolioItem
+                {
+                    AssetType = "reksadana",
+                    DisplayName = $"RD Indeks {idx.DisplayName}",
+                    Ticker = indexId,
+                    Units = 0,
+                    PricePerUnit = idx.CurrentPrice,
+                    TotalCost = 0
+                };
+            }
+
+            session.Portfolio[portfolioKey].Units += units;
+            session.Portfolio[portfolioKey].TotalCost += amount;
+            session.Portfolio[portfolioKey].PricePerUnit = idx.CurrentPrice;
+
+            session.AddLogEntry(session.Language == Language.Indonesian
+                ? $"Beli RD Indeks {indexId} Rp {amount:N0} ({units:F4} unit)"
+                : $"Purchased Index Fund {indexId} Rp {amount:N0} ({units:F4} units)");
+            return true;
+        }
+    }
+
+    public bool SellIndex(string connectionId, string indexId, decimal units)
+    {
+        lock (_lock)
+        {
+            var session = GetSession(connectionId);
+            if (session == null || session.IsGameOver || session.IsPaused)
+                return false;
+
+            var portfolioKey = $"index_{indexId}";
+            if (!session.Portfolio.ContainsKey(portfolioKey))
+                return false;
+
+            var portfolio = session.Portfolio[portfolioKey];
+            if (portfolio.Units <= 0 || units > portfolio.Units)
+                return false;
+
+            var idx = session.AvailableIndices.FirstOrDefault(i => i.IndexId == indexId);
+            if (idx == null) return false;
+
+            var saleValue = units * idx.CurrentPrice;
+            var costBasis = (portfolio.TotalCost / portfolio.Units) * units;
+
+            session.CashBalance += saleValue;
+            portfolio.Units -= units;
+            portfolio.TotalCost -= costBasis;
+
+            var profit = saleValue - costBasis;
+            session.TotalRealizedPortfolioGainLoss += profit;
+
+            if (portfolio.Units <= 0)
+                session.Portfolio.Remove(portfolioKey);
+
+            session.AddLogEntry(session.Language == Language.Indonesian
+                ? $"Jual RD Indeks {indexId} ({units:F4} unit, {(profit >= 0 ? "untung" : "rugi")} Rp {Math.Abs(profit):N0})"
+                : $"Sold Index Fund {indexId} ({units:F4} units, P/L: {(profit >= 0 ? "+" : "")}Rp {profit:N0})");
+            return true;
+        }
+    }
+
+    public bool SellAllIndex(string connectionId, string indexId)
+    {
+        lock (_lock)
+        {
+            var session = GetSession(connectionId);
+            if (session == null) return false;
+
+            var portfolioKey = $"index_{indexId}";
+            if (!session.Portfolio.ContainsKey(portfolioKey))
+                return false;
+
+            return SellIndex(connectionId, indexId, session.Portfolio[portfolioKey].Units);
         }
     }
 
@@ -1664,16 +1889,41 @@ public class GameEngine
             if (session.Portfolio.ContainsKey(assetType))
             {
                 var portfolio = session.Portfolio[assetType];
-                var currentPrice = session.AssetPrices.GetValueOrDefault(assetType, _assets.GetValueOrDefault(assetType)?.BasePrice ?? 1_000_000);
+                // Get current price based on asset type
+                decimal currentPrice;
+                if (assetType.StartsWith("index_") && !string.IsNullOrEmpty(portfolio.Ticker))
+                {
+                    var idx = session.AvailableIndices.FirstOrDefault(i => i.IndexId == portfolio.Ticker);
+                    currentPrice = idx?.CurrentPrice ?? 1_000_000m;
+                }
+                else if (assetType.StartsWith("stock_") && !string.IsNullOrEmpty(portfolio.Ticker))
+                {
+                    var stock = session.AvailableStocks.FirstOrDefault(s => s.Ticker == portfolio.Ticker);
+                    currentPrice = stock?.CurrentPrice ?? 1_000_000m;
+                }
+                else if (assetType.StartsWith("crypto_") && !string.IsNullOrEmpty(portfolio.Ticker))
+                {
+                    var crypto = session.AvailableCryptos.FirstOrDefault(c => c.Symbol == portfolio.Ticker);
+                    currentPrice = crypto?.CurrentPrice ?? 1_000_000m;
+                }
+                else
+                {
+                    currentPrice = session.AssetPrices.GetValueOrDefault(assetType, _assets.GetValueOrDefault(assetType)?.BasePrice ?? 1_000_000);
+                }
                 var portfolioValue = portfolio.Units * currentPrice;
 
                 if (portfolioValue >= cost)
                 {
-                    var unitsNeeded = (int)Math.Ceiling(cost / currentPrice);
-                    if (unitsNeeded > (int)portfolio.Units) unitsNeeded = (int)portfolio.Units;
+                    // Use decimal for fractional-unit assets (index, crypto), int for whole-unit assets (stocks)
+                    decimal unitsNeeded;
+                    if (assetType.StartsWith("index_") || assetType.StartsWith("crypto_"))
+                        unitsNeeded = Math.Ceiling(cost / currentPrice * 10000m) / 10000m;
+                    else
+                        unitsNeeded = (int)Math.Ceiling(cost / currentPrice);
+                    if (unitsNeeded > portfolio.Units) unitsNeeded = portfolio.Units;
 
                     var saleValue = unitsNeeded * currentPrice;
-                    var costBasis = (portfolio.TotalCost / (portfolio.Units + unitsNeeded)) * unitsNeeded;
+                    var costBasis = portfolio.Units > 0 ? (portfolio.TotalCost / portfolio.Units) * unitsNeeded : 0;
                     var saleProfit = saleValue - costBasis;
                     portfolio.Units -= unitsNeeded;
                     portfolio.TotalCost -= costBasis;
@@ -1706,31 +1956,59 @@ public class GameEngine
         session.EventCost = null;
         session.IsEventPending = false;
         session.IsPaused = false;
+        session.EventPendingAt = null;
     }
 
-    public void ProcessTick(string connectionId)
+    /// <summary>
+    /// Process one game tick. Returns (unlockOccurred, unlockAssetType, autoPayOccurred).
+    /// </summary>
+    public (bool UnlockOccurred, string? UnlockAssetType, bool AutoPayOccurred) ProcessTick(string connectionId)
     {
         lock (_lock)
         {
             var session = GetSession(connectionId);
             if (session == null || session.IsGameOver || session.IsPaused || session.IsEventPending)
-                return;
+                return (false, null, false);
 
             if (session.ShowIntro)
-                return;
+                return (false, null, false);
 
             session.MonthProgress += 20;
             session.NewUnlockMessage = null;
 
+            string? unlockAssetType = null;
             if (session.MonthProgress >= 100)
             {
                 session.MonthProgress = 0;
-                ProcessMonthEnd(session);
+                unlockAssetType = ProcessMonthEnd(session);
+
+                // If unlock occurred in multiplayer, pause all room sessions
+                // and sync all unlocked assets to other sessions so they don't re-trigger
+                if (unlockAssetType != null && session.IsMultiplayer && session.RoomCode != null)
+                {
+                    foreach (var s in _sessions.Values.Where(s => s.RoomCode == session.RoomCode))
+                    {
+                        s.IsPaused = true;
+                        if (s != session)
+                        {
+                            foreach (var asset in session.UnlockedAssets)
+                            {
+                                if (!s.UnlockedAssets.Contains(asset))
+                                    s.UnlockedAssets.Add(asset);
+                            }
+                        }
+                    }
+                }
             }
+
+            return (unlockAssetType != null, unlockAssetType, false);
         }
     }
 
-    private void ProcessMonthEnd(GameSession session)
+    /// <summary>
+    /// Process month-end logic. Returns the unlocked asset type if a new asset was unlocked, otherwise null.
+    /// </summary>
+    private string? ProcessMonthEnd(GameSession session)
     {
         // Update savings interest (monthly)
         if (session.SavingsAccount != null)
@@ -1751,12 +2029,13 @@ public class GameEngine
                     // Automatically re-invest the maturity value
                     var maturityValue = deposito.MaturityValue;
                     session.TotalDepositoInterestEarned += maturityValue - deposito.Principal;
-                    var rate = _depositoRates.FirstOrDefault(r => r.PeriodMonths == deposito.PeriodMonths);
+                    var rate = session.CurrentDepositoRates.FirstOrDefault(r => r.PeriodMonths == deposito.PeriodMonths && r.IsShariah == deposito.IsShariah);
                     if (rate != null)
                     {
                         // Reset the deposito with new principal (maturity value)
                         deposito.Principal = maturityValue;
                         deposito.InterestRate = rate.AnnualRate; // Use current rate in case it changed
+                        deposito.NisbahRatio = rate.NisbahRatio; // Update nisbah for shariah
                         deposito.StartYear = session.CurrentYear;
                         deposito.StartMonth = session.CurrentMonth;
                         deposito.MonthsRemaining = deposito.PeriodMonths;
@@ -1806,14 +2085,14 @@ public class GameEngine
             }
         }
 
+        // Advance month BEFORE fetching prices so prices match the new month
+        session.CurrentMonth++;
+
         // Update market prices for fluctuating assets
         UpdateMarketPrices(session);
 
-        // Update stock prices every 2 months
-        if (session.CurrentMonth % 2 == 0)
-        {
-            UpdateStockPrices(session);
-        }
+        // Update stock prices every month (real historical data)
+        UpdateStockPrices(session);
 
         // Update crypto prices monthly
         UpdateCryptoPrices(session);
@@ -1823,8 +2102,6 @@ public class GameEngine
 
         // Process crowdfunding investments (check maturity and failures)
         ProcessCrowdfundingMonthEnd(session);
-
-        session.CurrentMonth++;
 
         // Randomize event month at the start of each year (between month 7-10)
         if (session.CurrentMonth == 1 && session.EventMonthForYear == 0)
@@ -1846,13 +2123,17 @@ public class GameEngine
         {
             TriggerMonthlyEvent(session);
             session.EventOccurredThisYear = true;
-            return;
+            return null;
         }
 
         if (session.CurrentMonth > GameSession.MONTHS_PER_YEAR)
         {
             session.CurrentMonth = 1;
             session.CurrentYear++;
+
+            // Refresh deposito and bond rates for the new year (per-session, real historical data)
+            session.CurrentDepositoRates = RefreshDepositoRates(session.CurrentYear);
+            session.CurrentBondRates = RefreshBondRates(session.CurrentYear);
 
             if (session.IsMultiplayer && session.RoomCode != null &&
                 _roomMarketStates.TryGetValue(session.RoomCode, out var rms))
@@ -1870,16 +2151,39 @@ public class GameEngine
                 ? $"Terima gaji tahunan: Rp {GameSession.YEARLY_INCOME:N0}"
                 : $"Annual income received: Rp {GameSession.YEARLY_INCOME:N0}");
 
+            // Refresh dividend data for the year just completed (CurrentYear-1),
+            // since UpdateStockPrices' month==1 refresh doesn't trigger (month goes 13→wrap→1, never seen by UpdateStockPrices)
+            foreach (var stock in session.AvailableStocks)
+            {
+                var div = _stockData.GetDividend(stock.Ticker, session.CurrentYear - 1);
+                stock.AnnualDividendPerShare = div?.amount ?? 0;
+                stock.DividendType = div?.type ?? "None";
+            }
+
             // Pay dividends for stocks held
             PayStockDividends(session);
 
-            CheckAssetUnlocks(session);
+            // Now refresh to new year's dividend data for UI display
+            foreach (var stock in session.AvailableStocks)
+            {
+                var div = _stockData.GetDividend(stock.Ticker, session.CurrentYear);
+                stock.AnnualDividendPerShare = div?.amount ?? 0;
+                stock.DividendType = div?.type ?? "None";
+            }
+
+            var yearEndUnlock = CheckAssetUnlocks(session);
+            if (yearEndUnlock != null)
+            {
+                ProcessBotMonthEnd(session);
+                return yearEndUnlock;
+            }
         }
 
         // Check for mid-year unlock (deposito at month 6)
+        string? midYearUnlock = null;
         if (session.CurrentYear == 1 && session.CurrentMonth == 6)
         {
-            CheckAssetUnlocks(session);
+            midYearUnlock = CheckAssetUnlocks(session);
         }
 
         if (session.CurrentYear > GameSession.MAX_YEARS)
@@ -1892,6 +2196,7 @@ public class GameEngine
 
         // Process bot month end (same month as player)
         ProcessBotMonthEnd(session);
+        return midYearUnlock;
     }
 
     private void UpdatePortfolioValues(GameSession session)
@@ -1904,6 +2209,13 @@ public class GameEngine
                 var stock = session.AvailableStocks.FirstOrDefault(s => s.Ticker == ticker);
                 if (stock != null)
                     portfolio.PricePerUnit = stock.CurrentPrice;
+            }
+            else if (portfolio.AssetType == "reksadana" && !string.IsNullOrEmpty(portfolio.Ticker))
+            {
+                // Index fund - price tracked via AvailableIndices
+                var idx = session.AvailableIndices.FirstOrDefault(i => i.IndexId == portfolio.Ticker);
+                if (idx != null)
+                    portfolio.PricePerUnit = idx.CurrentPrice;
             }
             else if (portfolio.AssetType == "crypto")
             {
@@ -1939,9 +2251,13 @@ public class GameEngine
 
             investment.MonthsRemaining--;
 
-            // 20% annual failure rate = ~1.7% monthly chance
-            // We'll use 2% monthly chance for simplicity (roughly 22% annual)
-            if (_random.NextDouble() < 0.02)
+            // Risk-based failure: risk score 1 → 5% annual, score 10 → 25% annual
+            var project = _allCrowdfundingProjects.FirstOrDefault(p => p.ProjectId == investment.ProjectId);
+            int riskScore = project?.RiskLevel ?? 5;
+            double annualFailRate = 0.05 + (riskScore - 1) * (0.20 / 9.0);
+            double monthlyFailRate = 1.0 - Math.Pow(1.0 - annualFailRate, 1.0 / 12.0);
+
+            if (_random.NextDouble() < monthlyFailRate)
             {
                 investment.HasFailed = true;
                 var failureReasons = new[]
@@ -1988,8 +2304,8 @@ public class GameEngine
     }
 
     /// <summary>
-    /// Pay annual dividends for all stocks held by player
-    /// Dividend = Number of shares * Current price * Dividend yield
+    /// Pay annual dividends for all stocks held by player.
+    /// Uses real per-share dividend data: Dividend = Units × AnnualDividendPerShare
     /// </summary>
     private void PayStockDividends(GameSession session)
     {
@@ -1999,14 +2315,14 @@ public class GameEngine
         foreach (var portfolio in session.Portfolio.Values.Where(p => p.AssetType == "saham"))
         {
             var stock = session.AvailableStocks.FirstOrDefault(s => s.Ticker == portfolio.Ticker);
-            if (stock != null && stock.DividendYield > 0)
+            if (stock != null && stock.AnnualDividendPerShare > 0)
             {
-                // Dividend = shares * current price * yield
-                var dividend = Math.Round(portfolio.Units * stock.CurrentPrice * stock.DividendYield, 0);
+                // Dividend = shares × annual dividend per share (from real historical data)
+                var dividend = Math.Round(portfolio.Units * stock.AnnualDividendPerShare, 0);
                 if (dividend > 0)
                 {
                     totalDividends += dividend;
-                    dividendDetails.Add($"{stock.Ticker}: Rp {dividend:N0}");
+                    dividendDetails.Add($"{stock.Ticker}: Rp {dividend:N0} ({stock.DividendType})");
                 }
             }
         }
@@ -2016,8 +2332,8 @@ public class GameEngine
             session.CashBalance += totalDividends;
             session.TotalDividendEarned += totalDividends;
             session.AddLogEntry(session.Language == Language.Indonesian
-                ? $"Terima dividen saham! +Rp {totalDividends:N0}"
-                : $"Stock dividends received: +Rp {totalDividends:N0}");
+                ? $"Terima dividen saham! +Rp {totalDividends:N0} ({string.Join(", ", dividendDetails)})"
+                : $"Stock dividends received: +Rp {totalDividends:N0} ({string.Join(", ", dividendDetails)})");
         }
     }
 
@@ -2040,17 +2356,20 @@ public class GameEngine
             session.BotSavingsBalance += monthlyInterest;
         }
 
-        // Grow bot stock value (steady upward trend targeting ~200% profit over holding period)
-        // ~1.5% monthly growth = ~19.6% annual compound, over 11 years (month 37-180) = ~7x = ~600% total
-        // We cap at 200% profit (3x cost) to match the requirement
-        if (session.BotStockValue > 0)
+        // Grow bot stock value using real price changes from BBCA (blue chip reference)
+        if (session.BotStockValue > 0 && !string.IsNullOrEmpty(session.BotStockTicker))
         {
-            var monthlyGrowth = 0.015m + (decimal)(_random.NextDouble() * 0.005); // 1.5%-2.0% monthly
-            session.BotStockValue *= (1 + monthlyGrowth);
-            // Cap at 200% profit (3x cost basis)
-            var maxValue = session.BotStockCost * 3.0m;
-            if (session.BotStockValue > maxValue)
-                session.BotStockValue = maxValue;
+            var currentPrice = _stockData.GetPrice(session.BotStockTicker, session.CurrentYear, session.CurrentMonth);
+            var prevMonth = session.CurrentMonth - 1;
+            var prevYear = session.CurrentYear;
+            if (prevMonth < 1) { prevMonth = 12; prevYear--; }
+            var prevPrice = _stockData.GetPrice(session.BotStockTicker, prevYear, prevMonth);
+
+            if (currentPrice.HasValue && prevPrice.HasValue && prevPrice.Value > 0)
+            {
+                var changeRatio = currentPrice.Value / prevPrice.Value;
+                session.BotStockValue *= changeRatio;
+            }
         }
 
         // Process bot depositos - check maturity (reinvest immediately)
@@ -2105,7 +2424,7 @@ public class GameEngine
                     session.BotSavingsBalance -= fromSavings;
                     session.BotCashBalance += fromSavings;
                 }
-                var rate = _depositoRates.FirstOrDefault(r => r.PeriodMonths == 12);
+                var rate = session.CurrentDepositoRates.FirstOrDefault(r => r.PeriodMonths == 12);
                 if (rate != null)
                 {
                     session.BotDepositos.Add(new DepositoItem
@@ -2130,15 +2449,19 @@ public class GameEngine
             indexAmount = Math.Min(indexAmount, 5_000_000m);
             if (indexAmount >= 100_000m)
             {
-                var price = session.AssetPrices.GetValueOrDefault("reksadana", 1_000_000m);
-                var units = indexAmount / price;
-                session.BotIndexFundUnits = units;
-                session.BotIndexFundCost = indexAmount;
-                session.BotCashBalance -= indexAmount;
+                var convIdx = session.AvailableIndices.FirstOrDefault(i => !i.IsShariah);
+                var price = convIdx?.CurrentPrice ?? session.AssetPrices.GetValueOrDefault("reksadana", 1_000_000m);
+                if (price > 0)
+                {
+                    var units = indexAmount / price;
+                    session.BotIndexFundUnits = units;
+                    session.BotIndexFundCost = indexAmount;
+                    session.BotCashBalance -= indexAmount;
+                }
             }
         }
 
-        // Month 25: Bonds unlock - 15% target, invest in ST (6.7%)
+        // Month 25: Bonds unlock - 15% target, invest in SR (shariah) or ORI (conventional)
         if (totalMonths == 25 && session.BotBonds.Count == 0)
         {
             var reserve = GetBotDynamicReserve(session);
@@ -2146,7 +2469,8 @@ public class GameEngine
             var bondAmount = Math.Min(available * 0.50m, 2_000_000m);
             if (bondAmount >= 1_000_000m)
             {
-                var rate = _bondRates.FirstOrDefault(r => r.BondType == "ST");
+                var rate = session.CurrentBondRates.FirstOrDefault(r => r.BondType == "SR")
+                        ?? session.CurrentBondRates.FirstOrDefault(r => r.BondType == "ORI");
                 if (rate != null)
                 {
                     session.BotBonds.Add(new BondItem
@@ -2157,7 +2481,10 @@ public class GameEngine
                         CouponRate = rate.CouponRate,
                         StartYear = session.CurrentYear,
                         StartMonth = session.CurrentMonth,
-                        MonthsRemaining = rate.PeriodMonths
+                        MonthsRemaining = rate.PeriodMonths,
+                        IsShariah = rate.IsShariah,
+                        SeriesName = rate.SeriesName,
+                        AkadType = rate.AkadType
                     });
                     session.BotCashBalance -= bondAmount;
                 }
@@ -2172,8 +2499,8 @@ public class GameEngine
             stockAmount = Math.Min(stockAmount, 3_000_000m);
             if (stockAmount >= 100_000m && session.AvailableStocks.Count > 0)
             {
-                // Pick the highest dividend yield stock (bot is smart)
-                var bestStock = session.AvailableStocks.OrderByDescending(s => s.DividendYield).First();
+                // Pick the highest dividend stock (bot is smart)
+                var bestStock = session.AvailableStocks.OrderByDescending(s => s.AnnualDividendPerShare).First();
                 session.BotStockTicker = bestStock.Ticker;
                 session.BotStockCost = stockAmount;
                 session.BotStockValue = stockAmount; // Starts at cost basis
@@ -2201,6 +2528,22 @@ public class GameEngine
         if (session.CurrentMonth == 1 && session.CurrentYear > 1)
         {
             session.BotCashBalance += GameSession.YEARLY_INCOME;
+
+            // Pay bot stock dividends (same as player)
+            if (session.BotStockValue > 0 && !string.IsNullOrEmpty(session.BotStockTicker))
+            {
+                var stock = session.AvailableStocks.FirstOrDefault(s => s.Ticker == session.BotStockTicker);
+                if (stock != null && stock.AnnualDividendPerShare > 0)
+                {
+                    var effectiveShares = stock.CurrentPrice > 0 ? session.BotStockValue / stock.CurrentPrice : 0;
+                    var botDividend = Math.Round(effectiveShares * stock.AnnualDividendPerShare, 0);
+                    if (botDividend > 0)
+                    {
+                        session.BotCashBalance += botDividend;
+                    }
+                }
+            }
+
             RebalanceBotPortfolio(session);
         }
         // Continuous deployment: if maturity freed up cash or excess cash accumulated
@@ -2287,12 +2630,16 @@ public class GameEngine
             var indexInvestment = investableAmount * indexPct;
             if (indexInvestment >= 100_000m)
             {
-                var price = session.AssetPrices.GetValueOrDefault("reksadana", 1_000_000m);
-                var units = indexInvestment / price;
-                session.BotIndexFundUnits += units;
-                session.BotIndexFundCost += indexInvestment;
-                session.BotCashBalance -= indexInvestment;
-                investableAmount -= indexInvestment;
+                var convIdx = session.AvailableIndices.FirstOrDefault(i => !i.IsShariah);
+                var price = convIdx?.CurrentPrice ?? session.AssetPrices.GetValueOrDefault("reksadana", 1_000_000m);
+                if (price > 0)
+                {
+                    var units = indexInvestment / price;
+                    session.BotIndexFundUnits += units;
+                    session.BotIndexFundCost += indexInvestment;
+                    session.BotCashBalance -= indexInvestment;
+                    investableAmount -= indexInvestment;
+                }
             }
         }
 
@@ -2326,15 +2673,15 @@ public class GameEngine
             }
         }
 
-        // 4. Bonds - use ST (6.7%) for best coupon, skip if < 24 months remaining (won't mature)
+        // 4. Bonds - use SR (shariah) or ORI, skip if < 24 months remaining (won't mature)
         if (bondsUnlocked && investableAmount >= 1_000_000m && monthsRemaining >= 24)
         {
             var bondAmount = investableAmount * (bondsPct / Math.Max(0.01m, 1 - indexPct - stockPct - goldPct));
             bondAmount = Math.Min(bondAmount, investableAmount);
             if (bondAmount >= 1_000_000m)
             {
-                var rate = _bondRates.FirstOrDefault(r => r.BondType == "ST")
-                        ?? _bondRates.FirstOrDefault(r => r.BondType == "SBR");
+                var rate = session.CurrentBondRates.FirstOrDefault(r => r.BondType == "SR")
+                        ?? session.CurrentBondRates.FirstOrDefault(r => r.BondType == "ORI");
                 if (rate != null)
                 {
                     session.BotBonds.Add(new BondItem
@@ -2345,7 +2692,10 @@ public class GameEngine
                         CouponRate = rate.CouponRate,
                         StartYear = session.CurrentYear,
                         StartMonth = session.CurrentMonth,
-                        MonthsRemaining = rate.PeriodMonths
+                        MonthsRemaining = rate.PeriodMonths,
+                        IsShariah = rate.IsShariah,
+                        SeriesName = rate.SeriesName,
+                        AkadType = rate.AkadType
                     });
                     session.BotCashBalance -= bondAmount;
                     investableAmount -= bondAmount;
@@ -2362,8 +2712,8 @@ public class GameEngine
             {
                 int tenor = monthsRemaining >= 24 ? 24 : 12;
                 if (monthsRemaining < 12) tenor = Math.Max(1, monthsRemaining); // Use shortest if near end
-                var rate = _depositoRates.FirstOrDefault(r => r.PeriodMonths == tenor)
-                        ?? _depositoRates.FirstOrDefault(r => r.PeriodMonths == 12);
+                var rate = session.CurrentDepositoRates.FirstOrDefault(r => r.PeriodMonths == tenor)
+                        ?? session.CurrentDepositoRates.FirstOrDefault(r => r.PeriodMonths == 12);
                 if (rate != null)
                 {
                     session.BotDepositos.Add(new DepositoItem
@@ -2432,9 +2782,13 @@ public class GameEngine
         var indexFundValue = session.BotIndexFundValue;
         if (indexFundValue >= remaining)
         {
-            var price = session.AssetPrices.GetValueOrDefault("reksadana", 1_000_000m);
-            var unitsToSell = remaining / price;
-            session.BotIndexFundUnits -= unitsToSell;
+            var convIdx = session.AvailableIndices.FirstOrDefault(i => !i.IsShariah);
+            var price = convIdx?.CurrentPrice ?? session.AssetPrices.GetValueOrDefault("reksadana", 1_000_000m);
+            if (price > 0)
+            {
+                var unitsToSell = remaining / price;
+                session.BotIndexFundUnits -= unitsToSell;
+            }
             session.BotEventsPaidFromPortfolio++;
             return;
         }
@@ -2506,10 +2860,15 @@ public class GameEngine
         }
     }
 
-    private void CheckAssetUnlocks(GameSession session)
+    /// <summary>
+    /// Check for newly unlocked assets. Returns the last unlocked asset type (for multiplayer sync),
+    /// or null if no new unlocks occurred.
+    /// </summary>
+    private string? CheckAssetUnlocks(GameSession session)
     {
         var newUnlocks = new List<string>();
         var totalMonths = session.TotalGameMonths;
+        string? lastUnlockedAssetType = null;
 
         foreach (var asset in _assets)
         {
@@ -2525,9 +2884,13 @@ public class GameEngine
                     _ => asset.Value.DisplayNameAdultEN
                 });
 
-                // Show intro for newly unlocked asset
-                session.ShowIntro = true;
-                session.IntroAssetType = asset.Key;
+                // Show intro for newly unlocked asset (skip in multiplayer — MP unlock popup handles it)
+                if (!session.IsMultiplayer)
+                {
+                    session.ShowIntro = true;
+                    session.IntroAssetType = asset.Key;
+                }
+                lastUnlockedAssetType = asset.Key;
             }
         }
 
@@ -2539,6 +2902,8 @@ public class GameEngine
             session.NewUnlockMessage = message;
             session.AddLogEntry(message);
         }
+
+        return lastUnlockedAssetType;
     }
 
     private Random GetRngForSession(GameSession session)
@@ -2556,7 +2921,10 @@ public class GameEngine
     {
         var rng = GetRngForSession(session);
 
-        foreach (var asset in _assets.Where(a => !a.Value.IsFixedIncome && a.Value.Category != "stock" && a.Value.Category != "crypto"))
+        // Skip stock, crypto (handled separately), gold (real data), and reksadana (real index data)
+        foreach (var asset in _assets.Where(a => !a.Value.IsFixedIncome
+            && a.Value.Category != "stock" && a.Value.Category != "crypto"
+            && a.Value.Category != "gold" && a.Value.Category != "index"))
         {
             if (!session.AssetPrices.ContainsKey(asset.Key)) continue;
 
@@ -2581,51 +2949,79 @@ public class GameEngine
 
             session.AssetPrices[asset.Key] = Math.Round(newPrice, 0);
         }
+
+        // Update gold price from real data
+        UpdateGoldPrice(session);
+
+        // Update index prices from real data
+        UpdateIndexPrices(session);
+    }
+
+    private void UpdateGoldPrice(GameSession session)
+    {
+        var goldPrice = _goldData.GetPrice(session.CurrentYear, session.CurrentMonth);
+        if (goldPrice.HasValue)
+        {
+            if (session.AssetPrices.ContainsKey("emas"))
+                session.PreviousPrices["emas"] = session.AssetPrices["emas"];
+            session.AssetPrices["emas"] = goldPrice.Value;
+        }
+        // Update gold price history for mini chart
+        session.GoldPriceHistory = _goldData.GetPriceHistory(session.CurrentYear, session.CurrentMonth);
+    }
+
+    private void UpdateIndexPrices(GameSession session)
+    {
+        foreach (var idx in session.AvailableIndices)
+        {
+            var newPrice = _indexData.GetPrice(idx.IndexId, session.CurrentYear, session.CurrentMonth);
+            if (newPrice.HasValue)
+            {
+                idx.PreviousPrice = idx.CurrentPrice;
+                idx.CurrentPrice = newPrice.Value;
+            }
+            idx.PriceHistory = _indexData.GetPriceHistory(idx.IndexId, session.CurrentYear, session.CurrentMonth);
+        }
     }
 
     private void UpdateStockPrices(GameSession session)
     {
-        var rng = GetRngForSession(session);
-
         foreach (var stock in session.AvailableStocks)
         {
-            stock.PreviousPrice = stock.CurrentPrice;
-
-            // Random change between -15% to +20%
-            var changePercent = (decimal)(rng.NextDouble() * 0.35 - 0.15);
-
-            // 10% chance of big move
-            if (rng.NextDouble() < 0.10)
+            var newPrice = _stockData.GetPrice(stock.Ticker, session.CurrentYear, session.CurrentMonth);
+            if (newPrice.HasValue)
             {
-                changePercent *= 2;
+                stock.PreviousPrice = stock.CurrentPrice;
+                stock.CurrentPrice = newPrice.Value;
             }
 
-            var newPrice = stock.CurrentPrice * (1 + changePercent);
-            newPrice = Math.Max(100, Math.Min(stock.CurrentPrice * 3, newPrice)); // Price bounds
-            stock.CurrentPrice = Math.Round(newPrice, 0);
+            // Update dividend data at the start of each year (month 1)
+            if (session.CurrentMonth == 1 || stock.AnnualDividendPerShare == 0)
+            {
+                var div = _stockData.GetDividend(stock.Ticker, session.CurrentYear);
+                stock.AnnualDividendPerShare = div?.amount ?? 0;
+                stock.DividendType = div?.type ?? "None";
+            }
+
+            // Populate price history for mini chart (last 7 prices)
+            stock.PriceHistory = _stockData.GetPriceHistory(stock.Ticker, session.CurrentYear, session.CurrentMonth);
         }
     }
 
     private void UpdateCryptoPrices(GameSession session)
     {
-        var rng = GetRngForSession(session);
-
         foreach (var crypto in session.AvailableCryptos)
         {
             crypto.PreviousPrice = crypto.CurrentPrice;
 
-            // Crypto volatility range: -40% to +40% monthly for all coins
-            decimal minChange = -0.40m; // -40%
-            decimal maxChange = 0.40m;  // +40%
+            var newPrice = _cryptoData.GetPrice(crypto.Symbol, session.CurrentYear, session.CurrentMonth);
+            if (newPrice.HasValue)
+            {
+                crypto.CurrentPrice = newPrice.Value;
+            }
 
-            // Calculate random change within the volatility range
-            var range = maxChange - minChange;
-            var baseChange = minChange + (decimal)(rng.NextDouble() * (double)range);
-
-            var newPrice = crypto.CurrentPrice * (1 + baseChange);
-            // Minimum price: 1 IDR
-            newPrice = Math.Max(1, newPrice);
-            crypto.CurrentPrice = Math.Round(newPrice, 0);
+            // Update price history
+            crypto.PriceHistory = _cryptoData.GetPriceHistory(crypto.Symbol, session.CurrentYear, session.CurrentMonth);
         }
     }
 
@@ -2654,7 +3050,12 @@ public class GameEngine
         session.EventCost = randomizedCost;
 
         session.IsEventPending = true;
-        session.IsPaused = true;
+        // In multiplayer: don't pause the game — show a 10s countdown instead
+        // In solo: pause so player can choose how to pay
+        if (!session.IsMultiplayer)
+            session.IsPaused = true;
+        else
+            session.EventPendingAt = DateTime.UtcNow;
 
         var evtLogTitle = evt.GetTitle(session.AgeMode, session.Language);
         session.AddLogEntry(session.Language == Language.Indonesian
@@ -2672,6 +3073,219 @@ public class GameEngine
                 ? $"Tidak mampu membayar {evtLogTitle}. Total aset Rp {totalAssets:N0} tidak cukup untuk Rp {randomizedCost:N0}."
                 : $"Unable to pay {evtLogTitle}. Total assets Rp {totalAssets:N0} insufficient for Rp {randomizedCost:N0}.";
             session.AddLogEntry($"GAME OVER: {session.GameOverReason}");
+        }
+    }
+
+    // === MULTIPLAYER ROOM CONTROL ===
+
+    public void PauseAllInRoom(string roomCode)
+    {
+        lock (_lock)
+        {
+            foreach (var s in _sessions.Values.Where(s => s.RoomCode == roomCode))
+                s.IsPaused = true;
+        }
+    }
+
+    public void ResumeAllInRoom(string roomCode)
+    {
+        lock (_lock)
+        {
+            foreach (var s in _sessions.Values.Where(s => s.RoomCode == roomCode))
+            {
+                // Don't resume sessions that have pending events - they handle their own unpause
+                if (!s.IsEventPending)
+                    s.IsPaused = false;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Auto-pay event for player using priority: Cash → Savings → Index Fund → Gold → Stocks.
+    /// Returns true if payment was successful.
+    /// </summary>
+    private bool AutoPayEventForPlayer(GameSession session)
+    {
+        if (!session.IsEventPending || session.ActiveEvent == null) return false;
+
+        var cost = session.EventCost ?? 0;
+        var remaining = cost;
+        var eventTitle = session.ActiveEvent.GetTitle(session.AgeMode, session.Language);
+
+        // 1. Try Cash
+        if (session.CashBalance >= remaining)
+        {
+            session.CashBalance -= remaining;
+            session.PlayerTotalEventCostPaid += cost;
+            session.AddLogEntry(session.Language == Language.Indonesian
+                ? $"[Auto] Bayar {eventTitle} dari kas: Rp {cost:N0}"
+                : $"[Auto] Paid {eventTitle} from cash: Rp {cost:N0}");
+            ClearEvent(session);
+            return true;
+        }
+        else if (session.CashBalance > 0)
+        {
+            remaining -= session.CashBalance;
+            session.CashBalance = 0;
+        }
+
+        // 2. Try Savings
+        if (session.SavingsAccount != null && session.SavingsAccount.Balance >= remaining)
+        {
+            session.SavingsAccount.Balance -= remaining;
+            if (session.SavingsAccount.Balance <= 0) session.SavingsAccount = null;
+            session.PlayerTotalEventCostPaid += cost;
+            session.AddLogEntry(session.Language == Language.Indonesian
+                ? $"[Auto] Bayar {eventTitle} dari tabungan: Rp {cost:N0}"
+                : $"[Auto] Paid {eventTitle} from savings: Rp {cost:N0}");
+            ClearEvent(session);
+            return true;
+        }
+        else if (session.SavingsAccount != null && session.SavingsAccount.Balance > 0)
+        {
+            remaining -= session.SavingsAccount.Balance;
+            session.SavingsAccount = null;
+        }
+
+        // 3. Try Index Funds (portfolio keys: index_{indexId})
+        var indexPortfolios = session.Portfolio.Where(p => p.Key.StartsWith("index_")).ToList();
+        foreach (var (key, indexFund) in indexPortfolios)
+        {
+            if (indexFund.TotalValue >= remaining)
+            {
+                var idx = session.AvailableIndices.FirstOrDefault(i => i.IndexId == indexFund.Ticker);
+                var price = idx?.CurrentPrice ?? 1_000_000m;
+                if (price <= 0) continue;
+                var unitsNeeded = remaining / price;
+                if (unitsNeeded > indexFund.Units) unitsNeeded = indexFund.Units;
+                var saleValue = unitsNeeded * price;
+                var costBasis = (indexFund.TotalCost / indexFund.Units) * unitsNeeded;
+                indexFund.Units -= unitsNeeded;
+                indexFund.TotalCost -= costBasis;
+                if (indexFund.Units <= 0) session.Portfolio.Remove(key);
+                if (saleValue > remaining) session.CashBalance += saleValue - remaining;
+                session.TotalRealizedPortfolioGainLoss += saleValue - costBasis;
+                session.PlayerTotalEventCostPaid += cost;
+                session.AddLogEntry(session.Language == Language.Indonesian
+                    ? $"[Auto] Bayar {eventTitle} dari reksa dana: Rp {cost:N0}"
+                    : $"[Auto] Paid {eventTitle} from index fund: Rp {cost:N0}");
+                ClearEvent(session);
+                return true;
+            }
+        }
+
+        // 4. Try Gold
+        if (session.Portfolio.TryGetValue("emas", out var gold) && gold.TotalValue >= remaining)
+        {
+            var price = session.AssetPrices.GetValueOrDefault("emas", 1_200_000m);
+            var unitsNeeded = Math.Ceiling(remaining / price);
+            if (unitsNeeded > gold.Units) unitsNeeded = gold.Units;
+            var saleValue = (decimal)unitsNeeded * price;
+            var costBasis = (gold.TotalCost / (gold.Units + (decimal)unitsNeeded)) * (decimal)unitsNeeded;
+            gold.Units -= (decimal)unitsNeeded;
+            gold.TotalCost -= costBasis;
+            if (gold.Units <= 0) session.Portfolio.Remove("emas");
+            if (saleValue > remaining) session.CashBalance += saleValue - remaining;
+            session.TotalRealizedPortfolioGainLoss += saleValue - costBasis;
+            session.PlayerTotalEventCostPaid += cost;
+            session.AddLogEntry(session.Language == Language.Indonesian
+                ? $"[Auto] Bayar {eventTitle} dari emas: Rp {cost:N0}"
+                : $"[Auto] Paid {eventTitle} from gold: Rp {cost:N0}");
+            ClearEvent(session);
+            return true;
+        }
+
+        // 5. Try Stocks (highest value first)
+        var stockItems = session.Portfolio.Where(p => p.Key == "saham" || p.Value.AssetType == "saham")
+            .OrderByDescending(p => p.Value.TotalValue).ToList();
+        foreach (var kvp in stockItems)
+        {
+            var stock = kvp.Value;
+            if (stock.TotalValue >= remaining)
+            {
+                var price = stock.PricePerUnit;
+                var unitsNeeded = (int)Math.Ceiling(remaining / price);
+                if (unitsNeeded > (int)stock.Units) unitsNeeded = (int)stock.Units;
+                var saleValue = unitsNeeded * price;
+                var costBasis = (stock.TotalCost / (stock.Units + unitsNeeded)) * unitsNeeded;
+                stock.Units -= unitsNeeded;
+                stock.TotalCost -= costBasis;
+                if (stock.Units <= 0) session.Portfolio.Remove(kvp.Key);
+                if (saleValue > remaining) session.CashBalance += saleValue - remaining;
+                session.TotalRealizedPortfolioGainLoss += saleValue - costBasis;
+                session.PlayerTotalEventCostPaid += cost;
+                session.AddLogEntry(session.Language == Language.Indonesian
+                    ? $"[Auto] Bayar {eventTitle} dari saham: Rp {cost:N0}"
+                    : $"[Auto] Paid {eventTitle} from stocks: Rp {cost:N0}");
+                ClearEvent(session);
+                return true;
+            }
+        }
+
+        // Cannot pay — game over
+        var totalAssets = session.CashBalance + session.TotalSavingsValue + session.TotalPortfolioValue;
+        session.IsGameOver = true;
+        session.GameOverReason = session.Language == Language.Indonesian
+            ? $"Tidak mampu membayar {eventTitle}. Total aset Rp {totalAssets:N0} tidak cukup untuk Rp {cost:N0}."
+            : $"Unable to pay {eventTitle}. Total assets Rp {totalAssets:N0} insufficient for Rp {cost:N0}.";
+        session.AddLogEntry($"GAME OVER: {session.GameOverReason}");
+        ClearEvent(session);
+        return false;
+    }
+
+    /// <summary>
+    /// Check if player's event has timed out (10s) and auto-pay if so.
+    /// Returns true if auto-pay was triggered.
+    /// </summary>
+    public bool CheckAndAutoPayEvent(string connectionId)
+    {
+        lock (_lock)
+        {
+            var session = GetSession(connectionId);
+            if (session == null || !session.IsEventPending || session.EventPendingAt == null)
+                return false;
+
+            if ((DateTime.UtcNow - session.EventPendingAt.Value).TotalSeconds < 10)
+                return false;
+
+            return AutoPayEventForPlayer(session);
+        }
+    }
+
+    /// <summary>
+    /// Get portfolio summaries for all players in a room (for host dashboard).
+    /// </summary>
+    public List<PlayerSummary> GetAllPlayerPortfolios(string roomCode)
+    {
+        lock (_lock)
+        {
+            var sessions = _sessions.Values.Where(s => s.RoomCode == roomCode).ToList();
+            return sessions.Select(s =>
+            {
+                var nw = s.NetWorth;
+                var breakdown = new Dictionary<string, decimal>();
+                if (nw > 0)
+                {
+                    if (s.CashBalance > 0) breakdown["Cash"] = Math.Round((s.CashBalance / nw) * 100, 1);
+                    if (s.TotalSavingsValue > 0) breakdown["Savings"] = Math.Round((s.TotalSavingsValue / nw) * 100, 1);
+                    if (s.TotalDepositoValue > 0) breakdown["Deposito"] = Math.Round((s.TotalDepositoValue / nw) * 100, 1);
+                    if (s.TotalBondValue > 0) breakdown["Bond"] = Math.Round((s.TotalBondValue / nw) * 100, 1);
+                    if (s.TotalPortfolioValue > 0) breakdown["Portfolio"] = Math.Round((s.TotalPortfolioValue / nw) * 100, 1);
+                    if (s.TotalCrowdfundingValue > 0) breakdown["Crowdfunding"] = Math.Round((s.TotalCrowdfundingValue / nw) * 100, 1);
+                }
+                var initialCapital = 5_000_000m + (s.CurrentYear - 1) * GameSession.YEARLY_INCOME;
+                return new PlayerSummary
+                {
+                    ConnectionId = s.ConnectionId,
+                    PlayerName = s.PlayerId,
+                    NetWorth = nw,
+                    IsConnected = true,
+                    CurrentYear = s.CurrentYear,
+                    CurrentMonth = s.CurrentMonth,
+                    PortfolioBreakdown = breakdown,
+                    TotalGainLoss = nw - initialCapital
+                };
+            }).ToList();
         }
     }
 
@@ -2735,18 +3349,11 @@ public class GameEngine
                 session.EventMonthForYear = _random.Next(7, 11); // Random month 7-10 for year 1
                 session.EventOccurredThisYear = false;
 
-                // Reinitialize stocks with dividend yields
-                var selectedStocks = _allStocks.OrderBy(_ => _random.Next()).Take(5).Select(s => new StockInfo
-                {
-                    Ticker = s.Ticker,
-                    CompanyName = s.CompanyName,
-                    Sector = s.Sector,
-                    CurrentPrice = s.CurrentPrice,
-                    PreviousPrice = s.PreviousPrice,
-                    LastPriceUpdateMonth = 0,
-                    DividendYield = s.DividendYield
-                }).ToList();
-                session.InitializeStocks(selectedStocks);
+                // Reinitialize stocks: randomly select 3 shariah + 1 non-shariah
+                session.InitializeStocks(SelectRandomStocks(_random));
+
+                // Reinitialize indices
+                session.AvailableIndices = SelectRandomIndices(_random);
 
                 // Reinitialize cryptos
                 var cryptos = _allCryptos.Select(c => new CryptoInfo
@@ -2764,13 +3371,10 @@ public class GameEngine
                     ProjectId = p.ProjectId,
                     ProjectName = p.ProjectName,
                     ProjectType = p.ProjectType,
-                    Description = p.Description,
-                    FundingGoal = p.FundingGoal,
-                    CurrentFunding = 0,
                     MinimumInvestment = p.MinimumInvestment,
-                    DaysRemaining = 90 + _random.Next(-30, 30),
                     ExpectedReturn = p.ExpectedReturn,
                     RiskLevel = p.RiskLevel,
+                    LockUpMonths = p.LockUpMonths,
                     IsActive = true
                 }).ToList();
                 session.InitializeCrowdfunding(crowdfunding);

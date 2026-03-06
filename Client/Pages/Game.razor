@@ -76,7 +76,8 @@
                             <div class="tut-timeline">
                                 <div class="tut-tl-item"><span class="tut-tl-year">Tahun 1</span><span class="tut-tl-label">Tabungan, Deposito, Obligasi</span></div>
                                 <div class="tut-tl-item"><span class="tut-tl-year">Tahun 2</span><span class="tut-tl-label">Reksa Dana Indeks + Emas</span></div>
-                                <div class="tut-tl-item"><span class="tut-tl-year">Tahun 3</span><span class="tut-tl-label">Saham + Kripto + Urun Dana</span></div>
+                                <div class="tut-tl-item"><span class="tut-tl-year">Tahun 3</span><span class="tut-tl-label">Saham + Urun Dana</span></div>
+                                <div class="tut-tl-item"><span class="tut-tl-year">Tahun 12</span><span class="tut-tl-label">Kripto (BTC, XRP, XLM)</span></div>
                             </div>
                         </div>
                     }
@@ -172,7 +173,8 @@
                             <div class="tut-timeline">
                                 <div class="tut-tl-item"><span class="tut-tl-year">Year 1</span><span class="tut-tl-label">Savings, Fixed Deposit, Bonds</span></div>
                                 <div class="tut-tl-item"><span class="tut-tl-year">Year 2</span><span class="tut-tl-label">Index Fund + Gold</span></div>
-                                <div class="tut-tl-item"><span class="tut-tl-year">Year 3</span><span class="tut-tl-label">Stocks + Crypto + Crowdfunding</span></div>
+                                <div class="tut-tl-item"><span class="tut-tl-year">Year 3</span><span class="tut-tl-label">Stocks + Crowdfunding</span></div>
+                                <div class="tut-tl-item"><span class="tut-tl-year">Year 12</span><span class="tut-tl-label">Crypto (BTC, XRP, XLM)</span></div>
                             </div>
                         </div>
                     }
@@ -337,7 +339,11 @@
                         </button>
                     </div>
 
-                    @if (_connectionError != null)
+                    @if (_isReconnecting)
+                    {
+                        <p style="color: #DAA520; font-size: 0.85rem; text-align: center; margin-top: 0.5rem; opacity: 0.9;">Reconnecting...</p>
+                    }
+                    else if (_connectionError != null)
                     {
                         <p style="color: #CD853F; font-size: 0.85rem; text-align: center; margin-top: 0.5rem; opacity: 0.9;">@_connectionError</p>
                     }
@@ -395,11 +401,6 @@
                         <option value="@Language.Indonesian">🇮🇩 Bahasa Indonesia</option>
                         <option value="@Language.English">🇺🇸 English</option>
                     </select>
-
-                    <div class="an-toggle-row">
-                        <span class="an-toggle-label">@(_selectedLanguage == Language.Indonesian ? "Maks Pemain" : "Max Players"): @_maxPlayers</span>
-                        <input type="range" min="2" max="4" @bind="_maxPlayers" class="an-slider" />
-                    </div>
 
                     <button class="an-btn-start" @onclick="CreateRoom" disabled="@_isCreatingRoom">
                         @(_isCreatingRoom
@@ -463,16 +464,23 @@
                     </div>
 
                     <div class="room-settings">
-                        <span>@(_currentRoom.AgeMode == AgeMode.Kids ? (_selectedLanguage == Language.Indonesian ? "Mode Ringan" : "Light Mode") : "Normal") | @(_currentRoom.Language == Language.Indonesian ? "ID" : "EN") | @_currentRoom.MaxPlayers @(_selectedLanguage == Language.Indonesian ? "pemain" : "players")</span>
+                        <span>@(_currentRoom.AgeMode == AgeMode.Kids ? (_selectedLanguage == Language.Indonesian ? "Mode Ringan" : "Light Mode") : "Normal") | @(_currentRoom.Language == Language.Indonesian ? "ID" : "EN")</span>
                     </div>
+
+                    @if (_isHost)
+                    {
+                        <div class="host-label">
+                            @(_selectedLanguage == Language.Indonesian ? "Kamu adalah Host (pengamat)" : "You are Host (observer)")
+                        </div>
+                    }
 
                     <div class="player-list">
                         @foreach (var player in _currentRoom.Players)
                         {
-                            <div class="player-item @(player.IsHost ? "player-host" : "")">
+                            <div class="player-item">
                                 <span class="player-name-lobby">
-                                    @if (player.IsHost) { <span class="host-badge">HOST</span> }
                                     @player.PlayerName
+                                    @if (!player.IsConnected) { <span class="disconnected-badge">@(_selectedLanguage == Language.Indonesian ? "Terputus" : "Disconnected")</span> }
                                 </span>
                                 <span class="player-ready @(player.IsReady ? "ready" : "not-ready")">
                                     @(player.IsReady
@@ -481,10 +489,10 @@
                                 </span>
                             </div>
                         }
-                        @for (int i = _currentRoom.Players.Count; i < _currentRoom.MaxPlayers; i++)
+                        @if (_currentRoom.Players.Count == 0)
                         {
                             <div class="player-item player-empty">
-                                <span class="player-name-lobby">@(_selectedLanguage == Language.Indonesian ? "Menunggu pemain..." : "Waiting for player...")</span>
+                                <span class="player-name-lobby">@(_selectedLanguage == Language.Indonesian ? "Menunggu pemain bergabung..." : "Waiting for players to join...")</span>
                             </div>
                         }
                     </div>
@@ -501,7 +509,7 @@
                         @if (_isHost)
                         {
                             <button class="an-btn-start" @onclick="StartMultiplayerGame"
-                                    disabled="@(!_currentRoom.Players.All(p => p.IsReady) || _currentRoom.Players.Count < 2)">
+                                    disabled="@(_currentRoom.Players.Count < 1)">
                                 @(_selectedLanguage == Language.Indonesian ? "Mulai Permainan" : "Start Game")
                             </button>
                         }
@@ -511,6 +519,130 @@
                     </div>
                 }
             </div>
+        </div>
+    }
+    else if (_multiplayerScreen == "host-dashboard")
+    {
+        <!-- Host Dashboard Screen -->
+        <div class="game-screen host-dashboard">
+            <header class="game-header">
+                <div class="header-left">
+                    <h1><img class="header-logo" src="images/coin-front.jpg" alt="Logo" /> TJOEAN</h1>
+                    <span class="player-name">HOST: @(_currentRoom?.HostPlayerName ?? "")</span>
+                </div>
+                <div class="header-center">
+                    <span class="room-code-header">@(_selectedLanguage == Language.Indonesian ? "Room" : "Room"): <strong>@(_currentRoom?.RoomCode ?? "")</strong></span>
+                    <span class="host-observer-label">@(_selectedLanguage == Language.Indonesian ? "Mode Pengamat" : "Observer Mode")</span>
+                </div>
+                <div class="header-right">
+                    <button class="btn-host-action" @onclick="PauseAllPlayers">
+                        ⏸ @(_selectedLanguage == Language.Indonesian ? "Jeda Semua" : "Pause All")
+                    </button>
+                    <button class="btn-host-action btn-resume" @onclick="ResumeAllPlayers">
+                        ▶ @(_selectedLanguage == Language.Indonesian ? "Lanjut Semua" : "Resume All")
+                    </button>
+                    <button class="btn-host-action btn-force" @onclick="HostForceResume">
+                        ⚡ @(_selectedLanguage == Language.Indonesian ? "Paksa Lanjut" : "Force Resume")
+                    </button>
+                    <button class="an-btn-back" style="margin-left:1rem;" @onclick="LeaveRoom">
+                        @(_selectedLanguage == Language.Indonesian ? "Keluar" : "Leave")
+                    </button>
+                </div>
+            </header>
+
+            <main class="host-dashboard-main">
+                <!-- Left: Leaderboard -->
+                <section class="host-lb-panel">
+                    <h3>@(_selectedLanguage == Language.Indonesian ? "Papan Peringkat" : "Leaderboard")</h3>
+                    @if (_leaderboard != null && _leaderboard.Count > 0)
+                    {
+                        <div class="host-lb-list">
+                            @foreach (var entry in _leaderboard)
+                            {
+                                <div class="host-lb-entry @(entry.IsBot ? "lb-bot" : "") @(!entry.IsConnected ? "lb-disconnected" : "")">
+                                    <span class="lb-rank">#@entry.Rank</span>
+                                    <span class="lb-name">@(entry.IsBot ? "Bot" : entry.PlayerName) @(!entry.IsConnected ? "⚡" : "")</span>
+                                    <span class="lb-worth">Rp @entry.NetWorth.ToString("N0")</span>
+                                    <span class="lb-profit @(entry.TotalProfit >= 0 ? "profit-pos" : "profit-neg")">
+                                        @(entry.TotalProfit >= 0 ? "+" : "")Rp @entry.TotalProfit.ToString("N0")
+                                    </span>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="host-lb-empty">@(_selectedLanguage == Language.Indonesian ? "Menunggu data..." : "Waiting for data...")</p>
+                    }
+
+                    @if (_currentRoom != null)
+                    {
+                        <div class="host-unlock-ready-status">
+                            <h4>@(_selectedLanguage == Language.Indonesian ? "Status Siap Lanjut" : "Unlock Ready Status")</h4>
+                            @foreach (var player in _currentRoom.Players)
+                            {
+                                <div class="unlock-ready-row @(player.IsUnlockReady ? "is-ready" : "not-ready")">
+                                    <span class="unlock-player-name">@player.PlayerName</span>
+                                    <span class="unlock-ready-label">
+                                        @if (player.IsUnlockReady)
+                                        {
+                                            <span>✅ @(_selectedLanguage == Language.Indonesian ? "Siap" : "Ready")</span>
+                                        }
+                                        else
+                                        {
+                                            <span>⏳ @(_selectedLanguage == Language.Indonesian ? "Belum Siap" : "Not Ready")</span>
+                                        }
+                                    </span>
+                                </div>
+                            }
+                        </div>
+                    }
+                </section>
+
+                <!-- Right: Player Portfolios -->
+                <section class="host-portfolios-panel">
+                    <h3>@(_selectedLanguage == Language.Indonesian ? "Portofolio Pemain" : "Player Portfolios")</h3>
+                    @if (_hostPortfolios.Count > 0)
+                    {
+                        <div class="host-portfolio-grid">
+                            @foreach (var ps in _hostPortfolios)
+                            {
+                                <div class="host-portfolio-card @(!ps.IsConnected ? "disconnected" : "")">
+                                    <div class="portfolio-card-header">
+                                        <span class="portfolio-player-name">@ps.PlayerName @(!ps.IsConnected ? "⚡" : "")</span>
+                                        <span class="portfolio-networth">Rp @ps.NetWorth.ToString("N0")</span>
+                                    </div>
+                                    <div class="portfolio-year-month">
+                                        @(_selectedLanguage == Language.Indonesian ? "Tahun" : "Year") @ps.CurrentYear / @MonthAbbr(ps.CurrentMonth)
+                                    </div>
+                                    <div class="portfolio-gainloss @(ps.TotalGainLoss >= 0 ? "gain" : "loss")">
+                                        @(ps.TotalGainLoss >= 0 ? "+" : "")Rp @ps.TotalGainLoss.ToString("N0")
+                                    </div>
+                                    @if (ps.PortfolioBreakdown.Any())
+                                    {
+                                        <div class="portfolio-breakdown">
+                                            @foreach (var kvp in ps.PortfolioBreakdown)
+                                            {
+                                                <div class="breakdown-bar-row">
+                                                    <span class="breakdown-label">@kvp.Key</span>
+                                                    <div class="breakdown-bar-bg">
+                                                        <div class="breakdown-bar-fill" style="width: @kvp.Value.ToString("F0")%"></div>
+                                                    </div>
+                                                    <span class="breakdown-pct">@kvp.Value.ToString("F0")%</span>
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="host-portfolio-empty">@(_selectedLanguage == Language.Indonesian ? "Menunggu data portofolio..." : "Waiting for portfolio data...")</p>
+                    }
+                </section>
+            </main>
         </div>
     }
     else
@@ -525,7 +657,7 @@
                 <div class="header-center">
                     <div class="time-display">
                         <span class="year">@UIIcon("calendar") @GetText("Tahun", "Tahun", "Year", "Year") @_gameState.CurrentYear / 15</span>
-                        <span class="month">@UIIcon("month") @GetText("Bulan", "Bulan", "Month", "Month") @_gameState.CurrentMonth</span>
+                        <span class="month">@UIIcon("month") @MonthAbbr(_gameState.CurrentMonth)</span>
                     </div>
                     <div class="progress-container">
                         <div class="progress-label">@GetText("Tahun", "Tahun", "Year", "Year")</div>
@@ -562,16 +694,25 @@
                 </div>
             </header>
 
-            <!-- Multiplayer Leaderboard Bar -->
+            <!-- Multiplayer Leaderboard Sidebar (collapsible) -->
             @if (_gameState.IsMultiplayer && _leaderboard != null && _leaderboard.Count > 0)
             {
-                <div class="mp-leaderboard-bar">
-                    @foreach (var entry in _leaderboard)
+                <div class="mp-leaderboard-sidebar @(_showLeaderboard ? "lb-expanded" : "lb-collapsed")">
+                    <button class="lb-toggle-btn" @onclick='() => _showLeaderboard = !_showLeaderboard'>
+                        📊 @GetText("Peringkat", "Peringkat", "Ranking", "Ranking")
+                        @(_showLeaderboard ? "▲" : "▼")
+                    </button>
+                    @if (_showLeaderboard)
                     {
-                        <div class="mp-lb-entry @(entry.PlayerName == _playerName ? "mp-lb-self" : "") @(entry.IsBot ? "mp-lb-bot" : "")">
-                            <span class="mp-lb-rank">#@entry.Rank</span>
-                            <span class="mp-lb-name">@(entry.IsBot ? "Bot" : entry.PlayerName)</span>
-                            <span class="mp-lb-worth">Rp @entry.NetWorth.ToString("N0")</span>
+                        <div class="lb-entries">
+                            @foreach (var entry in _leaderboard)
+                            {
+                                <div class="mp-lb-entry @(entry.PlayerName == _playerName ? "mp-lb-self" : "") @(entry.IsBot ? "mp-lb-bot" : "") @(!entry.IsConnected ? "mp-lb-disconnected" : "")">
+                                    <span class="mp-lb-rank">#@entry.Rank</span>
+                                    <span class="mp-lb-name">@(entry.IsBot ? "Bot" : entry.PlayerName)</span>
+                                    <span class="mp-lb-worth">Rp @entry.NetWorth.ToString("N0")</span>
+                                </div>
+                            }
                         </div>
                     }
                 </div>
@@ -668,6 +809,10 @@
                                                 {
                                                     @item.Units.ToString("N0") <text> g (@GetText("gram", "gram", "grams", "grams"))</text>
                                                 }
+                                                else if (item.AssetType == "reksadana" && !string.IsNullOrEmpty(item.Ticker))
+                                                {
+                                                    @item.Units.ToString("F4") <text> @GetText("unit", "unit", "units", "units")</text>
+                                                }
                                                 else
                                                 {
                                                     @item.Units.ToString("N0") <text> @GetText("unit", "unit", "units", "units")</text>
@@ -713,6 +858,17 @@
                                                     @GetText("Jual Semua", "Jual Semua", "Sell All", "Sell All")
                                                 </button>
                                             }
+                                            else if (item.AssetType == "reksadana" && !string.IsNullOrEmpty(item.Ticker))
+                                            {
+                                                <button class="btn-sell" @onclick="() => SellIndexByAmount(item.Ticker, 1_000_000)"
+                                                        disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || item.TotalValue < 1_000_000)">
+                                                    @GetText("Jual Rp 1 Juta", "Jual Rp 1 Juta", "Sell Rp 1 Million", "Sell Rp 1 Million")
+                                                </button>
+                                                <button class="btn-sell-all" @onclick="() => SellAllIndex(item.Ticker)"
+                                                        disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending)">
+                                                    @GetText("Jual Semua", "Jual Semua", "Sell All", "Sell All")
+                                                </button>
+                                            }
                                             else
                                             {
                                                 <button class="btn-sell" @onclick="() => SellAsset(item.AssetType)"
@@ -746,8 +902,12 @@
                                     <div class="deposito-item">
                                         <div class="deposito-info">
                                             <div class="item-header">
-                                                <span class="item-name">@Icon("deposito") @GetText("Deposito", "Deposito", "Certificate of Deposit", "Certificate of Deposit") @deposito.PeriodMonths @GetText("Bulan", "Bulan", "Months", "Months")</span>
-                                                <span class="item-units">@((deposito.InterestRate * 100).ToString("F1"))% /@GetText("tahun", "tahun", "year", "year")</span>
+                                                <span class="item-name">@Icon("deposito") @(deposito.IsShariah ? "Syariah" : "Konvensional") @deposito.PeriodMonths @GetText("Bulan", "Bulan", "Months", "Months")
+                                                    @if (deposito.IsShariah) { <span class="badge-shariah">☪️</span> }
+                                                </span>
+                                                <span class="item-units">@((deposito.InterestRate * 100).ToString("F2"))% /@GetText("tahun", "tahun", "year", "year")
+                                                    @if (deposito.IsShariah && !string.IsNullOrEmpty(deposito.NisbahRatio)) { <span class="nisbah-label"> (Nisbah @deposito.NisbahRatio)</span> }
+                                                </span>
                                             </div>
                                             <div class="item-values">
                                                 <span class="item-value">Rp @deposito.CurrentValue.ToString("N0")</span>
@@ -802,8 +962,12 @@
                                     <div class="bond-item">
                                         <div class="bond-info">
                                             <div class="item-header">
-                                                <span class="item-name">@Icon("obligasi") @bond.BondName</span>
-                                                <span class="item-units">@((bond.CouponRate * 100).ToString("F1"))% @GetText("kupon", "kupon", "coupon", "coupon")</span>
+                                                <span class="item-name">@Icon("obligasi") @bond.BondName @(!string.IsNullOrEmpty(bond.SeriesName) ? $"({bond.SeriesName})" : "")
+                                                    @if (bond.IsShariah) { <span class="badge-shariah">☪️</span> }
+                                                </span>
+                                                <span class="item-units">@((bond.CouponRate * 100).ToString("F2"))% @GetText("kupon", "kupon", "coupon", "coupon")
+                                                    @if (bond.IsShariah && !string.IsNullOrEmpty(bond.AkadType)) { <span class="nisbah-label"> (@bond.AkadType)</span> }
+                                                </span>
                                             </div>
                                             <div class="item-values">
                                                 <span class="item-value">Rp @bond.CurrentValue.ToString("N0")</span>
@@ -838,7 +1002,7 @@
                     <h2>@GetText("Pasar Investasi", "Pasar Investasi", "Investment Market", "Investment Market")</h2>
 
                     <!-- Deposito Purchase Section -->
-                    @if (_gameState.UnlockedAssets.Contains("deposito") && _depositoRates != null && _depositoRates.Any())
+                    @if (_gameState.UnlockedAssets.Contains("deposito") && _gameState.AvailableDepositoRates != null && _gameState.AvailableDepositoRates.Any())
                     {
                         <div class="deposito-purchase-section">
                             <div class="section-header">
@@ -850,17 +1014,48 @@
                             <p style="font-size: 0.85rem; color: #636E72; margin-bottom: 0.8rem; text-align: center;">
                                 @GetText("💡 Deposito itu seperti celengan terkunci - uangmu aman dan dapat bonus bunga!", "💡 Deposito - suku bunga tetap dengan jaminan keuntungan", "💡 Fixed interest rate with guaranteed returns", "💡 Fixed interest rate with guaranteed returns")
                             </p>
-                            <div class="deposito-rates">
-                                @foreach (var rate in _depositoRates)
-                                {
-                                    <div class="deposito-rate-card @(_selectedDepositoPeriod == rate.PeriodMonths ? "selected" : "")"
-                                         @onclick="() => _selectedDepositoPeriod = rate.PeriodMonths">
-                                        <span class="period">@rate.PeriodName</span>
-                                        <span class="rate">@((rate.AnnualRate * 100).ToString("F1"))%</span>
-                                        <span class="min-deposit">Min: Rp @rate.MinimumDeposit.ToString("N0")</span>
-                                    </div>
-                                }
-                            </div>
+
+                            @{
+                                var convRates = _gameState.AvailableDepositoRates.Where(r => !r.IsShariah).ToList();
+                                var shariahRates = _gameState.AvailableDepositoRates.Where(r => r.IsShariah).ToList();
+                            }
+
+                            @if (convRates.Any())
+                            {
+                                <div class="deposito-group-header">🏦 @GetText("Konvensional (BRI)", "Konvensional (BRI)", "Conventional (BRI)", "Conventional (BRI)")</div>
+                                <div class="deposito-rates">
+                                    @foreach (var rate in convRates)
+                                    {
+                                        <div class="deposito-rate-card @(_selectedDepositoPeriod == rate.PeriodMonths && !_selectedDepositoIsShariah ? "selected" : "")"
+                                             @onclick="() => { _selectedDepositoPeriod = rate.PeriodMonths; _selectedDepositoIsShariah = false; }">
+                                            <span class="period">@rate.PeriodName</span>
+                                            <span class="rate">@((rate.AnnualRate * 100).ToString("F2"))%</span>
+                                            <span class="min-deposit">Min: Rp @rate.MinimumDeposit.ToString("N0")</span>
+                                        </div>
+                                    }
+                                </div>
+                            }
+
+                            @if (shariahRates.Any())
+                            {
+                                <div class="deposito-group-header">☪️ @GetText("Syariah (Bank Muamalat)", "Syariah (Bank Muamalat)", "Shariah (Bank Muamalat)", "Shariah (Bank Muamalat)")</div>
+                                <div class="deposito-rates">
+                                    @foreach (var rate in shariahRates)
+                                    {
+                                        <div class="deposito-rate-card shariah @(_selectedDepositoPeriod == rate.PeriodMonths && _selectedDepositoIsShariah ? "selected" : "")"
+                                             @onclick="() => { _selectedDepositoPeriod = rate.PeriodMonths; _selectedDepositoIsShariah = true; }">
+                                            <span class="period">@rate.PeriodName</span>
+                                            <span class="rate">@((rate.AnnualRate * 100).ToString("F2"))%</span>
+                                            @if (!string.IsNullOrEmpty(rate.NisbahRatio))
+                                            {
+                                                <span class="nisbah-info">Nisbah @rate.NisbahRatio</span>
+                                            }
+                                            <span class="min-deposit">Min: Rp @rate.MinimumDeposit.ToString("N0")</span>
+                                        </div>
+                                    }
+                                </div>
+                            }
+
                             <div class="deposito-auto-rollover">
                                 <label class="auto-rollover-checkbox" title="@GetText("Otomatis investasi ulang saat jatuh tempo dengan bunga compound", "Otomatis investasi ulang saat jatuh tempo", "Automatically re-invest when matured with compound interest", "Automatically re-invest at maturity")">
                                     <input type="checkbox" @bind="_depositoAutoRollOver" />
@@ -881,7 +1076,7 @@
                     }
 
                     <!-- Bond Purchase Section -->
-                    @if (_gameState.UnlockedAssets.Contains("obligasi") && _bondRates != null && _bondRates.Any())
+                    @if (_gameState.UnlockedAssets.Contains("obligasi") && _gameState.AvailableBondRates != null && _gameState.AvailableBondRates.Any())
                     {
                         <div class="bond-purchase-section">
                             <div class="section-header">
@@ -893,18 +1088,50 @@
                             <p style="font-size: 0.85rem; color: #636E72; margin-bottom: 0.8rem; text-align: center;">
                                 @GetText("💡 Obligasi adalah surat utang negara - aman dan dapat kupon tiap bulan!", "💡 Obligasi - risiko rendah dengan pembayaran kupon bulanan", "💡 Low risk with monthly coupon payments", "💡 Low risk with monthly coupon payments")
                             </p>
-                            <div class="bond-rates">
-                                @foreach (var rate in _bondRates)
-                                {
-                                    <div class="bond-rate-card @(_selectedBondType == rate.BondType ? "selected" : "")"
-                                         @onclick="() => _selectedBondType = rate.BondType">
-                                        <span class="bond-type">@rate.BondType</span>
-                                        <span class="bond-period">@rate.PeriodName</span>
-                                        <span class="bond-coupon">@((rate.CouponRate * 100).ToString("F1"))% @GetText("kupon", "kupon", "coupon", "coupon")</span>
-                                        <span class="min-invest">Min: Rp @rate.MinimumInvestment.ToString("N0")</span>
-                                    </div>
-                                }
-                            </div>
+
+                            @{
+                                var convBonds = _gameState.AvailableBondRates.Where(r => !r.IsShariah).ToList();
+                                var shariahBonds = _gameState.AvailableBondRates.Where(r => r.IsShariah).ToList();
+                            }
+
+                            @if (convBonds.Any())
+                            {
+                                <div class="bond-group-header">🏦 @GetText("Konvensional", "Konvensional", "Conventional", "Conventional")</div>
+                                <div class="bond-rates">
+                                    @foreach (var rate in convBonds)
+                                    {
+                                        <div class="bond-rate-card @(_selectedBondType == rate.BondType ? "selected" : "")"
+                                             @onclick="() => _selectedBondType = rate.BondType">
+                                            <span class="bond-type">@rate.BondType @(!string.IsNullOrEmpty(rate.SeriesName) ? $"({rate.SeriesName})" : "")</span>
+                                            <span class="bond-period">@rate.PeriodName</span>
+                                            <span class="bond-coupon">@((rate.CouponRate * 100).ToString("F2"))% @GetText("kupon", "kupon", "coupon", "coupon")</span>
+                                            <span class="min-invest">Min: Rp @rate.MinimumInvestment.ToString("N0")</span>
+                                        </div>
+                                    }
+                                </div>
+                            }
+
+                            @if (shariahBonds.Any())
+                            {
+                                <div class="bond-group-header">☪️ @GetText("Syariah (Sukuk)", "Syariah (Sukuk)", "Shariah (Sukuk)", "Shariah (Sukuk)")</div>
+                                <div class="bond-rates">
+                                    @foreach (var rate in shariahBonds)
+                                    {
+                                        <div class="bond-rate-card shariah @(_selectedBondType == rate.BondType ? "selected" : "")"
+                                             @onclick="() => _selectedBondType = rate.BondType">
+                                            <span class="bond-type">@rate.BondType @(!string.IsNullOrEmpty(rate.SeriesName) ? $"({rate.SeriesName})" : "")</span>
+                                            <span class="bond-period">@rate.PeriodName</span>
+                                            <span class="bond-coupon">@((rate.CouponRate * 100).ToString("F2"))% @GetText("kupon", "kupon", "coupon", "coupon")</span>
+                                            @if (!string.IsNullOrEmpty(rate.AkadType))
+                                            {
+                                                <span class="akad-info">@rate.AkadType</span>
+                                            }
+                                            <span class="min-invest">Min: Rp @rate.MinimumInvestment.ToString("N0")</span>
+                                        </div>
+                                    }
+                                </div>
+                            }
+
                             <div class="bond-amount-input">
                                 <input type="text" inputmode="numeric" value="@_bondAmountDisplay" @oninput="OnBondInput" placeholder="Min Rp 1.000.000" />
                                 <button class="btn-buy" @onclick="BuyBond"
@@ -926,10 +1153,10 @@
                                 </button>
                             </div>
                             <p class="section-tip">
-                                @GetText("💡 Harga saham berubah setiap 2 bulan. Dividen dibayar setiap akhir tahun!",
-                                         "💡 Harga saham berubah setiap 2 bulan. Dividen dibayar setiap akhir tahun!",
-                                         "💡 Stock prices update every 2 months. Dividends paid annually!",
-                                         "💡 Stock prices update every 2 months. Dividends paid annually!")
+                                @GetText("💡 Harga saham berdasarkan data historis bulanan. Dividen dibayar setiap akhir tahun!",
+                                         "💡 Harga saham berdasarkan data historis bulanan. Dividen dibayar setiap akhir tahun!",
+                                         "💡 Stock prices based on monthly historical data. Dividends paid annually!",
+                                         "💡 Stock prices based on monthly historical data. Dividends paid annually!")
                             </p>
                             <div class="stocks-list">
                                 @foreach (var stock in _gameState.AvailableStocks)
@@ -938,11 +1165,26 @@
                                         <div class="stock-info">
                                             <div class="stock-main">
                                                 <span class="stock-ticker-badge">@stock.Ticker</span>
+                                                <span class="@(stock.IsShariahCompliant ? "shariah-badge" : "conventional-badge")">
+                                                    @(stock.IsShariahCompliant ? "Syariah" : "Konvensional")
+                                                </span>
                                                 <div class="stock-details">
                                                     <span class="stock-name">@stock.CompanyName</span>
-                                                    <span class="stock-meta">@stock.Sector @if(stock.PaysDividend) { <span class="dividend-badge" title="@GetText("Dividen tahunan", "Dividen tahunan", "Annual dividend", "Annual dividend")">@UIIcon("coin") @((stock.DividendYield * 100).ToString("F1"))%</span> }</span>
+                                                    <span class="stock-meta">@stock.Sector @if(stock.PaysDividend) { <span class="dividend-badge" title="@GetText("Dividen tahunan per lembar", "Dividen tahunan per lembar", "Annual dividend per share", "Annual dividend per share")">@UIIcon("coin") Rp @stock.AnnualDividendPerShare.ToString("N0")/shr</span> } @if(stock.DividendType != "None" && stock.PaysDividend) { <span class="dividend-type-badge @(stock.DividendType == "Interim" ? "interim" : stock.DividendType == "Final+Interim" ? "final-interim" : "final")">@stock.DividendType</span> }</span>
                                                 </div>
                                             </div>
+                                            @if (stock.PriceHistory != null && stock.PriceHistory.Count >= 2)
+                                            {
+                                                <div class="stock-mini-chart">
+                                                    <svg viewBox="0 0 120 40" preserveAspectRatio="none">
+                                                        <polyline
+                                                            class="mini-chart-line @(stock.Change >= 0 ? "positive" : "negative")"
+                                                            fill="none"
+                                                            stroke-width="2"
+                                                            points="@GetStockMiniChartPoints(stock.PriceHistory)" />
+                                                    </svg>
+                                                </div>
+                                            }
                                             <div class="stock-price-info compact">
                                                 <span class="stock-price-value">Rp @stock.CurrentPrice.ToString("N0")</span>
                                                 <span class="stock-change @(stock.Change >= 0 ? "positive" : "negative")">
@@ -977,54 +1219,137 @@
                         </div>
                     }
 
-                    <!-- General Market Grid (Index Fund, Gold, Crypto, Crowdfunding) -->
+                    <!-- Index Funds Section (replaces single reksadana) -->
+                    @if (_gameState.UnlockedAssets.Contains("reksadana") && _gameState.AvailableIndices.Any())
+                    {
+                        <div class="stocks-section">
+                            <div class="section-header">
+                                <h3>@Icon("reksadana") @GetText("Reksa Dana Indeks", "Reksa Dana Indeks", "Index Funds", "Index Funds")</h3>
+                                <button class="btn-info-inline" @onclick='() => ShowAssetInfo("reksadana")' title="Info">
+                                    ❓
+                                </button>
+                            </div>
+                            <p class="section-tip">
+                                @GetText("💡 Harga indeks berdasarkan data historis bulanan. Beli unit reksa dana yang mengikuti indeks pasar!",
+                                         "💡 Harga indeks berdasarkan data historis bulanan. Diversifikasi otomatis!",
+                                         "💡 Index prices based on monthly historical data. Automatic diversification!",
+                                         "💡 Index prices based on monthly historical data. Automatic diversification!")
+                            </p>
+                            <div class="stocks-list">
+                                @foreach (var idx in _gameState.AvailableIndices)
+                                {
+                                    <div class="stock-row compact">
+                                        <div class="stock-info">
+                                            <div class="stock-main">
+                                                <span class="stock-ticker-badge">@idx.IndexId</span>
+                                                <span class="@(idx.IsShariah ? "shariah-badge" : "conventional-badge")">
+                                                    @(idx.IsShariah ? "Syariah" : "Konvensional")
+                                                </span>
+                                                <div class="stock-details">
+                                                    <span class="stock-name">@idx.DisplayName</span>
+                                                </div>
+                                            </div>
+                                            @if (idx.PriceHistory != null && idx.PriceHistory.Count >= 2)
+                                            {
+                                                <div class="stock-mini-chart">
+                                                    <svg viewBox="0 0 120 40" preserveAspectRatio="none">
+                                                        <polyline
+                                                            class="mini-chart-line @(idx.Change >= 0 ? "positive" : "negative")"
+                                                            fill="none"
+                                                            stroke-width="2"
+                                                            points="@GetStockMiniChartPoints(idx.PriceHistory)" />
+                                                    </svg>
+                                                </div>
+                                            }
+                                            <div class="stock-price-info compact">
+                                                <span class="stock-price-value">@idx.CurrentPrice.ToString("N2")</span>
+                                                <span class="stock-change @(idx.Change >= 0 ? "positive" : "negative")">
+                                                    @(idx.Change >= 0 ? "+" : "")@idx.ChangePercent.ToString("F1")%
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="stock-actions-row compact">
+                                            <span class="lot-price">1 Unit = Rp 1.000.000</span>
+                                            <div class="quick-buy-buttons">
+                                                <button class="btn-quick-lot" @onclick='() => BuyIndex(idx.IndexId, 1_000_000)'
+                                                        disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || _gameState.CashBalance < 1_000_000)">
+                                                    @GetText("Beli 1 Jt", "Beli 1 Jt", "Buy 1M", "Buy 1M")
+                                                </button>
+                                                <button class="btn-quick-lot" @onclick='() => BuyIndex(idx.IndexId, 2_000_000)'
+                                                        disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || _gameState.CashBalance < 2_000_000)">
+                                                    @GetText("Beli 2 Jt", "Beli 2 Jt", "Buy 2M", "Buy 2M")
+                                                </button>
+                                                <button class="btn-quick-lot" @onclick='() => BuyIndex(idx.IndexId, 5_000_000)'
+                                                        disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || _gameState.CashBalance < 5_000_000)">
+                                                    @GetText("Beli 5 Jt", "Beli 5 Jt", "Buy 5M", "Buy 5M")
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    <!-- General Market Grid (Gold, Crypto, Crowdfunding) -->
                     <div class="market-grid">
-                        @* Regular Assets (Index Fund, Gold, Crowdfunding) *@
-                        @foreach (var price in _gameState.CurrentPrices.Where(p => _gameState.UnlockedAssets.Contains(p.AssetType) && !new[] { "tabungan", "deposito", "obligasi", "saham", "crypto", "crowdfunding" }.Contains(p.AssetType)))
+                        @* Gold with mini chart (real historical data) *@
+                        @if (_gameState.UnlockedAssets.Contains("emas"))
                         {
-                            var asset = _assets?.GetValueOrDefault(price.AssetType);
-                            var isGold = price.AssetType == "emas";
-                            <div class="market-card @GetRiskClass(asset?.RiskLevel)">
+                            var goldAsset = _assets?.GetValueOrDefault("emas");
+                            var goldPrice = _gameState.GoldCurrentPrice;
+                            var goldPrevPrice = _gameState.GoldPreviousPrice;
+                            var goldChange = goldPrice - goldPrevPrice;
+                            var goldChangePct = goldPrevPrice > 0 ? (goldChange / goldPrevPrice) * 100 : 0;
+                            <div class="market-card @GetRiskClass(goldAsset?.RiskLevel)">
                                 <div class="card-header">
-                                    <span class="asset-name">@Icon(price.AssetType) @GetAssetDisplayName(asset, price.DisplayName)</span>
+                                    <span class="asset-name">@Icon("emas") @GetAssetDisplayName(goldAsset, "Emas")</span>
                                     <div class="card-actions">
-                                        <button class="btn-info" @onclick="() => ShowAssetInfo(price.AssetType)" title="Info">
+                                        <button class="btn-info" @onclick='() => ShowAssetInfo("emas")' title="Info">
                                             &#x2753;
                                         </button>
-                                        <span class="risk-badge">@(asset?.RiskLevel ?? "?")</span>
+                                        <span class="risk-badge">@(goldAsset?.RiskLevel ?? "?")</span>
                                     </div>
                                 </div>
                                 <div class="card-price">
-                                    <span class="price">Rp @price.Price.ToString("N0")@(isGold ? "/g" : "")</span>
-                                    @if (price.ShowChange)
+                                    <span class="price">Rp @goldPrice.ToString("N0")/g</span>
+                                    @if (goldPrevPrice > 0)
                                     {
-                                        <span class="change @(price.Change >= 0 ? "positive" : "negative")">
-                                            @(price.Change >= 0 ? "+" : "")@price.ChangePercent.ToString("F2")%
+                                        <span class="change @(goldChange >= 0 ? "positive" : "negative")">
+                                            @(goldChange >= 0 ? "+" : "")@goldChangePct.ToString("F2")%
                                         </span>
                                     }
                                 </div>
-                                @if (asset != null)
+                                @if (_gameState.GoldPriceHistory != null && _gameState.GoldPriceHistory.Count >= 2)
                                 {
-                                    <p class="card-desc">@GetAssetDescription(asset)</p>
+                                    <div class="stock-mini-chart" style="margin: 0.3rem 0;">
+                                        <svg viewBox="0 0 120 40" preserveAspectRatio="none">
+                                            <polyline
+                                                class="mini-chart-line @(goldChange >= 0 ? "positive" : "negative")"
+                                                fill="none"
+                                                stroke-width="2"
+                                                points="@GetStockMiniChartPoints(_gameState.GoldPriceHistory)" />
+                                        </svg>
+                                    </div>
                                 }
-                                @if (isGold)
-                                {
-                                    <button class="btn-buy btn-buy-1g" @onclick="() => BuyGoldByGrams(1)"
-                                            disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || _gameState.CashBalance < price.Price)">
+                                <div class="gold-buy-buttons">
+                                    <button class="btn-buy btn-buy-gold" @onclick="() => BuyGoldByGrams(1)"
+                                            disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || _gameState.CashBalance < goldPrice * 1)">
                                         @Icon("emas") @GetText("Beli 1g", "Beli 1g", "Buy 1g", "Buy 1g")
                                     </button>
-                                }
-                                else
-                                {
-                                    <button class="btn-buy" @onclick="() => BuyAsset(price.AssetType)"
-                                            disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || _gameState.CashBalance < 1_000_000)">
-                                        &#x1F6D2; @GetText("Beli Rp 1 Juta", "Beli Rp 1 Juta", "Buy Rp 1 Million", "Buy Rp 1 Million")
+                                    <button class="btn-buy btn-buy-gold" @onclick="() => BuyGoldByGrams(3)"
+                                            disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || _gameState.CashBalance < goldPrice * 3)">
+                                        @Icon("emas") @GetText("Beli 3g", "Beli 3g", "Buy 3g", "Buy 3g")
                                     </button>
-                                }
+                                    <button class="btn-buy btn-buy-gold" @onclick="() => BuyGoldByGrams(5)"
+                                            disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || _gameState.CashBalance < goldPrice * 5)">
+                                        @Icon("emas") @GetText("Beli 5g", "Beli 5g", "Buy 5g", "Buy 5g")
+                                    </button>
+                                </div>
                             </div>
                         }
 
-                        @* Crypto Assets (BTC, ETH, DOGE) - Grouped with black background *@
+                        @* Crypto Assets (BTC, XRP, XLM) - Grouped with black background *@
                         @if (_gameState.UnlockedAssets.Contains("crypto") && _gameState.AvailableCryptos.Any())
                         {
                             var cryptoAsset = _assets?.GetValueOrDefault("crypto");
@@ -1042,7 +1367,7 @@
                                 <div class="crypto-coins-row">
                                     @foreach (var crypto in _gameState.AvailableCryptos)
                                     {
-                                        <div class="crypto-coin-card @(crypto.Symbol == "DOGE" ? "doge-crypto" : "")">
+                                        <div class="crypto-coin-card">
                                             <div class="crypto-coin-header">
                                                 <span class="crypto-symbol">@crypto.Symbol</span>
                                                 <span class="crypto-name">@crypto.Name</span>
@@ -1053,6 +1378,18 @@
                                                     @(crypto.Change >= 0 ? "+" : "")@crypto.ChangePercent.ToString("F1")%
                                                 </span>
                                             </div>
+                                            @if (crypto.PriceHistory != null && crypto.PriceHistory.Count >= 2)
+                                            {
+                                                <div class="stock-mini-chart" style="margin: 0.2rem 0;">
+                                                    <svg viewBox="0 0 120 40" preserveAspectRatio="none">
+                                                        <polyline
+                                                            class="mini-chart-line @(crypto.Change >= 0 ? "positive" : "negative")"
+                                                            fill="none"
+                                                            stroke-width="2"
+                                                            points="@GetStockMiniChartPoints(crypto.PriceHistory)" />
+                                                    </svg>
+                                                </div>
+                                            }
                                             <div class="crypto-buy-controls">
                                                 <input type="text" inputmode="numeric" value="@GetCryptoAmountDisplay(crypto.Symbol)" @oninput="(e) => OnCryptoInput(e, crypto.Symbol)"
                                                        placeholder="Rp 1.000.000" class="crypto-input" />
@@ -1081,17 +1418,22 @@
                                         <span class="risk-badge high">@(cfAsset?.RiskLevel ?? "4")</span>
                                     </div>
                                 </div>
-                                <p class="crowdfunding-group-warning">⚠️ @GetText("Uang terkunci selama masa investasi. 20% proyek bisa GAGAL!", "Uang terkunci selama masa investasi. 20% proyek bisa GAGAL!", "Locked during investment period. 20% of projects may FAIL!", "Locked during investment period. 20% of projects may FAIL!")</p>
+                                <p class="crowdfunding-group-warning">⚠️ @GetText("Uang terkunci selama masa investasi. Ada risiko gagal!", "Uang terkunci selama masa investasi. Ada risiko gagal!", "Locked during investment period. There is a risk of failure!", "Locked during investment period. There is a risk of failure!")</p>
                                 <div class="crowdfunding-projects-row">
                                     @foreach (var project in _gameState.AvailableCrowdfunding.Where(p => p.IsActive))
                                     {
                                         var projectIcon = project.ProjectType switch
                                         {
-                                            "Commodities" => "☕",
-                                            "Agriculture" => "🌱",
-                                            "Tech Startup" => "💻",
-                                            "F&B" => "🍔",
+                                            "Agriculture" => "🌾",
+                                            "Food & Beverage" => "🍔",
                                             "Retail" => "👕",
+                                            "Manufacturing" => "🏭",
+                                            "Technology" => "💻",
+                                            "Logistics" => "🚚",
+                                            "Education" => "📚",
+                                            "Healthcare" => "🏥",
+                                            "Renewable Energy" => "⚡",
+                                            "Property" => "🏠",
                                             _ => "🏢"
                                         };
 
@@ -1109,6 +1451,14 @@
                                                 <div class="stat-row">
                                                     <span>@GetText("Terkunci", "Terkunci", "Lock-up", "Lock-up"):</span>
                                                     <span>@project.LockUpMonths @GetText("bulan", "bulan", "months", "months")</span>
+                                                </div>
+                                                <div class="stat-row">
+                                                    <span>@GetText("Risiko", "Risiko", "Risk", "Risk"):</span>
+                                                    <span class="@(project.RiskLevel <= 3 ? "success" : project.RiskLevel <= 6 ? "warning-text" : "danger")">
+                                                        @(project.RiskLevel <= 3 ? GetText("Rendah", "Rendah", "Low", "Low") :
+                                                          project.RiskLevel <= 6 ? GetText("Sedang", "Sedang", "Medium", "Medium") :
+                                                          GetText("Tinggi", "Tinggi", "High", "High"))
+                                                    </span>
                                                 </div>
                                             </div>
                                             <div class="crowdfunding-buy-controls">
@@ -1360,6 +1710,26 @@
                             @GetText("Harus Bayar:", "Harus Bayar:", "Amount Due:", "Amount Due:") Rp @(_gameState.EventCost?.ToString("N0") ?? "0")
                         </div>
 
+                        <!-- Auto-pay countdown for multiplayer -->
+                        @if (_gameState.IsMultiplayer)
+                        {
+                            <div class="event-autopay-countdown">
+                                <div class="countdown-bar-bg">
+                                    <div class="countdown-bar-fill" style="width: @(_eventCountdown * 10)%"></div>
+                                </div>
+                                <span class="countdown-text">
+                                    @if (_eventCountdown > 0)
+                                    {
+                                        @GetText($"Auto-bayar dalam {_eventCountdown}s", $"Auto-bayar dalam {_eventCountdown}s", $"Auto-pay in {_eventCountdown}s", $"Auto-pay in {_eventCountdown}s")
+                                    }
+                                    else
+                                    {
+                                        @GetText("Membayar otomatis...", "Membayar otomatis...", "Auto-paying...", "Auto-paying...")
+                                    }
+                                </span>
+                            </div>
+                        }
+
                         <div class="payment-instruction">
                             @GetText("💡 Pilih cara pembayaran:", "💡 Pilih cara pembayaran:", "💡 Choose payment method:", "💡 Choose payment method:")
                         </div>
@@ -1413,7 +1783,7 @@
                                         {
                                             var canAfford = item.TotalValue >= (_gameState.EventCost ?? 0);
                                             <button class="portfolio-option-btn @(canAfford ? "portfolio-sufficient" : "")"
-                                                    @onclick="() => PayEventFromPortfolio(item.AssetType)"
+                                                    @onclick="() => PayEventFromPortfolio(item.Key)"
                                                     disabled="@(!canAfford)">
                                                 @Icon(item.AssetType) @item.DisplayName<br/>
                                                 <small>Rp @item.TotalValue.ToString("N0")</small>
@@ -1522,6 +1892,77 @@
                                 "• Standard feature at Indonesian banks\n• LPS guaranteed up to Rp 2B\n• 20% tax on interest")</p>
                         </div>
                         <button class="btn-primary" @onclick="() => _showAroInfo = false">@GetText("Oke, Mengerti!", "Saya Mengerti", "Got it!", "Understood")</button>
+                    </div>
+                </div>
+            }
+
+            <!-- Host Paused Overlay (non-host players in multiplayer) -->
+            @if (_hostPausedGame && !_isHost && _gameState?.IsMultiplayer == true)
+            {
+                <div class="host-pause-overlay">
+                    <div class="host-pause-content">
+                        <div class="host-pause-icon">⏸</div>
+                        <h2>@GetText("Game Dijeda oleh Host", "Game Dijeda oleh Host", "Game Paused by Host", "Game Paused by Host")</h2>
+                        <p>@GetText("Menunggu host melanjutkan permainan...", "Menunggu host melanjutkan permainan...", "Waiting for host to resume the game...", "Waiting for host to resume the game...")</p>
+                    </div>
+                </div>
+            }
+
+            <!-- Multiplayer Asset Unlock Popup -->
+            @if (_showMpUnlockPopup && !string.IsNullOrEmpty(_mpUnlockAssetType))
+            {
+                <div class="modal-overlay">
+                    <div class="modal-content intro-modal">
+                        @{
+                            var mpUnlockAsset = _assets?.GetValueOrDefault(_mpUnlockAssetType);
+                        }
+                        @if (mpUnlockAsset != null)
+                        {
+                            <h2>@UIIcon("unlock") @GetText("Investasi Baru Terbuka!", "Investasi Baru Terbuka!", "New Investment Unlocked!", "New Investment Unlocked!")</h2>
+                            <p class="intro-desc">
+                                @GetText("Instrumen investasi baru kini tersedia untuk semua pemain!",
+                                         "Instrumen investasi baru kini tersedia untuk semua pemain!",
+                                         "A new investment instrument is now available for all players!",
+                                         "A new investment instrument is now available for all players!")
+                            </p>
+
+                            <div class="intro-cards">
+                                <div class="intro-card @GetRiskClass(mpUnlockAsset.RiskLevel)">
+                                    <h3>@Icon(mpUnlockAsset.Type) @GetAssetDisplayName(mpUnlockAsset, mpUnlockAsset.DisplayName)</h3>
+                                    <p><strong>@GetText("Apa sih ini?", "Apa itu?", "What is it?", "What is it?")</strong> @GetAssetWhatIsIt(mpUnlockAsset)</p>
+                                    <p><strong>@GetText("Risikonya:", "Tingkat Risiko:", "Risk Level:", "Risk Level:")</strong> @GetAssetRiskExplanation(mpUnlockAsset)</p>
+                                    <p><strong>@GetText("Cocok untuk:", "Cocok untuk:", "Best for:", "Best for:")</strong> @GetAssetBestFor(mpUnlockAsset)</p>
+                                    <p><strong>@GetText("Untungnya:", "Potensi Keuntungan:", "Expected Return:", "Expected Return:")</strong> @GetAssetExpectedReturn(mpUnlockAsset)</p>
+                                </div>
+                            </div>
+
+                            <p class="mp-unlock-waiting">
+                                @GetText("⏳ Tutup popup ini untuk memberitahu host kamu siap.", "⏳ Tutup popup ini untuk memberitahu host kamu siap.", "⏳ Close this popup to signal that you are ready.", "⏳ Close this popup to signal that you are ready.")
+                            </p>
+
+                            <button class="btn-primary" @onclick="DismissMpUnlockPopup">
+                                @GetText("Oke, Siap!", "Siap!", "Got it, Ready!", "Ready!")
+                            </button>
+                        }
+                        else
+                        {
+                            <h2>@UIIcon("unlock") @GetText("Investasi Baru Terbuka!", "Investasi Baru Terbuka!", "New Investment Unlocked!", "New Investment Unlocked!")</h2>
+                            <p>@_mpUnlockAssetType</p>
+                            <button class="btn-primary" @onclick="DismissMpUnlockPopup">
+                                @GetText("Siap!", "Siap!", "Ready!", "Ready!")
+                            </button>
+                        }
+                    </div>
+                </div>
+            }
+
+            <!-- Waiting for other players after dismissing unlock popup -->
+            @if (_waitingForUnlockSync && !_showMpUnlockPopup)
+            {
+                <div class="modal-overlay waiting-overlay">
+                    <div class="modal-content waiting-modal">
+                        <div class="waiting-spinner"></div>
+                        <p>@GetText("Menunggu pemain lain...", "Menunggu pemain lain...", "Waiting for other players...", "Waiting for other players...")</p>
                     </div>
                 </div>
             }
@@ -1900,6 +2341,7 @@
 @code {
     private string _playerName = "";
     private string? _connectionError = null;
+    private bool _isReconnecting = false;
     private string _errorMessage = "";
     private bool _isConnected = false;
     private bool _isPaused = false;
@@ -1907,9 +2349,9 @@
     private AssetDefinition? _selectedAsset;
     private GameState? _gameState;
     private Dictionary<string, AssetDefinition>? _assets;
-    private List<DepositoRate>? _depositoRates;
-    private List<BondRate>? _bondRates;
+    // Rates now come from _gameState.AvailableDepositoRates / AvailableBondRates
     private int _selectedDepositoPeriod = 0;
+    private bool _selectedDepositoIsShariah = false;
     private decimal _depositoAmount = 1_000_000;
     private string _depositoAmountDisplay = "1.000.000";
     private bool _depositoAutoRollOver = false;
@@ -1933,7 +2375,7 @@
     private int _currentTutorialSlide = 0;
 
     // Multiplayer state
-    private string _multiplayerScreen = "none"; // none, create-join, create, join, lobby
+    private string _multiplayerScreen = "none"; // none, create-join, create, join, lobby, host-dashboard
     private RoomInfo? _currentRoom;
     private string _roomCodeInput = "";
     private string? _roomError;
@@ -1941,8 +2383,15 @@
     private bool _isJoiningRoom;
     private bool _isHost;
     private bool _isReady;
-    private int _maxPlayers = 4;
     private List<LeaderboardEntry>? _leaderboard;
+    private bool _showLeaderboard = false;           // collapsible leaderboard sidebar
+    private bool _hostPausedGame = false;            // non-host players: game paused by host
+    private bool _showMpUnlockPopup = false;         // multiplayer asset unlock popup
+    private string? _mpUnlockAssetType = null;       // asset type from server
+    private bool _waitingForUnlockSync = false;      // waiting for all players to dismiss unlock popup
+    private int _eventCountdown = 10;                // client-side countdown for auto-pay
+    private System.Timers.Timer? _eventCountdownTimer;
+    private List<PlayerSummary> _hostPortfolios = new();  // host dashboard portfolios
 
     protected override async Task OnInitializedAsync()
     {
@@ -1950,24 +2399,29 @@
         GameClient.OnGamePaused += HandleGamePaused;
         GameClient.OnGameResumed += HandleGameResumed;
         GameClient.OnError += HandleError;
+        GameClient.OnReconnecting += HandleReconnecting;
+        GameClient.OnReconnected += HandleReconnected;
 
         // Multiplayer event handlers
         GameClient.OnRoomUpdated += HandleRoomUpdated;
         GameClient.OnRoomGameStarted += HandleRoomGameStarted;
+        GameClient.OnHostDashboardStarted += HandleHostDashboardStarted;
         GameClient.OnLeaderboardUpdated += HandleLeaderboardUpdated;
         GameClient.OnAllPlayersFinished += HandleAllPlayersFinished;
         GameClient.OnRoomClosed += HandleRoomClosed;
         GameClient.OnRoomError += HandleRoomError;
         GameClient.OnLeftRoom += HandleLeftRoom;
-        GameClient.OnHostChanged += HandleHostChanged;
+        GameClient.OnHostLeft += HandleHostLeft;
+        GameClient.OnAllPaused += HandleAllPaused;
+        GameClient.OnAllResumed += HandleAllResumed;
+        GameClient.OnAssetUnlocked += HandleAssetUnlocked;
+        GameClient.OnUnlockComplete += HandleUnlockComplete;
 
         try
         {
             var baseUri = NavigationManager.BaseUri;
             await GameClient.ConnectAsync(baseUri);
             _assets = await GameClient.GetAssetDefinitionsAsync();
-            _depositoRates = await GameClient.GetDepositoRatesAsync();
-            _bondRates = await GameClient.GetBondRatesAsync();
             _isConnected = true;
         }
         catch (Exception ex)
@@ -2017,6 +2471,9 @@
     {
         return GetText(kidsText, adultText, kidsText, adultText);
     }
+
+    private static readonly string[] _monthAbbr = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+    private string MonthAbbr(int month) => (month >= 1 && month <= 12) ? _monthAbbr[month - 1] : month.ToString();
 
     // Currency formatting helper - formats with 2 decimal places
     private string FormatCurrency(decimal amount)
@@ -2212,6 +2669,31 @@
         return string.Join(" ", points);
     }
 
+    private string GetStockMiniChartPoints(List<decimal> priceHistory)
+    {
+        if (priceHistory == null || priceHistory.Count < 2)
+            return "";
+
+        var max = priceHistory.Max();
+        var min = priceHistory.Min();
+        var range = max - min;
+        if (range == 0) range = 1;
+
+        var points = new List<string>();
+        var width = 120;
+        var height = 40;
+
+        for (int i = 0; i < priceHistory.Count; i++)
+        {
+            var x = (double)i / (priceHistory.Count - 1) * width;
+            var normalizedValue = (double)((priceHistory[i] - min) / range);
+            var y = height - (normalizedValue * height * 0.8) - (height * 0.1);
+            points.Add($"{x:F1},{y:F1}");
+        }
+
+        return string.Join(" ", points);
+    }
+
     private string GetAssetIcon(string assetType)
     {
         // Returns CSS class name for the coin-style SVG icon
@@ -2376,11 +2858,13 @@
         if (_gameState == null || _isPaused || _gameState.IsGameOver || _gameState.IsEventPending) return;
         if (_selectedDepositoPeriod == 0 || _depositoAmount < 1_000_000) return;
 
-        var result = await GameClient.BuyDepositoAsync(_selectedDepositoPeriod, _depositoAmount, _depositoAutoRollOver);
+        var result = await GameClient.BuyDepositoAsync(_selectedDepositoPeriod, _depositoAmount, _depositoAutoRollOver, _selectedDepositoIsShariah);
         if (result)
         {
             _depositoAmount = 1_000_000;
+            _depositoAmountDisplay = "1.000.000";
             _selectedDepositoPeriod = 0;
+            _selectedDepositoIsShariah = false;
             _depositoAutoRollOver = false; // Reset checkbox after purchase
         }
         else
@@ -2416,6 +2900,7 @@
         if (result)
         {
             _bondAmount = 1_000_000;
+            _bondAmountDisplay = "1.000.000";
             _selectedBondType = "";
         }
         else
@@ -2542,6 +3027,44 @@
         }
     }
 
+    private async Task BuyIndex(string indexId, decimal amount)
+    {
+        if (_gameState == null || _isPaused || _gameState.IsGameOver || _gameState.IsEventPending) return;
+
+        var result = await GameClient.BuyIndexAsync(indexId, amount);
+        if (!result)
+        {
+            ShowError(GetText("Gagal beli reksa dana indeks.", "Gagal beli reksa dana indeks.", "Failed to buy index fund.", "Failed to buy index fund."));
+        }
+    }
+
+    private async Task SellIndexByAmount(string indexId, decimal amount)
+    {
+        if (_gameState == null || _isPaused || _gameState.IsGameOver || _gameState.IsEventPending) return;
+
+        // Find the index price to calculate units to sell
+        var idx = _gameState.AvailableIndices?.FirstOrDefault(i => i.IndexId == indexId);
+        if (idx == null || idx.CurrentPrice <= 0) return;
+
+        var units = amount / idx.CurrentPrice;
+        var result = await GameClient.SellIndexAsync(indexId, units);
+        if (!result)
+        {
+            ShowError(GetText("Gagal jual reksa dana indeks.", "Gagal jual reksa dana indeks.", "Failed to sell index fund.", "Failed to sell index fund."));
+        }
+    }
+
+    private async Task SellAllIndex(string indexId)
+    {
+        if (_gameState == null || _isPaused || _gameState.IsGameOver || _gameState.IsEventPending) return;
+
+        var result = await GameClient.SellAllIndexAsync(indexId);
+        if (!result)
+        {
+            ShowError(GetText("Gagal jual reksa dana indeks.", "Gagal jual reksa dana indeks.", "Failed to sell index fund.", "Failed to sell index fund."));
+        }
+    }
+
     private async Task SellAsset(string assetType)
     {
         if (_gameState == null || _isPaused || _gameState.IsGameOver || _gameState.IsEventPending) return;
@@ -2567,6 +3090,7 @@
     private async Task PayEventFromCash()
     {
         if (_gameState == null) return;
+        StopEventCountdownTimer();
 
         var result = await GameClient.PayEventFromCashAsync();
         if (!result)
@@ -2578,6 +3102,7 @@
     private async Task PayEventFromSavings()
     {
         if (_gameState == null) return;
+        StopEventCountdownTimer();
 
         var result = await GameClient.PayEventFromSavingsAsync();
         if (!result)
@@ -2589,6 +3114,7 @@
     private async Task PayEventFromPortfolio(string assetType)
     {
         if (_gameState == null) return;
+        StopEventCountdownTimer();
 
         var result = await GameClient.PayEventFromPortfolioAsync(assetType);
         if (!result)
@@ -2668,7 +3194,21 @@
 
     private void HandleGameStateUpdated(GameState state)
     {
+        var wasEventPending = _gameState?.IsEventPending ?? false;
         _gameState = state;
+
+        // Multiplayer event countdown: start timer when event becomes pending
+        if (state.IsMultiplayer && state.IsEventPending && !wasEventPending)
+        {
+            // Sync countdown from server if available, otherwise start fresh
+            _eventCountdown = state.EventAutoPaySecondsRemaining ?? 10;
+            StartEventCountdownTimer();
+        }
+        else if (!state.IsEventPending && wasEventPending)
+        {
+            // Event resolved, stop countdown timer
+            StopEventCountdownTimer();
+        }
 
         // Update stock lots dictionary when stocks change
         if (state.AvailableStocks != null)
@@ -2728,7 +3268,25 @@
 
     private void HandleError(string error)
     {
-        ShowError(error);
+        _isReconnecting = false;
+        _connectionError = error;
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void HandleReconnecting(string? error)
+    {
+        _isReconnecting = true;
+        _isConnected = false;
+        _connectionError = null;
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void HandleReconnected(string? connectionId)
+    {
+        _isReconnecting = false;
+        _isConnected = true;
+        _connectionError = null;
+        InvokeAsync(StateHasChanged);
     }
 
     private void ShowError(string message)
@@ -2967,7 +3525,7 @@
 
         try
         {
-            var room = await GameClient.CreateRoomAsync(_playerName, _selectedAgeMode, _selectedLanguage, _maxPlayers);
+            var room = await GameClient.CreateRoomAsync(_playerName, _selectedAgeMode, _selectedLanguage);
             if (room != null)
             {
                 _currentRoom = room;
@@ -3068,16 +3626,17 @@
     private void HandleRoomUpdated(RoomInfo room)
     {
         _currentRoom = room;
-        _isHost = room.HostConnectionId == room.Players.FirstOrDefault(p => p.PlayerName == _playerName)?.ConnectionId;
+        // Don't update _isHost here — it's set when creating/joining room
         InvokeAsync(StateHasChanged);
     }
 
     private void HandleRoomGameStarted(GameState state)
     {
         _gameState = state;
-        _isHost = state.IsHost;
+        _isHost = false;  // players are never the host
         _multiplayerScreen = "playing";
         _isPaused = false;
+        _hostPausedGame = false;
         _performanceHistory.Clear();
 
         // Initialize stock/crypto/crowdfunding dictionaries
@@ -3099,10 +3658,38 @@
         });
     }
 
+    private void HandleHostDashboardStarted(RoomInfo room)
+    {
+        _currentRoom = room;
+        _isHost = true;
+        _multiplayerScreen = "host-dashboard";
+        InvokeAsync(async () =>
+        {
+            await ApplyTheme();
+            // Fetch initial portfolios
+            var portfolios = await GameClient.GetAllPlayerPortfoliosAsync();
+            if (portfolios != null) _hostPortfolios = portfolios;
+            StateHasChanged();
+        });
+    }
+
     private void HandleLeaderboardUpdated(List<LeaderboardEntry> entries)
     {
         _leaderboard = entries;
-        InvokeAsync(StateHasChanged);
+        // If host dashboard, also refresh portfolios
+        if (_isHost && _multiplayerScreen == "host-dashboard")
+        {
+            InvokeAsync(async () =>
+            {
+                var portfolios = await GameClient.GetAllPlayerPortfoliosAsync();
+                if (portfolios != null) _hostPortfolios = portfolios;
+                StateHasChanged();
+            });
+        }
+        else
+        {
+            InvokeAsync(StateHasChanged);
+        }
     }
 
     private void HandleAllPlayersFinished(List<LeaderboardEntry> entries)
@@ -3122,6 +3709,7 @@
         _multiplayerScreen = "none";
         _gameState = null;
         _leaderboard = null;
+        StopEventCountdownTimer();
         InvokeAsync(StateHasChanged);
     }
 
@@ -3136,13 +3724,101 @@
         _currentRoom = null;
         _multiplayerScreen = "none";
         _leaderboard = null;
+        StopEventCountdownTimer();
         InvokeAsync(StateHasChanged);
     }
 
-    private void HandleHostChanged(string newHostName)
+    private void HandleHostLeft()
     {
-        _isHost = newHostName == _playerName;
+        // Host left: players continue without pause capability
+        _errorMessage = _selectedLanguage == Language.Indonesian
+            ? "Host telah meninggalkan room. Permainan dilanjutkan tanpa host."
+            : "Host has left the room. Game continues without host.";
         InvokeAsync(StateHasChanged);
+    }
+
+    private void HandleAllPaused()
+    {
+        _hostPausedGame = true;
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void HandleAllResumed()
+    {
+        _hostPausedGame = false;
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void HandleAssetUnlocked(string assetType)
+    {
+        _mpUnlockAssetType = assetType;
+        _showMpUnlockPopup = true;
+        _waitingForUnlockSync = true;
+        InvokeAsync(StateHasChanged);
+    }
+
+    private async Task DismissMpUnlockPopup()
+    {
+        _showMpUnlockPopup = false;
+        _mpUnlockAssetType = null;
+        // Keep _waitingForUnlockSync = true — show waiting indicator until all players are ready
+        await GameClient.SetUnlockReadyAsync();
+        StateHasChanged();
+    }
+
+    private void HandleUnlockComplete()
+    {
+        _showMpUnlockPopup = false;
+        _mpUnlockAssetType = null;
+        _waitingForUnlockSync = false;
+        InvokeAsync(StateHasChanged);
+    }
+
+    // === HOST DASHBOARD ACTIONS ===
+
+    private async Task PauseAllPlayers()
+    {
+        await GameClient.PauseAllPlayersAsync();
+    }
+
+    private async Task ResumeAllPlayers()
+    {
+        await GameClient.ResumeAllPlayersAsync();
+    }
+
+    private async Task HostForceResume()
+    {
+        await GameClient.HostForceResumeAsync();
+    }
+
+    // === EVENT AUTO-PAY COUNTDOWN (Multiplayer) ===
+
+    private void StartEventCountdownTimer()
+    {
+        StopEventCountdownTimer();
+        // _eventCountdown should already be set by caller before calling this
+        _eventCountdownTimer = new System.Timers.Timer(1000);
+        _eventCountdownTimer.Elapsed += (s, e) =>
+        {
+            if (_eventCountdown > 0)
+            {
+                _eventCountdown--;
+                InvokeAsync(StateHasChanged);
+            }
+            else
+            {
+                StopEventCountdownTimer();
+            }
+        };
+        _eventCountdownTimer.AutoReset = true;
+        _eventCountdownTimer.Start();
+    }
+
+    private void StopEventCountdownTimer()
+    {
+        _eventCountdownTimer?.Stop();
+        _eventCountdownTimer?.Dispose();
+        _eventCountdownTimer = null;
     }
 
     public async ValueTask DisposeAsync()
@@ -3151,17 +3827,25 @@
         GameClient.OnGamePaused -= HandleGamePaused;
         GameClient.OnGameResumed -= HandleGameResumed;
         GameClient.OnError -= HandleError;
+        GameClient.OnReconnecting -= HandleReconnecting;
+        GameClient.OnReconnected -= HandleReconnected;
 
         // Multiplayer cleanup
         GameClient.OnRoomUpdated -= HandleRoomUpdated;
         GameClient.OnRoomGameStarted -= HandleRoomGameStarted;
+        GameClient.OnHostDashboardStarted -= HandleHostDashboardStarted;
         GameClient.OnLeaderboardUpdated -= HandleLeaderboardUpdated;
         GameClient.OnAllPlayersFinished -= HandleAllPlayersFinished;
         GameClient.OnRoomClosed -= HandleRoomClosed;
         GameClient.OnRoomError -= HandleRoomError;
         GameClient.OnLeftRoom -= HandleLeftRoom;
-        GameClient.OnHostChanged -= HandleHostChanged;
+        GameClient.OnHostLeft -= HandleHostLeft;
+        GameClient.OnAllPaused -= HandleAllPaused;
+        GameClient.OnAllResumed -= HandleAllResumed;
+        GameClient.OnAssetUnlocked -= HandleAssetUnlocked;
+        GameClient.OnUnlockComplete -= HandleUnlockComplete;
 
+        StopEventCountdownTimer();
         await GameClient.DisposeAsync();
     }
 }

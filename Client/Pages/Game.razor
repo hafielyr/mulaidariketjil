@@ -631,7 +631,13 @@
                                 Rp @FormatCurrency(_gameState.SavingsAccount?.Balance ?? 0)
                             </div>
                             <div class="savings-controls">
-                                <input type="text" inputmode="numeric" value="@_savingsAmountDisplay" @oninput="OnSavingsInput" placeholder="Rp 1.000.000" class="savings-input-compact" />
+                                <div class="numeric-spin-group">
+                                    <input type="text" inputmode="numeric" value="@_savingsAmountDisplay" @oninput="OnSavingsInput" placeholder="Rp 1.000.000" class="savings-input-compact" />
+                                    <div class="spin-buttons">
+                                        <button class="spin-btn spin-up" @onclick="() => SpinInput(ref _savingsAmount, ref _savingsAmountDisplay, 1_000_000, true)" title="+Rp 1.000.000">&#9650;</button>
+                                        <button class="spin-btn spin-down" @onclick="() => SpinInput(ref _savingsAmount, ref _savingsAmountDisplay, 1_000_000, false)" title="-Rp 1.000.000">&#9660;</button>
+                                    </div>
+                                </div>
                                 <button class="btn-action-compact deposit" @onclick="DepositToSavings"
                                         disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || _savingsAmount <= 0 || _savingsAmount > _gameState.CashBalance)">
                                     @GetText("Setor", "Setor", "Deposit", "Deposit")
@@ -871,7 +877,13 @@
                                 </label>
                             </div>
                             <div class="deposito-amount-input">
-                                <input type="text" inputmode="numeric" value="@_depositoAmountDisplay" @oninput="OnDepositoInput" placeholder="Min Rp 1.000.000" />
+                                <div class="numeric-spin-group">
+                                    <input type="text" inputmode="numeric" value="@_depositoAmountDisplay" @oninput="OnDepositoInput" placeholder="Min Rp 1.000.000" />
+                                    <div class="spin-buttons">
+                                        <button class="spin-btn spin-up" @onclick="() => SpinInput(ref _depositoAmount, ref _depositoAmountDisplay, 1_000_000, true)" title="+Rp 1.000.000">&#9650;</button>
+                                        <button class="spin-btn spin-down" @onclick="() => SpinInput(ref _depositoAmount, ref _depositoAmountDisplay, 1_000_000, false)" title="-Rp 1.000.000">&#9660;</button>
+                                    </div>
+                                </div>
                                 <button class="btn-buy" @onclick="BuyDeposito"
                                         disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || _selectedDepositoPeriod == 0 || _depositoAmount < 1000000 || _depositoAmount > _gameState.CashBalance)">
                                     @UIIcon("lock") @GetText("Kunci Uang", "Kunci Uang", "Lock Funds", "Lock Funds")
@@ -906,7 +918,13 @@
                                 }
                             </div>
                             <div class="bond-amount-input">
-                                <input type="text" inputmode="numeric" value="@_bondAmountDisplay" @oninput="OnBondInput" placeholder="Min Rp 1.000.000" />
+                                <div class="numeric-spin-group">
+                                    <input type="text" inputmode="numeric" value="@_bondAmountDisplay" @oninput="OnBondInput" placeholder="Min Rp 1.000.000" />
+                                    <div class="spin-buttons">
+                                        <button class="spin-btn spin-up" @onclick="() => SpinInput(ref _bondAmount, ref _bondAmountDisplay, 1_000_000, true)" title="+Rp 1.000.000">&#9650;</button>
+                                        <button class="spin-btn spin-down" @onclick="() => SpinInput(ref _bondAmount, ref _bondAmountDisplay, 1_000_000, false)" title="-Rp 1.000.000">&#9660;</button>
+                                    </div>
+                                </div>
                                 <button class="btn-buy" @onclick="BuyBond"
                                         disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || string.IsNullOrEmpty(_selectedBondType) || _bondAmount < 1000000 || _bondAmount > _gameState.CashBalance)">
                                     @Icon("obligasi") @GetText("Beli Obligasi", "Beli Obligasi", "Buy Bond", "Buy Bond")
@@ -984,6 +1002,7 @@
                         {
                             var asset = _assets?.GetValueOrDefault(price.AssetType);
                             var isGold = price.AssetType == "emas";
+                            var isReksadana = price.AssetType == "reksadana";
                             <div class="market-card @GetRiskClass(asset?.RiskLevel)">
                                 <div class="card-header">
                                     <span class="asset-name">@Icon(price.AssetType) @GetAssetDisplayName(asset, price.DisplayName)</span>
@@ -994,15 +1013,18 @@
                                         <span class="risk-badge">@(asset?.RiskLevel ?? "?")</span>
                                     </div>
                                 </div>
-                                <div class="card-price">
-                                    <span class="price">Rp @price.Price.ToString("N0")@(isGold ? "/g" : "")</span>
-                                    @if (price.ShowChange)
-                                    {
-                                        <span class="change @(price.Change >= 0 ? "positive" : "negative")">
-                                            @(price.Change >= 0 ? "+" : "")@price.ChangePercent.ToString("F2")%
-                                        </span>
-                                    }
-                                </div>
+                                @if (!isReksadana)
+                                {
+                                    <div class="card-price">
+                                        <span class="price">Rp @price.Price.ToString("N0")@(isGold ? "/g" : "")</span>
+                                        @if (price.ShowChange)
+                                        {
+                                            <span class="change @(price.Change >= 0 ? "positive" : "negative")">
+                                                @(price.Change >= 0 ? "+" : "")@price.ChangePercent.ToString("F2")%
+                                            </span>
+                                        }
+                                    </div>
+                                }
                                 @if (asset != null)
                                 {
                                     <p class="card-desc">@GetAssetDescription(asset)</p>
@@ -1054,8 +1076,14 @@
                                                 </span>
                                             </div>
                                             <div class="crypto-buy-controls">
-                                                <input type="text" inputmode="numeric" value="@GetCryptoAmountDisplay(crypto.Symbol)" @oninput="(e) => OnCryptoInput(e, crypto.Symbol)"
-                                                       placeholder="Rp 1.000.000" class="crypto-input" />
+                                                <div class="numeric-spin-group crypto-spin">
+                                                    <input type="text" inputmode="numeric" value="@GetCryptoAmountDisplay(crypto.Symbol)" @oninput="(e) => OnCryptoInput(e, crypto.Symbol)"
+                                                           placeholder="Rp 1.000.000" class="crypto-input" />
+                                                    <div class="spin-buttons">
+                                                        <button class="spin-btn spin-up" @onclick="() => SpinDictInput(_cryptoAmounts, crypto.Symbol, 1_000_000, true, 1_000_000)" title="+Rp 1.000.000">&#9650;</button>
+                                                        <button class="spin-btn spin-down" @onclick="() => SpinDictInput(_cryptoAmounts, crypto.Symbol, 1_000_000, false, 1_000_000)" title="-Rp 1.000.000">&#9660;</button>
+                                                    </div>
+                                                </div>
                                                 <button class="crypto-buy-btn" @onclick="() => BuyCrypto(crypto.Symbol)"
                                                         disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || GetCryptoAmount(crypto.Symbol) < 1000000 || GetCryptoAmount(crypto.Symbol) > _gameState.CashBalance)">
                                                     @GetText("Beli", "Beli", "Buy", "Buy")
@@ -1112,8 +1140,14 @@
                                                 </div>
                                             </div>
                                             <div class="crowdfunding-buy-controls">
-                                                <input type="text" inputmode="numeric" value="@GetCrowdfundingAmountDisplay(project.ProjectId)" @oninput="(e) => OnCrowdfundingInput(e, project.ProjectId)"
-                                                       placeholder="Min Rp 100.000" class="cf-input" />
+                                                <div class="numeric-spin-group">
+                                                    <input type="text" inputmode="numeric" value="@GetCrowdfundingAmountDisplay(project.ProjectId)" @oninput="(e) => OnCrowdfundingInput(e, project.ProjectId)"
+                                                           placeholder="Min Rp 100.000" class="cf-input" />
+                                                    <div class="spin-buttons">
+                                                        <button class="spin-btn spin-up" @onclick="() => SpinDictInput(_crowdfundingAmounts, project.ProjectId, 100_000, true, 100_000)" title="+Rp 100.000">&#9650;</button>
+                                                        <button class="spin-btn spin-down" @onclick="() => SpinDictInput(_crowdfundingAmounts, project.ProjectId, 100_000, false, 100_000)" title="-Rp 100.000">&#9660;</button>
+                                                    </div>
+                                                </div>
                                                 <button class="cf-buy-btn" @onclick="() => BuyCrowdfunding(project.ProjectId)"
                                                         disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || GetCrowdfundingAmount(project.ProjectId) < 100000 || GetCrowdfundingAmount(project.ProjectId) > _gameState.CashBalance)">
                                                     @GetText("Investasi", "Investasi", "Invest", "Invest")
@@ -1297,13 +1331,19 @@
                     <div class="divider"></div>
 
                     <!-- Game History Log -->
-                    <h3>@GetText("Riwayat", "Riwayat", "History", "History")</h3>
-                    <div class="log-list">
-                        @foreach (var log in _gameState.GameLog.AsEnumerable().Reverse())
-                        {
-                            <div class="log-item @GetLogClass(log)">@log</div>
-                        }
+                    <div class="log-header" @onclick="() => _logExpanded = !_logExpanded">
+                        <h3>@GetText("Riwayat", "Riwayat", "History", "History")</h3>
+                        <span class="log-toggle @(_logExpanded ? "expanded" : "")">&#9660;</span>
                     </div>
+                    @if (_logExpanded)
+                    {
+                        <div class="log-list">
+                            @foreach (var log in _gameState.GameLog.AsEnumerable().Reverse())
+                            {
+                                <div class="log-item @GetLogClass(log)">@log</div>
+                            }
+                        </div>
+                    }
                 </section>
             </main>
 
@@ -1928,6 +1968,9 @@
     private Dictionary<string, decimal> _crowdfundingAmounts = new();
     private List<decimal> _performanceHistory = new();
 
+    // Log history state
+    private bool _logExpanded = true;
+
     // Tutorial state
     private bool _showTutorial = false;
     private int _currentTutorialSlide = 0;
@@ -2161,6 +2204,25 @@
     {
         _bondAmount = ParseRp(e.Value?.ToString());
         _bondAmountDisplay = _bondAmount > 0 ? FormatRp(_bondAmount) : "";
+    }
+
+    private void SpinInput(ref decimal amount, ref string display, decimal step, bool up)
+    {
+        if (up)
+            amount += step;
+        else
+            amount = Math.Max(0, amount - step);
+        display = amount > 0 ? FormatRp(amount) : "";
+    }
+
+    private void SpinDictInput(Dictionary<string, decimal> dict, string key, decimal step, bool up, decimal defaultVal)
+    {
+        var current = dict.GetValueOrDefault(key, defaultVal);
+        if (up)
+            current += step;
+        else
+            current = Math.Max(0, current - step);
+        dict[key] = current;
     }
 
     private void OnCryptoInput(ChangeEventArgs e, string symbol)

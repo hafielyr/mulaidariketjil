@@ -1999,9 +1999,18 @@ html, body {
 
 .deposito-amount-input {
     display: flex;
+    flex-wrap: wrap;
     gap: 0.5rem;
     margin-top: 1rem;
     align-items: center;
+}
+
+.deposito-amount-input .numeric-spin-group {
+    flex: 1 1 100%;
+}
+
+.deposito-amount-input .btn-buy {
+    width: 100%;
 }
 
 .deposito-amount-input input {
@@ -2200,6 +2209,23 @@ html, body {
     font-size: 0.75rem;
     border-radius: 8px;
     box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+}
+
+.btn-buy-half {
+    width: 50% !important;
+    display: block;
+    margin: 0 auto;
+}
+
+.gold-buy-buttons {
+    display: flex;
+    gap: 0.4rem;
+    justify-content: center;
+}
+
+.gold-buy-buttons .btn-buy-1g {
+    flex: 1;
+    width: auto;
 }
 
 .btn-buy-1g {
@@ -4069,6 +4095,10 @@ html, body {
     align-items: stretch;
 }
 
+.savings-controls .numeric-spin-group {
+    flex: 1 1 100%;
+}
+
 .savings-input-compact {
     flex: 1 1 100%;
     min-width: 0;
@@ -4280,9 +4310,18 @@ html, body {
 
 .bond-amount-input {
     display: flex;
+    flex-wrap: wrap;
     gap: 0.5rem;
     margin-top: 1rem;
     align-items: center;
+}
+
+.bond-amount-input .numeric-spin-group {
+    flex: 1 1 100%;
+}
+
+.bond-amount-input .btn-buy {
+    width: 100%;
 }
 
 .bond-amount-input input {

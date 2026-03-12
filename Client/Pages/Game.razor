@@ -1031,14 +1031,24 @@
                                 }
                                 @if (isGold)
                                 {
-                                    <button class="btn-buy btn-buy-1g" @onclick="() => BuyGoldByGrams(1)"
-                                            disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || _gameState.CashBalance < price.Price)">
-                                        @Icon("emas") @GetText("Beli 1g", "Beli 1g", "Buy 1g", "Buy 1g")
-                                    </button>
+                                    <div class="gold-buy-buttons">
+                                        <button class="btn-buy btn-buy-1g" @onclick="() => BuyGoldByGrams(1)"
+                                                disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || _gameState.CashBalance < price.Price)">
+                                            @Icon("emas") @GetText("1g", "1g", "1g", "1g")
+                                        </button>
+                                        <button class="btn-buy btn-buy-1g" @onclick="() => BuyGoldByGrams(3)"
+                                                disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || _gameState.CashBalance < price.Price * 3)">
+                                            @Icon("emas") @GetText("3g", "3g", "3g", "3g")
+                                        </button>
+                                        <button class="btn-buy btn-buy-1g" @onclick="() => BuyGoldByGrams(5)"
+                                                disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || _gameState.CashBalance < price.Price * 5)">
+                                            @Icon("emas") @GetText("5g", "5g", "5g", "5g")
+                                        </button>
+                                    </div>
                                 }
                                 else
                                 {
-                                    <button class="btn-buy" @onclick="() => BuyAsset(price.AssetType)"
+                                    <button class="btn-buy @(isReksadana ? "btn-buy-half" : "")" @onclick="() => BuyAsset(price.AssetType)"
                                             disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || _gameState.CashBalance < 1_000_000)">
                                         &#x1F6D2; @GetText("Beli Rp 1 Juta", "Beli Rp 1 Juta", "Buy Rp 1 Million", "Buy Rp 1 Million")
                                     </button>
@@ -1969,7 +1979,7 @@
     private List<decimal> _performanceHistory = new();
 
     // Log history state
-    private bool _logExpanded = true;
+    private bool _logExpanded = false;
 
     // Tutorial state
     private bool _showTutorial = false;

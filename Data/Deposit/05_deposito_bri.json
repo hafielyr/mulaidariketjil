@@ -1,0 +1,151 @@
+{
+  "description": "BRI Deposito Interest Rate (% p.a.) by Tenor and Year",
+  "source": "Bank Indonesia, BRI Annual Reports, various financial publications",
+  "notes": "Rates are approximate year-end rates for retail deposits < Rp2 billion. BI Rate/BI 7DRRR shown as reference.",
+  "data": [
+    {
+      "year": 2006,
+      "bi_rate": 9.75,
+      "tenor_1m": 8.25,
+      "tenor_3m": 8.75,
+      "tenor_6m": 9.0,
+      "tenor_12m": 9.5,
+      "tenor_24m": 9.5
+    },
+    {
+      "year": 2007,
+      "bi_rate": 8.0,
+      "tenor_1m": 6.75,
+      "tenor_3m": 7.25,
+      "tenor_6m": 7.5,
+      "tenor_12m": 7.75,
+      "tenor_24m": 7.75
+    },
+    {
+      "year": 2008,
+      "bi_rate": 9.25,
+      "tenor_1m": 8.5,
+      "tenor_3m": 9.0,
+      "tenor_6m": 9.25,
+      "tenor_12m": 9.5,
+      "tenor_24m": 9.5
+    },
+    {
+      "year": 2009,
+      "bi_rate": 6.5,
+      "tenor_1m": 6.0,
+      "tenor_3m": 6.5,
+      "tenor_6m": 6.75,
+      "tenor_12m": 7.0,
+      "tenor_24m": 7.0
+    },
+    {
+      "year": 2010,
+      "bi_rate": 6.5,
+      "tenor_1m": 5.75,
+      "tenor_3m": 6.25,
+      "tenor_6m": 6.5,
+      "tenor_12m": 6.75,
+      "tenor_24m": 6.75
+    },
+    {
+      "year": 2011,
+      "bi_rate": 6.0,
+      "tenor_1m": 5.5,
+      "tenor_3m": 5.75,
+      "tenor_6m": 6.0,
+      "tenor_12m": 6.25,
+      "tenor_24m": 6.25
+    },
+    {
+      "year": 2012,
+      "bi_rate": 5.75,
+      "tenor_1m": 5.0,
+      "tenor_3m": 5.5,
+      "tenor_6m": 5.75,
+      "tenor_12m": 6.0,
+      "tenor_24m": 6.0
+    },
+    {
+      "year": 2013,
+      "bi_rate": 7.5,
+      "tenor_1m": 6.5,
+      "tenor_3m": 7.0,
+      "tenor_6m": 7.25,
+      "tenor_12m": 7.5,
+      "tenor_24m": 7.5
+    },
+    {
+      "year": 2014,
+      "bi_rate": 7.75,
+      "tenor_1m": 6.75,
+      "tenor_3m": 7.25,
+      "tenor_6m": 7.5,
+      "tenor_12m": 7.75,
+      "tenor_24m": 7.75
+    },
+    {
+      "year": 2015,
+      "bi_rate": 7.5,
+      "tenor_1m": 6.5,
+      "tenor_3m": 7.0,
+      "tenor_6m": 7.25,
+      "tenor_12m": 7.5,
+      "tenor_24m": 7.5
+    },
+    {
+      "year": 2016,
+      "bi_rate": 4.75,
+      "tenor_1m": 5.0,
+      "tenor_3m": 5.5,
+      "tenor_6m": 5.75,
+      "tenor_12m": 6.0,
+      "tenor_24m": 6.0
+    },
+    {
+      "year": 2017,
+      "bi_rate": 4.25,
+      "tenor_1m": 4.5,
+      "tenor_3m": 5.0,
+      "tenor_6m": 5.25,
+      "tenor_12m": 5.5,
+      "tenor_24m": 5.5
+    },
+    {
+      "year": 2018,
+      "bi_rate": 6.0,
+      "tenor_1m": 5.0,
+      "tenor_3m": 5.5,
+      "tenor_6m": 5.75,
+      "tenor_12m": 6.0,
+      "tenor_24m": 6.0
+    },
+    {
+      "year": 2019,
+      "bi_rate": 5.0,
+      "tenor_1m": 4.5,
+      "tenor_3m": 5.0,
+      "tenor_6m": 5.25,
+      "tenor_12m": 5.5,
+      "tenor_24m": 5.5
+    },
+    {
+      "year": 2020,
+      "bi_rate": 3.75,
+      "tenor_1m": 3.25,
+      "tenor_3m": 3.5,
+      "tenor_6m": 3.75,
+      "tenor_12m": 4.0,
+      "tenor_24m": 4.0
+    },
+    {
+      "year": 2021,
+      "bi_rate": 3.5,
+      "tenor_1m": 2.75,
+      "tenor_3m": 3.0,
+      "tenor_6m": 3.25,
+      "tenor_12m": 3.5,
+      "tenor_24m": 3.5
+    }
+  ]
+}

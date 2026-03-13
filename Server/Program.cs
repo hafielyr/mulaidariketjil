@@ -6,9 +6,19 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
-builder.Services.AddSignalR();
+builder.Services.AddSignalR(options =>
+{
+    options.ClientTimeoutInterval = TimeSpan.FromSeconds(60);
+    options.KeepAliveInterval = TimeSpan.FromSeconds(15);
+});
 
-// Register GameEngine and RoomManager as singletons (in-memory state)
+// Register data services and GameEngine as singletons (in-memory state)
+builder.Services.AddSingleton<StockDataService>();
+builder.Services.AddSingleton<GoldDataService>();
+builder.Services.AddSingleton<IndexDataService>();
+builder.Services.AddSingleton<DepositoDataService>();
+builder.Services.AddSingleton<BondDataService>();
+builder.Services.AddSingleton<CryptoDataService>();
 builder.Services.AddSingleton<GameEngine>();
 builder.Services.AddSingleton<RoomManager>();
 

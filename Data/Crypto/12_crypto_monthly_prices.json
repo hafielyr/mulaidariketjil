@@ -1,0 +1,249 @@
+{
+  "description": "Cryptocurrency Monthly Closing Prices (USD) - 2017 to 2021",
+  "coins": {
+    "BTC": {
+      "name": "Bitcoin",
+      "symbol": "BTC",
+      "description": "First and largest cryptocurrency by market cap",
+      "max_supply": 21000000,
+      "consensus": "Proof of Work (SHA-256)"
+    },
+    "XRP": {
+      "name": "XRP",
+      "symbol": "XRP",
+      "description": "Digital payment network/protocol by Ripple for cross-border transactions",
+      "max_supply": 100000000000,
+      "consensus": "Federated Consensus (RPCA)"
+    },
+    "XLM": {
+      "name": "Stellar Lumens",
+      "symbol": "XLM",
+      "description": "Open-source payment network for cross-border transfers, founded by Jed McCaleb",
+      "max_supply": 50001806812,
+      "consensus": "Stellar Consensus Protocol (SCP)"
+    }
+  },
+  "data_type": "month-end closing price (UTC)",
+  "currency": "USD",
+  "period": "2017-01 to 2021-12",
+  "source": "CoinMarketCap, CoinGecko, Yahoo Finance, Investing.com",
+  "caveat": "Prices are approximate month-end closing values from publicly available sources. Crypto prices can vary between exchanges; these represent market-wide averages.",
+  "monthly_prices": {
+    "BTC": {
+      "2017": {
+        "Jan": 970.18,
+        "Feb": 1190.78,
+        "Mar": 1071.79,
+        "Apr": 1348.27,
+        "May": 2286.29,
+        "Jun": 2492.6,
+        "Jul": 2875.34,
+        "Aug": 4764.87,
+        "Sep": 4338.71,
+        "Oct": 6468.4,
+        "Nov": 10233.6,
+        "Dec": 13860.14
+      },
+      "2018": {
+        "Jan": 10166.51,
+        "Feb": 10326.76,
+        "Mar": 6925.01,
+        "Apr": 9240.55,
+        "May": 7488.99,
+        "Jun": 6394.29,
+        "Jul": 8220.07,
+        "Aug": 7014.35,
+        "Sep": 6601.8,
+        "Oct": 6317.61,
+        "Nov": 3908.76,
+        "Dec": 3693.79
+      },
+      "2019": {
+        "Jan": 3457.79,
+        "Feb": 3784.51,
+        "Mar": 4092.63,
+        "Apr": 5269.03,
+        "May": 8574.5,
+        "Jun": 10764.28,
+        "Jul": 10085.8,
+        "Aug": 9596.44,
+        "Sep": 8293.87,
+        "Oct": 9199.58,
+        "Nov": 7569.63,
+        "Dec": 7193.6
+      },
+      "2020": {
+        "Jan": 9350.53,
+        "Feb": 8778.44,
+        "Mar": 6424.35,
+        "Apr": 8628.66,
+        "May": 9446.57,
+        "Jun": 9137.08,
+        "Jul": 11351.62,
+        "Aug": 11681.36,
+        "Sep": 10764.48,
+        "Oct": 13804.81,
+        "Nov": 19698.14,
+        "Dec": 29001.72
+      },
+      "2021": {
+        "Jan": 33141.52,
+        "Feb": 45231.77,
+        "Mar": 58918.83,
+        "Apr": 57684.1,
+        "May": 37332.86,
+        "Jun": 35040.84,
+        "Jul": 41461.84,
+        "Aug": 47166.59,
+        "Sep": 43790.89,
+        "Oct": 61318.96,
+        "Nov": 56905.07,
+        "Dec": 46306.45
+      }
+    },
+    "XRP": {
+      "2017": {
+        "Jan": 0.0063,
+        "Feb": 0.0058,
+        "Mar": 0.0056,
+        "Apr": 0.0349,
+        "May": 0.2527,
+        "Jun": 0.2681,
+        "Jul": 0.1822,
+        "Aug": 0.2068,
+        "Sep": 0.1961,
+        "Oct": 0.2038,
+        "Nov": 0.25,
+        "Dec": 2.3
+      },
+      "2018": {
+        "Jan": 1.1268,
+        "Feb": 0.9225,
+        "Mar": 0.5131,
+        "Apr": 0.826,
+        "May": 0.6095,
+        "Jun": 0.457,
+        "Jul": 0.4381,
+        "Aug": 0.3359,
+        "Sep": 0.5817,
+        "Oct": 0.4536,
+        "Nov": 0.362,
+        "Dec": 0.3535
+      },
+      "2019": {
+        "Jan": 0.2925,
+        "Feb": 0.3056,
+        "Mar": 0.3109,
+        "Apr": 0.3007,
+        "May": 0.4142,
+        "Jun": 0.4627,
+        "Jul": 0.3188,
+        "Aug": 0.2619,
+        "Sep": 0.2454,
+        "Oct": 0.292,
+        "Nov": 0.2218,
+        "Dec": 0.1924
+      },
+      "2020": {
+        "Jan": 0.2426,
+        "Feb": 0.2364,
+        "Mar": 0.1755,
+        "Apr": 0.215,
+        "May": 0.203,
+        "Jun": 0.1764,
+        "Jul": 0.2418,
+        "Aug": 0.2906,
+        "Sep": 0.2419,
+        "Oct": 0.2407,
+        "Nov": 0.652,
+        "Dec": 0.2135
+      },
+      "2021": {
+        "Jan": 0.3719,
+        "Feb": 0.435,
+        "Mar": 0.5623,
+        "Apr": 1.3897,
+        "May": 0.9199,
+        "Jun": 0.6552,
+        "Jul": 0.7515,
+        "Aug": 1.1048,
+        "Sep": 0.9437,
+        "Oct": 1.0943,
+        "Nov": 0.9692,
+        "Dec": 0.8321
+      }
+    },
+    "XLM": {
+      "2017": {
+        "Jan": 0.0021,
+        "Feb": 0.0032,
+        "Mar": 0.0043,
+        "Apr": 0.005,
+        "May": 0.0424,
+        "Jun": 0.0286,
+        "Jul": 0.02,
+        "Aug": 0.0249,
+        "Sep": 0.0182,
+        "Oct": 0.0254,
+        "Nov": 0.0642,
+        "Dec": 0.4583
+      },
+      "2018": {
+        "Jan": 0.5914,
+        "Feb": 0.3619,
+        "Mar": 0.2311,
+        "Apr": 0.4013,
+        "May": 0.2871,
+        "Jun": 0.192,
+        "Jul": 0.2528,
+        "Aug": 0.2048,
+        "Sep": 0.2304,
+        "Oct": 0.2301,
+        "Nov": 0.1282,
+        "Dec": 0.1116
+      },
+      "2019": {
+        "Jan": 0.0816,
+        "Feb": 0.0818,
+        "Mar": 0.1086,
+        "Apr": 0.1003,
+        "May": 0.1174,
+        "Jun": 0.1254,
+        "Jul": 0.0868,
+        "Aug": 0.0604,
+        "Sep": 0.0604,
+        "Oct": 0.0617,
+        "Nov": 0.0521,
+        "Dec": 0.0463
+      },
+      "2020": {
+        "Jan": 0.0593,
+        "Feb": 0.0488,
+        "Mar": 0.0411,
+        "Apr": 0.0669,
+        "May": 0.0706,
+        "Jun": 0.0683,
+        "Jul": 0.101,
+        "Aug": 0.0877,
+        "Sep": 0.0757,
+        "Oct": 0.0813,
+        "Nov": 0.1641,
+        "Dec": 0.13
+      },
+      "2021": {
+        "Jan": 0.2887,
+        "Feb": 0.4153,
+        "Mar": 0.3963,
+        "Apr": 0.5238,
+        "May": 0.367,
+        "Jun": 0.2609,
+        "Jul": 0.2807,
+        "Aug": 0.3237,
+        "Sep": 0.2999,
+        "Oct": 0.3758,
+        "Nov": 0.3339,
+        "Dec": 0.2691
+      }
+    }
+  }
+}

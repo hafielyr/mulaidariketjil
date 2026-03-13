@@ -1,0 +1,87 @@
+{
+  "description": "Shariah compliance status of 20 Indonesian blue-chip stocks",
+  "source": "OJK Daftar Efek Syariah (DES), IDX Islamic indices",
+  "note": "Conventional banks are automatically excluded from DES due to riba. Status reviewed by OJK twice yearly (May & Nov). Tobacco stocks included per Indonesian DES criteria.",
+  "data": {
+    "BBCA": {
+      "shariah_compliant": false,
+      "reason": "Conventional bank - interest-based (riba)"
+    },
+    "BBRI": {
+      "shariah_compliant": false,
+      "reason": "Conventional bank - interest-based (riba)"
+    },
+    "BMRI": {
+      "shariah_compliant": false,
+      "reason": "Conventional bank - interest-based (riba)"
+    },
+    "BBNI": {
+      "shariah_compliant": false,
+      "reason": "Conventional bank - interest-based (riba)"
+    },
+    "TLKM": {
+      "shariah_compliant": true,
+      "reason": "Telecom - listed in JII/ISSI"
+    },
+    "ASII": {
+      "shariah_compliant": true,
+      "reason": "Automotive/conglomerate - listed in JII/ISSI"
+    },
+    "UNVR": {
+      "shariah_compliant": true,
+      "reason": "Consumer goods - listed in JII/ISSI"
+    },
+    "HMSP": {
+      "shariah_compliant": false,
+      "reason": "Tobacco - included in DES (Indonesia does not exclude tobacco)"
+    },
+    "GGRM": {
+      "shariah_compliant": false,
+      "reason": "Tobacco - included in DES (Indonesia does not exclude tobacco)"
+    },
+    "INDF": {
+      "shariah_compliant": true,
+      "reason": "Food & beverage - listed in JII/ISSI"
+    },
+    "ICBP": {
+      "shariah_compliant": true,
+      "reason": "Food & beverage - listed in JII/ISSI"
+    },
+    "KLBF": {
+      "shariah_compliant": true,
+      "reason": "Pharmaceuticals - listed in JII/ISSI"
+    },
+    "SMGR": {
+      "shariah_compliant": true,
+      "reason": "Cement/construction - listed in JII/ISSI"
+    },
+    "UNTR": {
+      "shariah_compliant": true,
+      "reason": "Heavy equipment/mining - listed in JII/ISSI"
+    },
+    "PGAS": {
+      "shariah_compliant": true,
+      "reason": "Gas utility - listed in JII/ISSI"
+    },
+    "INTP": {
+      "shariah_compliant": true,
+      "reason": "Cement - listed in JII/ISSI"
+    },
+    "PTBA": {
+      "shariah_compliant": true,
+      "reason": "Coal mining - listed in JII/ISSI"
+    },
+    "ADRO": {
+      "shariah_compliant": true,
+      "reason": "Coal mining - listed in JII/ISSI"
+    },
+    "JSMR": {
+      "shariah_compliant": true,
+      "reason": "Toll road operator - listed in JII/ISSI"
+    },
+    "ANTM": {
+      "shariah_compliant": true,
+      "reason": "Mining (nickel/gold) - listed in JII/ISSI"
+    }
+  }
+}

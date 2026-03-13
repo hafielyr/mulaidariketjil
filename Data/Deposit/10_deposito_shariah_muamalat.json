@@ -1,0 +1,194 @@
+{
+  "description": "Bank Muamalat Indonesia - Deposito Syariah (Mudharabah) Indicative Equivalent Rates",
+  "bank": "PT Bank Muamalat Indonesia Tbk",
+  "product": "Deposito iB Hijrah (Mudharabah Mutlaqah)",
+  "note": "Islamic deposits use profit-sharing (nisbah), NOT interest. The 'equivalent rate' shown is the approximate annualized return to depositors based on nisbah ratio and bank's actual profit. Actual monthly returns vary. Nisbah format is 'depositor:bank' share.",
+  "tenors": [
+    "1 month",
+    "3 months",
+    "6 months",
+    "12 months"
+  ],
+  "currency": "IDR",
+  "period": "2006-2021",
+  "source": "Bank Muamalat annual reports, OJK Islamic banking statistics, BI Rate reference",
+  "caveat": "Approximate equivalent rates for comparison purposes. Actual bagi hasil varies monthly based on bank profitability.",
+  "data": {
+    "2006": {
+      "bi_rate": 9.75,
+      "1m": 7.5,
+      "3m": 8.0,
+      "6m": 8.5,
+      "12m": 9.0,
+      "nisbah_1m": "50:50",
+      "nisbah_3m": "51:49",
+      "nisbah_6m": "53:47",
+      "nisbah_12m": "55:45"
+    },
+    "2007": {
+      "bi_rate": 8.0,
+      "1m": 6.5,
+      "3m": 7.0,
+      "6m": 7.25,
+      "12m": 7.75,
+      "nisbah_1m": "50:50",
+      "nisbah_3m": "51:49",
+      "nisbah_6m": "53:47",
+      "nisbah_12m": "55:45"
+    },
+    "2008": {
+      "bi_rate": 9.25,
+      "1m": 7.25,
+      "3m": 7.75,
+      "6m": 8.25,
+      "12m": 8.75,
+      "nisbah_1m": "50:50",
+      "nisbah_3m": "51:49",
+      "nisbah_6m": "53:47",
+      "nisbah_12m": "55:45"
+    },
+    "2009": {
+      "bi_rate": 6.5,
+      "1m": 6.0,
+      "3m": 6.5,
+      "6m": 7.0,
+      "12m": 7.25,
+      "nisbah_1m": "48:52",
+      "nisbah_3m": "50:50",
+      "nisbah_6m": "52:48",
+      "nisbah_12m": "55:45"
+    },
+    "2010": {
+      "bi_rate": 6.5,
+      "1m": 5.75,
+      "3m": 6.25,
+      "6m": 6.75,
+      "12m": 7.0,
+      "nisbah_1m": "48:52",
+      "nisbah_3m": "50:50",
+      "nisbah_6m": "52:48",
+      "nisbah_12m": "55:45"
+    },
+    "2011": {
+      "bi_rate": 6.0,
+      "1m": 5.5,
+      "3m": 6.0,
+      "6m": 6.5,
+      "12m": 7.0,
+      "nisbah_1m": "48:52",
+      "nisbah_3m": "50:50",
+      "nisbah_6m": "52:48",
+      "nisbah_12m": "55:45"
+    },
+    "2012": {
+      "bi_rate": 5.75,
+      "1m": 5.0,
+      "3m": 5.5,
+      "6m": 6.0,
+      "12m": 6.5,
+      "nisbah_1m": "45:55",
+      "nisbah_3m": "48:52",
+      "nisbah_6m": "50:50",
+      "nisbah_12m": "52:48"
+    },
+    "2013": {
+      "bi_rate": 7.5,
+      "1m": 6.25,
+      "3m": 6.75,
+      "6m": 7.25,
+      "12m": 7.75,
+      "nisbah_1m": "48:52",
+      "nisbah_3m": "50:50",
+      "nisbah_6m": "52:48",
+      "nisbah_12m": "55:45"
+    },
+    "2014": {
+      "bi_rate": 7.75,
+      "1m": 6.5,
+      "3m": 7.0,
+      "6m": 7.5,
+      "12m": 8.0,
+      "nisbah_1m": "48:52",
+      "nisbah_3m": "50:50",
+      "nisbah_6m": "52:48",
+      "nisbah_12m": "55:45"
+    },
+    "2015": {
+      "bi_rate": 7.5,
+      "1m": 6.25,
+      "3m": 6.75,
+      "6m": 7.25,
+      "12m": 7.5,
+      "nisbah_1m": "48:52",
+      "nisbah_3m": "50:50",
+      "nisbah_6m": "52:48",
+      "nisbah_12m": "55:45"
+    },
+    "2016": {
+      "bi_rate": 4.75,
+      "1m": 5.0,
+      "3m": 5.5,
+      "6m": 6.0,
+      "12m": 6.25,
+      "nisbah_1m": "45:55",
+      "nisbah_3m": "48:52",
+      "nisbah_6m": "50:50",
+      "nisbah_12m": "52:48"
+    },
+    "2017": {
+      "bi_rate": 4.25,
+      "1m": 4.5,
+      "3m": 5.0,
+      "6m": 5.5,
+      "12m": 5.75,
+      "nisbah_1m": "45:55",
+      "nisbah_3m": "48:52",
+      "nisbah_6m": "50:50",
+      "nisbah_12m": "52:48"
+    },
+    "2018": {
+      "bi_rate": 6.0,
+      "1m": 5.25,
+      "3m": 5.75,
+      "6m": 6.25,
+      "12m": 6.5,
+      "nisbah_1m": "48:52",
+      "nisbah_3m": "50:50",
+      "nisbah_6m": "52:48",
+      "nisbah_12m": "55:45"
+    },
+    "2019": {
+      "bi_rate": 5.0,
+      "1m": 4.75,
+      "3m": 5.25,
+      "6m": 5.75,
+      "12m": 6.0,
+      "nisbah_1m": "45:55",
+      "nisbah_3m": "48:52",
+      "nisbah_6m": "50:50",
+      "nisbah_12m": "52:48"
+    },
+    "2020": {
+      "bi_rate": 3.75,
+      "1m": 3.75,
+      "3m": 4.25,
+      "6m": 4.75,
+      "12m": 5.0,
+      "nisbah_1m": "42:58",
+      "nisbah_3m": "45:55",
+      "nisbah_6m": "48:52",
+      "nisbah_12m": "50:50"
+    },
+    "2021": {
+      "bi_rate": 3.5,
+      "1m": 3.25,
+      "3m": 3.75,
+      "6m": 4.25,
+      "12m": 4.5,
+      "nisbah_1m": "40:60",
+      "nisbah_3m": "43:57",
+      "nisbah_6m": "45:55",
+      "nisbah_12m": "48:52"
+    }
+  }
+}

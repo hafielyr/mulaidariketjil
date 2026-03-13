@@ -15,7 +15,10 @@ public class RoomManager
         _logger = logger;
     }
 
-    public RoomInfo CreateRoom(string connectionId, string playerName, AgeMode ageMode, Language language, int maxPlayers = 4)
+    /// <summary>
+    /// Creates a new room. Host is tracked separately and NOT added to Players list.
+    /// </summary>
+    public RoomInfo CreateRoom(string connectionId, string hostName, AgeMode ageMode, Language language)
     {
         lock (_lock)
         {
@@ -24,29 +27,18 @@ public class RoomManager
             {
                 RoomCode = roomCode,
                 HostConnectionId = connectionId,
-                HostPlayerName = playerName,
+                HostPlayerName = hostName,
                 AgeMode = ageMode,
                 Language = language,
-                MaxPlayers = Math.Clamp(maxPlayers, 2, 4),
                 Status = RoomStatus.Waiting,
                 CreatedAt = DateTime.UtcNow,
-                Players = new List<RoomPlayer>
-                {
-                    new RoomPlayer
-                    {
-                        ConnectionId = connectionId,
-                        PlayerName = playerName,
-                        IsHost = true,
-                        IsReady = true,
-                        IsConnected = true
-                    }
-                }
+                Players = new List<RoomPlayer>()  // host is NOT in this list
             };
 
             _rooms[roomCode] = room;
             _connectionToRoom[connectionId] = roomCode;
 
-            _logger.LogInformation("Room {RoomCode} created by {PlayerName}", roomCode, playerName);
+            _logger.LogInformation("Room {RoomCode} created by host {HostName}", roomCode, hostName);
             return room;
         }
     }
@@ -63,9 +55,6 @@ public class RoomManager
             if (room.Status != RoomStatus.Waiting)
                 return (null, "Game already started");
 
-            if (room.Players.Count >= room.MaxPlayers)
-                return (null, "Room is full");
-
             if (room.Players.Any(p => p.ConnectionId == connectionId))
                 return (null, "Already in this room");
 
@@ -73,7 +62,6 @@ public class RoomManager
             {
                 ConnectionId = connectionId,
                 PlayerName = playerName,
-                IsHost = false,
                 IsReady = false,
                 IsConnected = true
             });
@@ -85,6 +73,10 @@ public class RoomManager
         }
     }
 
+    /// <summary>
+    /// Returns (roomCode, wasHost, updatedRoom).
+    /// updatedRoom is null when room is now empty.
+    /// </summary>
     public (string? RoomCode, bool WasHost, RoomInfo? Room) LeaveRoom(string connectionId)
     {
         lock (_lock)
@@ -98,35 +90,43 @@ public class RoomManager
                 return (null, false, null);
             }
 
-            var player = room.Players.FirstOrDefault(p => p.ConnectionId == connectionId);
-            if (player == null)
+            // Check if this is the host leaving
+            bool wasHost = room.HostConnectionId == connectionId;
+
+            if (wasHost)
             {
+                // Host leaves: remove host tracking but keep room alive (players still playing/in lobby)
                 _connectionToRoom.Remove(connectionId);
-                return (roomCode, false, room);
+                room.HostConnectionId = string.Empty;
+                room.HostPlayerName = string.Empty;
+
+                // If no players remain, remove the room
+                if (room.Players.Count == 0)
+                {
+                    _rooms.Remove(roomCode);
+                    _logger.LogInformation("Room {RoomCode} removed (host left, no players)", roomCode);
+                    return (roomCode, true, null);
+                }
+
+                _logger.LogInformation("Host left room {RoomCode}", roomCode);
+                return (roomCode, true, room);
             }
 
-            var wasHost = player.IsHost;
-            room.Players.Remove(player);
+            // A regular player is leaving
+            var player = room.Players.FirstOrDefault(p => p.ConnectionId == connectionId);
+            if (player != null)
+                room.Players.Remove(player);
             _connectionToRoom.Remove(connectionId);
 
-            if (room.Players.Count == 0)
+            // If room is empty (no host, no players) remove it
+            if (room.Players.Count == 0 && string.IsNullOrEmpty(room.HostConnectionId))
             {
                 _rooms.Remove(roomCode);
                 _logger.LogInformation("Room {RoomCode} removed (empty)", roomCode);
-                return (roomCode, wasHost, null);
+                return (roomCode, false, null);
             }
 
-            // Transfer host if needed
-            if (wasHost)
-            {
-                var newHost = room.Players.FirstOrDefault(p => p.IsConnected) ?? room.Players.First();
-                newHost.IsHost = true;
-                room.HostConnectionId = newHost.ConnectionId;
-                room.HostPlayerName = newHost.PlayerName;
-                _logger.LogInformation("Host transferred to {PlayerName} in room {RoomCode}", newHost.PlayerName, roomCode);
-            }
-
-            return (roomCode, wasHost, room);
+            return (roomCode, false, room);
         }
     }
 
@@ -148,6 +148,40 @@ public class RoomManager
         }
     }
 
+    /// <summary>
+    /// Mark a player as unlock-ready. Returns true when ALL players in the room are unlock-ready.
+    /// </summary>
+    public bool SetUnlockReady(string connectionId)
+    {
+        lock (_lock)
+        {
+            if (!_connectionToRoom.TryGetValue(connectionId, out var roomCode))
+                return false;
+
+            if (!_rooms.TryGetValue(roomCode, out var room))
+                return false;
+
+            var player = room.Players.FirstOrDefault(p => p.ConnectionId == connectionId);
+            if (player != null)
+                player.IsUnlockReady = true;
+
+            return room.Players.Count > 0 && room.Players.All(p => p.IsUnlockReady);
+        }
+    }
+
+    /// <summary>
+    /// Reset all players' IsUnlockReady flags for the next unlock event.
+    /// </summary>
+    public void ResetUnlockReady(string roomCode)
+    {
+        lock (_lock)
+        {
+            if (!_rooms.TryGetValue(roomCode, out var room)) return;
+            foreach (var p in room.Players)
+                p.IsUnlockReady = false;
+        }
+    }
+
     public (bool Success, string? Error) StartGame(string connectionId)
     {
         lock (_lock)
@@ -161,11 +195,8 @@ public class RoomManager
             if (room.HostConnectionId != connectionId)
                 return (false, "Only host can start");
 
-            if (room.Players.Count < 2)
-                return (false, "Need at least 2 players");
-
-            if (!room.Players.All(p => p.IsReady))
-                return (false, "Not all players ready");
+            if (room.Players.Count < 1)
+                return (false, "Need at least 1 player");
 
             room.Status = RoomStatus.InProgress;
             _logger.LogInformation("Game started in room {RoomCode}", roomCode);
@@ -199,6 +230,18 @@ public class RoomManager
         }
     }
 
+    public bool IsHost(string connectionId)
+    {
+        lock (_lock)
+        {
+            if (!_connectionToRoom.TryGetValue(connectionId, out var roomCode))
+                return false;
+            if (!_rooms.TryGetValue(roomCode, out var room))
+                return false;
+            return room.HostConnectionId == connectionId;
+        }
+    }
+
     public void SetRoomFinished(string roomCode)
     {
         lock (_lock)
@@ -228,18 +271,27 @@ public class RoomManager
         }
     }
 
-    public (string? RoomCode, string? PlayerName) MarkReconnected(string oldConnectionId, string newConnectionId)
+    public (string? RoomCode, string? PlayerName, bool WasHost) MarkReconnected(string oldConnectionId, string newConnectionId)
     {
         lock (_lock)
         {
             if (!_connectionToRoom.TryGetValue(oldConnectionId, out var roomCode))
-                return (null, null);
+                return (null, null, false);
 
             if (!_rooms.TryGetValue(roomCode, out var room))
-                return (null, null);
+                return (null, null, false);
+
+            // Check if it was the host reconnecting
+            if (room.HostConnectionId == oldConnectionId)
+            {
+                room.HostConnectionId = newConnectionId;
+                _connectionToRoom.Remove(oldConnectionId);
+                _connectionToRoom[newConnectionId] = roomCode;
+                return (roomCode, room.HostPlayerName, true);
+            }
 
             var player = room.Players.FirstOrDefault(p => p.ConnectionId == oldConnectionId);
-            if (player == null) return (null, null);
+            if (player == null) return (null, null, false);
 
             player.ConnectionId = newConnectionId;
             player.IsConnected = true;
@@ -247,10 +299,7 @@ public class RoomManager
             _connectionToRoom.Remove(oldConnectionId);
             _connectionToRoom[newConnectionId] = roomCode;
 
-            if (room.HostConnectionId == oldConnectionId)
-                room.HostConnectionId = newConnectionId;
-
-            return (roomCode, player.PlayerName);
+            return (roomCode, player.PlayerName, false);
         }
     }
 
@@ -260,10 +309,12 @@ public class RoomManager
         {
             if (_rooms.TryGetValue(roomCode, out var room))
             {
+                // Remove host connection
+                if (!string.IsNullOrEmpty(room.HostConnectionId))
+                    _connectionToRoom.Remove(room.HostConnectionId);
+                // Remove player connections
                 foreach (var player in room.Players)
-                {
                     _connectionToRoom.Remove(player.ConnectionId);
-                }
                 _rooms.Remove(roomCode);
             }
         }

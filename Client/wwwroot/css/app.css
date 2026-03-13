@@ -2202,13 +2202,23 @@ html, body {
     box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
 }
 
-.btn-buy-1g {
-    background: linear-gradient(135deg, #FFD700, #FFA500);
-    border-color: #FF8C00;
-    width: 100%;
+.gold-buy-buttons {
+    display: flex;
+    gap: 0.4rem;
 }
 
-.btn-buy-1g:hover:not(:disabled) {
+.gold-buy-buttons .btn-buy-gold {
+    flex: 1;
+    font-size: 0.78rem;
+    padding: 0.4rem 0.2rem;
+}
+
+.btn-buy-gold {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    border-color: #FF8C00;
+}
+
+.btn-buy-gold:hover:not(:disabled) {
     background: linear-gradient(135deg, #FFE55C, #FFB84D);
     transform: translateY(-1px);
 }
@@ -4338,6 +4348,77 @@ html, body {
     color: rgba(255,255,255,0.7);
 }
 
+/* ===== SHARIAH/CONVENTIONAL GROUP HEADERS ===== */
+.deposito-group-header,
+.bond-group-header {
+    font-family: 'Cinzel', 'Georgia', serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--dark-brown);
+    margin: 0.8rem 0 0.4rem;
+    padding: 0.3rem 0.6rem;
+    border-left: 3px solid var(--money-green);
+    background: rgba(0, 128, 0, 0.05);
+}
+
+.bond-group-header {
+    border-left-color: var(--sky-blue);
+    background: rgba(0, 180, 216, 0.05);
+}
+
+.badge-shariah {
+    font-size: 0.75rem;
+    vertical-align: middle;
+}
+
+.nisbah-label {
+    font-size: 0.7rem;
+    color: #2d9c2d;
+    font-weight: 600;
+}
+
+.nisbah-info {
+    font-size: 0.7rem;
+    color: #2d9c2d;
+    font-weight: 600;
+    text-align: center;
+}
+
+.akad-info {
+    font-size: 0.65rem;
+    color: #2d9c2d;
+    font-style: italic;
+    text-align: center;
+}
+
+.deposito-rate-card.shariah {
+    border-color: #2d9c2d;
+}
+
+.deposito-rate-card.shariah.selected {
+    border-color: #2d9c2d;
+    background: linear-gradient(135deg, #d4edda, #2d9c2d);
+}
+
+.bond-rate-card.shariah {
+    border-color: #2d9c2d;
+}
+
+.bond-rate-card.shariah.selected {
+    border-color: #2d9c2d;
+    background: linear-gradient(135deg, #d4edda, #2d9c2d);
+    color: white;
+}
+
+.bond-rate-card.shariah.selected .bond-period,
+.bond-rate-card.shariah.selected .min-invest {
+    color: rgba(255,255,255,0.8);
+}
+
+.bond-rate-card.shariah.selected .akad-info {
+    color: rgba(255,255,255,0.9);
+}
+
 /* ===== STOCKS SECTION ===== */
 .stocks-section {
     background: linear-gradient(135deg, #FFFFFF, rgba(233, 196, 106, 0.2));
@@ -5210,6 +5291,17 @@ html, body {
     font-size: 0.7rem;
     font-weight: 700;
 }
+
+.dividend-type-badge {
+    padding: 0.05rem 0.3rem;
+    border-radius: 3px;
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: white;
+}
+.dividend-type-badge.final { background: #27ae60; }
+.dividend-type-badge.interim { background: #2980b9; }
+.dividend-type-badge.final-interim { background: #8e44ad; }
 
 .stock-price-info.compact {
     flex-direction: row;
@@ -6593,4 +6685,598 @@ html, body {
 @keyframes pulse {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.5; }
+}
+
+/* ===== MULTIPLAYER LEADERBOARD SIDEBAR (collapsible) ===== */
+.mp-leaderboard-sidebar {
+    position: relative;
+    border-bottom: 1px solid rgba(212, 200, 154, 0.2);
+}
+
+.lb-toggle-btn {
+    width: 100%;
+    padding: 0.35rem 0.75rem;
+    background: rgba(30, 25, 18, 0.5);
+    border: none;
+    color: rgba(212, 200, 154, 0.8);
+    font-size: 0.75rem;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.lb-toggle-btn:hover {
+    background: rgba(212, 200, 154, 0.1);
+}
+
+.lb-entries {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.4rem 0.75rem;
+    background: rgba(20, 16, 10, 0.6);
+    overflow-x: auto;
+    flex-wrap: nowrap;
+}
+
+.mp-lb-disconnected {
+    opacity: 0.5;
+    text-decoration: line-through;
+}
+
+/* ===== HOST DASHBOARD ===== */
+.host-dashboard {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.host-dashboard .game-header {
+    flex-shrink: 0;
+}
+
+.host-dashboard-main {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    gap: 0;
+}
+
+.host-lb-panel {
+    width: 280px;
+    min-width: 220px;
+    flex-shrink: 0;
+    background: rgba(30, 25, 18, 0.6);
+    border-right: 1px solid rgba(212, 200, 154, 0.2);
+    padding: 1rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.host-lb-panel h3 {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--ayam-gold, #D4C89A);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.host-lb-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.host-lb-entry {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.6rem;
+    border-radius: 6px;
+    background: rgba(245, 240, 232, 0.08);
+    font-size: 0.8rem;
+}
+
+.host-lb-entry.lb-bot {
+    opacity: 0.7;
+    font-style: italic;
+}
+
+.host-lb-entry.lb-disconnected {
+    opacity: 0.4;
+}
+
+.lb-rank {
+    font-weight: 700;
+    min-width: 1.8rem;
+    color: var(--ayam-gold, #D4C89A);
+}
+
+.lb-name {
+    flex: 1;
+    color: rgba(212, 200, 154, 0.9);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.lb-worth {
+    font-weight: 600;
+    font-size: 0.75rem;
+    color: var(--money-green, #8BAE79);
+}
+
+.lb-profit {
+    font-size: 0.7rem;
+}
+
+.profit-pos { color: var(--money-green, #8BAE79); }
+.profit-neg { color: #e07070; }
+
+.host-lb-empty,
+.host-portfolio-empty {
+    font-style: italic;
+    font-size: 0.8rem;
+    color: rgba(212, 200, 154, 0.5);
+    text-align: center;
+    padding: 1rem 0;
+}
+
+.host-unlock-ready-status {
+    margin-top: auto;
+    border-top: 1px solid rgba(212, 200, 154, 0.15);
+    padding-top: 0.75rem;
+}
+
+.host-unlock-ready-status h4 {
+    margin: 0 0 0.5rem;
+    font-size: 0.75rem;
+    color: var(--ayam-gold, #D4C89A);
+    text-transform: uppercase;
+}
+
+.unlock-ready-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.35rem 0.5rem;
+    font-size: 0.8rem;
+    border-radius: 4px;
+    margin-bottom: 0.25rem;
+    border: 1px solid transparent;
+}
+
+.unlock-ready-row.not-ready {
+    color: rgba(212, 200, 154, 0.6);
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(212, 200, 154, 0.08);
+}
+
+.unlock-ready-row.is-ready {
+    color: var(--money-green, #8BAE79);
+    background: rgba(139, 174, 121, 0.08);
+    border-color: rgba(139, 174, 121, 0.2);
+}
+
+.unlock-player-name {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.unlock-ready-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+    margin-left: 0.5rem;
+}
+
+/* Host portfolios panel */
+.host-portfolios-panel {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.host-portfolios-panel h3 {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--ayam-gold, #D4C89A);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+}
+
+.host-portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 0.75rem;
+}
+
+.host-portfolio-card {
+    background: rgba(245, 240, 232, 0.06);
+    border: 1px solid rgba(212, 200, 154, 0.15);
+    border-radius: 8px;
+    padding: 0.75rem;
+    font-size: 0.8rem;
+}
+
+.host-portfolio-card.disconnected {
+    opacity: 0.5;
+}
+
+.portfolio-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.4rem;
+}
+
+.portfolio-player-name {
+    font-weight: 700;
+    color: rgba(212, 200, 154, 0.9);
+}
+
+.portfolio-networth {
+    font-weight: 600;
+    color: var(--money-green, #8BAE79);
+}
+
+.portfolio-year-month {
+    font-size: 0.7rem;
+    color: rgba(212, 200, 154, 0.5);
+    margin-bottom: 0.3rem;
+}
+
+.portfolio-gainloss {
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.portfolio-gainloss.gain { color: var(--money-green, #8BAE79); }
+.portfolio-gainloss.loss { color: #e07070; }
+
+.portfolio-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.breakdown-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.7rem;
+}
+
+.breakdown-label {
+    width: 70px;
+    color: rgba(212, 200, 154, 0.7);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.breakdown-bar-bg {
+    flex: 1;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.breakdown-bar-fill {
+    height: 100%;
+    background: var(--ayam-gold, #D4C89A);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.breakdown-pct {
+    width: 30px;
+    text-align: right;
+    color: rgba(212, 200, 154, 0.6);
+}
+
+/* Host header elements */
+.room-code-header {
+    font-size: 1.1rem;
+    color: var(--ayam-gold, #D4C89A);
+    letter-spacing: 0.1em;
+}
+
+.host-observer-label {
+    font-size: 0.7rem;
+    color: rgba(212, 200, 154, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.btn-host-action {
+    padding: 0.4rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid rgba(212, 200, 154, 0.3);
+    background: rgba(212, 200, 154, 0.08);
+    color: rgba(212, 200, 154, 0.9);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-host-action:hover {
+    background: rgba(212, 200, 154, 0.18);
+}
+
+.btn-host-action.btn-resume {
+    border-color: rgba(139, 174, 121, 0.4);
+    color: var(--money-green, #8BAE79);
+}
+
+.btn-host-action.btn-force {
+    border-color: rgba(224, 112, 112, 0.4);
+    color: #e07070;
+}
+
+/* ===== HOST PAUSED OVERLAY ===== */
+.host-pause-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 8, 5, 0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 900;
+    backdrop-filter: blur(4px);
+}
+
+.host-pause-content {
+    text-align: center;
+    padding: 2rem 3rem;
+    background: rgba(30, 25, 18, 0.95);
+    border: 1px solid rgba(212, 200, 154, 0.3);
+    border-radius: 12px;
+}
+
+.host-pause-icon {
+    font-size: 3rem;
+    margin-bottom: 0.75rem;
+}
+
+.host-pause-content h2 {
+    color: var(--ayam-gold, #D4C89A);
+    margin-bottom: 0.5rem;
+}
+
+.host-pause-content p {
+    color: rgba(212, 200, 154, 0.6);
+    font-size: 0.9rem;
+}
+
+/* ===== MP UNLOCK POPUP waiting text ===== */
+.mp-unlock-waiting {
+    font-size: 0.85rem;
+    color: rgba(212, 200, 154, 0.7);
+    font-style: italic;
+    margin-top: 0.75rem;
+    text-align: center;
+}
+
+/* ===== EVENT AUTO-PAY COUNTDOWN ===== */
+.event-autopay-countdown {
+    margin-bottom: 1rem;
+    padding: 0.6rem 0.75rem;
+    background: rgba(212, 200, 154, 0.06);
+    border: 1px solid rgba(212, 200, 154, 0.15);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.countdown-bar-bg {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.countdown-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #e07070, #D4C89A);
+    border-radius: 4px;
+    transition: width 1s linear;
+}
+
+.countdown-text {
+    font-size: 0.8rem;
+    color: rgba(212, 200, 154, 0.7);
+    text-align: center;
+}
+
+/* ===== LOBBY UPDATES ===== */
+.host-label {
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--ayam-gold, #D4C89A);
+    padding: 0.4rem 0.75rem;
+    background: rgba(212, 200, 154, 0.08);
+    border-radius: 6px;
+    border: 1px solid rgba(212, 200, 154, 0.2);
+    margin-bottom: 0.5rem;
+}
+
+.disconnected-badge {
+    font-size: 0.65rem;
+    padding: 0.1rem 0.35rem;
+    background: rgba(224, 112, 112, 0.2);
+    color: #e07070;
+    border-radius: 3px;
+    margin-left: 0.4rem;
+}
+
+/* ===== WAITING FOR UNLOCK SYNC ===== */
+.waiting-overlay {
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.waiting-modal {
+    max-width: 320px;
+    padding: 2rem 1.5rem;
+}
+
+.waiting-modal p {
+    color: rgba(212, 200, 154, 0.8);
+    font-style: italic;
+    margin-top: 1rem;
+}
+
+.waiting-spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid rgba(212, 200, 154, 0.2);
+    border-top-color: #D4C89A;
+    border-radius: 50%;
+    margin: 0 auto;
+    animation: waitSpin 0.8s linear infinite;
+}
+
+@keyframes waitSpin {
+    to { transform: rotate(360deg); }
+}
+
+/* ===== STOCK MINI CHARTS & BADGES ===== */
+.stock-mini-chart {
+    width: 120px;
+    height: 40px;
+    flex-shrink: 0;
+    border: 1px solid rgba(139, 111, 71, 0.2);
+    border-radius: 4px;
+    background: rgba(245, 240, 232, 0.5);
+    overflow: hidden;
+}
+
+.stock-mini-chart svg {
+    width: 100%;
+    height: 100%;
+}
+
+.mini-chart-line.positive {
+    stroke: var(--money-green);
+}
+
+.mini-chart-line.negative {
+    stroke: var(--ayam-red);
+}
+
+.shariah-badge {
+    display: inline-block;
+    font-size: 0.6rem;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--money-green), var(--money-green-dark));
+    color: #fff;
+    letter-spacing: 0.3px;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.conventional-badge {
+    display: inline-block;
+    font-size: 0.6rem;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #9e9e9e, #757575);
+    color: #fff;
+    letter-spacing: 0.3px;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+/* ===== Chart Hover Tooltips ===== */
+.mini-chart-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.mini-chart-hover-info {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(20, 12, 4, 0.93);
+    color: #fff;
+    border-radius: 8px;
+    padding: 7px 11px;
+    font-size: 0.68rem;
+    white-space: nowrap;
+    z-index: 200;
+    pointer-events: none;
+    border: 1px solid var(--ayam-gold);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.45);
+    line-height: 1.75;
+    min-width: 140px;
+}
+
+.mini-chart-hover-info::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: rgba(20, 12, 4, 0.93);
+}
+
+.mini-chart-wrapper:hover .mini-chart-hover-info {
+    display: block;
+}
+
+.mini-chart-hover-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+.mini-chart-hover-label {
+    color: rgba(255, 200, 100, 0.85);
+    font-weight: 700;
+}
+
+/* Performance chart hover overlay */
+.perf-chart-hover-overlay {
+    display: none;
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background: rgba(20, 12, 4, 0.88);
+    color: #fff;
+    border-radius: 7px;
+    padding: 6px 10px;
+    font-size: 0.68rem;
+    pointer-events: none;
+    border: 1px solid var(--ayam-gold);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+    line-height: 1.75;
+    z-index: 50;
+    min-width: 160px;
+}
+
+.performance-chart:hover .perf-chart-hover-overlay {
+    display: block;
+}
+
+.chart-label[title] {
+    cursor: help;
+    text-decoration: underline dotted rgba(139,111,71,0.5);
 }

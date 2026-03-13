@@ -13,20 +13,29 @@ public class GameClient : IAsyncDisposable
     public event Action? OnGamePaused;
     public event Action? OnGameResumed;
     public event Action<string>? OnError;
+    public event Action<string?>? OnReconnecting;
+    public event Action<string?>? OnReconnected;
 
     // Multiplayer events
     public event Action<RoomInfo>? OnRoomUpdated;
     public event Action<GameState>? OnRoomGameStarted;
+    public event Action<RoomInfo>? OnHostDashboardStarted;
     public event Action<string>? OnPlayerJoined;
     public event Action<string>? OnPlayerLeft;
     public event Action<List<LeaderboardEntry>>? OnLeaderboardUpdated;
     public event Action<List<LeaderboardEntry>>? OnAllPlayersFinished;
-    public event Action<string>? OnHostChanged;
+    public event Action? OnHostLeft;
     public event Action? OnRoomClosed;
     public event Action<string>? OnRoomError;
     public event Action? OnLeftRoom;
     public event Action<string>? OnPlayerDisconnected;
     public event Action<string>? OnPlayerReconnected;
+
+    // Multiplayer control events
+    public event Action? OnAllPaused;
+    public event Action? OnAllResumed;
+    public event Action<string>? OnAssetUnlocked;   // payload: asset type string
+    public event Action? OnUnlockComplete;
 
     public bool IsConnected => _hubConnection?.State == HubConnectionState.Connected;
     public bool IsRunning => _isRunning;
@@ -44,7 +53,7 @@ public class GameClient : IAsyncDisposable
 
         _hubConnection = new HubConnectionBuilder()
             .WithUrl($"{baseUri}gamehub")
-            .WithAutomaticReconnect()
+            .WithAutomaticReconnect(new[] { TimeSpan.Zero, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(15), TimeSpan.FromSeconds(30) })
             .Build();
 
         // Solo game callbacks
@@ -75,9 +84,16 @@ public class GameClient : IAsyncDisposable
 
         _hubConnection.On<GameState>("RoomGameStarted", state =>
         {
+            // Only players get this — start their tick timer
             _isRunning = true;
             StartTickTimer();
             OnRoomGameStarted?.Invoke(state);
+        });
+
+        _hubConnection.On<RoomInfo>("HostDashboardStarted", room =>
+        {
+            // Host gets this instead of RoomGameStarted — host does NOT get a tick timer
+            OnHostDashboardStarted?.Invoke(room);
         });
 
         _hubConnection.On<string>("PlayerJoined", name =>
@@ -100,9 +116,9 @@ public class GameClient : IAsyncDisposable
             OnAllPlayersFinished?.Invoke(entries);
         });
 
-        _hubConnection.On<string>("HostChanged", newHost =>
+        _hubConnection.On("HostLeft", () =>
         {
-            OnHostChanged?.Invoke(newHost);
+            OnHostLeft?.Invoke();
         });
 
         _hubConnection.On("RoomClosed", () =>
@@ -134,20 +150,72 @@ public class GameClient : IAsyncDisposable
             OnPlayerReconnected?.Invoke(name);
         });
 
+        // Multiplayer control callbacks
+        _hubConnection.On("AllPaused", () =>
+        {
+            _isRunning = false;
+            StopTickTimer();
+            OnAllPaused?.Invoke();
+        });
+
+        _hubConnection.On("AllResumed", () =>
+        {
+            _isRunning = true;
+            StartTickTimer();
+            OnAllResumed?.Invoke();
+        });
+
+        _hubConnection.On<string>("AssetUnlocked", assetType =>
+        {
+            // Pause the tick timer — all sessions are paused server-side until all players dismiss popup
+            _isRunning = false;
+            StopTickTimer();
+            OnAssetUnlocked?.Invoke(assetType);
+        });
+
+        _hubConnection.On("UnlockComplete", () =>
+        {
+            _isRunning = true;
+            StartTickTimer();
+            OnUnlockComplete?.Invoke();
+        });
+
+        _hubConnection.Reconnecting += (error) =>
+        {
+            OnReconnecting?.Invoke(error?.Message);
+            return Task.CompletedTask;
+        };
+
+        _hubConnection.Reconnected += (connectionId) =>
+        {
+            OnReconnected?.Invoke(connectionId);
+            return Task.CompletedTask;
+        };
+
         _hubConnection.Closed += async (error) =>
         {
             _isRunning = false;
             StopTickTimer();
-            OnError?.Invoke("Connection lost. Attempting to reconnect...");
-            await Task.Delay(5000);
-            try
+
+            // Retry up to 3 times with increasing delays before giving up
+            var retryDelays = new[] { 5000, 10000, 20000 };
+            foreach (var delay in retryDelays)
             {
-                await _hubConnection.StartAsync();
+                OnReconnecting?.Invoke("Attempting to reconnect...");
+                await Task.Delay(delay);
+                try
+                {
+                    await _hubConnection.StartAsync();
+                    OnReconnected?.Invoke(null);
+                    return;
+                }
+                catch
+                {
+                    // Continue to next retry
+                }
             }
-            catch (Exception ex)
-            {
-                OnError?.Invoke($"Failed to reconnect: {ex.Message}");
-            }
+
+            OnError?.Invoke("Connection lost. Please refresh the page.");
         };
 
         await _hubConnection.StartAsync();
@@ -177,10 +245,10 @@ public class GameClient : IAsyncDisposable
     }
 
     // === ROOM MANAGEMENT (Multiplayer) ===
-    public async Task<RoomInfo?> CreateRoomAsync(string playerName, AgeMode ageMode, Language language, int maxPlayers = 4)
+    public async Task<RoomInfo?> CreateRoomAsync(string hostName, AgeMode ageMode, Language language)
     {
         if (_hubConnection == null) return null;
-        return await _hubConnection.InvokeAsync<RoomInfo>("CreateRoom", playerName, ageMode, language, maxPlayers);
+        return await _hubConnection.InvokeAsync<RoomInfo>("CreateRoom", hostName, ageMode, language);
     }
 
     public async Task<RoomInfo?> JoinRoomAsync(string roomCode, string playerName)
@@ -215,6 +283,43 @@ public class GameClient : IAsyncDisposable
         return await _hubConnection.InvokeAsync<List<LeaderboardEntry>>("GetLeaderboard");
     }
 
+    // === HOST DASHBOARD ===
+    public async Task PauseAllPlayersAsync()
+    {
+        if (_hubConnection == null) return;
+        await _hubConnection.SendAsync("PauseAllPlayers");
+    }
+
+    public async Task ResumeAllPlayersAsync()
+    {
+        if (_hubConnection == null) return;
+        await _hubConnection.SendAsync("ResumeAllPlayers");
+    }
+
+    public async Task SetUnlockReadyAsync()
+    {
+        if (_hubConnection == null) return;
+        await _hubConnection.SendAsync("SetUnlockReady");
+    }
+
+    public async Task HostForceResumeAsync()
+    {
+        if (_hubConnection == null) return;
+        await _hubConnection.SendAsync("HostForceResume");
+    }
+
+    public async Task<List<PlayerSummary>?> GetAllPlayerPortfoliosAsync()
+    {
+        if (_hubConnection == null) return null;
+        return await _hubConnection.InvokeAsync<List<PlayerSummary>>("GetAllPlayerPortfolios");
+    }
+
+    public async Task<RoomInfo?> GetRoomStatusAsync()
+    {
+        if (_hubConnection == null) return null;
+        return await _hubConnection.InvokeAsync<RoomInfo?>("GetRoomStatus");
+    }
+
     // === SAVINGS ACCOUNT ===
     public async Task<bool> DepositToSavingsAsync(decimal amount)
     {
@@ -229,10 +334,10 @@ public class GameClient : IAsyncDisposable
     }
 
     // === CERTIFICATE OF DEPOSIT ===
-    public async Task<bool> BuyDepositoAsync(int periodMonths, decimal amount, bool autoRollOver = false)
+    public async Task<bool> BuyDepositoAsync(int periodMonths, decimal amount, bool autoRollOver = false, bool isShariah = false)
     {
         if (_hubConnection == null) return false;
-        return await _hubConnection.InvokeAsync<bool>("BuyDeposito", periodMonths, amount, autoRollOver);
+        return await _hubConnection.InvokeAsync<bool>("BuyDeposito", periodMonths, amount, autoRollOver, isShariah);
     }
 
     public async Task<bool> WithdrawDepositoAsync(string depositoId, bool earlyWithdraw)
@@ -286,7 +391,26 @@ public class GameClient : IAsyncDisposable
         return await _hubConnection.InvokeAsync<bool>("SellCrypto", symbol, amount);
     }
 
-    // === GENERAL ASSETS (Index Fund, Gold, Crowdfunding) ===
+    // === INDEX FUNDS ===
+    public async Task<bool> BuyIndexAsync(string indexId, decimal amount)
+    {
+        if (_hubConnection == null) return false;
+        return await _hubConnection.InvokeAsync<bool>("BuyIndex", indexId, amount);
+    }
+
+    public async Task<bool> SellIndexAsync(string indexId, decimal units)
+    {
+        if (_hubConnection == null) return false;
+        return await _hubConnection.InvokeAsync<bool>("SellIndex", indexId, units);
+    }
+
+    public async Task<bool> SellAllIndexAsync(string indexId)
+    {
+        if (_hubConnection == null) return false;
+        return await _hubConnection.InvokeAsync<bool>("SellAllIndex", indexId);
+    }
+
+    // === GENERAL ASSETS (Gold, Crowdfunding) ===
     public async Task<bool> BuyAssetAsync(string assetType)
     {
         if (_hubConnection == null) return false;

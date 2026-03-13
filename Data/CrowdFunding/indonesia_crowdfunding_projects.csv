@@ -1,0 +1,11 @@
+Project ID,Project Name,Sector,Borrower,Risk Level,Risk Score (1-10),Grade,Funding Amount (IDR),Tenor (Months),ROI (%),Estimated Profit (IDR),Purpose,Location
+URD-2024-001,Proyek Agriculture Modal Kerja 1,Agriculture,PT Agriculture Nusantara 1,Medium,6,B-,75000000,6,20.25,7593750,Renovasi gedung,Makassar
+URD-2024-002,Proyek Food & Beverage Modal Kerja 2,Food & Beverage,PT Food & Beverage Nusantara 2,Low,1,A-,25000000,6,9.93,1241250,Pembelian mesin,Surabaya
+URD-2024-003,Proyek Retail Pengembangan 3,Retail,PT Retail Nusantara 3,Medium,4,B+,300000000,10,19.52,48799999,Pengembangan produk,Bandung
+URD-2024-004,Proyek Manufacturing Ekspansi 4,Manufacturing,PT Manufacturing Nusantara 4,Low,2,A,200000000,5,9.91,8258333,Pembelian inventory,Makassar
+URD-2024-005,Proyek Technology Pengembangan 5,Technology,PT Technology Nusantara 5,Medium,4,B+,100000000,9,17.17,12877500,Pembelian inventory,Makassar
+URD-2024-006,Proyek Logistics Investasi 6,Logistics,PT Logistics Nusantara 6,Medium,5,B,25000000,6,20.93,2616250,Ekspansi cabang baru,Bandung
+URD-2024-007,Proyek Education Modal Kerja 7,Education,PT Education Nusantara 7,Low,3,A,25000000,5,12.31,1282291,Ekspansi cabang baru,Yogyakarta
+URD-2024-008,Proyek Healthcare Modal Kerja 8,Healthcare,PT Healthcare Nusantara 8,Low,1,A+,10000000,4,11.94,398000,Pengembangan produk,Jakarta
+URD-2024-009,Proyek Renewable Energy Modal Kerja 9,Renewable Energy,PT Renewable Energy Nusantara 9,High,10,C+,150000000,21,35.31,92688750,Renovasi gedung,Yogyakarta
+URD-2024-010,Proyek Property Pengembangan 10,Property,PT Property Nusantara 10,Low,3,A,500000000,4,12.18,20299999,Pembelian mesin,Yogyakarta

@@ -30,17 +30,28 @@ public class GameHub : Hub
         var room = _roomManager.GetRoomByConnection(Context.ConnectionId);
         if (room != null)
         {
+            bool isHost = room.HostConnectionId == Context.ConnectionId;
+
             if (room.Status == RoomStatus.InProgress)
             {
-                // Mark as disconnected but keep session alive
-                _roomManager.MarkDisconnected(Context.ConnectionId);
-                var session = _gameEngine.GetSession(Context.ConnectionId);
-                if (session != null)
+                if (isHost)
                 {
-                    session.IsPaused = true;
+                    // Host disconnected during game: auto-resume if paused, notify players
+                    _gameEngine.ResumeAllInRoom(room.RoomCode);
+                    _roomManager.LeaveRoom(Context.ConnectionId);
+                    await Groups.RemoveFromGroupAsync(Context.ConnectionId, room.RoomCode);
+                    await Clients.Group(room.RoomCode).SendAsync("HostLeft");
                 }
-                await Clients.Group(room.RoomCode).SendAsync("PlayerDisconnected",
-                    room.Players.FirstOrDefault(p => p.ConnectionId == Context.ConnectionId)?.PlayerName ?? "Unknown");
+                else
+                {
+                    // Player disconnected: mark as disconnected but keep session alive
+                    _roomManager.MarkDisconnected(Context.ConnectionId);
+                    var session = _gameEngine.GetSession(Context.ConnectionId);
+                    if (session != null)
+                        session.IsPaused = true;
+                    await Clients.Group(room.RoomCode).SendAsync("PlayerDisconnected",
+                        room.Players.FirstOrDefault(p => p.ConnectionId == Context.ConnectionId)?.PlayerName ?? "Unknown");
+                }
             }
             else
             {
@@ -52,9 +63,7 @@ public class GameHub : Hub
                     if (updatedRoom != null)
                     {
                         if (wasHost)
-                        {
-                            await Clients.Group(roomCode).SendAsync("HostChanged", updatedRoom.HostPlayerName);
-                        }
+                            await Clients.Group(roomCode).SendAsync("HostLeft");
                         await Clients.Group(roomCode).SendAsync("RoomUpdated", updatedRoom);
                     }
                     else
@@ -100,11 +109,11 @@ public class GameHub : Hub
 
     // === ROOM MANAGEMENT (Multiplayer) ===
 
-    public async Task<RoomInfo> CreateRoom(string playerName, AgeMode ageMode, Language language, int maxPlayers = 4)
+    public async Task<RoomInfo> CreateRoom(string hostName, AgeMode ageMode, Language language)
     {
-        var room = _roomManager.CreateRoom(Context.ConnectionId, playerName, ageMode, language, maxPlayers);
+        var room = _roomManager.CreateRoom(Context.ConnectionId, hostName, ageMode, language);
         await Groups.AddToGroupAsync(Context.ConnectionId, room.RoomCode);
-        _logger.LogInformation("Room {RoomCode} created by {PlayerName}", room.RoomCode, playerName);
+        _logger.LogInformation("Room {RoomCode} created by host {HostName}", room.RoomCode, hostName);
         return room;
     }
 
@@ -129,18 +138,15 @@ public class GameHub : Hub
         if (roomCode == null) return;
 
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, roomCode);
-
-        // Also remove the game session
         _gameEngine.RemoveSession(Context.ConnectionId);
 
         if (updatedRoom != null)
         {
-            var player = updatedRoom.Players.FirstOrDefault(p => p.ConnectionId == Context.ConnectionId);
-            await Clients.Group(roomCode).SendAsync("PlayerLeft", player?.PlayerName ?? "Unknown");
             if (wasHost)
-            {
-                await Clients.Group(roomCode).SendAsync("HostChanged", updatedRoom.HostPlayerName);
-            }
+                await Clients.Group(roomCode).SendAsync("HostLeft");
+            else
+                await Clients.Group(roomCode).SendAsync("PlayerLeft",
+                    updatedRoom.Players.FirstOrDefault(p => p.ConnectionId == Context.ConnectionId)?.PlayerName ?? "Unknown");
             await Clients.Group(roomCode).SendAsync("RoomUpdated", updatedRoom);
         }
         else
@@ -173,24 +179,97 @@ public class GameHub : Hub
         if (room == null) return false;
 
         // Create shared market state for the room
-        var marketState = _gameEngine.CreateRoomMarketState(room.RoomCode);
+        _gameEngine.CreateRoomMarketState(room.RoomCode);
 
-        // Create game sessions for all players
+        // Create game sessions for all PLAYERS (not host)
         foreach (var player in room.Players)
         {
             var session = _gameEngine.CreateMultiplayerSession(
                 player.PlayerName, player.ConnectionId, room.RoomCode, room.AgeMode, room.Language);
 
-            // Send initial game state to each player
             var gameState = session.ToGameState();
-            gameState.IsHost = player.IsHost;
             gameState.PlayerSummaries = GetPlayerSummaries(room.RoomCode);
             await Clients.Client(player.ConnectionId).SendAsync("RoomGameStarted", gameState);
         }
 
+        // Send host to dashboard (no GameSession for host)
+        await Clients.Client(room.HostConnectionId).SendAsync("HostDashboardStarted", room);
+
+        // Broadcast initial Tabungan unlock via MP sync popup (sessions start paused)
+        _roomManager.ResetUnlockReady(room.RoomCode);
+        await Clients.Group(room.RoomCode).SendAsync("AssetUnlocked", "tabungan");
+        await Clients.Client(room.HostConnectionId).SendAsync("RoomUpdated", room);
+
         await Clients.Group(room.RoomCode).SendAsync("RoomUpdated", room);
         _logger.LogInformation("Multiplayer game started in room {RoomCode}", room.RoomCode);
         return true;
+    }
+
+    // === HOST DASHBOARD METHODS (host only) ===
+
+    public RoomInfo? GetRoomStatus()
+    {
+        return _roomManager.GetRoomByConnection(Context.ConnectionId);
+    }
+
+    public List<PlayerSummary> GetAllPlayerPortfolios()
+    {
+        var room = _roomManager.GetRoomByConnection(Context.ConnectionId);
+        if (room == null) return new List<PlayerSummary>();
+        return _gameEngine.GetAllPlayerPortfolios(room.RoomCode);
+    }
+
+    public async Task PauseAllPlayers()
+    {
+        var room = _roomManager.GetRoomByConnection(Context.ConnectionId);
+        if (room == null || room.HostConnectionId != Context.ConnectionId) return;
+
+        _gameEngine.PauseAllInRoom(room.RoomCode);
+        await Clients.Group(room.RoomCode).SendAsync("AllPaused");
+    }
+
+    public async Task ResumeAllPlayers()
+    {
+        var room = _roomManager.GetRoomByConnection(Context.ConnectionId);
+        if (room == null || room.HostConnectionId != Context.ConnectionId) return;
+
+        _gameEngine.ResumeAllInRoom(room.RoomCode);
+        await Clients.Group(room.RoomCode).SendAsync("AllResumed");
+    }
+
+    // === UNLOCK SYNC ===
+
+    public async Task SetUnlockReady()
+    {
+        var room = _roomManager.GetRoomByConnection(Context.ConnectionId);
+        if (room == null) return;
+
+        var allReady = _roomManager.SetUnlockReady(Context.ConnectionId);
+
+        // Notify host of updated ready state
+        await Clients.Client(room.HostConnectionId).SendAsync("RoomUpdated", room);
+
+        if (allReady)
+        {
+            // All players dismissed their intro popups — resume all sessions
+            _gameEngine.ResumeAllInRoom(room.RoomCode);
+            _roomManager.ResetUnlockReady(room.RoomCode);
+            // Send updated room (all IsUnlockReady=false) to host so dashboard resets
+            await Clients.Client(room.HostConnectionId).SendAsync("RoomUpdated", room);
+            await Clients.Group(room.RoomCode).SendAsync("UnlockComplete");
+        }
+    }
+
+    public async Task HostForceResume()
+    {
+        var room = _roomManager.GetRoomByConnection(Context.ConnectionId);
+        if (room == null || room.HostConnectionId != Context.ConnectionId) return;
+
+        _gameEngine.ResumeAllInRoom(room.RoomCode);
+        _roomManager.ResetUnlockReady(room.RoomCode);
+        // Send updated room (all IsUnlockReady=false) to host so dashboard resets
+        await Clients.Client(room.HostConnectionId).SendAsync("RoomUpdated", room);
+        await Clients.Group(room.RoomCode).SendAsync("UnlockComplete");
     }
 
     public List<LeaderboardEntry> GetLeaderboard()
@@ -207,6 +286,7 @@ public class GameHub : Hub
 
         return sessions.Select(s => new PlayerSummary
         {
+            ConnectionId = s.ConnectionId,
             PlayerName = s.PlayerId,
             NetWorth = s.NetWorth,
             IsConnected = room?.Players.FirstOrDefault(p => p.ConnectionId == s.ConnectionId)?.IsConnected ?? true,
@@ -223,9 +303,7 @@ public class GameHub : Hub
         {
             var session = _gameEngine.GetSession(Context.ConnectionId);
             if (session != null)
-            {
                 await Clients.Caller.SendAsync("GameStateUpdated", session.ToGameState());
-            }
         }
         return result;
     }
@@ -237,24 +315,20 @@ public class GameHub : Hub
         {
             var session = _gameEngine.GetSession(Context.ConnectionId);
             if (session != null)
-            {
                 await Clients.Caller.SendAsync("GameStateUpdated", session.ToGameState());
-            }
         }
         return result;
     }
 
     // === CERTIFICATE OF DEPOSIT ===
-    public async Task<bool> BuyDeposito(int periodMonths, decimal amount, bool autoRollOver = false)
+    public async Task<bool> BuyDeposito(int periodMonths, decimal amount, bool autoRollOver = false, bool isShariah = false)
     {
-        var result = _gameEngine.BuyDeposito(Context.ConnectionId, periodMonths, amount, autoRollOver);
+        var result = _gameEngine.BuyDeposito(Context.ConnectionId, periodMonths, amount, autoRollOver, isShariah);
         if (result)
         {
             var session = _gameEngine.GetSession(Context.ConnectionId);
             if (session != null)
-            {
                 await Clients.Caller.SendAsync("GameStateUpdated", session.ToGameState());
-            }
         }
         return result;
     }
@@ -266,9 +340,7 @@ public class GameHub : Hub
         {
             var session = _gameEngine.GetSession(Context.ConnectionId);
             if (session != null)
-            {
                 await Clients.Caller.SendAsync("GameStateUpdated", session.ToGameState());
-            }
         }
         return result;
     }
@@ -280,9 +352,7 @@ public class GameHub : Hub
         {
             var session = _gameEngine.GetSession(Context.ConnectionId);
             if (session != null)
-            {
                 await Clients.Caller.SendAsync("GameStateUpdated", session.ToGameState());
-            }
         }
         return result;
     }
@@ -295,9 +365,7 @@ public class GameHub : Hub
         {
             var session = _gameEngine.GetSession(Context.ConnectionId);
             if (session != null)
-            {
                 await Clients.Caller.SendAsync("GameStateUpdated", session.ToGameState());
-            }
         }
         return result;
     }
@@ -309,9 +377,7 @@ public class GameHub : Hub
         {
             var session = _gameEngine.GetSession(Context.ConnectionId);
             if (session != null)
-            {
                 await Clients.Caller.SendAsync("GameStateUpdated", session.ToGameState());
-            }
         }
         return result;
     }
@@ -324,9 +390,7 @@ public class GameHub : Hub
         {
             var session = _gameEngine.GetSession(Context.ConnectionId);
             if (session != null)
-            {
                 await Clients.Caller.SendAsync("GameStateUpdated", session.ToGameState());
-            }
         }
         return result;
     }
@@ -338,9 +402,7 @@ public class GameHub : Hub
         {
             var session = _gameEngine.GetSession(Context.ConnectionId);
             if (session != null)
-            {
                 await Clients.Caller.SendAsync("GameStateUpdated", session.ToGameState());
-            }
         }
         return result;
     }
@@ -353,9 +415,7 @@ public class GameHub : Hub
         {
             var session = _gameEngine.GetSession(Context.ConnectionId);
             if (session != null)
-            {
                 await Clients.Caller.SendAsync("GameStateUpdated", session.ToGameState());
-            }
         }
         return result;
     }
@@ -367,9 +427,44 @@ public class GameHub : Hub
         {
             var session = _gameEngine.GetSession(Context.ConnectionId);
             if (session != null)
-            {
                 await Clients.Caller.SendAsync("GameStateUpdated", session.ToGameState());
-            }
+        }
+        return result;
+    }
+
+    // === INDEX FUNDS ===
+    public async Task<bool> BuyIndex(string indexId, decimal amount)
+    {
+        var result = _gameEngine.BuyIndex(Context.ConnectionId, indexId, amount);
+        if (result)
+        {
+            var session = _gameEngine.GetSession(Context.ConnectionId);
+            if (session != null)
+                await Clients.Caller.SendAsync("GameStateUpdated", session.ToGameState());
+        }
+        return result;
+    }
+
+    public async Task<bool> SellIndex(string indexId, decimal units)
+    {
+        var result = _gameEngine.SellIndex(Context.ConnectionId, indexId, units);
+        if (result)
+        {
+            var session = _gameEngine.GetSession(Context.ConnectionId);
+            if (session != null)
+                await Clients.Caller.SendAsync("GameStateUpdated", session.ToGameState());
+        }
+        return result;
+    }
+
+    public async Task<bool> SellAllIndex(string indexId)
+    {
+        var result = _gameEngine.SellAllIndex(Context.ConnectionId, indexId);
+        if (result)
+        {
+            var session = _gameEngine.GetSession(Context.ConnectionId);
+            if (session != null)
+                await Clients.Caller.SendAsync("GameStateUpdated", session.ToGameState());
         }
         return result;
     }
@@ -382,9 +477,7 @@ public class GameHub : Hub
         {
             var session = _gameEngine.GetSession(Context.ConnectionId);
             if (session != null)
-            {
                 await Clients.Caller.SendAsync("GameStateUpdated", session.ToGameState());
-            }
         }
         return result;
     }
@@ -396,9 +489,7 @@ public class GameHub : Hub
         {
             var session = _gameEngine.GetSession(Context.ConnectionId);
             if (session != null)
-            {
                 await Clients.Caller.SendAsync("GameStateUpdated", session.ToGameState());
-            }
         }
         return result;
     }
@@ -410,9 +501,7 @@ public class GameHub : Hub
         {
             var session = _gameEngine.GetSession(Context.ConnectionId);
             if (session != null)
-            {
                 await Clients.Caller.SendAsync("GameStateUpdated", session.ToGameState());
-            }
         }
         return result;
     }
@@ -424,9 +513,7 @@ public class GameHub : Hub
         {
             var session = _gameEngine.GetSession(Context.ConnectionId);
             if (session != null)
-            {
                 await Clients.Caller.SendAsync("GameStateUpdated", session.ToGameState());
-            }
         }
         return result;
     }
@@ -439,9 +526,7 @@ public class GameHub : Hub
         {
             var session = _gameEngine.GetSession(Context.ConnectionId);
             if (session != null)
-            {
                 await Clients.Caller.SendAsync("GameStateUpdated", session.ToGameState());
-            }
         }
         return result;
     }
@@ -452,9 +537,7 @@ public class GameHub : Hub
         var result = _gameEngine.PayEventFromCash(Context.ConnectionId);
         var session = _gameEngine.GetSession(Context.ConnectionId);
         if (session != null)
-        {
             await Clients.Caller.SendAsync("GameStateUpdated", session.ToGameState());
-        }
         return result;
     }
 
@@ -463,9 +546,7 @@ public class GameHub : Hub
         var result = _gameEngine.PayEventFromSavings(Context.ConnectionId);
         var session = _gameEngine.GetSession(Context.ConnectionId);
         if (session != null)
-        {
             await Clients.Caller.SendAsync("GameStateUpdated", session.ToGameState());
-        }
         return result;
     }
 
@@ -474,19 +555,28 @@ public class GameHub : Hub
         var result = _gameEngine.PayEventFromPortfolio(Context.ConnectionId, assetType);
         var session = _gameEngine.GetSession(Context.ConnectionId);
         if (session != null)
-        {
             await Clients.Caller.SendAsync("GameStateUpdated", session.ToGameState());
-        }
         return result;
     }
 
     // === GAME CONTROL ===
     public async Task ProcessTick()
     {
-        _gameEngine.ProcessTick(Context.ConnectionId);
+        var (unlockOccurred, unlockAssetType, _) = _gameEngine.ProcessTick(Context.ConnectionId);
         var session = _gameEngine.GetSession(Context.ConnectionId);
         if (session != null)
         {
+            // Check auto-pay for multiplayer events
+            if (session.IsMultiplayer && session.IsEventPending)
+            {
+                var autoPaid = _gameEngine.CheckAndAutoPayEvent(Context.ConnectionId);
+                // Re-fetch session state after potential auto-pay
+                if (autoPaid)
+                {
+                    // Broadcast updated state since event was resolved
+                }
+            }
+
             var gameState = session.ToGameState();
 
             // For multiplayer, include player summaries and check for all-finished
@@ -494,13 +584,22 @@ public class GameHub : Hub
             {
                 gameState.PlayerSummaries = GetPlayerSummaries(session.RoomCode);
                 var room = _roomManager.GetRoomByConnection(Context.ConnectionId);
-                gameState.IsHost = room?.HostConnectionId == Context.ConnectionId;
 
                 // Broadcast leaderboard update at month-end (when MonthProgress resets to 0)
                 if (session.MonthProgress == 0)
                 {
                     var leaderboard = _gameEngine.GetLeaderboard(session.RoomCode);
                     await Clients.Group(session.RoomCode).SendAsync("LeaderboardUpdated", leaderboard);
+                }
+
+                // Broadcast asset unlock to all players in room
+                if (unlockOccurred && unlockAssetType != null)
+                {
+                    _roomManager.ResetUnlockReady(session.RoomCode);
+                    await Clients.Group(session.RoomCode).SendAsync("AssetUnlocked", unlockAssetType);
+                    // Refresh host dashboard with current room state (all IsUnlockReady=false)
+                    if (room != null && !string.IsNullOrEmpty(room.HostConnectionId))
+                        await Clients.Client(room.HostConnectionId).SendAsync("RoomUpdated", room);
                 }
 
                 // Check if all players finished
@@ -510,7 +609,6 @@ public class GameHub : Hub
                     gameState.AllPlayersFinished = true;
                     gameState.FinalLeaderboard = finalLeaderboard;
                     await Clients.Group(session.RoomCode).SendAsync("AllPlayersFinished", finalLeaderboard);
-
                     _roomManager.SetRoomFinished(session.RoomCode);
                 }
             }
@@ -524,9 +622,7 @@ public class GameHub : Hub
         _gameEngine.PauseGame(Context.ConnectionId);
         var session = _gameEngine.GetSession(Context.ConnectionId);
         if (session != null)
-        {
             await Clients.Caller.SendAsync("GamePaused");
-        }
     }
 
     public async Task ResumeGame()
@@ -534,9 +630,7 @@ public class GameHub : Hub
         _gameEngine.ResumeGame(Context.ConnectionId);
         var session = _gameEngine.GetSession(Context.ConnectionId);
         if (session != null)
-        {
             await Clients.Caller.SendAsync("GameResumed");
-        }
     }
 
     public async Task RestartGame()
@@ -544,9 +638,7 @@ public class GameHub : Hub
         _gameEngine.RestartGame(Context.ConnectionId);
         var session = _gameEngine.GetSession(Context.ConnectionId);
         if (session != null)
-        {
             await Clients.Caller.SendAsync("GameStateUpdated", session.ToGameState());
-        }
     }
 
     // === DATA RETRIEVAL ===

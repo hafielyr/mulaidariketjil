@@ -1431,7 +1431,7 @@
                 </section>
 
                 <!-- Right Panel: Performance & Log -->
-                <section class="panel panel-right">
+                <section class="panel panel-right @(_mobileActiveTab == "stats" ? "mobile-active" : "")">
                     <!-- Portfolio Performance -->
                     <div class="performance-section">
                         <h3>@Lang.T("PERF_TITLE")</h3>
@@ -1538,6 +1538,22 @@
                     </div>
                 </section>
             </main>
+
+            <!-- Mobile Bottom Tab Bar -->
+            <nav class="mobile-tab-bar">
+                <button class="mobile-tab @(_mobileActiveTab == "portfolio" ? "active" : "")" @onclick='() => _mobileActiveTab = "portfolio"'>
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M21 18v1a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v1"/><path d="M15 12h6m-3-3l3 3-3 3"/></svg>
+                    <span>Portfolio</span>
+                </button>
+                <button class="mobile-tab @(_mobileActiveTab == "market" ? "active" : "")" @onclick='() => _mobileActiveTab = "market"'>
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M3 17l5-5 3 3 7-8 2 2-9 10-3-3z"/><path d="M17 6h4v4"/></svg>
+                    <span>Market</span>
+                </button>
+                <button class="mobile-tab @(_mobileActiveTab == "stats" ? "active" : "")" @onclick='() => _mobileActiveTab = "stats"'>
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M4 4h4v16H4zm6 6h4v10h-4zm6-2h4v12h-4z"/></svg>
+                    <span>Stats</span>
+                </button>
+            </nav>
 
             <!-- Paused Indicator -->
             @if (_isPaused && !_gameState.IsEventPending && !_showAssetInfo && !_gameState.IsGameOver && !_gameState.ShowIntro)

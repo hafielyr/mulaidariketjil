@@ -1,0 +1,2006 @@
+[
+  {
+    "ticker": "BBCA",
+    "year": 2006,
+    "amount_per_share": 75,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBCA",
+    "year": 2007,
+    "amount_per_share": 85,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBCA",
+    "year": 2008,
+    "amount_per_share": 96,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBCA",
+    "year": 2009,
+    "amount_per_share": 55,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBCA",
+    "year": 2010,
+    "amount_per_share": 88,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBCA",
+    "year": 2011,
+    "amount_per_share": 100,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBCA",
+    "year": 2012,
+    "amount_per_share": 120,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBCA",
+    "year": 2013,
+    "amount_per_share": 140,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBCA",
+    "year": 2014,
+    "amount_per_share": 155,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBCA",
+    "year": 2015,
+    "amount_per_share": 170,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBCA",
+    "year": 2016,
+    "amount_per_share": 195,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBCA",
+    "year": 2017,
+    "amount_per_share": 225,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBCA",
+    "year": 2018,
+    "amount_per_share": 280,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBCA",
+    "year": 2019,
+    "amount_per_share": 340,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBCA",
+    "year": 2019,
+    "amount_per_share": 100,
+    "type": "Interim"
+  },
+  {
+    "ticker": "BBCA",
+    "year": 2020,
+    "amount_per_share": 455,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBCA",
+    "year": 2020,
+    "amount_per_share": 100,
+    "type": "Interim"
+  },
+  {
+    "ticker": "BBCA",
+    "year": 2021,
+    "amount_per_share": 315,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBCA",
+    "year": 2021,
+    "amount_per_share": 120,
+    "type": "Interim"
+  },
+  {
+    "ticker": "BBRI",
+    "year": 2006,
+    "amount_per_share": 63,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBRI",
+    "year": 2007,
+    "amount_per_share": 72,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBRI",
+    "year": 2008,
+    "amount_per_share": 79,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBRI",
+    "year": 2009,
+    "amount_per_share": 47,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBRI",
+    "year": 2010,
+    "amount_per_share": 67,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBRI",
+    "year": 2011,
+    "amount_per_share": 74,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBRI",
+    "year": 2012,
+    "amount_per_share": 79,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBRI",
+    "year": 2013,
+    "amount_per_share": 94,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBRI",
+    "year": 2014,
+    "amount_per_share": 121,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBRI",
+    "year": 2015,
+    "amount_per_share": 135,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBRI",
+    "year": 2016,
+    "amount_per_share": 118,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBRI",
+    "year": 2017,
+    "amount_per_share": 143,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBRI",
+    "year": 2018,
+    "amount_per_share": 168,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBRI",
+    "year": 2019,
+    "amount_per_share": 189,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBRI",
+    "year": 2019,
+    "amount_per_share": 56,
+    "type": "Interim"
+  },
+  {
+    "ticker": "BBRI",
+    "year": 2020,
+    "amount_per_share": 168,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBRI",
+    "year": 2020,
+    "amount_per_share": 47,
+    "type": "Interim"
+  },
+  {
+    "ticker": "BBRI",
+    "year": 2021,
+    "amount_per_share": 124,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBRI",
+    "year": 2021,
+    "amount_per_share": 50,
+    "type": "Interim"
+  },
+  {
+    "ticker": "BMRI",
+    "year": 2006,
+    "amount_per_share": 63,
+    "type": "Final"
+  },
+  {
+    "ticker": "BMRI",
+    "year": 2007,
+    "amount_per_share": 72,
+    "type": "Final"
+  },
+  {
+    "ticker": "BMRI",
+    "year": 2008,
+    "amount_per_share": 86,
+    "type": "Final"
+  },
+  {
+    "ticker": "BMRI",
+    "year": 2009,
+    "amount_per_share": 50,
+    "type": "Final"
+  },
+  {
+    "ticker": "BMRI",
+    "year": 2010,
+    "amount_per_share": 82,
+    "type": "Final"
+  },
+  {
+    "ticker": "BMRI",
+    "year": 2011,
+    "amount_per_share": 118,
+    "type": "Final"
+  },
+  {
+    "ticker": "BMRI",
+    "year": 2012,
+    "amount_per_share": 140,
+    "type": "Final"
+  },
+  {
+    "ticker": "BMRI",
+    "year": 2013,
+    "amount_per_share": 165,
+    "type": "Final"
+  },
+  {
+    "ticker": "BMRI",
+    "year": 2014,
+    "amount_per_share": 185,
+    "type": "Final"
+  },
+  {
+    "ticker": "BMRI",
+    "year": 2015,
+    "amount_per_share": 169,
+    "type": "Final"
+  },
+  {
+    "ticker": "BMRI",
+    "year": 2016,
+    "amount_per_share": 134,
+    "type": "Final"
+  },
+  {
+    "ticker": "BMRI",
+    "year": 2017,
+    "amount_per_share": 159,
+    "type": "Final"
+  },
+  {
+    "ticker": "BMRI",
+    "year": 2018,
+    "amount_per_share": 199,
+    "type": "Final"
+  },
+  {
+    "ticker": "BMRI",
+    "year": 2019,
+    "amount_per_share": 240,
+    "type": "Final"
+  },
+  {
+    "ticker": "BMRI",
+    "year": 2020,
+    "amount_per_share": 268,
+    "type": "Final"
+  },
+  {
+    "ticker": "BMRI",
+    "year": 2021,
+    "amount_per_share": 193,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBNI",
+    "year": 2006,
+    "amount_per_share": 28,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBNI",
+    "year": 2007,
+    "amount_per_share": 35,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBNI",
+    "year": 2008,
+    "amount_per_share": 42,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBNI",
+    "year": 2009,
+    "amount_per_share": 22,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBNI",
+    "year": 2010,
+    "amount_per_share": 36,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBNI",
+    "year": 2011,
+    "amount_per_share": 62,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBNI",
+    "year": 2012,
+    "amount_per_share": 79,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBNI",
+    "year": 2013,
+    "amount_per_share": 107,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBNI",
+    "year": 2014,
+    "amount_per_share": 121,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBNI",
+    "year": 2015,
+    "amount_per_share": 89,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBNI",
+    "year": 2016,
+    "amount_per_share": 62,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBNI",
+    "year": 2017,
+    "amount_per_share": 101,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBNI",
+    "year": 2018,
+    "amount_per_share": 131,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBNI",
+    "year": 2019,
+    "amount_per_share": 136,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBNI",
+    "year": 2020,
+    "amount_per_share": 121,
+    "type": "Final"
+  },
+  {
+    "ticker": "BBNI",
+    "year": 2021,
+    "amount_per_share": 37,
+    "type": "Final"
+  },
+  {
+    "ticker": "TLKM",
+    "year": 2006,
+    "amount_per_share": 267,
+    "type": "Final"
+  },
+  {
+    "ticker": "TLKM",
+    "year": 2007,
+    "amount_per_share": 297,
+    "type": "Final"
+  },
+  {
+    "ticker": "TLKM",
+    "year": 2007,
+    "amount_per_share": 71,
+    "type": "Interim"
+  },
+  {
+    "ticker": "TLKM",
+    "year": 2008,
+    "amount_per_share": 293,
+    "type": "Final"
+  },
+  {
+    "ticker": "TLKM",
+    "year": 2008,
+    "amount_per_share": 71,
+    "type": "Interim"
+  },
+  {
+    "ticker": "TLKM",
+    "year": 2009,
+    "amount_per_share": 261,
+    "type": "Final"
+  },
+  {
+    "ticker": "TLKM",
+    "year": 2009,
+    "amount_per_share": 71,
+    "type": "Interim"
+  },
+  {
+    "ticker": "TLKM",
+    "year": 2010,
+    "amount_per_share": 268,
+    "type": "Final"
+  },
+  {
+    "ticker": "TLKM",
+    "year": 2010,
+    "amount_per_share": 71,
+    "type": "Interim"
+  },
+  {
+    "ticker": "TLKM",
+    "year": 2011,
+    "amount_per_share": 56,
+    "type": "Final"
+  },
+  {
+    "ticker": "TLKM",
+    "year": 2011,
+    "amount_per_share": 15,
+    "type": "Interim"
+  },
+  {
+    "ticker": "TLKM",
+    "year": 2012,
+    "amount_per_share": 60,
+    "type": "Final"
+  },
+  {
+    "ticker": "TLKM",
+    "year": 2012,
+    "amount_per_share": 18,
+    "type": "Interim"
+  },
+  {
+    "ticker": "TLKM",
+    "year": 2013,
+    "amount_per_share": 68,
+    "type": "Final"
+  },
+  {
+    "ticker": "TLKM",
+    "year": 2013,
+    "amount_per_share": 23,
+    "type": "Interim"
+  },
+  {
+    "ticker": "TLKM",
+    "year": 2014,
+    "amount_per_share": 72,
+    "type": "Final"
+  },
+  {
+    "ticker": "TLKM",
+    "year": 2014,
+    "amount_per_share": 24,
+    "type": "Interim"
+  },
+  {
+    "ticker": "TLKM",
+    "year": 2015,
+    "amount_per_share": 75,
+    "type": "Final"
+  },
+  {
+    "ticker": "TLKM",
+    "year": 2015,
+    "amount_per_share": 26,
+    "type": "Interim"
+  },
+  {
+    "ticker": "TLKM",
+    "year": 2016,
+    "amount_per_share": 84,
+    "type": "Final"
+  },
+  {
+    "ticker": "TLKM",
+    "year": 2016,
+    "amount_per_share": 28,
+    "type": "Interim"
+  },
+  {
+    "ticker": "TLKM",
+    "year": 2017,
+    "amount_per_share": 90,
+    "type": "Final"
+  },
+  {
+    "ticker": "TLKM",
+    "year": 2017,
+    "amount_per_share": 30,
+    "type": "Interim"
+  },
+  {
+    "ticker": "TLKM",
+    "year": 2018,
+    "amount_per_share": 92,
+    "type": "Final"
+  },
+  {
+    "ticker": "TLKM",
+    "year": 2018,
+    "amount_per_share": 31,
+    "type": "Interim"
+  },
+  {
+    "ticker": "TLKM",
+    "year": 2019,
+    "amount_per_share": 88,
+    "type": "Final"
+  },
+  {
+    "ticker": "TLKM",
+    "year": 2019,
+    "amount_per_share": 29,
+    "type": "Interim"
+  },
+  {
+    "ticker": "TLKM",
+    "year": 2020,
+    "amount_per_share": 89,
+    "type": "Final"
+  },
+  {
+    "ticker": "TLKM",
+    "year": 2020,
+    "amount_per_share": 30,
+    "type": "Interim"
+  },
+  {
+    "ticker": "TLKM",
+    "year": 2021,
+    "amount_per_share": 72,
+    "type": "Final"
+  },
+  {
+    "ticker": "TLKM",
+    "year": 2021,
+    "amount_per_share": 24,
+    "type": "Interim"
+  },
+  {
+    "ticker": "ASII",
+    "year": 2006,
+    "amount_per_share": 220,
+    "type": "Final"
+  },
+  {
+    "ticker": "ASII",
+    "year": 2007,
+    "amount_per_share": 330,
+    "type": "Final"
+  },
+  {
+    "ticker": "ASII",
+    "year": 2008,
+    "amount_per_share": 500,
+    "type": "Final"
+  },
+  {
+    "ticker": "ASII",
+    "year": 2009,
+    "amount_per_share": 310,
+    "type": "Final"
+  },
+  {
+    "ticker": "ASII",
+    "year": 2010,
+    "amount_per_share": 530,
+    "type": "Final"
+  },
+  {
+    "ticker": "ASII",
+    "year": 2011,
+    "amount_per_share": 113,
+    "type": "Final"
+  },
+  {
+    "ticker": "ASII",
+    "year": 2012,
+    "amount_per_share": 141,
+    "type": "Final"
+  },
+  {
+    "ticker": "ASII",
+    "year": 2013,
+    "amount_per_share": 121,
+    "type": "Final"
+  },
+  {
+    "ticker": "ASII",
+    "year": 2014,
+    "amount_per_share": 129,
+    "type": "Final"
+  },
+  {
+    "ticker": "ASII",
+    "year": 2015,
+    "amount_per_share": 109,
+    "type": "Final"
+  },
+  {
+    "ticker": "ASII",
+    "year": 2016,
+    "amount_per_share": 88,
+    "type": "Final"
+  },
+  {
+    "ticker": "ASII",
+    "year": 2017,
+    "amount_per_share": 109,
+    "type": "Final"
+  },
+  {
+    "ticker": "ASII",
+    "year": 2018,
+    "amount_per_share": 136,
+    "type": "Final"
+  },
+  {
+    "ticker": "ASII",
+    "year": 2019,
+    "amount_per_share": 127,
+    "type": "Final"
+  },
+  {
+    "ticker": "ASII",
+    "year": 2020,
+    "amount_per_share": 90,
+    "type": "Final"
+  },
+  {
+    "ticker": "ASII",
+    "year": 2021,
+    "amount_per_share": 72,
+    "type": "Final"
+  },
+  {
+    "ticker": "UNVR",
+    "year": 2006,
+    "amount_per_share": 140,
+    "type": "Final"
+  },
+  {
+    "ticker": "UNVR",
+    "year": 2007,
+    "amount_per_share": 162,
+    "type": "Final"
+  },
+  {
+    "ticker": "UNVR",
+    "year": 2008,
+    "amount_per_share": 180,
+    "type": "Final"
+  },
+  {
+    "ticker": "UNVR",
+    "year": 2009,
+    "amount_per_share": 199,
+    "type": "Final"
+  },
+  {
+    "ticker": "UNVR",
+    "year": 2010,
+    "amount_per_share": 250,
+    "type": "Final"
+  },
+  {
+    "ticker": "UNVR",
+    "year": 2011,
+    "amount_per_share": 276,
+    "type": "Final"
+  },
+  {
+    "ticker": "UNVR",
+    "year": 2012,
+    "amount_per_share": 327,
+    "type": "Final"
+  },
+  {
+    "ticker": "UNVR",
+    "year": 2013,
+    "amount_per_share": 367,
+    "type": "Final"
+  },
+  {
+    "ticker": "UNVR",
+    "year": 2014,
+    "amount_per_share": 335,
+    "type": "Final"
+  },
+  {
+    "ticker": "UNVR",
+    "year": 2015,
+    "amount_per_share": 338,
+    "type": "Final"
+  },
+  {
+    "ticker": "UNVR",
+    "year": 2016,
+    "amount_per_share": 458,
+    "type": "Final"
+  },
+  {
+    "ticker": "UNVR",
+    "year": 2017,
+    "amount_per_share": 505,
+    "type": "Final"
+  },
+  {
+    "ticker": "UNVR",
+    "year": 2018,
+    "amount_per_share": 615,
+    "type": "Final"
+  },
+  {
+    "ticker": "UNVR",
+    "year": 2019,
+    "amount_per_share": 605,
+    "type": "Final"
+  },
+  {
+    "ticker": "UNVR",
+    "year": 2020,
+    "amount_per_share": 430,
+    "type": "Final"
+  },
+  {
+    "ticker": "UNVR",
+    "year": 2021,
+    "amount_per_share": 250,
+    "type": "Final"
+  },
+  {
+    "ticker": "HMSP",
+    "year": 2006,
+    "amount_per_share": 250,
+    "type": "Final"
+  },
+  {
+    "ticker": "HMSP",
+    "year": 2007,
+    "amount_per_share": 350,
+    "type": "Final"
+  },
+  {
+    "ticker": "HMSP",
+    "year": 2008,
+    "amount_per_share": 160,
+    "type": "Final"
+  },
+  {
+    "ticker": "HMSP",
+    "year": 2009,
+    "amount_per_share": 275,
+    "type": "Final"
+  },
+  {
+    "ticker": "HMSP",
+    "year": 2010,
+    "amount_per_share": 540,
+    "type": "Final"
+  },
+  {
+    "ticker": "HMSP",
+    "year": 2011,
+    "amount_per_share": 660,
+    "type": "Final"
+  },
+  {
+    "ticker": "HMSP",
+    "year": 2012,
+    "amount_per_share": 975,
+    "type": "Final"
+  },
+  {
+    "ticker": "HMSP",
+    "year": 2013,
+    "amount_per_share": 1100,
+    "type": "Final"
+  },
+  {
+    "ticker": "HMSP",
+    "year": 2014,
+    "amount_per_share": 1100,
+    "type": "Final"
+  },
+  {
+    "ticker": "HMSP",
+    "year": 2015,
+    "amount_per_share": 50,
+    "type": "Final"
+  },
+  {
+    "ticker": "HMSP",
+    "year": 2016,
+    "amount_per_share": 55,
+    "type": "Final"
+  },
+  {
+    "ticker": "HMSP",
+    "year": 2017,
+    "amount_per_share": 58,
+    "type": "Final"
+  },
+  {
+    "ticker": "HMSP",
+    "year": 2018,
+    "amount_per_share": 60,
+    "type": "Final"
+  },
+  {
+    "ticker": "HMSP",
+    "year": 2019,
+    "amount_per_share": 50,
+    "type": "Final"
+  },
+  {
+    "ticker": "HMSP",
+    "year": 2020,
+    "amount_per_share": 34,
+    "type": "Final"
+  },
+  {
+    "ticker": "HMSP",
+    "year": 2021,
+    "amount_per_share": 21,
+    "type": "Final"
+  },
+  {
+    "ticker": "GGRM",
+    "year": 2006,
+    "amount_per_share": 275,
+    "type": "Final"
+  },
+  {
+    "ticker": "GGRM",
+    "year": 2007,
+    "amount_per_share": 300,
+    "type": "Final"
+  },
+  {
+    "ticker": "GGRM",
+    "year": 2008,
+    "amount_per_share": 350,
+    "type": "Final"
+  },
+  {
+    "ticker": "GGRM",
+    "year": 2009,
+    "amount_per_share": 400,
+    "type": "Final"
+  },
+  {
+    "ticker": "GGRM",
+    "year": 2010,
+    "amount_per_share": 650,
+    "type": "Final"
+  },
+  {
+    "ticker": "GGRM",
+    "year": 2011,
+    "amount_per_share": 880,
+    "type": "Final"
+  },
+  {
+    "ticker": "GGRM",
+    "year": 2012,
+    "amount_per_share": 800,
+    "type": "Final"
+  },
+  {
+    "ticker": "GGRM",
+    "year": 2013,
+    "amount_per_share": 800,
+    "type": "Final"
+  },
+  {
+    "ticker": "GGRM",
+    "year": 2014,
+    "amount_per_share": 800,
+    "type": "Final"
+  },
+  {
+    "ticker": "GGRM",
+    "year": 2015,
+    "amount_per_share": 800,
+    "type": "Final"
+  },
+  {
+    "ticker": "GGRM",
+    "year": 2016,
+    "amount_per_share": 1000,
+    "type": "Final"
+  },
+  {
+    "ticker": "GGRM",
+    "year": 2017,
+    "amount_per_share": 1300,
+    "type": "Final"
+  },
+  {
+    "ticker": "GGRM",
+    "year": 2018,
+    "amount_per_share": 1300,
+    "type": "Final"
+  },
+  {
+    "ticker": "GGRM",
+    "year": 2019,
+    "amount_per_share": 1300,
+    "type": "Final"
+  },
+  {
+    "ticker": "GGRM",
+    "year": 2020,
+    "amount_per_share": 500,
+    "type": "Final"
+  },
+  {
+    "ticker": "GGRM",
+    "year": 2021,
+    "amount_per_share": 400,
+    "type": "Final"
+  },
+  {
+    "ticker": "INDF",
+    "year": 2006,
+    "amount_per_share": 30,
+    "type": "Final"
+  },
+  {
+    "ticker": "INDF",
+    "year": 2007,
+    "amount_per_share": 47,
+    "type": "Final"
+  },
+  {
+    "ticker": "INDF",
+    "year": 2008,
+    "amount_per_share": 47,
+    "type": "Final"
+  },
+  {
+    "ticker": "INDF",
+    "year": 2009,
+    "amount_per_share": 50,
+    "type": "Final"
+  },
+  {
+    "ticker": "INDF",
+    "year": 2010,
+    "amount_per_share": 93,
+    "type": "Final"
+  },
+  {
+    "ticker": "INDF",
+    "year": 2011,
+    "amount_per_share": 115,
+    "type": "Final"
+  },
+  {
+    "ticker": "INDF",
+    "year": 2012,
+    "amount_per_share": 142,
+    "type": "Final"
+  },
+  {
+    "ticker": "INDF",
+    "year": 2013,
+    "amount_per_share": 142,
+    "type": "Final"
+  },
+  {
+    "ticker": "INDF",
+    "year": 2014,
+    "amount_per_share": 142,
+    "type": "Final"
+  },
+  {
+    "ticker": "INDF",
+    "year": 2015,
+    "amount_per_share": 168,
+    "type": "Final"
+  },
+  {
+    "ticker": "INDF",
+    "year": 2016,
+    "amount_per_share": 140,
+    "type": "Final"
+  },
+  {
+    "ticker": "INDF",
+    "year": 2017,
+    "amount_per_share": 168,
+    "type": "Final"
+  },
+  {
+    "ticker": "INDF",
+    "year": 2018,
+    "amount_per_share": 171,
+    "type": "Final"
+  },
+  {
+    "ticker": "INDF",
+    "year": 2019,
+    "amount_per_share": 171,
+    "type": "Final"
+  },
+  {
+    "ticker": "INDF",
+    "year": 2020,
+    "amount_per_share": 178,
+    "type": "Final"
+  },
+  {
+    "ticker": "INDF",
+    "year": 2021,
+    "amount_per_share": 178,
+    "type": "Final"
+  },
+  {
+    "ticker": "ICBP",
+    "year": 2010,
+    "amount_per_share": 43,
+    "type": "Final"
+  },
+  {
+    "ticker": "ICBP",
+    "year": 2011,
+    "amount_per_share": 69,
+    "type": "Final"
+  },
+  {
+    "ticker": "ICBP",
+    "year": 2012,
+    "amount_per_share": 89,
+    "type": "Final"
+  },
+  {
+    "ticker": "ICBP",
+    "year": 2013,
+    "amount_per_share": 111,
+    "type": "Final"
+  },
+  {
+    "ticker": "ICBP",
+    "year": 2014,
+    "amount_per_share": 117,
+    "type": "Final"
+  },
+  {
+    "ticker": "ICBP",
+    "year": 2015,
+    "amount_per_share": 134,
+    "type": "Final"
+  },
+  {
+    "ticker": "ICBP",
+    "year": 2016,
+    "amount_per_share": 101,
+    "type": "Final"
+  },
+  {
+    "ticker": "ICBP",
+    "year": 2017,
+    "amount_per_share": 119,
+    "type": "Final"
+  },
+  {
+    "ticker": "ICBP",
+    "year": 2018,
+    "amount_per_share": 137,
+    "type": "Final"
+  },
+  {
+    "ticker": "ICBP",
+    "year": 2019,
+    "amount_per_share": 170,
+    "type": "Final"
+  },
+  {
+    "ticker": "ICBP",
+    "year": 2020,
+    "amount_per_share": 166,
+    "type": "Final"
+  },
+  {
+    "ticker": "ICBP",
+    "year": 2021,
+    "amount_per_share": 109,
+    "type": "Final"
+  },
+  {
+    "ticker": "KLBF",
+    "year": 2006,
+    "amount_per_share": 10,
+    "type": "Final"
+  },
+  {
+    "ticker": "KLBF",
+    "year": 2007,
+    "amount_per_share": 10,
+    "type": "Final"
+  },
+  {
+    "ticker": "KLBF",
+    "year": 2008,
+    "amount_per_share": 12,
+    "type": "Final"
+  },
+  {
+    "ticker": "KLBF",
+    "year": 2009,
+    "amount_per_share": 12,
+    "type": "Final"
+  },
+  {
+    "ticker": "KLBF",
+    "year": 2010,
+    "amount_per_share": 17,
+    "type": "Final"
+  },
+  {
+    "ticker": "KLBF",
+    "year": 2011,
+    "amount_per_share": 19,
+    "type": "Final"
+  },
+  {
+    "ticker": "KLBF",
+    "year": 2012,
+    "amount_per_share": 19,
+    "type": "Final"
+  },
+  {
+    "ticker": "KLBF",
+    "year": 2013,
+    "amount_per_share": 19,
+    "type": "Final"
+  },
+  {
+    "ticker": "KLBF",
+    "year": 2014,
+    "amount_per_share": 19,
+    "type": "Final"
+  },
+  {
+    "ticker": "KLBF",
+    "year": 2015,
+    "amount_per_share": 19,
+    "type": "Final"
+  },
+  {
+    "ticker": "KLBF",
+    "year": 2016,
+    "amount_per_share": 22,
+    "type": "Final"
+  },
+  {
+    "ticker": "KLBF",
+    "year": 2017,
+    "amount_per_share": 25,
+    "type": "Final"
+  },
+  {
+    "ticker": "KLBF",
+    "year": 2018,
+    "amount_per_share": 26,
+    "type": "Final"
+  },
+  {
+    "ticker": "KLBF",
+    "year": 2019,
+    "amount_per_share": 26,
+    "type": "Final"
+  },
+  {
+    "ticker": "KLBF",
+    "year": 2020,
+    "amount_per_share": 26,
+    "type": "Final"
+  },
+  {
+    "ticker": "KLBF",
+    "year": 2021,
+    "amount_per_share": 20,
+    "type": "Final"
+  },
+  {
+    "ticker": "SMGR",
+    "year": 2006,
+    "amount_per_share": 145,
+    "type": "Final"
+  },
+  {
+    "ticker": "SMGR",
+    "year": 2007,
+    "amount_per_share": 185,
+    "type": "Final"
+  },
+  {
+    "ticker": "SMGR",
+    "year": 2008,
+    "amount_per_share": 215,
+    "type": "Final"
+  },
+  {
+    "ticker": "SMGR",
+    "year": 2009,
+    "amount_per_share": 250,
+    "type": "Final"
+  },
+  {
+    "ticker": "SMGR",
+    "year": 2010,
+    "amount_per_share": 310,
+    "type": "Final"
+  },
+  {
+    "ticker": "SMGR",
+    "year": 2011,
+    "amount_per_share": 330,
+    "type": "Final"
+  },
+  {
+    "ticker": "SMGR",
+    "year": 2012,
+    "amount_per_share": 368,
+    "type": "Final"
+  },
+  {
+    "ticker": "SMGR",
+    "year": 2013,
+    "amount_per_share": 407,
+    "type": "Final"
+  },
+  {
+    "ticker": "SMGR",
+    "year": 2014,
+    "amount_per_share": 375,
+    "type": "Final"
+  },
+  {
+    "ticker": "SMGR",
+    "year": 2015,
+    "amount_per_share": 308,
+    "type": "Final"
+  },
+  {
+    "ticker": "SMGR",
+    "year": 2016,
+    "amount_per_share": 136,
+    "type": "Final"
+  },
+  {
+    "ticker": "SMGR",
+    "year": 2017,
+    "amount_per_share": 68,
+    "type": "Final"
+  },
+  {
+    "ticker": "SMGR",
+    "year": 2018,
+    "amount_per_share": 41,
+    "type": "Final"
+  },
+  {
+    "ticker": "SMGR",
+    "year": 2019,
+    "amount_per_share": 40,
+    "type": "Final"
+  },
+  {
+    "ticker": "SMGR",
+    "year": 2020,
+    "amount_per_share": 40,
+    "type": "Final"
+  },
+  {
+    "ticker": "SMGR",
+    "year": 2021,
+    "amount_per_share": 40,
+    "type": "Final"
+  },
+  {
+    "ticker": "UNTR",
+    "year": 2006,
+    "amount_per_share": 120,
+    "type": "Final"
+  },
+  {
+    "ticker": "UNTR",
+    "year": 2007,
+    "amount_per_share": 175,
+    "type": "Final"
+  },
+  {
+    "ticker": "UNTR",
+    "year": 2008,
+    "amount_per_share": 350,
+    "type": "Final"
+  },
+  {
+    "ticker": "UNTR",
+    "year": 2009,
+    "amount_per_share": 320,
+    "type": "Final"
+  },
+  {
+    "ticker": "UNTR",
+    "year": 2010,
+    "amount_per_share": 487,
+    "type": "Final"
+  },
+  {
+    "ticker": "UNTR",
+    "year": 2011,
+    "amount_per_share": 550,
+    "type": "Final"
+  },
+  {
+    "ticker": "UNTR",
+    "year": 2012,
+    "amount_per_share": 540,
+    "type": "Final"
+  },
+  {
+    "ticker": "UNTR",
+    "year": 2013,
+    "amount_per_share": 610,
+    "type": "Final"
+  },
+  {
+    "ticker": "UNTR",
+    "year": 2014,
+    "amount_per_share": 535,
+    "type": "Final"
+  },
+  {
+    "ticker": "UNTR",
+    "year": 2015,
+    "amount_per_share": 300,
+    "type": "Final"
+  },
+  {
+    "ticker": "UNTR",
+    "year": 2016,
+    "amount_per_share": 284,
+    "type": "Final"
+  },
+  {
+    "ticker": "UNTR",
+    "year": 2017,
+    "amount_per_share": 530,
+    "type": "Final"
+  },
+  {
+    "ticker": "UNTR",
+    "year": 2018,
+    "amount_per_share": 725,
+    "type": "Final"
+  },
+  {
+    "ticker": "UNTR",
+    "year": 2019,
+    "amount_per_share": 550,
+    "type": "Final"
+  },
+  {
+    "ticker": "UNTR",
+    "year": 2020,
+    "amount_per_share": 380,
+    "type": "Final"
+  },
+  {
+    "ticker": "UNTR",
+    "year": 2021,
+    "amount_per_share": 450,
+    "type": "Final"
+  },
+  {
+    "ticker": "PGAS",
+    "year": 2006,
+    "amount_per_share": 60,
+    "type": "Final"
+  },
+  {
+    "ticker": "PGAS",
+    "year": 2007,
+    "amount_per_share": 73,
+    "type": "Final"
+  },
+  {
+    "ticker": "PGAS",
+    "year": 2008,
+    "amount_per_share": 76,
+    "type": "Final"
+  },
+  {
+    "ticker": "PGAS",
+    "year": 2009,
+    "amount_per_share": 47,
+    "type": "Final"
+  },
+  {
+    "ticker": "PGAS",
+    "year": 2010,
+    "amount_per_share": 62,
+    "type": "Final"
+  },
+  {
+    "ticker": "PGAS",
+    "year": 2011,
+    "amount_per_share": 83,
+    "type": "Final"
+  },
+  {
+    "ticker": "PGAS",
+    "year": 2012,
+    "amount_per_share": 103,
+    "type": "Final"
+  },
+  {
+    "ticker": "PGAS",
+    "year": 2013,
+    "amount_per_share": 114,
+    "type": "Final"
+  },
+  {
+    "ticker": "PGAS",
+    "year": 2014,
+    "amount_per_share": 108,
+    "type": "Final"
+  },
+  {
+    "ticker": "PGAS",
+    "year": 2015,
+    "amount_per_share": 47,
+    "type": "Final"
+  },
+  {
+    "ticker": "PGAS",
+    "year": 2016,
+    "amount_per_share": 36,
+    "type": "Final"
+  },
+  {
+    "ticker": "PGAS",
+    "year": 2017,
+    "amount_per_share": 24,
+    "type": "Final"
+  },
+  {
+    "ticker": "PGAS",
+    "year": 2018,
+    "amount_per_share": 35,
+    "type": "Final"
+  },
+  {
+    "ticker": "PGAS",
+    "year": 2019,
+    "amount_per_share": 18,
+    "type": "Final"
+  },
+  {
+    "ticker": "PGAS",
+    "year": 2020,
+    "amount_per_share": 9,
+    "type": "Final"
+  },
+  {
+    "ticker": "PGAS",
+    "year": 2021,
+    "amount_per_share": 15,
+    "type": "Final"
+  },
+  {
+    "ticker": "INTP",
+    "year": 2006,
+    "amount_per_share": 135,
+    "type": "Final"
+  },
+  {
+    "ticker": "INTP",
+    "year": 2007,
+    "amount_per_share": 180,
+    "type": "Final"
+  },
+  {
+    "ticker": "INTP",
+    "year": 2008,
+    "amount_per_share": 225,
+    "type": "Final"
+  },
+  {
+    "ticker": "INTP",
+    "year": 2009,
+    "amount_per_share": 360,
+    "type": "Final"
+  },
+  {
+    "ticker": "INTP",
+    "year": 2010,
+    "amount_per_share": 420,
+    "type": "Final"
+  },
+  {
+    "ticker": "INTP",
+    "year": 2011,
+    "amount_per_share": 450,
+    "type": "Final"
+  },
+  {
+    "ticker": "INTP",
+    "year": 2012,
+    "amount_per_share": 450,
+    "type": "Final"
+  },
+  {
+    "ticker": "INTP",
+    "year": 2013,
+    "amount_per_share": 450,
+    "type": "Final"
+  },
+  {
+    "ticker": "INTP",
+    "year": 2014,
+    "amount_per_share": 900,
+    "type": "Final"
+  },
+  {
+    "ticker": "INTP",
+    "year": 2015,
+    "amount_per_share": 550,
+    "type": "Final"
+  },
+  {
+    "ticker": "INTP",
+    "year": 2016,
+    "amount_per_share": 415,
+    "type": "Final"
+  },
+  {
+    "ticker": "INTP",
+    "year": 2017,
+    "amount_per_share": 350,
+    "type": "Final"
+  },
+  {
+    "ticker": "INTP",
+    "year": 2018,
+    "amount_per_share": 350,
+    "type": "Final"
+  },
+  {
+    "ticker": "INTP",
+    "year": 2019,
+    "amount_per_share": 250,
+    "type": "Final"
+  },
+  {
+    "ticker": "INTP",
+    "year": 2020,
+    "amount_per_share": 150,
+    "type": "Final"
+  },
+  {
+    "ticker": "INTP",
+    "year": 2021,
+    "amount_per_share": 150,
+    "type": "Final"
+  },
+  {
+    "ticker": "PTBA",
+    "year": 2006,
+    "amount_per_share": 85,
+    "type": "Final"
+  },
+  {
+    "ticker": "PTBA",
+    "year": 2007,
+    "amount_per_share": 120,
+    "type": "Final"
+  },
+  {
+    "ticker": "PTBA",
+    "year": 2008,
+    "amount_per_share": 210,
+    "type": "Final"
+  },
+  {
+    "ticker": "PTBA",
+    "year": 2009,
+    "amount_per_share": 135,
+    "type": "Final"
+  },
+  {
+    "ticker": "PTBA",
+    "year": 2010,
+    "amount_per_share": 350,
+    "type": "Final"
+  },
+  {
+    "ticker": "PTBA",
+    "year": 2011,
+    "amount_per_share": 400,
+    "type": "Final"
+  },
+  {
+    "ticker": "PTBA",
+    "year": 2012,
+    "amount_per_share": 370,
+    "type": "Final"
+  },
+  {
+    "ticker": "PTBA",
+    "year": 2013,
+    "amount_per_share": 302,
+    "type": "Final"
+  },
+  {
+    "ticker": "PTBA",
+    "year": 2014,
+    "amount_per_share": 258,
+    "type": "Final"
+  },
+  {
+    "ticker": "PTBA",
+    "year": 2015,
+    "amount_per_share": 176,
+    "type": "Final"
+  },
+  {
+    "ticker": "PTBA",
+    "year": 2016,
+    "amount_per_share": 70,
+    "type": "Final"
+  },
+  {
+    "ticker": "PTBA",
+    "year": 2017,
+    "amount_per_share": 207,
+    "type": "Final"
+  },
+  {
+    "ticker": "PTBA",
+    "year": 2018,
+    "amount_per_share": 301,
+    "type": "Final"
+  },
+  {
+    "ticker": "PTBA",
+    "year": 2019,
+    "amount_per_share": 188,
+    "type": "Final"
+  },
+  {
+    "ticker": "PTBA",
+    "year": 2020,
+    "amount_per_share": 96,
+    "type": "Final"
+  },
+  {
+    "ticker": "PTBA",
+    "year": 2021,
+    "amount_per_share": 61,
+    "type": "Final"
+  },
+  {
+    "ticker": "ADRO",
+    "year": 2008,
+    "amount_per_share": 0,
+    "type": "Final"
+  },
+  {
+    "ticker": "ADRO",
+    "year": 2009,
+    "amount_per_share": 13,
+    "type": "Final"
+  },
+  {
+    "ticker": "ADRO",
+    "year": 2010,
+    "amount_per_share": 19,
+    "type": "Final"
+  },
+  {
+    "ticker": "ADRO",
+    "year": 2011,
+    "amount_per_share": 29,
+    "type": "Final"
+  },
+  {
+    "ticker": "ADRO",
+    "year": 2012,
+    "amount_per_share": 28,
+    "type": "Final"
+  },
+  {
+    "ticker": "ADRO",
+    "year": 2013,
+    "amount_per_share": 19,
+    "type": "Final"
+  },
+  {
+    "ticker": "ADRO",
+    "year": 2014,
+    "amount_per_share": 15,
+    "type": "Final"
+  },
+  {
+    "ticker": "ADRO",
+    "year": 2015,
+    "amount_per_share": 9,
+    "type": "Final"
+  },
+  {
+    "ticker": "ADRO",
+    "year": 2016,
+    "amount_per_share": 18,
+    "type": "Final"
+  },
+  {
+    "ticker": "ADRO",
+    "year": 2017,
+    "amount_per_share": 34,
+    "type": "Final"
+  },
+  {
+    "ticker": "ADRO",
+    "year": 2018,
+    "amount_per_share": 42,
+    "type": "Final"
+  },
+  {
+    "ticker": "ADRO",
+    "year": 2019,
+    "amount_per_share": 25,
+    "type": "Final"
+  },
+  {
+    "ticker": "ADRO",
+    "year": 2020,
+    "amount_per_share": 18,
+    "type": "Final"
+  },
+  {
+    "ticker": "ADRO",
+    "year": 2021,
+    "amount_per_share": 18,
+    "type": "Final"
+  },
+  {
+    "ticker": "JSMR",
+    "year": 2007,
+    "amount_per_share": 30,
+    "type": "Final"
+  },
+  {
+    "ticker": "JSMR",
+    "year": 2008,
+    "amount_per_share": 30,
+    "type": "Final"
+  },
+  {
+    "ticker": "JSMR",
+    "year": 2009,
+    "amount_per_share": 36,
+    "type": "Final"
+  },
+  {
+    "ticker": "JSMR",
+    "year": 2010,
+    "amount_per_share": 50,
+    "type": "Final"
+  },
+  {
+    "ticker": "JSMR",
+    "year": 2011,
+    "amount_per_share": 60,
+    "type": "Final"
+  },
+  {
+    "ticker": "JSMR",
+    "year": 2012,
+    "amount_per_share": 68,
+    "type": "Final"
+  },
+  {
+    "ticker": "JSMR",
+    "year": 2013,
+    "amount_per_share": 73,
+    "type": "Final"
+  },
+  {
+    "ticker": "JSMR",
+    "year": 2014,
+    "amount_per_share": 72,
+    "type": "Final"
+  },
+  {
+    "ticker": "JSMR",
+    "year": 2015,
+    "amount_per_share": 60,
+    "type": "Final"
+  },
+  {
+    "ticker": "JSMR",
+    "year": 2016,
+    "amount_per_share": 62,
+    "type": "Final"
+  },
+  {
+    "ticker": "JSMR",
+    "year": 2017,
+    "amount_per_share": 62,
+    "type": "Final"
+  },
+  {
+    "ticker": "JSMR",
+    "year": 2018,
+    "amount_per_share": 60,
+    "type": "Final"
+  },
+  {
+    "ticker": "JSMR",
+    "year": 2019,
+    "amount_per_share": 55,
+    "type": "Final"
+  },
+  {
+    "ticker": "JSMR",
+    "year": 2020,
+    "amount_per_share": 25,
+    "type": "Final"
+  },
+  {
+    "ticker": "JSMR",
+    "year": 2021,
+    "amount_per_share": 10,
+    "type": "Final"
+  },
+  {
+    "ticker": "ANTM",
+    "year": 2006,
+    "amount_per_share": 100,
+    "type": "Final"
+  },
+  {
+    "ticker": "ANTM",
+    "year": 2007,
+    "amount_per_share": 150,
+    "type": "Final"
+  },
+  {
+    "ticker": "ANTM",
+    "year": 2008,
+    "amount_per_share": 75,
+    "type": "Final"
+  },
+  {
+    "ticker": "ANTM",
+    "year": 2009,
+    "amount_per_share": 15,
+    "type": "Final"
+  },
+  {
+    "ticker": "ANTM",
+    "year": 2010,
+    "amount_per_share": 22,
+    "type": "Final"
+  },
+  {
+    "ticker": "ANTM",
+    "year": 2011,
+    "amount_per_share": 30,
+    "type": "Final"
+  },
+  {
+    "ticker": "ANTM",
+    "year": 2012,
+    "amount_per_share": 28,
+    "type": "Final"
+  },
+  {
+    "ticker": "ANTM",
+    "year": 2013,
+    "amount_per_share": 10,
+    "type": "Final"
+  },
+  {
+    "ticker": "ANTM",
+    "year": 2014,
+    "amount_per_share": 6,
+    "type": "Final"
+  },
+  {
+    "ticker": "ANTM",
+    "year": 2015,
+    "amount_per_share": 4,
+    "type": "Final"
+  },
+  {
+    "ticker": "ANTM",
+    "year": 2016,
+    "amount_per_share": 3,
+    "type": "Final"
+  },
+  {
+    "ticker": "ANTM",
+    "year": 2017,
+    "amount_per_share": 6,
+    "type": "Final"
+  },
+  {
+    "ticker": "ANTM",
+    "year": 2018,
+    "amount_per_share": 12,
+    "type": "Final"
+  },
+  {
+    "ticker": "ANTM",
+    "year": 2019,
+    "amount_per_share": 11,
+    "type": "Final"
+  },
+  {
+    "ticker": "ANTM",
+    "year": 2020,
+    "amount_per_share": 6,
+    "type": "Final"
+  },
+  {
+    "ticker": "ANTM",
+    "year": 2021,
+    "amount_per_share": 20,
+    "type": "Final"
+  }
+]

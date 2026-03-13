@@ -1185,15 +1185,14 @@
                         <h3>@Lang.T("LOG_TITLE")</h3>
                         <span class="log-toggle @(_logExpanded ? "expanded" : "")">&#9660;</span>
                     </div>
-                    @if (_logExpanded)
-                    {
+                    <div class="log-list-wrapper @(_logExpanded ? "expanded" : "")">
                         <div class="log-list">
                             @foreach (var log in _gameState.GameLog.AsEnumerable().Reverse())
                             {
                                 <div class="log-item @GetLogClass(log)">@log</div>
                             }
                         </div>
-                    }
+                    </div>
                 </section>
             </main>
 
@@ -1775,6 +1774,7 @@
     private decimal _savingsAmount = 1_000_000;
     private string _savingsAmountDisplay = "1.000.000";
     private bool _isLightMode = false;
+    private bool _logExpanded = true;
     private AgeMode _selectedAgeMode => _isLightMode ? AgeMode.Kids : AgeMode.Adult;
     private Language _selectedLanguage = Language.Indonesian;
     private bool _showLangDropdown = false;

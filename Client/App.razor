@@ -1,11 +1,13 @@
+@inject InvestmentGame.Client.Services.LanguageFactory Lang
+
 <Router AppAssembly="@typeof(App).Assembly">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
     </Found>
     <NotFound>
-        <PageTitle>Tidak Ditemukan</PageTitle>
+        <PageTitle>@Lang.T("PAGE_NOT_FOUND_TITLE")</PageTitle>
         <LayoutView Layout="@typeof(MainLayout)">
-            <p role="alert">Halaman tidak ditemukan.</p>
+            <p role="alert">@Lang.T("PAGE_NOT_FOUND_MSG")</p>
         </LayoutView>
     </NotFound>
 </Router>

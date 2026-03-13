@@ -2482,6 +2482,34 @@ html, body {
     content: '📜';
 }
 
+.log-header {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    user-select: none;
+}
+
+.log-toggle {
+    transition: transform 0.3s ease;
+    display: inline-block;
+}
+
+.log-toggle.expanded {
+    transform: rotate(180deg);
+}
+
+.log-list-wrapper {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+}
+
+.log-list-wrapper.expanded {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
 .log-list {
     display: flex;
     flex-direction: column;

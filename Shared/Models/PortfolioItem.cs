@@ -236,6 +236,7 @@ public class RoomInfo
     public string HostPlayerName { get; set; } = string.Empty;
     public AgeMode AgeMode { get; set; } = AgeMode.Adult;
     public Language Language { get; set; } = Language.Indonesian;
+    public int MaxPlayers { get; set; } = 100;
     public List<RoomPlayer> Players { get; set; } = new();  // excludes host
     public RoomStatus Status { get; set; } = RoomStatus.Waiting;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

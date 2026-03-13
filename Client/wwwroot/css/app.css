@@ -4098,6 +4098,74 @@ html, body {
     border-bottom: 2px solid var(--stroke-color);
 }
 
+/* ===== NUMERIC SPIN BUTTONS ===== */
+.numeric-spin-group {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+}
+
+.numeric-spin-group input {
+    flex: 1;
+    min-width: 0;
+    border-radius: 0 !important;
+    border-left: none !important;
+    border-right: none !important;
+    text-align: center;
+}
+
+.spin-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    min-height: 40px;
+    padding: 0.4rem 0.7rem;
+    font-size: 1.3rem;
+    font-weight: 700;
+    border: 2px solid var(--stroke-color);
+    background: var(--cream-bg, #FFF8F0);
+    color: var(--text-dark, #2D3436);
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.spin-btn:active:not(:disabled) {
+    transform: scale(0.92);
+}
+
+.spin-btn:hover:not(:disabled) {
+    background: var(--money-green, #7A9368);
+    color: white;
+}
+
+.spin-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.spin-down {
+    border-radius: 8px 0 0 8px;
+}
+
+.spin-up {
+    border-radius: 0 8px 8px 0;
+}
+
+/* Crypto variant - dark theme */
+.spin-btn.crypto-spin {
+    border-color: rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.1);
+    color: white;
+}
+
+.spin-btn.crypto-spin:hover:not(:disabled) {
+    background: rgba(255,255,255,0.25);
+    color: white;
+}
+
 .savings-controls {
     display: flex;
     flex-wrap: wrap;
@@ -6375,6 +6443,13 @@ html, body {
         padding: 0.2rem 0.3rem;
         font-size: 0.5rem;
     }
+
+    .spin-btn {
+        min-width: 32px;
+        min-height: 32px;
+        padding: 0.2rem 0.4rem;
+        font-size: 1rem;
+    }
 }
 
 /* Touch-friendly buttons for mobile */
@@ -6391,6 +6466,11 @@ html, body {
     .crypto-coin-card .crypto-input,
     .cf-input {
         min-height: 32px;
+    }
+
+    .spin-btn {
+        min-width: 44px;
+        min-height: 44px;
     }
 }
 

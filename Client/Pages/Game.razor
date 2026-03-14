@@ -982,43 +982,49 @@
                                 var shariahBonds = _gameState.AvailableBondRates.Where(r => r.IsShariah).ToList();
                             }
 
-                            @if (convBonds.Any())
-                            {
-                                <div class="bond-group-header">🏦 @GetText("Konvensional", "Konvensional", "Conventional", "Conventional")</div>
-                                <div class="bond-rates">
-                                    @foreach (var rate in convBonds)
-                                    {
-                                        <div class="bond-rate-card @(_selectedBondType == rate.BondType ? "selected" : "")"
-                                             @onclick="() => _selectedBondType = rate.BondType">
-                                            <span class="bond-type">@rate.BondType @(!string.IsNullOrEmpty(rate.SeriesName) ? $"({rate.SeriesName})" : "")</span>
-                                            <span class="bond-period">@rate.PeriodName</span>
-                                            <span class="bond-coupon">@((rate.CouponRate * 100).ToString("F2"))% @GetText("kupon", "kupon", "coupon", "coupon")</span>
-                                            <span class="min-invest">Min: Rp @rate.MinimumInvestment.ToString("N0")</span>
-                                        </div>
-                                    }
-                                </div>
-                            }
-
-                            @if (shariahBonds.Any())
-                            {
-                                <div class="bond-group-header">☪️ @GetText("Syariah (Sukuk)", "Syariah (Sukuk)", "Shariah (Sukuk)", "Shariah (Sukuk)")</div>
-                                <div class="bond-rates">
-                                    @foreach (var rate in shariahBonds)
-                                    {
-                                        <div class="bond-rate-card shariah @(_selectedBondType == rate.BondType ? "selected" : "")"
-                                             @onclick="() => _selectedBondType = rate.BondType">
-                                            <span class="bond-type">@rate.BondType @(!string.IsNullOrEmpty(rate.SeriesName) ? $"({rate.SeriesName})" : "")</span>
-                                            <span class="bond-period">@rate.PeriodName</span>
-                                            <span class="bond-coupon">@((rate.CouponRate * 100).ToString("F2"))% @GetText("kupon", "kupon", "coupon", "coupon")</span>
-                                            @if (!string.IsNullOrEmpty(rate.AkadType))
+                            <div class="bond-groups-row">
+                                @if (convBonds.Any())
+                                {
+                                    <div class="bond-group">
+                                        <div class="bond-group-header">🏦 @GetText("Konvensional", "Konvensional", "Conventional", "Conventional")</div>
+                                        <div class="bond-rates">
+                                            @foreach (var rate in convBonds)
                                             {
-                                                <span class="akad-info">@rate.AkadType</span>
+                                                <div class="bond-rate-card @(_selectedBondType == rate.BondType ? "selected" : "")"
+                                                     @onclick="() => _selectedBondType = rate.BondType">
+                                                    <span class="bond-type">@rate.BondType @(!string.IsNullOrEmpty(rate.SeriesName) ? $"({rate.SeriesName})" : "")</span>
+                                                    <span class="bond-period">@rate.PeriodName</span>
+                                                    <span class="bond-coupon">@((rate.CouponRate * 100).ToString("F2"))% @GetText("kupon", "kupon", "coupon", "coupon")</span>
+                                                    <span class="min-invest">Min: Rp @rate.MinimumInvestment.ToString("N0")</span>
+                                                </div>
                                             }
-                                            <span class="min-invest">Min: Rp @rate.MinimumInvestment.ToString("N0")</span>
                                         </div>
-                                    }
-                                </div>
-                            }
+                                    </div>
+                                }
+
+                                @if (shariahBonds.Any())
+                                {
+                                    <div class="bond-group">
+                                        <div class="bond-group-header">☪️ @GetText("Syariah (Sukuk)", "Syariah (Sukuk)", "Shariah (Sukuk)", "Shariah (Sukuk)")</div>
+                                        <div class="bond-rates">
+                                            @foreach (var rate in shariahBonds)
+                                            {
+                                                <div class="bond-rate-card shariah @(_selectedBondType == rate.BondType ? "selected" : "")"
+                                                     @onclick="() => _selectedBondType = rate.BondType">
+                                                    <span class="bond-type">@rate.BondType @(!string.IsNullOrEmpty(rate.SeriesName) ? $"({rate.SeriesName})" : "")</span>
+                                                    <span class="bond-period">@rate.PeriodName</span>
+                                                    <span class="bond-coupon">@((rate.CouponRate * 100).ToString("F2"))% @GetText("kupon", "kupon", "coupon", "coupon")</span>
+                                                    @if (!string.IsNullOrEmpty(rate.AkadType))
+                                                    {
+                                                        <span class="akad-info">@rate.AkadType</span>
+                                                    }
+                                                    <span class="min-invest">Min: Rp @rate.MinimumInvestment.ToString("N0")</span>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            </div>
 
                             <div class="bond-amount-input">
                                 <div class="numeric-spin-group">

@@ -130,7 +130,7 @@
         <div class="landing-page">
             <!-- Hero background -->
             <div class="hero-bg">
-                <img src="images/hero-landing.jpg" alt="The Wise Guardian" loading="eager" />
+                <img src="images/hero-landing.jpg" alt="The Giant Coin" loading="eager" />
                 <div class="overlay-gradient"></div>
                 <div class="overlay-vignette"></div>
                 <div class="noise-texture"></div>
@@ -154,8 +154,17 @@
 
             <!-- Hero content -->
             <div class="hero-content">
-                <span class="hero-tag">GAME EDUKASI INVESTASI</span>
-                <h1 class="hero-headline">Mulai dari <span class="accent">Ketjil.</span></h1>
+                <span class="hero-tag">@(_selectedLanguage == Language.English ? "INVESTMENT SIMULATION GAME" : "GAME SIMULASI INVESTASI")</span>
+                <h1 class="hero-headline">
+                    @if (_selectedLanguage == Language.English)
+                    {
+                        <span>Start your investment </span><span class="accent">journey today.</span>
+                    }
+                    else
+                    {
+                        <span>Mulai perjalanan </span><span class="accent">investasimu hari ini.</span>
+                    }
+                </h1>
                 <p class="hero-subtitle">@Lang.T("START_SUBTITLE")</p>
 
                 <!-- Form -->
@@ -245,7 +254,7 @@
             <!-- Footer -->
             <div class="landing-footer">
                 <span>Tjoean 2025</span>
-                <span class="landing-footer-tagline">Mulai dari yang kecil, raih yang besar.</span>
+                <span class="landing-footer-tagline">mulai dari kecil.</span>
             </div>
         </div>
     }

@@ -610,7 +610,7 @@
             <!-- Main Content -->
             <main class="game-main">
                 <!-- Left Panel: Balance & Portfolio -->
-                <section class="panel panel-left">
+                <section class="panel panel-left @(_mobileActiveTab == "portfolio" ? "mobile-active" : "")">
                     <div class="balance-networth-compact">
                         <div class="balance-row">
                             <span class="label">@UIIcon("cash") @Lang.T("LABEL_CASH")</span>
@@ -652,7 +652,11 @@
                                 Rp @FormatCurrency(_gameState.SavingsAccount?.Balance ?? 0)
                             </div>
                             <div class="savings-controls">
-                                <input type="text" inputmode="numeric" value="@_savingsAmountDisplay" @oninput="OnSavingsInput" placeholder="Rp 1.000.000" class="savings-input-compact" />
+                                <div class="numeric-spin-group">
+                                    <button class="spin-btn spin-down" @onclick="() => SpinSavings(-1_000_000)" disabled="@(_savingsAmount <= 0)">−</button>
+                                    <input type="text" inputmode="numeric" value="@_savingsAmountDisplay" @oninput="OnSavingsInput" placeholder="Rp 1.000.000" class="savings-input-compact" />
+                                    <button class="spin-btn spin-up" @onclick="() => SpinSavings(1_000_000)">+</button>
+                                </div>
                                 <button class="btn-action-compact deposit" @onclick="DepositToSavings"
                                         disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || _savingsAmount <= 0 || _savingsAmount > _gameState.CashBalance)">
                                     @Lang.T("BTN_DEPOSIT")
@@ -878,7 +882,7 @@
                 </section>
 
                 <!-- Center Panel: Market -->
-                <section class="panel panel-center">
+                <section class="panel panel-center @(_mobileActiveTab == "market" ? "mobile-active" : "")">
                     <h2>@Lang.T("MARKET_TITLE")</h2>
 
                     <!-- Deposito Purchase Section -->
@@ -946,7 +950,11 @@
                                 </label>
                             </div>
                             <div class="deposito-amount-input">
-                                <input type="text" inputmode="numeric" value="@_depositoAmountDisplay" @oninput="OnDepositoInput" placeholder="Min Rp 1.000.000" />
+                                <div class="numeric-spin-group">
+                                    <button class="spin-btn spin-down" @onclick="() => SpinDeposito(-1_000_000)" disabled="@(_depositoAmount <= 0)">−</button>
+                                    <input type="text" inputmode="numeric" value="@_depositoAmountDisplay" @oninput="OnDepositoInput" placeholder="Min Rp 1.000.000" />
+                                    <button class="spin-btn spin-up" @onclick="() => SpinDeposito(1_000_000)">+</button>
+                                </div>
                                 <button class="btn-buy" @onclick="BuyDeposito"
                                         disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || _selectedDepositoPeriod == 0 || _depositoAmount < 1000000 || _depositoAmount > _gameState.CashBalance)">
                                     @UIIcon("lock") @Lang.T("BTN_LOCK_FUNDS")
@@ -974,46 +982,56 @@
                                 var shariahBonds = _gameState.AvailableBondRates.Where(r => r.IsShariah).ToList();
                             }
 
-                            @if (convBonds.Any())
-                            {
-                                <div class="bond-group-header">🏦 @GetText("Konvensional", "Konvensional", "Conventional", "Conventional")</div>
-                                <div class="bond-rates">
-                                    @foreach (var rate in convBonds)
-                                    {
-                                        <div class="bond-rate-card @(_selectedBondType == rate.BondType ? "selected" : "")"
-                                             @onclick="() => _selectedBondType = rate.BondType">
-                                            <span class="bond-type">@rate.BondType @(!string.IsNullOrEmpty(rate.SeriesName) ? $"({rate.SeriesName})" : "")</span>
-                                            <span class="bond-period">@rate.PeriodName</span>
-                                            <span class="bond-coupon">@((rate.CouponRate * 100).ToString("F2"))% @GetText("kupon", "kupon", "coupon", "coupon")</span>
-                                            <span class="min-invest">Min: Rp @rate.MinimumInvestment.ToString("N0")</span>
-                                        </div>
-                                    }
-                                </div>
-                            }
-
-                            @if (shariahBonds.Any())
-                            {
-                                <div class="bond-group-header">☪️ @GetText("Syariah (Sukuk)", "Syariah (Sukuk)", "Shariah (Sukuk)", "Shariah (Sukuk)")</div>
-                                <div class="bond-rates">
-                                    @foreach (var rate in shariahBonds)
-                                    {
-                                        <div class="bond-rate-card shariah @(_selectedBondType == rate.BondType ? "selected" : "")"
-                                             @onclick="() => _selectedBondType = rate.BondType">
-                                            <span class="bond-type">@rate.BondType @(!string.IsNullOrEmpty(rate.SeriesName) ? $"({rate.SeriesName})" : "")</span>
-                                            <span class="bond-period">@rate.PeriodName</span>
-                                            <span class="bond-coupon">@((rate.CouponRate * 100).ToString("F2"))% @GetText("kupon", "kupon", "coupon", "coupon")</span>
-                                            @if (!string.IsNullOrEmpty(rate.AkadType))
+                            <div class="bond-groups-row">
+                                @if (convBonds.Any())
+                                {
+                                    <div class="bond-group">
+                                        <div class="bond-group-header">🏦 @GetText("Konvensional", "Konvensional", "Conventional", "Conventional")</div>
+                                        <div class="bond-rates">
+                                            @foreach (var rate in convBonds)
                                             {
-                                                <span class="akad-info">@rate.AkadType</span>
+                                                <div class="bond-rate-card @(_selectedBondType == rate.BondType ? "selected" : "")"
+                                                     @onclick="() => _selectedBondType = rate.BondType">
+                                                    <span class="bond-type">@rate.BondType @(!string.IsNullOrEmpty(rate.SeriesName) ? $"({rate.SeriesName})" : "")</span>
+                                                    <span class="bond-period">@rate.PeriodName</span>
+                                                    <span class="bond-coupon">@((rate.CouponRate * 100).ToString("F2"))% @GetText("kupon", "kupon", "coupon", "coupon")</span>
+                                                    <span class="min-invest">Min: Rp @rate.MinimumInvestment.ToString("N0")</span>
+                                                </div>
                                             }
-                                            <span class="min-invest">Min: Rp @rate.MinimumInvestment.ToString("N0")</span>
                                         </div>
-                                    }
-                                </div>
-                            }
+                                    </div>
+                                }
+
+                                @if (shariahBonds.Any())
+                                {
+                                    <div class="bond-group">
+                                        <div class="bond-group-header">☪️ @GetText("Syariah (Sukuk)", "Syariah (Sukuk)", "Shariah (Sukuk)", "Shariah (Sukuk)")</div>
+                                        <div class="bond-rates">
+                                            @foreach (var rate in shariahBonds)
+                                            {
+                                                <div class="bond-rate-card shariah @(_selectedBondType == rate.BondType ? "selected" : "")"
+                                                     @onclick="() => _selectedBondType = rate.BondType">
+                                                    <span class="bond-type">@rate.BondType @(!string.IsNullOrEmpty(rate.SeriesName) ? $"({rate.SeriesName})" : "")</span>
+                                                    <span class="bond-period">@rate.PeriodName</span>
+                                                    <span class="bond-coupon">@((rate.CouponRate * 100).ToString("F2"))% @GetText("kupon", "kupon", "coupon", "coupon")</span>
+                                                    @if (!string.IsNullOrEmpty(rate.AkadType))
+                                                    {
+                                                        <span class="akad-info">@rate.AkadType</span>
+                                                    }
+                                                    <span class="min-invest">Min: Rp @rate.MinimumInvestment.ToString("N0")</span>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            </div>
 
                             <div class="bond-amount-input">
-                                <input type="text" inputmode="numeric" value="@_bondAmountDisplay" @oninput="OnBondInput" placeholder="Min Rp 1.000.000" />
+                                <div class="numeric-spin-group">
+                                    <button class="spin-btn spin-down" @onclick="() => SpinBond(-1_000_000)" disabled="@(_bondAmount <= 0)">−</button>
+                                    <input type="text" inputmode="numeric" value="@_bondAmountDisplay" @oninput="OnBondInput" placeholder="Min Rp 1.000.000" />
+                                    <button class="spin-btn spin-up" @onclick="() => SpinBond(1_000_000)">+</button>
+                                </div>
                                 <button class="btn-buy" @onclick="BuyBond"
                                         disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || string.IsNullOrEmpty(_selectedBondType) || _bondAmount < 1000000 || _bondAmount > _gameState.CashBalance)">
                                     @Icon("obligasi") @Lang.T("BTN_BUY_BOND")
@@ -1268,8 +1286,12 @@
                                                 </div>
                                             }
                                             <div class="crypto-buy-controls">
-                                                <input type="text" inputmode="numeric" value="@GetCryptoAmountDisplay(crypto.Symbol)" @oninput="(e) => OnCryptoInput(e, crypto.Symbol)"
-                                                       placeholder="Rp 1.000.000" class="crypto-input" />
+                                                <div class="numeric-spin-group">
+                                                    <button class="spin-btn spin-down crypto-spin" @onclick="() => SpinCrypto(crypto.Symbol, -1_000_000)" disabled="@(GetCryptoAmount(crypto.Symbol) <= 0)">−</button>
+                                                    <input type="text" inputmode="numeric" value="@GetCryptoAmountDisplay(crypto.Symbol)" @oninput="(e) => OnCryptoInput(e, crypto.Symbol)"
+                                                           placeholder="Rp 1.000.000" class="crypto-input" />
+                                                    <button class="spin-btn spin-up crypto-spin" @onclick="() => SpinCrypto(crypto.Symbol, 1_000_000)">+</button>
+                                                </div>
                                                 <button class="crypto-buy-btn" @onclick="() => BuyCrypto(crypto.Symbol)"
                                                         disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || GetCryptoAmount(crypto.Symbol) < 1000000 || GetCryptoAmount(crypto.Symbol) > _gameState.CashBalance)">
                                                     @Lang.T("BTN_BUY")
@@ -1339,8 +1361,12 @@
                                                 </div>
                                             </div>
                                             <div class="crowdfunding-buy-controls">
-                                                <input type="text" inputmode="numeric" value="@GetCrowdfundingAmountDisplay(project.ProjectId)" @oninput="(e) => OnCrowdfundingInput(e, project.ProjectId)"
-                                                       placeholder="Min Rp 100.000" class="cf-input" />
+                                                <div class="numeric-spin-group">
+                                                    <button class="spin-btn spin-down" @onclick="() => SpinCrowdfunding(project.ProjectId, -100_000)" disabled="@(GetCrowdfundingAmount(project.ProjectId) <= 0)">−</button>
+                                                    <input type="text" inputmode="numeric" value="@GetCrowdfundingAmountDisplay(project.ProjectId)" @oninput="(e) => OnCrowdfundingInput(e, project.ProjectId)"
+                                                           placeholder="Min Rp 100.000" class="cf-input" />
+                                                    <button class="spin-btn spin-up" @onclick="() => SpinCrowdfunding(project.ProjectId, 100_000)">+</button>
+                                                </div>
                                                 <button class="cf-buy-btn" @onclick="() => BuyCrowdfunding(project.ProjectId)"
                                                         disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || GetCrowdfundingAmount(project.ProjectId) < 100000 || GetCrowdfundingAmount(project.ProjectId) > _gameState.CashBalance)">
                                                     @Lang.T("BTN_INVEST")
@@ -2241,6 +2267,7 @@
     private int _eventCountdown = 10;                // client-side countdown for auto-pay
     private System.Timers.Timer? _eventCountdownTimer;
     private List<PlayerSummary> _hostPortfolios = new();  // host dashboard portfolios
+    private string _mobileActiveTab = "market"; // portfolio, market, stats
 
     protected override async Task OnInitializedAsync()
     {
@@ -2494,6 +2521,36 @@
     {
         var val = _crowdfundingAmounts.GetValueOrDefault(projectId, 100_000);
         return val > 0 ? FormatRp(val) : "";
+    }
+
+    private void SpinSavings(decimal step)
+    {
+        _savingsAmount = Math.Max(0, _savingsAmount + step);
+        _savingsAmountDisplay = _savingsAmount > 0 ? FormatRp(_savingsAmount) : "";
+    }
+
+    private void SpinDeposito(decimal step)
+    {
+        _depositoAmount = Math.Max(0, _depositoAmount + step);
+        _depositoAmountDisplay = _depositoAmount > 0 ? FormatRp(_depositoAmount) : "";
+    }
+
+    private void SpinBond(decimal step)
+    {
+        _bondAmount = Math.Max(0, _bondAmount + step);
+        _bondAmountDisplay = _bondAmount > 0 ? FormatRp(_bondAmount) : "";
+    }
+
+    private void SpinCrypto(string symbol, decimal step)
+    {
+        var current = _cryptoAmounts.GetValueOrDefault(symbol, 1_000_000);
+        _cryptoAmounts[symbol] = Math.Max(0, current + step);
+    }
+
+    private void SpinCrowdfunding(string projectId, decimal step)
+    {
+        var current = _crowdfundingAmounts.GetValueOrDefault(projectId, 100_000);
+        _crowdfundingAmounts[projectId] = Math.Max(0, current + step);
     }
 
     private string GetChartPoints()

@@ -2342,10 +2342,13 @@ public class GameEngine
     /// - Savings interest
     /// - Deposito maturity
     /// - Bond maturity and coupon payments
+    /// - Crypto price tracking
+    /// - CrowdFunding maturity
     /// - Investment rebalancing when assets unlock
     /// - Yearly income allocation
-    /// Bot uses balanced strategy:
-    /// 10% Savings, 10% Deposito, 15% Bonds, 30% Index Fund, 15% Stocks, 20% Gold
+    /// - Market-aware stock picking with momentum + volatility filtering
+    /// Bot uses aggressive stock-heavy strategy with future data advantage:
+    /// 5% Savings, 20% Deposito, 5% Bonds, 10% Index Fund, 40% Stocks, 5% Gold, 10% Crypto, 5% CrowdFunding
     /// </summary>
     private void ProcessBotMonthEnd(GameSession session)
     {
@@ -2356,7 +2359,7 @@ public class GameEngine
             session.BotSavingsBalance += monthlyInterest;
         }
 
-        // Grow bot stock value using real price changes from BBCA (blue chip reference)
+        // Grow bot stock value using real price changes
         if (session.BotStockValue > 0 && !string.IsNullOrEmpty(session.BotStockTicker))
         {
             var currentPrice = _stockData.GetPrice(session.BotStockTicker, session.CurrentYear, session.CurrentMonth);
@@ -2369,6 +2372,39 @@ public class GameEngine
             {
                 var changeRatio = currentPrice.Value / prevPrice.Value;
                 session.BotStockValue *= changeRatio;
+            }
+        }
+
+        // Bot uses future data to sell before crashes and switch to better stocks
+        if (session.TotalGameMonths >= 37)
+        {
+            BotFutureAwareStockTrading(session);
+
+            // Re-buy stocks if bot sold (sitting in cash) and a good entry appears
+            if (session.BotStockValue == 0 && string.IsNullOrEmpty(session.BotStockTicker)
+                && session.AvailableStocks.Count > 0)
+            {
+                var bestStock = PickBestStock(session);
+                var bestPrice = _stockData.GetPrice(bestStock.Ticker, session.CurrentYear, session.CurrentMonth);
+                // Look 3 months ahead — only re-enter if positive return ahead
+                var fm = session.CurrentMonth + 3;
+                var fy = session.CurrentYear;
+                if (fm > 12) { fm -= 12; fy++; }
+                var futurePrice = _stockData.GetPrice(bestStock.Ticker, fy, fm);
+                if (bestPrice.HasValue && futurePrice.HasValue && bestPrice.Value > 0
+                    && (futurePrice.Value - bestPrice.Value) / bestPrice.Value > 0.05m)
+                {
+                    var reserve = GetBotDynamicReserve(session);
+                    var stockAmount = Math.Max(0, session.BotCashBalance - reserve);
+                    stockAmount = Math.Min(stockAmount, session.BotNetWorth * 0.40m); // 40% target
+                    if (stockAmount >= 100_000m)
+                    {
+                        session.BotStockTicker = bestStock.Ticker;
+                        session.BotStockCost = stockAmount;
+                        session.BotStockValue = stockAmount;
+                        session.BotCashBalance -= stockAmount;
+                    }
+                }
             }
         }
 
@@ -2397,12 +2433,25 @@ public class GameEngine
             }
         }
 
+        // Process bot crowdfunding investments - check maturity
+        foreach (var cf in session.BotCrowdfundingInvestments.ToList())
+        {
+            cf.MonthsRemaining--;
+            if (cf.IsMatured)
+            {
+                if (!cf.HasFailed)
+                    session.BotCashBalance += cf.CurrentValue;
+                session.BotCrowdfundingInvestments.Remove(cf);
+                hadMaturity = true;
+            }
+        }
+
         var totalMonths = session.TotalGameMonths;
 
-        // Month 1 (game start): Park cash in savings immediately (earns ~3% avg)
+        // Month 1 (game start): Park cash in savings immediately
         if (totalMonths == 1 && session.BotSavingsBalance == 0)
         {
-            var savingsAmount = session.BotCashBalance - 500_000m; // Keep 500K cash
+            var savingsAmount = session.BotCashBalance - 500_000m;
             if (savingsAmount > 0)
             {
                 session.BotSavingsBalance += savingsAmount;
@@ -2410,12 +2459,12 @@ public class GameEngine
             }
         }
 
-        // Month 6: Deposito unlocks - invest ~10% allocation in 12-month CD
+        // Month 6: Deposito unlocks - 20% target allocation (largest fixed-income)
         if (totalMonths == 6 && session.BotDepositos.Count == 0)
         {
             var available = session.BotCashBalance + session.BotSavingsBalance - 500_000m;
-            var depositoAmount = Math.Min(available * 0.10m, 1_000_000m);
-            depositoAmount = Math.Max(depositoAmount, 1_000_000m); // Min 1M
+            var depositoAmount = Math.Min(available * 0.20m, 2_000_000m);
+            depositoAmount = Math.Max(depositoAmount, 1_000_000m);
             if (depositoAmount >= 1_000_000m && available >= depositoAmount)
             {
                 if (session.BotCashBalance < depositoAmount)
@@ -2441,7 +2490,7 @@ public class GameEngine
             }
         }
 
-        // Month 13: Index Fund unlocks - 30% target allocation (largest)
+        // Month 13: Index Fund unlocks - 20% target allocation
         if (totalMonths == 13 && session.BotIndexFundUnits == 0)
         {
             var reserve = GetBotDynamicReserve(session);
@@ -2461,7 +2510,7 @@ public class GameEngine
             }
         }
 
-        // Month 25: Bonds unlock - 15% target, invest in SR (shariah) or ORI (conventional)
+        // Month 25: Bonds unlock - 10% target, invest in SR (shariah) or ORI (conventional)
         if (totalMonths == 25 && session.BotBonds.Count == 0)
         {
             var reserve = GetBotDynamicReserve(session);
@@ -2491,29 +2540,28 @@ public class GameEngine
             }
         }
 
-        // Month 37 (Year 4): Stocks unlock - 15% target, bot picks high-dividend stock
+        // Month 37 (Year 4): Stocks unlock - 40% target, future-aware stock picking
         if (totalMonths == 37 && session.BotStockCost == 0)
         {
             var reserve = GetBotDynamicReserve(session);
             var stockAmount = Math.Max(0, session.BotCashBalance - reserve);
-            stockAmount = Math.Min(stockAmount, 3_000_000m);
+            stockAmount = Math.Min(stockAmount, session.BotNetWorth * 0.40m); // 40% of net worth
             if (stockAmount >= 100_000m && session.AvailableStocks.Count > 0)
             {
-                // Pick the highest dividend stock (bot is smart)
-                var bestStock = session.AvailableStocks.OrderByDescending(s => s.AnnualDividendPerShare).First();
+                var bestStock = PickBestStock(session);
                 session.BotStockTicker = bestStock.Ticker;
                 session.BotStockCost = stockAmount;
-                session.BotStockValue = stockAmount; // Starts at cost basis
+                session.BotStockValue = stockAmount;
                 session.BotCashBalance -= stockAmount;
             }
         }
 
-        // Month 49: Gold unlocks - 20% target allocation
+        // Month 49: Gold unlocks - 10% target allocation
         if (totalMonths == 49 && session.BotGoldUnits == 0)
         {
             var reserve = GetBotDynamicReserve(session);
             var goldAmount = Math.Max(0, session.BotCashBalance - reserve);
-            goldAmount = Math.Min(goldAmount, 4_000_000m);
+            goldAmount = Math.Min(goldAmount, 3_000_000m);
             if (goldAmount >= 50_000m)
             {
                 var price = session.AssetPrices.GetValueOrDefault("emas", 1_200_000m);
@@ -2521,6 +2569,62 @@ public class GameEngine
                 session.BotGoldUnits = units;
                 session.BotGoldCost = goldAmount;
                 session.BotCashBalance -= goldAmount;
+            }
+        }
+
+        // Month 66 (Y6M6): CrowdFunding unlocks - 5% target, pick medium-risk project
+        if (totalMonths == 66 && session.BotCrowdfundingInvestments.Count == 0)
+        {
+            var reserve = GetBotDynamicReserve(session);
+            var cfAmount = Math.Max(0, session.BotCashBalance - reserve);
+            cfAmount = Math.Min(cfAmount, 1_500_000m);
+            if (cfAmount >= 100_000m && session.AvailableCrowdfunding.Count > 0)
+            {
+                // Pick a medium-risk project with reasonable tenor
+                var project = session.AvailableCrowdfunding
+                    .Where(p => p.IsActive && p.RiskLevel >= 3 && p.RiskLevel <= 6)
+                    .OrderBy(p => p.LockUpMonths)
+                    .FirstOrDefault() ?? session.AvailableCrowdfunding.FirstOrDefault(p => p.IsActive);
+                if (project != null)
+                {
+                    session.BotCrowdfundingInvestments.Add(new CrowdfundingInvestment
+                    {
+                        ProjectId = project.ProjectId,
+                        ProjectName = project.ProjectName,
+                        ProjectType = project.ProjectType,
+                        InvestedAmount = cfAmount,
+                        ExpectedReturn = project.ExpectedReturn,
+                        StartYear = session.CurrentYear,
+                        StartMonth = session.CurrentMonth,
+                        LockUpMonths = project.LockUpMonths,
+                        MonthsRemaining = project.LockUpMonths,
+                        HasFailed = false
+                    });
+                    session.BotCashBalance -= cfAmount;
+                }
+            }
+        }
+
+        // Month 133 (Y12M1): Crypto unlocks - 10% target, invest in BTC
+        if (totalMonths == 133 && session.BotCryptoUnits == 0)
+        {
+            var reserve = GetBotDynamicReserve(session);
+            var cryptoAmount = Math.Max(0, session.BotCashBalance - reserve);
+            // Cap at 10% of current net worth
+            var maxCrypto = session.BotNetWorth * 0.10m;
+            cryptoAmount = Math.Min(cryptoAmount, maxCrypto);
+            cryptoAmount = Math.Min(cryptoAmount, 5_000_000m);
+            if (cryptoAmount >= 100_000m)
+            {
+                var btc = session.AvailableCryptos.FirstOrDefault(c => c.Symbol == "BTC");
+                var price = btc?.CurrentPrice ?? 0;
+                if (price > 0)
+                {
+                    var units = cryptoAmount / price;
+                    session.BotCryptoUnits = units;
+                    session.BotCryptoCost = cryptoAmount;
+                    session.BotCashBalance -= cryptoAmount;
+                }
             }
         }
 
@@ -2544,13 +2648,265 @@ public class GameEngine
                 }
             }
 
+            // Enforce 20% deposito floor: if deposito < 20% of net worth, top up
+            EnforceBotDepositoFloor(session);
+
             RebalanceBotPortfolio(session);
+
+            // Generate advisory tips for the player at year-end
+            GenerateAdvisorTips(session);
         }
         // Continuous deployment: if maturity freed up cash or excess cash accumulated
         else if (hadMaturity || session.BotCashBalance > GetBotDynamicReserve(session) + 1_000_000m)
         {
             RebalanceBotPortfolio(session);
         }
+    }
+
+    /// <summary>
+    /// Future-aware stock picking: bot peeks at the next 12 months of real historical data
+    /// to select the stock with the best forward return. This makes the bot extremely hard to beat.
+    /// </summary>
+    private StockInfo PickBestStock(GameSession session)
+    {
+        var candidates = new List<(StockInfo stock, decimal forwardReturn)>();
+
+        foreach (var stock in session.AvailableStocks)
+        {
+            var currentPrice = _stockData.GetPrice(stock.Ticker, session.CurrentYear, session.CurrentMonth);
+            if (!currentPrice.HasValue || currentPrice.Value <= 0) continue;
+
+            // Look ahead 12 months to pick the best performer
+            var futureYear = session.CurrentYear + 1;
+            var futurePrice = _stockData.GetPrice(stock.Ticker, futureYear, session.CurrentMonth);
+            if (!futurePrice.HasValue)
+            {
+                // Try 6 months ahead as fallback
+                var fm = session.CurrentMonth + 6;
+                var fy = session.CurrentYear;
+                if (fm > 12) { fm -= 12; fy++; }
+                futurePrice = _stockData.GetPrice(stock.Ticker, fy, fm);
+            }
+
+            decimal forwardReturn = 0;
+            if (futurePrice.HasValue && currentPrice.Value > 0)
+                forwardReturn = (futurePrice.Value - currentPrice.Value) / currentPrice.Value;
+
+            // Also add dividend yield bonus
+            if (stock.AnnualDividendPerShare > 0 && currentPrice.Value > 0)
+                forwardReturn += stock.AnnualDividendPerShare / currentPrice.Value;
+
+            candidates.Add((stock, forwardReturn));
+        }
+
+        if (candidates.Count > 0)
+            return candidates.OrderByDescending(c => c.forwardReturn).First().stock;
+
+        return session.AvailableStocks.OrderByDescending(s => s.AnnualDividendPerShare).First();
+    }
+
+    /// <summary>
+    /// Bot uses future data to decide whether to sell stocks before a crash.
+    /// If the stock price will drop >15% in the next 3 months, sell and re-buy later.
+    /// Also switches to a better-performing stock if available.
+    /// </summary>
+    private void BotFutureAwareStockTrading(GameSession session)
+    {
+        if (session.BotStockValue <= 0 || string.IsNullOrEmpty(session.BotStockTicker)) return;
+
+        var currentPrice = _stockData.GetPrice(session.BotStockTicker, session.CurrentYear, session.CurrentMonth);
+        if (!currentPrice.HasValue || currentPrice.Value <= 0) return;
+
+        // Look ahead 3 months for crash detection
+        var fm = session.CurrentMonth + 3;
+        var fy = session.CurrentYear;
+        if (fm > 12) { fm -= 12; fy++; }
+        var futurePrice3M = _stockData.GetPrice(session.BotStockTicker, fy, fm);
+
+        if (futurePrice3M.HasValue && futurePrice3M.Value > 0)
+        {
+            var forwardChange = (futurePrice3M.Value - currentPrice.Value) / currentPrice.Value;
+
+            // Sell if crash coming (>15% drop ahead)
+            if (forwardChange < -0.15m)
+            {
+                session.BotCashBalance += session.BotStockValue;
+                session.BotStockValue = 0;
+                session.BotStockCost = 0;
+                session.BotStockTicker = string.Empty;
+                return;
+            }
+        }
+
+        // Check if a different stock will outperform — switch if >20% better forward return
+        var bestStock = PickBestStock(session);
+        if (bestStock.Ticker != session.BotStockTicker)
+        {
+            var bestPrice = _stockData.GetPrice(bestStock.Ticker, session.CurrentYear, session.CurrentMonth);
+            var bestFuture = _stockData.GetPrice(bestStock.Ticker, fy, fm);
+            var currentFuture = futurePrice3M;
+
+            if (bestPrice.HasValue && bestFuture.HasValue && bestPrice.Value > 0 &&
+                currentPrice.HasValue && currentFuture.HasValue && currentPrice.Value > 0)
+            {
+                var bestReturn = (bestFuture.Value - bestPrice.Value) / bestPrice.Value;
+                var currentReturn = (currentFuture.Value - currentPrice.Value) / currentPrice.Value;
+
+                if (bestReturn - currentReturn > 0.20m)
+                {
+                    // Switch: sell current, buy best
+                    session.BotCashBalance += session.BotStockValue;
+                    var investAmount = session.BotStockValue;
+                    session.BotStockTicker = bestStock.Ticker;
+                    session.BotStockCost = investAmount;
+                    session.BotStockValue = investAmount;
+                    session.BotCashBalance -= investAmount;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Enforce 20% deposito floor: ensure bot always has at least 20% of net worth in deposito.
+    /// Called at year-end before rebalancing.
+    /// </summary>
+    private void EnforceBotDepositoFloor(GameSession session)
+    {
+        var botNetWorth = session.BotNetWorth;
+        if (botNetWorth <= 0) return;
+
+        var depositoValue = session.BotTotalDepositoValue;
+        var targetDeposito = botNetWorth * 0.20m;
+        var deficit = targetDeposito - depositoValue;
+
+        if (deficit < 1_000_000m) return; // Close enough or already above target
+
+        var available = session.BotCashBalance - GetBotDynamicReserve(session);
+        var depositoTopUp = Math.Min(deficit, available);
+        if (depositoTopUp < 1_000_000m) return;
+
+        var monthsRemaining = (GameSession.MAX_YEARS * 12) - session.TotalGameMonths;
+        int tenor = monthsRemaining >= 24 ? 24 : monthsRemaining >= 12 ? 12 : Math.Max(1, monthsRemaining);
+
+        var rate = session.CurrentDepositoRates.FirstOrDefault(r => r.PeriodMonths == tenor)
+                ?? session.CurrentDepositoRates.FirstOrDefault(r => r.PeriodMonths == 12);
+        if (rate != null)
+        {
+            session.BotDepositos.Add(new DepositoItem
+            {
+                Principal = depositoTopUp,
+                PeriodMonths = tenor,
+                InterestRate = rate.AnnualRate,
+                StartYear = session.CurrentYear,
+                StartMonth = session.CurrentMonth,
+                MonthsRemaining = tenor
+            });
+            session.BotCashBalance -= depositoTopUp;
+        }
+    }
+
+    /// <summary>
+    /// Generate contextual advisory tips for the player at year-end.
+    /// Tips are based on portfolio analysis and market data conditions.
+    /// </summary>
+    private void GenerateAdvisorTips(GameSession session)
+    {
+        session.AdvisorTips.Clear();
+        if (session.CurrentYear < 2) return; // No tips in first year
+
+        var netWorth = session.NetWorth;
+        if (netWorth <= 0) return;
+
+        var cashRatio = session.CashBalance / netWorth;
+        var savingsRatio = session.TotalSavingsValue / netWorth;
+
+        // Tip 1: Too much idle cash (>70% in cash+savings at Y2+)
+        if (cashRatio + savingsRatio > 0.70m && session.CurrentYear >= 2)
+        {
+            session.AdvisorTips.Add(new AdvisorTip
+            {
+                Message = "Uang idle sebaiknya diinvestasikan. Pertimbangkan Deposito atau Reksa Dana untuk imbal hasil lebih baik.",
+                MessageEN = "Idle cash should be invested. Consider Deposito or Index Funds for better returns.",
+                Category = "suggestion"
+            });
+        }
+
+        // Tip 2: Deposit rate dropped >1% year-over-year
+        if (session.CurrentYear >= 3)
+        {
+            var currentRate = _depositoData.GetConventionalRate(session.CurrentYear, 12);
+            var prevRate = _depositoData.GetConventionalRate(session.CurrentYear - 1, 12);
+            if (currentRate.HasValue && prevRate.HasValue && (prevRate.Value - currentRate.Value) > 0.01m)
+            {
+                session.AdvisorTips.Add(new AdvisorTip
+                {
+                    Message = "Suku bunga deposito turun tahun ini. Obligasi bisa menjadi alternatif yang lebih menguntungkan.",
+                    MessageEN = "Deposit rates dropped this year. Bonds could be a more profitable alternative.",
+                    Category = "info"
+                });
+            }
+        }
+
+        // Tip 3: Stock 12-month momentum >20%
+        foreach (var stock in session.AvailableStocks)
+        {
+            var currentPrice = _stockData.GetPrice(stock.Ticker, session.CurrentYear, session.CurrentMonth);
+            var price12MAgo = _stockData.GetPrice(stock.Ticker, session.CurrentYear - 1, session.CurrentMonth);
+            if (currentPrice.HasValue && price12MAgo.HasValue && price12MAgo.Value > 0)
+            {
+                var momentum = (currentPrice.Value - price12MAgo.Value) / price12MAgo.Value;
+                if (momentum > 0.20m)
+                {
+                    session.AdvisorTips.Add(new AdvisorTip
+                    {
+                        Message = $"Saham {stock.Ticker} naik {(momentum * 100):F0}% dalam 12 bulan terakhir. Hati-hati valuasi tinggi.",
+                        MessageEN = $"Stock {stock.Ticker} rose {(momentum * 100):F0}% in the last 12 months. Watch for high valuation.",
+                        Category = "warning"
+                    });
+                    break; // Only show one stock tip
+                }
+            }
+        }
+
+        // Tip 4: Gold price YoY >30%
+        var goldNow = _goldData.GetPrice(session.CurrentYear, session.CurrentMonth);
+        var goldPrev = _goldData.GetPrice(session.CurrentYear - 1, session.CurrentMonth);
+        if (goldNow.HasValue && goldPrev.HasValue && goldPrev.Value > 0)
+        {
+            var goldChange = (goldNow.Value - goldPrev.Value) / goldPrev.Value;
+            if (goldChange > 0.30m)
+            {
+                session.AdvisorTips.Add(new AdvisorTip
+                {
+                    Message = "Harga emas naik tajam tahun ini. Ini bisa jadi waktu tepat untuk mengambil keuntungan.",
+                    MessageEN = "Gold prices surged this year. This could be a good time to take profits.",
+                    Category = "warning"
+                });
+            }
+        }
+
+        // Tip 5: Portfolio concentration (>60% in one asset class)
+        var portfolioValue = session.TotalPortfolioValue;
+        var depositoValue = session.TotalDepositoValue;
+        var bondValue = session.TotalBondValue;
+        var assetValues = new[] { session.CashBalance + session.TotalSavingsValue, depositoValue, bondValue, portfolioValue };
+        foreach (var v in assetValues)
+        {
+            if (netWorth > 0 && v / netWorth > 0.60m)
+            {
+                session.AdvisorTips.Add(new AdvisorTip
+                {
+                    Message = "Portofolio Anda terkonsentrasi pada satu jenis aset. Diversifikasi bisa mengurangi risiko.",
+                    MessageEN = "Your portfolio is concentrated in one asset class. Diversification can reduce risk.",
+                    Category = "suggestion"
+                });
+                break;
+            }
+        }
+
+        // Keep max 3 tips to avoid overwhelming
+        if (session.AdvisorTips.Count > 3)
+            session.AdvisorTips = session.AdvisorTips.Take(3).ToList();
     }
 
     /// <summary>
@@ -2581,8 +2937,8 @@ public class GameEngine
     }
 
     /// <summary>
-    /// Rebalance bot portfolio with balanced strategy.
-    /// Target: 30% Index Fund, 20% Gold, 15% Bonds (ST), 10% Deposito, 15% Stocks, 10% Savings
+    /// Rebalance bot portfolio with aggressive stock-heavy strategy.
+    /// Target: 40% Stocks, 20% Deposito, 10% Index Fund, 10% Crypto, 5% Bonds, 5% Gold, 5% CrowdFunding, 5% Savings
     /// Uses dynamic event-aware reserve and redistributes locked allocations.
     /// </summary>
     private void RebalanceBotPortfolio(GameSession session)
@@ -2598,36 +2954,69 @@ public class GameEngine
         if (investableAmount < 500_000m) return;
 
         // Calculate effective allocation percentages based on what's unlocked
-        // Target: 10% Savings, 10% Deposito, 15% Bonds, 30% Index Fund, 15% Stocks, 20% Gold
+        // Target: 40% Stocks, 20% Deposito, 10% Index Fund, 10% Crypto, 5% Bonds, 5% Gold, 5% CrowdFunding, 5% Savings
         bool indexUnlocked = totalMonths >= 13;
+        bool bondsUnlocked = totalMonths >= 25;
         bool stocksUnlocked = totalMonths >= 37;
         bool goldUnlocked = totalMonths >= 49;
-        bool bondsUnlocked = totalMonths >= 25;
+        bool crowdfundingUnlocked = totalMonths >= 66;
+        bool cryptoUnlocked = totalMonths >= 133;
         bool depositoUnlocked = totalMonths >= 6;
 
-        decimal indexPct = indexUnlocked ? 0.30m : 0;
-        decimal stockPct = stocksUnlocked ? 0.15m : 0;
-        decimal goldPct = goldUnlocked ? 0.20m : 0;
-        decimal bondsPct = bondsUnlocked ? 0.15m : 0;
-        decimal depositoPct = depositoUnlocked ? 0.10m : 0;
-        decimal savingsPct = 0.10m;
+        decimal stockPct = stocksUnlocked ? 0.40m : 0;
+        decimal depositoPct = depositoUnlocked ? 0.20m : 0;
+        decimal indexPct = indexUnlocked ? 0.10m : 0;
+        decimal cryptoPct = cryptoUnlocked ? 0.10m : 0;
+        decimal bondsPct = bondsUnlocked ? 0.05m : 0;
+        decimal goldPct = goldUnlocked ? 0.05m : 0;
+        decimal crowdfundingPct = crowdfundingUnlocked ? 0.05m : 0;
+        decimal savingsPct = 0.05m;
 
         // Redistribute locked allocations to best available asset
-        decimal unallocated = 1.0m - indexPct - stockPct - goldPct - bondsPct - depositoPct - savingsPct;
-        if (unallocated > 0)
+        decimal totalAllocated = indexPct + stockPct + goldPct + bondsPct + depositoPct + cryptoPct + crowdfundingPct + savingsPct;
+        decimal unallocated = 1.0m - totalAllocated;
+        if (unallocated > 0.001m)
         {
             if (indexUnlocked)
                 indexPct += unallocated; // Index Fund gets priority for redistribution
             else if (depositoUnlocked)
                 depositoPct += unallocated;
             else
-                savingsPct += unallocated; // Pre-month-6: everything to savings
+                savingsPct += unallocated;
         }
 
-        // 1. Index Fund (highest priority for growth)
+        // 1. Deposito (20% target - highest priority fixed income)
+        if (depositoUnlocked && investableAmount >= 1_000_000m)
+        {
+            var depositoAmount = investableAmount * depositoPct;
+            if (depositoAmount >= 1_000_000m)
+            {
+                int tenor = monthsRemaining >= 24 ? 24 : 12;
+                if (monthsRemaining < 12) tenor = Math.Max(1, monthsRemaining);
+                var rate = session.CurrentDepositoRates.FirstOrDefault(r => r.PeriodMonths == tenor)
+                        ?? session.CurrentDepositoRates.FirstOrDefault(r => r.PeriodMonths == 12);
+                if (rate != null)
+                {
+                    session.BotDepositos.Add(new DepositoItem
+                    {
+                        Principal = depositoAmount,
+                        PeriodMonths = tenor,
+                        InterestRate = rate.AnnualRate,
+                        StartYear = session.CurrentYear,
+                        StartMonth = session.CurrentMonth,
+                        MonthsRemaining = tenor
+                    });
+                    session.BotCashBalance -= depositoAmount;
+                    investableAmount -= depositoAmount;
+                }
+            }
+        }
+
+        // 2. Index Fund (20% target - core growth)
         if (indexUnlocked && investableAmount >= 100_000m)
         {
-            var indexInvestment = investableAmount * indexPct;
+            var indexInvestment = investableAmount * (indexPct / Math.Max(0.01m, 1 - depositoPct));
+            indexInvestment = Math.Min(indexInvestment, investableAmount);
             if (indexInvestment >= 100_000m)
             {
                 var convIdx = session.AvailableIndices.FirstOrDefault(i => !i.IsShariah);
@@ -2643,13 +3032,16 @@ public class GameEngine
             }
         }
 
-        // 2. Stocks (high growth, bot gets favorable returns)
+        // 3. Stocks (40% target - aggressive, future-aware)
         if (stocksUnlocked && investableAmount >= 100_000m && session.BotStockCost > 0)
         {
-            var stockInvestment = investableAmount * stockPct;
+            var stockInvestment = investableAmount * (stockPct / Math.Max(0.01m, 1 - depositoPct - indexPct));
+            stockInvestment = Math.Min(stockInvestment, investableAmount);
+            // Cap at 40% of net worth
+            var stockCap = session.BotNetWorth * 0.40m - session.BotStockValue;
+            if (stockCap > 0) stockInvestment = Math.Min(stockInvestment, stockCap);
             if (stockInvestment >= 100_000m)
             {
-                // Add to existing stock position (value grows via monthly ProcessBotMonthEnd)
                 session.BotStockCost += stockInvestment;
                 session.BotStockValue += stockInvestment;
                 session.BotCashBalance -= stockInvestment;
@@ -2657,10 +3049,10 @@ public class GameEngine
             }
         }
 
-        // 3. Gold (stable growth, lower variance)
+        // 4. Gold (10% target)
         if (goldUnlocked && investableAmount >= 50_000m)
         {
-            var goldInvestment = investableAmount * (goldPct / Math.Max(0.01m, 1 - indexPct - stockPct));
+            var goldInvestment = investableAmount * (goldPct / Math.Max(0.01m, 1 - depositoPct - indexPct - stockPct));
             goldInvestment = Math.Min(goldInvestment, investableAmount);
             if (goldInvestment >= 50_000m)
             {
@@ -2673,10 +3065,10 @@ public class GameEngine
             }
         }
 
-        // 4. Bonds - use SR (shariah) or ORI, skip if < 24 months remaining (won't mature)
+        // 5. Bonds (10% target) - skip if < 24 months remaining
         if (bondsUnlocked && investableAmount >= 1_000_000m && monthsRemaining >= 24)
         {
-            var bondAmount = investableAmount * (bondsPct / Math.Max(0.01m, 1 - indexPct - stockPct - goldPct));
+            var bondAmount = investableAmount * (bondsPct / Math.Max(0.01m, 1 - depositoPct - indexPct - stockPct - goldPct));
             bondAmount = Math.Min(bondAmount, investableAmount);
             if (bondAmount >= 1_000_000m)
             {
@@ -2703,38 +3095,66 @@ public class GameEngine
             }
         }
 
-        // 5. Deposito - prefer 24-month (7%) when enough time remains, else 12-month (6%)
-        if (depositoUnlocked && investableAmount >= 1_000_000m)
+        // 6. Crypto (10% target) - cap at 10% of net worth
+        if (cryptoUnlocked && investableAmount >= 100_000m && session.BotCryptoUnits > 0)
         {
-            var depositoAmount = investableAmount * (depositoPct / Math.Max(0.01m, 1 - indexPct - stockPct - goldPct - bondsPct));
-            depositoAmount = Math.Min(depositoAmount, investableAmount);
-            if (depositoAmount >= 1_000_000m)
+            var cryptoCap = session.BotNetWorth * 0.10m;
+            var currentCryptoValue = session.BotCryptoValue;
+            var cryptoRoom = cryptoCap - currentCryptoValue;
+            if (cryptoRoom > 100_000m)
             {
-                int tenor = monthsRemaining >= 24 ? 24 : 12;
-                if (monthsRemaining < 12) tenor = Math.Max(1, monthsRemaining); // Use shortest if near end
-                var rate = session.CurrentDepositoRates.FirstOrDefault(r => r.PeriodMonths == tenor)
-                        ?? session.CurrentDepositoRates.FirstOrDefault(r => r.PeriodMonths == 12);
-                if (rate != null)
+                var cryptoInvestment = Math.Min(investableAmount * cryptoPct, cryptoRoom);
+                if (cryptoInvestment >= 100_000m)
                 {
-                    session.BotDepositos.Add(new DepositoItem
+                    var btc = session.AvailableCryptos.FirstOrDefault(c => c.Symbol == "BTC");
+                    var price = btc?.CurrentPrice ?? 0;
+                    if (price > 0)
                     {
-                        Principal = depositoAmount,
-                        PeriodMonths = tenor,
-                        InterestRate = rate.AnnualRate,
-                        StartYear = session.CurrentYear,
-                        StartMonth = session.CurrentMonth,
-                        MonthsRemaining = tenor
-                    });
-                    session.BotCashBalance -= depositoAmount;
-                    investableAmount -= depositoAmount;
+                        var units = cryptoInvestment / price;
+                        session.BotCryptoUnits += units;
+                        session.BotCryptoCost += cryptoInvestment;
+                        session.BotCashBalance -= cryptoInvestment;
+                        investableAmount -= cryptoInvestment;
+                    }
                 }
             }
         }
 
-        // 6. Savings - put small remainder as emergency buffer
+        // 7. CrowdFunding (5% target) - reinvest if previous matured
+        if (crowdfundingUnlocked && investableAmount >= 100_000m && session.BotCrowdfundingInvestments.Count == 0)
+        {
+            var cfInvestment = Math.Min(investableAmount * crowdfundingPct, 1_500_000m);
+            if (cfInvestment >= 100_000m && session.AvailableCrowdfunding.Count > 0)
+            {
+                var project = session.AvailableCrowdfunding
+                    .Where(p => p.IsActive && p.RiskLevel >= 3 && p.RiskLevel <= 6)
+                    .OrderBy(p => p.LockUpMonths)
+                    .FirstOrDefault() ?? session.AvailableCrowdfunding.FirstOrDefault(p => p.IsActive);
+                if (project != null)
+                {
+                    session.BotCrowdfundingInvestments.Add(new CrowdfundingInvestment
+                    {
+                        ProjectId = project.ProjectId,
+                        ProjectName = project.ProjectName,
+                        ProjectType = project.ProjectType,
+                        InvestedAmount = cfInvestment,
+                        ExpectedReturn = project.ExpectedReturn,
+                        StartYear = session.CurrentYear,
+                        StartMonth = session.CurrentMonth,
+                        LockUpMonths = project.LockUpMonths,
+                        MonthsRemaining = project.LockUpMonths,
+                        HasFailed = false
+                    });
+                    session.BotCashBalance -= cfInvestment;
+                    investableAmount -= cfInvestment;
+                }
+            }
+        }
+
+        // 8. Savings - put small remainder as emergency buffer
         if (investableAmount >= 100_000m)
         {
-            var savingsAmount = investableAmount * 0.50m; // Put half remainder in savings
+            var savingsAmount = investableAmount * 0.50m;
             if (savingsAmount >= 100_000m)
             {
                 session.BotSavingsBalance += savingsAmount;
@@ -2814,7 +3234,27 @@ public class GameEngine
             session.BotStockCost = 0;
         }
 
-        // 5. Try gold (liquid commodity)
+        // 5. Try crypto (liquid digital asset)
+        var cryptoValue = session.BotCryptoValue;
+        if (cryptoValue >= remaining)
+        {
+            var btc = session.AvailableCryptos.FirstOrDefault(c => c.Symbol == "BTC");
+            var price = btc?.CurrentPrice ?? 0;
+            if (price > 0)
+            {
+                var unitsToSell = remaining / price;
+                session.BotCryptoUnits -= unitsToSell;
+            }
+            session.BotEventsPaidFromPortfolio++;
+            return;
+        }
+        else if (cryptoValue > 0)
+        {
+            remaining -= cryptoValue;
+            session.BotCryptoUnits = 0;
+        }
+
+        // 6. Try gold (liquid commodity)
         var goldValue = session.BotGoldValue;
         if (goldValue >= remaining)
         {
@@ -2830,7 +3270,7 @@ public class GameEngine
             session.BotGoldUnits = 0;
         }
 
-        // 6. Try bonds (early redemption with partial penalty)
+        // 8. Try bonds (early redemption with partial penalty)
         foreach (var bond in session.BotBonds.ToList())
         {
             if (remaining <= 0) break;
@@ -2844,7 +3284,7 @@ public class GameEngine
             session.BotEventsPaidFromPortfolio++;
         }
 
-        // 7. Last resort - liquidate depositos (early withdrawal with penalty)
+        // 9. Last resort - liquidate depositos (early withdrawal with penalty)
         foreach (var deposito in session.BotDepositos.ToList())
         {
             if (remaining <= 0) break;

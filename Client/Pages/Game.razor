@@ -188,12 +188,6 @@
                         ? "Grow your wealth over 15 years. Mirror real-world historical data."
                         : "Investasi strategis dalam 15 tahun. Berbasis data historis pasar nyata.")
                 </p>
-                <p class="hero-quote">
-                    @(_selectedLanguage == Language.English
-                        ? "Embrace the stoic nature of the orangutan."
-                        : "Jadilah bijak seperti orangutan.")
-                </p>
-
                 <!-- Form -->
                 <div class="hero-cta">
                     <input type="text" @bind="_playerName" @bind:event="oninput" placeholder="@Lang.T("START_NAME_PLACEHOLDER")" maxlength="20" class="an-input" />
@@ -236,6 +230,22 @@
                 </div>
 
             </div>
+
+            <!-- Right-side market text -->
+            <div class="hero-right-text">
+                <p>
+                    @(_selectedLanguage == Language.English
+                        ? "Simulated market crashes, booms, and recoveries."
+                        : "Simulasi krisis, lonjakan, dan pemulihan pasar modal.")
+                </p>
+            </div>
+
+            <!-- Bottom quote -->
+            <p class="hero-quote">
+                @(_selectedLanguage == Language.English
+                    ? "Embrace the stoic nature of the orangutan."
+                    : "Jadilah bijak seperti orangutan.")
+            </p>
 
             <!-- Bottom badge -->
             <div class="hero-badge">

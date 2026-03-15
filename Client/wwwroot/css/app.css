@@ -2490,7 +2490,7 @@ html, body {
     font-family: 'Cinzel', 'Georgia', serif;
     font-size: 1.5rem;
     font-weight: 700;
-    margin-bottom: 1rem;
+    margin-bottom: 0.6rem;
     color: var(--ayam-red);
     text-align: center;
     display: flex;
@@ -2516,8 +2516,8 @@ html, body {
     background: linear-gradient(135deg, #FFFFFF, var(--sky-blue-light));
     border: 3px solid var(--stroke-color);
     border-radius: 12px;
-    padding: 1rem;
-    margin-bottom: 1.5rem;
+    padding: 0.8rem;
+    margin-bottom: 0.8rem;
     animation: pop-in 0.5s ease-out;
     box-shadow: 6px 6px 0 rgba(0,0,0,0.12);
 }
@@ -2527,7 +2527,7 @@ html, body {
     font-size: 1.1rem;
     font-weight: 700;
     color: var(--money-green-dark);
-    margin-bottom: 1rem;
+    margin-bottom: 0.6rem;
     text-align: center;
 }
 
@@ -2586,7 +2586,7 @@ html, body {
 .deposito-amount-input {
     display: flex;
     gap: 0.5rem;
-    margin-top: 1rem;
+    margin-top: 0.6rem;
     align-items: center;
 }
 
@@ -2853,17 +2853,17 @@ html, body {
 
 .crowdfunding-desc {
     font-size: 0.8rem;
-    line-height: 1.4;
-    min-height: 50px;
-    margin: 0.5rem 0;
+    line-height: 1.3;
+    min-height: 40px;
+    margin: 0.3rem 0;
 }
 
 .crowdfunding-stats {
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
-    margin: 0.5rem 0;
-    padding: 0.5rem;
+    gap: 0.3rem;
+    margin: 0.3rem 0;
+    padding: 0.4rem;
     background: rgba(122, 147, 104, 0.05);
     border-radius: 8px;
 }
@@ -2987,8 +2987,8 @@ html, body {
 
 /* ===== LOCKED SECTION ===== */
 .locked-section {
-    margin-top: 1.5rem;
-    padding-top: 1rem;
+    margin-top: 0.8rem;
+    padding-top: 0.6rem;
     border-top: 3px dashed var(--ayam-gold);
 }
 
@@ -2997,7 +2997,7 @@ html, body {
     font-size: 1rem;
     font-weight: 700;
     color: var(--text-muted);
-    margin-bottom: 1rem;
+    margin-bottom: 0.6rem;
     text-align: center;
 }
 
@@ -3007,15 +3007,15 @@ html, body {
 
 .locked-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 0.5rem;
 }
 
 .locked-card {
     background: rgba(0, 0, 0, 0.05);
     border: 3px dashed var(--stroke-color);
     border-radius: 8px;
-    padding: 1rem;
+    padding: 0.6rem;
     text-align: center;
     opacity: 0.7;
     transition: all 0.3s;
@@ -3224,7 +3224,7 @@ html, body {
 }
 
 .modal-content.intro-modal {
-    max-width: 800px;
+    max-width: 500px;
 }
 
 .modal-close {
@@ -3869,6 +3869,90 @@ html, body {
 .intro-card.risk-high { border-left: 6px solid var(--risk-high); }
 .intro-card.risk-very-high { border-left: 6px solid var(--risk-extreme); }
 
+
+/* ===== MODAL SLIDES ===== */
+.slide-dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+
+.slide-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--stroke-color);
+    opacity: 0.35;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.slide-dot.active {
+    opacity: 1;
+    background: var(--ayam-red);
+    transform: scale(1.3);
+}
+
+.slide-content {
+    animation: slide-fade 0.3s ease-out;
+    min-height: 120px;
+}
+
+@keyframes slide-fade {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.slide-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.2rem;
+    gap: 0.5rem;
+}
+
+.slide-nav-btn {
+    background: none;
+    border: 2px solid var(--stroke-color);
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    color: var(--text-dark);
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.slide-nav-btn:hover:not(:disabled) {
+    background: var(--stroke-color);
+    color: white;
+    transform: scale(1.1);
+}
+
+.slide-nav-btn:disabled {
+    opacity: 0.25;
+    cursor: not-allowed;
+}
+
+.slide-nav-btn--next {
+    border-color: var(--ayam-red);
+    color: var(--ayam-red);
+}
+
+.slide-nav-btn--next:hover {
+    background: var(--ayam-red);
+    color: white;
+}
+
+.slide-nav .btn-primary {
+    flex: 1;
+}
+
 /* ===== GAME OVER MODAL ===== */
 .final-stats {
     display: flex;
@@ -4178,22 +4262,50 @@ html, body {
 
 /* Mobile responsiveness for stock rows */
 @media (max-width: 768px) {
+    .panel-center h2 {
+        font-size: 1.2rem;
+        margin-bottom: 0.4rem;
+    }
+
+    .deposito-purchase-section,
+    .bond-purchase-section,
+    .stocks-section {
+        padding: 0.6rem;
+        margin-bottom: 0.6rem;
+    }
+
+    .bond-groups-row {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
     .stock-row {
-        padding: 0.8rem;
+        padding: 0.6rem;
     }
 
     .stock-info {
         flex-direction: column;
         align-items: flex-start;
+        margin-bottom: 0.4rem;
+        gap: 0.4rem;
+    }
+
+    .stock-main {
+        min-width: unset;
+        gap: 0.5rem;
     }
 
     .stock-price-info {
         align-items: flex-start;
+        flex-direction: row;
+        gap: 0.5rem;
     }
 
     .stock-actions-row {
         flex-direction: column;
         align-items: stretch;
+        padding-top: 0.4rem;
+        gap: 0.4rem;
     }
 
     .quick-buy-buttons {
@@ -4204,30 +4316,136 @@ html, body {
         flex: 1;
         min-width: 60px;
     }
-}
 
-@media (max-width: 480px) {
-    .stocks-list {
-        gap: 0.6rem;
+    .locked-section {
+        margin-top: 0.6rem;
+        padding-top: 0.4rem;
     }
 
-    .stock-row {
-        padding: 0.6rem;
-    }
-
-    .stock-main {
-        flex-direction: column;
+    .locked-grid {
+        grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
         gap: 0.4rem;
     }
 
+    .locked-card {
+        padding: 0.5rem;
+    }
+
+    .lock-icon {
+        font-size: 1.4rem;
+        margin-bottom: 0.2rem;
+    }
+
+    .locked-name {
+        font-size: 0.75rem;
+    }
+
+    .unlock-info {
+        font-size: 0.6rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .panel-center h2 {
+        font-size: 1rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .deposito-purchase-section,
+    .bond-purchase-section,
+    .stocks-section {
+        padding: 0.5rem;
+        margin-bottom: 0.5rem;
+        border-radius: 8px;
+        border-width: 2px;
+        box-shadow: 3px 3px 0 rgba(0,0,0,0.08);
+    }
+
+    .deposito-purchase-section h3,
+    .bond-purchase-section h3,
+    .stocks-section h3 {
+        font-size: 0.95rem;
+        margin-bottom: 0.4rem;
+    }
+
+    .deposito-rates,
+    .bond-rates {
+        gap: 0.4rem;
+    }
+
+    .deposito-rate-card,
+    .bond-rate-card {
+        padding: 0.3rem;
+    }
+
+    .deposito-rate-card .period {
+        font-size: 0.8rem;
+    }
+
+    .deposito-rate-card .rate {
+        font-size: 0.95rem;
+    }
+
+    .deposito-amount-input,
+    .bond-amount-input {
+        margin-top: 0.4rem;
+        gap: 0.3rem;
+    }
+
+    .deposito-amount-input input,
+    .bond-amount-input input {
+        padding: 0.4rem;
+        font-size: 1.1rem;
+    }
+
+    .stocks-list {
+        gap: 0.4rem;
+    }
+
+    .stock-row {
+        padding: 0.5rem;
+        border-width: 2px;
+        border-radius: 8px;
+    }
+
+    .stock-main {
+        flex-direction: row;
+        gap: 0.4rem;
+        min-width: unset;
+    }
+
     .stock-ticker-badge {
-        width: 100%;
+        font-size: 0.8rem;
+        padding: 0.3rem 0.5rem;
+        min-width: 50px;
+    }
+
+    .stock-name {
+        font-size: 0.85rem;
     }
 
     .btn-quick-lot {
         flex: 1;
         font-size: 0.75rem;
         padding: 0.3rem 0.4rem;
+    }
+
+    .locked-grid {
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        gap: 0.3rem;
+    }
+
+    .locked-card {
+        padding: 0.4rem;
+    }
+
+    .lock-icon {
+        font-size: 1.2rem;
+        margin-bottom: 0.15rem;
+    }
+
+    .locked-name {
+        font-size: 0.7rem;
     }
 }
 
@@ -4884,8 +5102,8 @@ html, body {
     background: linear-gradient(135deg, #FFFFFF, var(--sky-blue-light));
     border: 3px solid var(--stroke-color);
     border-radius: 12px;
-    padding: 1rem;
-    margin-bottom: 1.5rem;
+    padding: 0.8rem;
+    margin-bottom: 0.8rem;
     animation: pop-in 0.5s ease-out;
     box-shadow: 6px 6px 0 rgba(0,0,0,0.12);
 }
@@ -4894,7 +5112,7 @@ html, body {
     font-family: 'Cinzel', 'Georgia', serif;
     font-size: 1.1rem;
     color: var(--money-green-dark);
-    margin-bottom: 1rem;
+    margin-bottom: 0.6rem;
     text-align: center;
 }
 
@@ -4983,7 +5201,7 @@ html, body {
 .bond-amount-input {
     display: flex;
     gap: 0.5rem;
-    margin-top: 1rem;
+    margin-top: 0.6rem;
     align-items: center;
 }
 
@@ -5021,8 +5239,8 @@ html, body {
     font-size: 0.85rem;
     font-weight: 700;
     color: var(--dark-brown);
-    margin: 0.8rem 0 0.4rem;
-    padding: 0.3rem 0.6rem;
+    margin: 0.5rem 0 0.3rem;
+    padding: 0.25rem 0.5rem;
     border-left: 3px solid var(--money-green);
     background: rgba(0, 128, 0, 0.05);
 }
@@ -5090,8 +5308,8 @@ html, body {
     background: linear-gradient(135deg, #FFFFFF, rgba(233, 196, 106, 0.2));
     border: 3px solid var(--stroke-color);
     border-radius: 12px;
-    padding: 1rem;
-    margin-bottom: 1.5rem;
+    padding: 0.8rem;
+    margin-bottom: 0.8rem;
     animation: pop-in 0.5s ease-out;
     box-shadow: 6px 6px 0 rgba(0,0,0,0.12);
 }
@@ -5108,14 +5326,14 @@ html, body {
 .stocks-list {
     display: flex;
     flex-direction: column;
-    gap: 0.8rem;
+    gap: 0.5rem;
 }
 
 .stock-row {
     background: white;
     border: 3px solid var(--stroke-color);
     border-radius: 12px;
-    padding: 1rem;
+    padding: 0.7rem;
     transition: all 0.3s;
     box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
 }
@@ -5129,9 +5347,9 @@ html, body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.5rem;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 0.6rem;
 }
 
 .stock-main {
@@ -5214,10 +5432,10 @@ html, body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-top: 0.8rem;
+    padding-top: 0.5rem;
     border-top: 2px dashed var(--ayam-gold);
     flex-wrap: wrap;
-    gap: 0.8rem;
+    gap: 0.5rem;
 }
 
 .lot-price {
@@ -6935,11 +7153,12 @@ html, body {
 @media (max-width: 768px) {
     .market-grid {
         grid-template-columns: 1fr 1fr;
-        gap: 0.4rem;
+        gap: 0.3rem;
     }
 
     .market-card {
-        padding: 0.5rem;
+        padding: 0.4rem 0.5rem;
+        border-radius: 8px;
     }
 
     .market-card .asset-name {
@@ -6950,14 +7169,22 @@ html, body {
         font-size: 0.85rem;
     }
 
+    .market-card .card-price {
+        margin-bottom: 0.2rem;
+    }
+
     .market-card .btn-buy {
-        padding: 0.4rem;
+        padding: 0.35rem;
         font-size: 0.7rem;
+    }
+
+    .gold-buy-buttons {
+        gap: 0.3rem;
     }
 
     /* Crypto horizontal scroll on mobile */
     .crypto-group-container {
-        padding: 0.5rem;
+        padding: 0.4rem;
     }
 
     .crypto-coins-row {
@@ -6965,27 +7192,52 @@ html, body {
         justify-content: flex-start;
         padding-bottom: 0.3rem;
         -webkit-overflow-scrolling: touch;
+        gap: 0.3rem;
     }
 
     .crypto-coin-card {
         min-width: 100px;
         flex-shrink: 0;
+        padding: 0.5rem;
+    }
+
+    .crypto-coin-card .crypto-buy-controls {
+        flex-direction: row;
+        gap: 0.3rem;
+        margin-top: 0.3rem;
+    }
+
+    .crypto-coin-card .crypto-input {
+        flex: 1;
+        min-width: 0;
+        padding: 0.4rem 0.3rem;
+        font-size: 0.9rem;
+    }
+
+    .crypto-coin-card .crypto-buy-btn {
+        width: auto;
+        flex-shrink: 0;
+        padding: 0.4rem 0.6rem;
+        font-size: 0.75rem;
+        min-width: 45px;
     }
 
     /* Crowdfunding horizontal scroll on mobile */
     .crowdfunding-group-container {
-        padding: 0.5rem;
+        padding: 0.4rem;
     }
 
     .crowdfunding-projects-row {
         flex-wrap: nowrap;
         overflow-x: auto;
         justify-content: flex-start;
+        gap: 0.3rem;
     }
 
     .crowdfunding-project-card {
         min-width: 100px;
         flex-shrink: 0;
+        padding: 0.5rem;
     }
 
     .cf-investments-row {
@@ -6996,18 +7248,9 @@ html, body {
         max-width: 100%;
     }
 
-    .crypto-coin-card .crypto-buy-controls {
-        flex-direction: row;
-    }
-
-    .crypto-coin-card .crypto-input {
-        flex: 1;
-        min-width: 0;
-    }
-
-    .crypto-coin-card .crypto-buy-btn {
-        width: auto;
-        flex-shrink: 0;
+    .crowdfunding-buy-controls {
+        gap: 0.3rem;
+        margin-top: 0.3rem;
     }
 }
 
@@ -7171,8 +7414,17 @@ html, body {
     }
 
     .spin-btn {
-        min-width: 44px;
-        min-height: 44px;
+        min-width: 40px;
+        min-height: 40px;
+    }
+
+    .btn-quick-lot {
+        min-height: 36px;
+    }
+
+    .deposito-rate-card,
+    .bond-rate-card {
+        min-height: 36px;
     }
 }
 

@@ -75,8 +75,8 @@ public class GameSession
     public List<BondRate> CurrentBondRates { get; set; } = new();
 
     // === BOT STATE ===
-    // Bot uses aggressive balanced strategy optimized for growth:
-    // 2% Savings, 15% Deposito (24mo), 15% Bonds (ST), 35% Index Fund, 10% Stocks, 23% Gold
+    // Bot uses aggressive stock-heavy strategy with future data advantage:
+    // 40% Stocks, 20% Deposito, 10% Index Fund, 10% Crypto, 5% Bonds, 5% Gold, 5% CrowdFunding, 5% Savings
     public decimal BotCashBalance { get; set; } = 5_000_000;
     public decimal BotSavingsBalance { get; set; } = 0;
     public List<DepositoItem> BotDepositos { get; set; } = new();
@@ -86,8 +86,17 @@ public class GameSession
     public decimal BotGoldUnits { get; set; } = 0;
     public decimal BotGoldCost { get; set; } = 0;
     public decimal BotStockCost { get; set; } = 0; // Total cost basis for bot stocks
-    public decimal BotStockValue { get; set; } = 0; // Current value of bot stocks (grows toward 200% profit)
+    public decimal BotStockValue { get; set; } = 0; // Current value of bot stocks
     public string BotStockTicker { get; set; } = string.Empty; // Which stock the bot picked
+    // Crypto
+    public decimal BotCryptoUnits { get; set; } = 0; // Fractional BTC units
+    public decimal BotCryptoCost { get; set; } = 0;
+    public string BotCryptoSymbol { get; set; } = "BTC";
+    // CrowdFunding
+    public List<CrowdfundingInvestment> BotCrowdfundingInvestments { get; set; } = new();
+    // Advisory tips
+    public List<AdvisorTip> AdvisorTips { get; set; } = new();
+    // Event tracking
     public int BotEventsPaidFromCash { get; set; } = 0;
     public int BotEventsPaidFromSavings { get; set; } = 0;
     public int BotEventsPaidFromPortfolio { get; set; } = 0;
@@ -124,6 +133,8 @@ public class GameSession
     // Bot calculated values
     public decimal BotIndexFundValue => BotIndexFundUnits * GetBotIndexPrice();
     public decimal BotGoldValue => BotGoldUnits * AssetPrices.GetValueOrDefault("emas", UNIT_COST);
+    public decimal BotCryptoValue => BotCryptoUnits * GetBotCryptoPrice();
+    public decimal BotCrowdfundingValue => BotCrowdfundingInvestments.Where(c => !c.HasFailed).Sum(c => c.CurrentValue);
 
     private decimal GetBotIndexPrice()
     {
@@ -131,9 +142,15 @@ public class GameSession
         var convIdx = AvailableIndices.FirstOrDefault(i => !i.IsShariah);
         return convIdx?.CurrentPrice ?? AssetPrices.GetValueOrDefault("reksadana", UNIT_COST);
     }
+
+    private decimal GetBotCryptoPrice()
+    {
+        var btc = AvailableCryptos.FirstOrDefault(c => c.Symbol == "BTC");
+        return btc?.CurrentPrice ?? 0;
+    }
     public decimal BotTotalDepositoValue => BotDepositos.Sum(d => d.CurrentValue);
     public decimal BotTotalBondValue => BotBonds.Sum(b => b.CurrentValue);
-    public decimal BotNetWorth => BotCashBalance + BotSavingsBalance + BotIndexFundValue + BotGoldValue + BotTotalDepositoValue + BotTotalBondValue + BotStockValue;
+    public decimal BotNetWorth => BotCashBalance + BotSavingsBalance + BotIndexFundValue + BotGoldValue + BotTotalDepositoValue + BotTotalBondValue + BotStockValue + BotCryptoValue + BotCrowdfundingValue;
 
     public void InitializePrices(Dictionary<string, AssetDefinition> assets)
     {
@@ -225,6 +242,7 @@ public class GameSession
             IntroAssetType = IntroAssetType,
             TotalGameMonths = TotalGameMonths,
             BotState = ToBotState(),
+            AdvisorTips = AdvisorTips.ToList(),
             // Player portfolio percentages
             PlayerCashPercent = playerCashPct,
             PlayerSavingsPercent = playerSavingsPct,
@@ -268,12 +286,13 @@ public class GameSession
         var stockValue = BotStockValue;
         var depositoValue = BotTotalDepositoValue;
         var bondValue = BotTotalBondValue;
+        var cryptoValue = BotCryptoValue;
+        var crowdfundingValue = BotCrowdfundingValue;
         var botNetWorth = BotNetWorth;
 
-        // Deduct player's total event cost from bot's displayed net worth
-        // This ensures the bot is penalized the same emergency event amount as the player
-        var playerEventDeduction = PlayerTotalEventCostPaid;
-        var displayNetWorth = botNetWorth - playerEventDeduction;
+        // Bot already pays events via ProcessBotEventPayment (BotNetWorth is already reduced).
+        // No additional deduction needed — display actual bot net worth.
+        var displayNetWorth = botNetWorth;
 
         // Calculate portfolio percentages for pie chart (based on actual net worth)
         var cashPct = botNetWorth > 0 ? (BotCashBalance / botNetWorth) * 100 : 0;
@@ -283,6 +302,8 @@ public class GameSession
         var indexPct = botNetWorth > 0 ? (indexFundValue / botNetWorth) * 100 : 0;
         var goldPct = botNetWorth > 0 ? (goldValue / botNetWorth) * 100 : 0;
         var stockPct = botNetWorth > 0 ? (stockValue / botNetWorth) * 100 : 0;
+        var cryptoPct = botNetWorth > 0 ? (cryptoValue / botNetWorth) * 100 : 0;
+        var crowdfundingPct = botNetWorth > 0 ? (crowdfundingValue / botNetWorth) * 100 : 0;
 
         var totalIncomeReceived = totalInvested + (CurrentYear - 1) * YEARLY_INCOME;
 
@@ -301,13 +322,22 @@ public class GameSession
             StockCost = BotStockCost,
             StockValue = stockValue,
             StockTicker = BotStockTicker,
+            // Crypto
+            CryptoUnits = BotCryptoUnits,
+            CryptoCost = BotCryptoCost,
+            CryptoValue = cryptoValue,
+            CryptoSymbol = BotCryptoSymbol,
+            // Crowdfunding
+            CrowdfundingValue = crowdfundingValue,
+            CrowdfundingCost = BotCrowdfundingInvestments.Sum(c => c.InvestedAmount),
+            // Calculated
             IndexFundValue = indexFundValue,
             GoldValue = goldValue,
             TotalDepositoValue = depositoValue,
             TotalBondValue = bondValue,
             NetWorth = botNetWorth,
             DisplayNetWorth = displayNetWorth,
-            PlayerEventDeduction = playerEventDeduction,
+            PlayerEventDeduction = 0, // Bot already pays events directly
             TotalInvested = totalIncomeReceived,
             TotalProfit = botNetWorth - totalIncomeReceived,
             ProfitPercent = totalIncomeReceived > 0 ? ((botNetWorth - totalIncomeReceived) / totalIncomeReceived) * 100 : 0,
@@ -319,12 +349,14 @@ public class GameSession
             IndexFundPercent = indexPct,
             GoldPercent = goldPct,
             StockPercent = stockPct,
+            CryptoPercent = cryptoPct,
+            CrowdfundingPercent = crowdfundingPct,
             // Event tracking
             EventsPaidFromCash = BotEventsPaidFromCash,
             EventsPaidFromSavings = BotEventsPaidFromSavings,
             EventsPaidFromPortfolio = BotEventsPaidFromPortfolio,
             TotalEventCostPaid = BotTotalEventCostPaid,
-            TargetAllocation = "10% Savings, 10% Deposito, 15% Bonds, 30% Index Fund, 15% Stocks, 20% Gold"
+            TargetAllocation = "40% Stocks, 20% Deposito, 10% Index Fund, 10% Crypto, 5% Bonds, 5% Gold, 5% CrowdFunding, 5% Savings"
         };
     }
 

@@ -320,6 +320,9 @@ public class GameState
     // Bot state for comparison at game over
     public BotState? BotState { get; set; }
 
+    // Advisory tips (shown at year-end)
+    public List<AdvisorTip> AdvisorTips { get; set; } = new();
+
     // Multiplayer fields
     public string? RoomCode { get; set; }
     public bool IsMultiplayer { get; set; }
@@ -408,13 +411,21 @@ public class RandomEvent
 }
 
 /// <summary>
-/// Bot state for comparing player performance against balanced investment strategy.
-/// - 10% Emergency Fund (Savings)
-/// - 10% Fixed Income - Deposito
-/// - 15% Fixed Income - Government Bonds (ST)
-/// - 30% Equities (Index Fund / Reksa Dana)
-/// - 15% Individual Stocks
-/// - 20% Commodities (Gold / Emas)
+/// Contextual financial advisory tip shown to the player during gameplay.
+/// Generated at year-end based on portfolio analysis and market data.
+/// </summary>
+public class AdvisorTip
+{
+    public string Message { get; set; } = string.Empty;
+    public string MessageEN { get; set; } = string.Empty;
+    public string Category { get; set; } = "info"; // "warning", "suggestion", "info"
+
+    public string GetMessage(Language lang) => lang == Language.English ? MessageEN : Message;
+}
+
+/// <summary>
+/// Bot state for comparing player performance against aggressive investment strategy.
+/// Uses future data to time stock trades. Very hard to beat.
 /// </summary>
 public class BotState
 {
@@ -432,6 +443,16 @@ public class BotState
     public decimal StockCost { get; set; }
     public decimal StockValue { get; set; }
     public string StockTicker { get; set; } = string.Empty;
+
+    // Crypto holdings
+    public decimal CryptoUnits { get; set; }
+    public decimal CryptoCost { get; set; }
+    public decimal CryptoValue { get; set; }
+    public string CryptoSymbol { get; set; } = string.Empty;
+
+    // Crowdfunding holdings
+    public decimal CrowdfundingValue { get; set; }
+    public decimal CrowdfundingCost { get; set; }
 
     // Calculated values (set by server)
     public decimal IndexFundValue { get; set; }
@@ -455,6 +476,8 @@ public class BotState
     public decimal IndexFundPercent { get; set; }
     public decimal GoldPercent { get; set; }
     public decimal StockPercent { get; set; }
+    public decimal CryptoPercent { get; set; }
+    public decimal CrowdfundingPercent { get; set; }
 
     // Event tracking
     public int EventsPaidFromCash { get; set; }
@@ -463,5 +486,5 @@ public class BotState
     public decimal TotalEventCostPaid { get; set; }
 
     // Target allocation for display
-    public string TargetAllocation { get; set; } = "10% Savings, 10% Deposito, 15% Bonds, 30% Index Fund, 15% Stocks, 20% Gold";
+    public string TargetAllocation { get; set; } = "40% Stocks, 20% Deposito, 10% Index Fund, 10% Crypto, 5% Bonds, 5% Gold, 5% CrowdFunding, 5% Savings";
 }

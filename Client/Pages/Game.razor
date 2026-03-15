@@ -127,113 +127,137 @@
     }
     else if (_gameState == null && _multiplayerScreen == "none")
     {
-        <div class="start-screen">
-            <!-- Background botanical SVG decorations -->
-            <div class="an-bg-botanicals">
-                <svg class="an-bg-vine an-bg-vine--left" viewBox="0 0 60 400" fill="none"><path d="M30 0C20 50 10 100 15 150C20 200 10 250 15 300C20 350 15 380 20 400" stroke="currentColor" stroke-width="1"/><path d="M15 80C8 70 4 60 8 50" stroke="currentColor" stroke-width="0.6"/><path d="M15 150C5 145 2 135 6 125" stroke="currentColor" stroke-width="0.6"/><circle cx="15" cy="80" r="3" fill="currentColor" opacity="0.3"/><circle cx="15" cy="150" r="2.5" fill="currentColor" opacity="0.25"/><circle cx="18" cy="220" r="3" fill="currentColor" opacity="0.2"/><path d="M15 280C8 275 3 265 5 255" stroke="currentColor" stroke-width="0.6"/><circle cx="15" cy="280" r="2.5" fill="currentColor" opacity="0.2"/></svg>
-                <svg class="an-bg-vine an-bg-vine--right" viewBox="0 0 60 400" fill="none"><path d="M30 0C40 50 50 100 45 150C40 200 50 250 45 300C40 350 45 380 40 400" stroke="currentColor" stroke-width="1"/><path d="M45 80C52 70 56 60 52 50" stroke="currentColor" stroke-width="0.6"/><path d="M45 150C55 145 58 135 54 125" stroke="currentColor" stroke-width="0.6"/><circle cx="45" cy="80" r="3" fill="currentColor" opacity="0.3"/><circle cx="45" cy="150" r="2.5" fill="currentColor" opacity="0.25"/><circle cx="42" cy="220" r="3" fill="currentColor" opacity="0.2"/></svg>
+        <div class="landing-page">
+            <!-- Hero background -->
+            <div class="hero-bg">
+                <img src="images/hero-landing.jpg" alt="The Giant Coin" loading="eager" />
+                <div class="overlay-gradient"></div>
+                <div class="overlay-vignette"></div>
+                <div class="noise-texture"></div>
             </div>
 
-            <!-- Art Nouveau framed content -->
-            <div class="an-start-frame">
-                <!-- Ornate border -->
-                <svg class="an-start-border" viewBox="0 0 440 620" fill="none" preserveAspectRatio="none">
-                    <rect x="6" y="6" width="428" height="608" rx="12" stroke="#C5A059" stroke-width="1.2" opacity="0.45"/>
-                    <rect x="16" y="16" width="408" height="588" rx="6" stroke="#C5A059" stroke-width="0.6" opacity="0.25"/>
-                    <path d="M130 16C130 16 170 2 220 2C270 2 310 16 310 16" stroke="#C5A059" stroke-width="0.8" opacity="0.35"/>
-                    <path d="M130 604C130 604 170 618 220 618C270 618 310 604 310 604" stroke="#C5A059" stroke-width="0.8" opacity="0.35"/>
-                </svg>
+            <!-- Floating particles -->
+            <div class="landing-particles">
+                <span class="lp lp1"></span><span class="lp lp2"></span><span class="lp lp3"></span>
+                <span class="lp lp4"></span><span class="lp lp5"></span><span class="lp lp6"></span>
+                <span class="lp lp7"></span><span class="lp lp8"></span>
+            </div>
 
-                <!-- Corner ornaments -->
-                <svg class="an-start-corner an-start-corner--tl" viewBox="0 0 80 80" fill="none"><path d="M4 76C4 76 4 32 12 20C20 8 36 4 76 4" stroke="#C5A059" stroke-width="1.2" stroke-linecap="round"/><path d="M12 20C12 20 6 14 10 8C14 2 20 4 20 8C20 12 14 15 12 20Z" fill="#C5A059" opacity="0.25"/><circle cx="24" cy="9" r="2" fill="#C5A059" opacity="0.2"/></svg>
-                <svg class="an-start-corner an-start-corner--tr" viewBox="0 0 80 80" fill="none"><path d="M4 76C4 76 4 32 12 20C20 8 36 4 76 4" stroke="#C5A059" stroke-width="1.2" stroke-linecap="round"/><path d="M12 20C12 20 6 14 10 8C14 2 20 4 20 8C20 12 14 15 12 20Z" fill="#C5A059" opacity="0.25"/><circle cx="24" cy="9" r="2" fill="#C5A059" opacity="0.2"/></svg>
-                <svg class="an-start-corner an-start-corner--bl" viewBox="0 0 80 80" fill="none"><path d="M4 76C4 76 4 32 12 20C20 8 36 4 76 4" stroke="#C5A059" stroke-width="1.2" stroke-linecap="round"/><path d="M12 20C12 20 6 14 10 8C14 2 20 4 20 8C20 12 14 15 12 20Z" fill="#C5A059" opacity="0.25"/></svg>
-                <svg class="an-start-corner an-start-corner--br" viewBox="0 0 80 80" fill="none"><path d="M4 76C4 76 4 32 12 20C20 8 36 4 76 4" stroke="#C5A059" stroke-width="1.2" stroke-linecap="round"/><path d="M12 20C12 20 6 14 10 8C14 2 20 4 20 8C20 12 14 15 12 20Z" fill="#C5A059" opacity="0.25"/></svg>
-
-                <!-- Orangutan emblem -->
-                <div class="an-start-emblem">
-                    <img src="images/coin-front.jpg" alt="Orang Utan Capital" />
+            <!-- Navigation bar -->
+            <nav class="landing-nav">
+                <div class="nav-logo">
+                    <img src="images/coin-front.jpg" alt="Orang Utan Capital" class="nav-logo-img" />
+                    <span class="nav-logo-text">Tjoean</span>
                 </div>
+                <div class="nav-right">
+                    <div class="an-lang-dropdown-wrapper">
+                        <button class="an-lang-dropdown-btn" @onclick="() => _showLangDropdown = !_showLangDropdown" title="Change Language">
+                            @(_selectedLanguage == Language.Indonesian ? "🇮🇩" : "🇺🇸")
+                        </button>
+                        @if (_showLangDropdown)
+                        {
+                            <div class="an-lang-dropdown-menu">
+                                <button class="an-lang-dropdown-item @(_selectedLanguage == Language.Indonesian ? "selected" : "")"
+                                        @onclick="() => { _selectedLanguage = Language.Indonesian; _showLangDropdown = false; Lang.SetLanguage(_selectedLanguage, _selectedAgeMode); }">
+                                    🇮🇩 Bahasa Indonesia
+                                </button>
+                                <button class="an-lang-dropdown-item @(_selectedLanguage == Language.English ? "selected" : "")"
+                                        @onclick="() => { _selectedLanguage = Language.English; _showLangDropdown = false; Lang.SetLanguage(_selectedLanguage, _selectedAgeMode); }">
+                                    🇺🇸 English
+                                </button>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </nav>
 
-                <!-- Title -->
-                <h1 class="an-start-title">Tjoean</h1>
-
-                <!-- Flourish -->
-                <svg class="an-start-flourish" viewBox="0 0 240 20" fill="none">
-                    <path d="M15 10C15 10 50 3 85 9C120 15 120 5 155 9C190 13 225 10 225 10" stroke="#C5A059" stroke-width="0.8" stroke-linecap="round"/>
-                    <path d="M116 10L120 6L124 10L120 14Z" fill="#C5A059" opacity="0.5"/>
-                    <circle cx="15" cy="10" r="1.5" fill="#C5A059" opacity="0.4"/>
-                    <circle cx="225" cy="10" r="1.5" fill="#C5A059" opacity="0.4"/>
-                </svg>
-
-                <p class="an-start-subtitle">@Lang.T("START_SUBTITLE")</p>
-
+            <!-- Hero content -->
+            <div class="hero-content">
+                <h1 class="hero-headline">
+                    @if (_selectedLanguage == Language.English)
+                    {
+                        <span>Start your investment </span><span class="accent">journey today.</span>
+                    }
+                    else
+                    {
+                        <span>Mulai perjalanan </span><span class="accent">investasimu hari ini.</span>
+                    }
+                </h1>
+                <p class="hero-subtitle">
+                    @(_selectedLanguage == Language.English
+                        ? "Grow your wealth over 15 years. Mirror real-world historical data."
+                        : "Investasi strategis dalam 15 tahun. Berbasis data historis pasar modal.")
+                </p>
                 <!-- Form -->
-                <div class="an-start-form">
+                <div class="hero-cta">
                     <input type="text" @bind="_playerName" @bind:event="oninput" placeholder="@Lang.T("START_NAME_PLACEHOLDER")" maxlength="20" class="an-input" />
 
-                    <div class="an-toggle-row">
+                    <div class="cta-buttons">
+                        <button class="cta-btn cta-btn--primary" @onclick="ShowTutorial" disabled="@(string.IsNullOrWhiteSpace(_playerName) || !_isConnected)" title="Solo Game">
+                            <svg class="cta-btn-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+                            </svg>
+                            <span>SOLO</span>
+                            @if (!_isConnected)
+                            {
+                                <span class="cta-btn-status">@Lang.T("START_CONNECTING")</span>
+                            }
+                        </button>
+                        <button class="cta-btn cta-btn--secondary" @onclick='() => _multiplayerScreen = "create-join"' disabled="@(string.IsNullOrWhiteSpace(_playerName) || !_isConnected)" title="Multiplayer Game">
+                            <svg class="cta-btn-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                            </svg>
+                            <span>GROUP</span>
+                        </button>
+                    </div>
+
+                    <div class="cta-options-row">
                         <label class="toggle-switch">
                             <input type="checkbox" @bind="_isLightMode" />
                             <span class="an-toggle-slider"></span>
                         </label>
-                        <div class="an-toggle-info">
-                            <span class="an-toggle-label">@Lang.T("START_LIGHT_MODE")</span>
-                            <span class="an-toggle-desc">@Lang.T("START_LIGHT_MODE_DESC")</span>
-                        </div>
-                        <!-- Language Dropdown -->
-                        <div class="an-lang-dropdown-wrapper">
-                            <button class="an-lang-dropdown-btn" @onclick="() => _showLangDropdown = !_showLangDropdown" title="Change Language">
-                                @(_selectedLanguage == Language.Indonesian ? "🇮🇩" : "🇺🇸")
-                            </button>
-                            @if (_showLangDropdown)
-                            {
-                                <div class="an-lang-dropdown-menu">
-                                    <button class="an-lang-dropdown-item @(_selectedLanguage == Language.Indonesian ? "selected" : "")"
-                                            @onclick="() => { _selectedLanguage = Language.Indonesian; _showLangDropdown = false; Lang.SetLanguage(_selectedLanguage, _selectedAgeMode); }">
-                                        🇮🇩 Bahasa Indonesia
-                                    </button>
-                                    <button class="an-lang-dropdown-item @(_selectedLanguage == Language.English ? "selected" : "")"
-                                            @onclick="() => { _selectedLanguage = Language.English; _showLangDropdown = false; Lang.SetLanguage(_selectedLanguage, _selectedAgeMode); }">
-                                        🇺🇸 English
-                                    </button>
-                                </div>
-                            }
-                        </div>
-                    </div>
-
-                    <!-- Mode Buttons with Icons -->
-                    <div class="an-mode-buttons-icon">
-                        <button class="an-mode-icon-btn solo-btn" @onclick="ShowTutorial" disabled="@(string.IsNullOrWhiteSpace(_playerName) || !_isConnected)" title="Solo Game">
-                            <svg class="an-mode-icon" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
-                            </svg>
-                            <span class="an-mode-label">SOLO</span>
-                            @if (!_isConnected)
-                            {
-                                <span class="an-mode-status">@Lang.T("START_CONNECTING")</span>
-                            }
-                        </button>
-                        <button class="an-mode-icon-btn multi-btn" @onclick='() => _multiplayerScreen = "create-join"' disabled="@(string.IsNullOrWhiteSpace(_playerName) || !_isConnected)" title="Multiplayer Game">
-                            <svg class="an-mode-icon" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
-                            </svg>
-                            <span class="an-mode-label">GROUP</span>
-                        </button>
+                        <span class="cta-option-label">@Lang.T("START_LIGHT_MODE")</span>
                     </div>
 
                     @if (_isReconnecting)
                     {
-                        <p style="color: #DAA520; font-size: 0.85rem; text-align: center; margin-top: 0.5rem; opacity: 0.9;">Reconnecting...</p>
+                        <p style="color: #DAA520; font-size: 0.85rem; margin-top: 0.5rem; opacity: 0.9;">Reconnecting...</p>
                     }
                     else if (_connectionError != null)
                     {
-                        <p style="color: #CD853F; font-size: 0.85rem; text-align: center; margin-top: 0.5rem; opacity: 0.9;">@_connectionError</p>
+                        <p style="color: #CD853F; font-size: 0.85rem; margin-top: 0.5rem; opacity: 0.9;">@_connectionError</p>
                     }
                 </div>
+
             </div>
 
-            <span class="an-start-footer">Orang Utan Capital</span>
+            <!-- Right-side market text -->
+            <div class="hero-right-text">
+                <p>
+                    @(_selectedLanguage == Language.English
+                        ? "Simulated market crashes, booms, and recoveries."
+                        : "Simulasi krisis, lonjakan, dan pemulihan pasar modal.")
+                </p>
+            </div>
+
+            <!-- Bottom quote -->
+            <p class="hero-quote">
+                @(_selectedLanguage == Language.English
+                    ? "Embrace the stoic nature of the orangutan."
+                    : "Berinvestasi secara stoik seperti orangutan.")
+            </p>
+
+            <!-- Bottom badge -->
+            <div class="hero-badge">
+                <img src="images/coin-front.jpg" alt="" class="hero-badge-coin" />
+                <span class="hero-badge-text">Orang Utan Capital</span>
+            </div>
+
+            <!-- Footer -->
+            <div class="landing-footer">
+                <span>Tjoean 2025</span>
+                <span class="landing-footer-tagline">mulai dari kecil.</span>
+            </div>
         </div>
     }
     else if (_multiplayerScreen == "create-join")
@@ -1547,6 +1571,29 @@
                         }
                     </div>
 
+                    @if (_gameState.AdvisorTips != null && _gameState.AdvisorTips.Count > 0)
+                    {
+                        <div class="divider"></div>
+
+                        <!-- Advisory Tips Panel -->
+                        <div class="advisor-tips-panel">
+                            <div class="advisor-tips-header" @onclick="() => _advisorExpanded = !_advisorExpanded">
+                                <span class="advisor-icon">@UIIcon("bot")</span>
+                                <h3>@(_selectedLanguage == Language.English ? "Financial Advisor" : "Penasihat Keuangan")</h3>
+                                <span class="log-toggle @(_advisorExpanded ? "expanded" : "")">&#9660;</span>
+                            </div>
+                            <div class="advisor-tips-body @(_advisorExpanded ? "expanded" : "")">
+                                @foreach (var tip in _gameState.AdvisorTips)
+                                {
+                                    <div class="advisor-tip @tip.Category">
+                                        <span class="tip-icon">@(tip.Category == "warning" ? "\u26A0" : tip.Category == "suggestion" ? "\U0001F4A1" : "\u2139")</span>
+                                        <span class="tip-text">@tip.GetMessage(_gameState.Language)</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+
                     <div class="divider"></div>
 
                     <!-- Game History Log -->
@@ -1870,7 +1917,6 @@
                         <!-- Comparison Section -->
                         <div class="comparison-section">
                             <h3>@Lang.T("GAMEOVER_AI_COMPARISON")</h3>
-                            <p class="comparison-desc">@Lang.T("GAMEOVER_AI_STRATEGY")</p>
 
                             <div class="comparison-cards">
                                 <!-- Player Card with Pie Chart -->
@@ -1932,6 +1978,13 @@
                                             <span>@UIIcon("chart") @Lang.T("LABEL_INVESTMENTS")</span>
                                             <span>Rp @_gameState.TotalPortfolioValue.ToString("N0")</span>
                                         </div>
+                                        @if (_gameState.PlayerTotalEventCostPaid > 0)
+                                        {
+                                            <div class="breakdown-item event-cost-row">
+                                                <span>@UIIcon("warning") @Lang.T("PERF_TOTAL_EVENT_COSTS")</span>
+                                                <span class="negative">-Rp @_gameState.PlayerTotalEventCostPaid.ToString("N0")</span>
+                                            </div>
+                                        }
                                     </div>
                                 </div>
 
@@ -1946,10 +1999,6 @@
                                         <div class="card-networth @(GetNetWorthComparisonClass(false))">
                                             <span class="networth-label">@Lang.T("GAMEOVER_NET_WORTH")</span>
                                             <span class="networth-value">Rp @_gameState.BotState.DisplayNetWorth.ToString("N0")</span>
-                                            @if (_gameState.BotState.PlayerEventDeduction > 0)
-                                            {
-                                                <span class="event-deduction">@Lang.T("GAMEOVER_EVENT_DEDUCTION", new Dictionary<string, object>{{"amount", _gameState.BotState.PlayerEventDeduction.ToString("N0")}})</span>
-                                            }
                                         </div>
 
                                         <!-- Bot Pie Chart -->
@@ -1984,6 +2033,14 @@
                                                 {
                                                     <div class="legend-item"><span class="legend-color gold"></span>@Lang.T("LABEL_GOLD") @_gameState.BotState.GoldPercent.ToString("F1")%</div>
                                                 }
+                                                @if (_gameState.BotState.CryptoPercent > 0)
+                                                {
+                                                    <div class="legend-item"><span class="legend-color crypto"></span>Crypto @_gameState.BotState.CryptoPercent.ToString("F1")%</div>
+                                                }
+                                                @if (_gameState.BotState.CrowdfundingPercent > 0)
+                                                {
+                                                    <div class="legend-item"><span class="legend-color crowdfunding"></span>CrowdFunding @_gameState.BotState.CrowdfundingPercent.ToString("F1")%</div>
+                                                }
                                             </div>
                                         </div>
 
@@ -2006,7 +2063,14 @@
                                             </div>
                                             <div class="breakdown-item">
                                                 <span>@Icon("reksadana") @Lang.T("LABEL_INDEX_FUND")</span>
-                                                <span>Rp @_gameState.BotState.IndexFundValue.ToString("N0")</span>
+                                                <span>Rp @_gameState.BotState.IndexFundValue.ToString("N0")
+                                                    @{ var idxProfit = _gameState.BotState.IndexFundValue - _gameState.BotState.IndexFundCost;
+                                                       var idxProfitPct = _gameState.BotState.IndexFundCost > 0 ? (idxProfit / _gameState.BotState.IndexFundCost * 100) : 0; }
+                                                    @if (_gameState.BotState.IndexFundCost > 0)
+                                                    {
+                                                        <span class="@(idxProfit >= 0 ? "positive" : "negative")">(@(idxProfit >= 0 ? "+" : "")@idxProfitPct.ToString("F0")%)</span>
+                                                    }
+                                                </span>
                                             </div>
                                             @if (_gameState.BotState.StockValue > 0)
                                             {
@@ -2021,8 +2085,41 @@
                                             }
                                             <div class="breakdown-item">
                                                 <span>@Icon("emas") @Lang.T("LABEL_GOLD")</span>
-                                                <span>Rp @_gameState.BotState.GoldValue.ToString("N0")</span>
+                                                <span>Rp @_gameState.BotState.GoldValue.ToString("N0")
+                                                    @{ var goldProfit = _gameState.BotState.GoldValue - _gameState.BotState.GoldCost;
+                                                       var goldProfitPct = _gameState.BotState.GoldCost > 0 ? (goldProfit / _gameState.BotState.GoldCost * 100) : 0; }
+                                                    <span class="@(goldProfit >= 0 ? "positive" : "negative")">(@(goldProfit >= 0 ? "+" : "")@goldProfitPct.ToString("F0")%)</span>
+                                                </span>
                                             </div>
+                                            @if (_gameState.BotState.CryptoValue > 0)
+                                            {
+                                                <div class="breakdown-item">
+                                                    <span>@Icon("crypto") Crypto @(!string.IsNullOrEmpty(_gameState.BotState.CryptoSymbol) ? $"({_gameState.BotState.CryptoSymbol})" : "")</span>
+                                                    <span>Rp @_gameState.BotState.CryptoValue.ToString("N0")
+                                                        @{ var cryptoProfit = _gameState.BotState.CryptoValue - _gameState.BotState.CryptoCost;
+                                                           var cryptoProfitPct = _gameState.BotState.CryptoCost > 0 ? (cryptoProfit / _gameState.BotState.CryptoCost * 100) : 0; }
+                                                        <span class="@(cryptoProfit >= 0 ? "positive" : "negative")">(@(cryptoProfit >= 0 ? "+" : "")@cryptoProfitPct.ToString("F0")%)</span>
+                                                    </span>
+                                                </div>
+                                            }
+                                            @if (_gameState.BotState.CrowdfundingValue > 0)
+                                            {
+                                                <div class="breakdown-item">
+                                                    <span>@Icon("crowdfunding") CrowdFunding</span>
+                                                    <span>Rp @_gameState.BotState.CrowdfundingValue.ToString("N0")
+                                                        @{ var cfProfit = _gameState.BotState.CrowdfundingValue - _gameState.BotState.CrowdfundingCost;
+                                                           var cfProfitPct = _gameState.BotState.CrowdfundingCost > 0 ? (cfProfit / _gameState.BotState.CrowdfundingCost * 100) : 0; }
+                                                        <span class="@(cfProfit >= 0 ? "positive" : "negative")">(@(cfProfit >= 0 ? "+" : "")@cfProfitPct.ToString("F0")%)</span>
+                                                    </span>
+                                                </div>
+                                            }
+                                            @if (_gameState.BotState.TotalEventCostPaid > 0)
+                                            {
+                                                <div class="breakdown-item event-cost-row">
+                                                    <span>@UIIcon("warning") @Lang.T("PERF_TOTAL_EVENT_COSTS")</span>
+                                                    <span class="negative">-Rp @_gameState.BotState.TotalEventCostPaid.ToString("N0")</span>
+                                                </div>
+                                            }
                                         </div>
                                     </div>
                                 }
@@ -2236,6 +2333,7 @@
     private string _savingsAmountDisplay = "1.000.000";
     private bool _isLightMode = false;
     private bool _logExpanded = true;
+    private bool _advisorExpanded = true;
     private AgeMode _selectedAgeMode => _isLightMode ? AgeMode.Kids : AgeMode.Adult;
     private Language _selectedLanguage = Language.Indonesian;
     private bool _showLangDropdown = false;
@@ -3318,6 +3416,8 @@
         var index = bot.IndexFundPercent;
         var stock = bot.StockPercent;
         var gold = bot.GoldPercent;
+        var crypto = bot.CryptoPercent;
+        var crowdfunding = bot.CrowdfundingPercent;
 
         // Build conic gradient for pie chart
         var segments = new List<string>();
@@ -3357,6 +3457,16 @@
         {
             segments.Add($"#FFD700 {cumulative}% {cumulative + gold}%");
             cumulative += gold;
+        }
+        if (crypto > 0)
+        {
+            segments.Add($"#F7931A {cumulative}% {cumulative + crypto}%");
+            cumulative += crypto;
+        }
+        if (crowdfunding > 0)
+        {
+            segments.Add($"#795548 {cumulative}% {cumulative + crowdfunding}%");
+            cumulative += crowdfunding;
         }
 
         if (!segments.Any()) return "background: #ccc;";

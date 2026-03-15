@@ -149,12 +149,30 @@
                     <img src="images/coin-front.jpg" alt="Orang Utan Capital" class="nav-logo-img" />
                     <span class="nav-logo-text">Tjoean</span>
                 </div>
-                <div class="nav-links"></div>
+                <div class="nav-right">
+                    <div class="an-lang-dropdown-wrapper">
+                        <button class="an-lang-dropdown-btn" @onclick="() => _showLangDropdown = !_showLangDropdown" title="Change Language">
+                            @(_selectedLanguage == Language.Indonesian ? "🇮🇩" : "🇺🇸")
+                        </button>
+                        @if (_showLangDropdown)
+                        {
+                            <div class="an-lang-dropdown-menu">
+                                <button class="an-lang-dropdown-item @(_selectedLanguage == Language.Indonesian ? "selected" : "")"
+                                        @onclick="() => { _selectedLanguage = Language.Indonesian; _showLangDropdown = false; Lang.SetLanguage(_selectedLanguage, _selectedAgeMode); }">
+                                    🇮🇩 Bahasa Indonesia
+                                </button>
+                                <button class="an-lang-dropdown-item @(_selectedLanguage == Language.English ? "selected" : "")"
+                                        @onclick="() => { _selectedLanguage = Language.English; _showLangDropdown = false; Lang.SetLanguage(_selectedLanguage, _selectedAgeMode); }">
+                                    🇺🇸 English
+                                </button>
+                            </div>
+                        }
+                    </div>
+                </div>
             </nav>
 
             <!-- Hero content -->
             <div class="hero-content">
-                <span class="hero-tag">@(_selectedLanguage == Language.English ? "INVESTMENT SIMULATION GAME" : "GAME SIMULASI INVESTASI")</span>
                 <h1 class="hero-headline">
                     @if (_selectedLanguage == Language.English)
                     {
@@ -165,7 +183,16 @@
                         <span>Mulai perjalanan </span><span class="accent">investasimu hari ini.</span>
                     }
                 </h1>
-                <p class="hero-subtitle">@Lang.T("START_SUBTITLE")</p>
+                <p class="hero-subtitle">
+                    @(_selectedLanguage == Language.English
+                        ? "Grow your wealth over 15 years. Mirror real-world historical data."
+                        : "Investasi strategis dalam 15 tahun. Berbasis data historis pasar nyata.")
+                </p>
+                <p class="hero-quote">
+                    @(_selectedLanguage == Language.English
+                        ? "Embrace the stoic nature of the orangutan."
+                        : "Jadilah bijak seperti orangutan.")
+                </p>
 
                 <!-- Form -->
                 <div class="hero-cta">
@@ -196,26 +223,6 @@
                             <span class="an-toggle-slider"></span>
                         </label>
                         <span class="cta-option-label">@Lang.T("START_LIGHT_MODE")</span>
-
-                        <!-- Language Dropdown -->
-                        <div class="an-lang-dropdown-wrapper">
-                            <button class="an-lang-dropdown-btn" @onclick="() => _showLangDropdown = !_showLangDropdown" title="Change Language">
-                                @(_selectedLanguage == Language.Indonesian ? "🇮🇩" : "🇺🇸")
-                            </button>
-                            @if (_showLangDropdown)
-                            {
-                                <div class="an-lang-dropdown-menu">
-                                    <button class="an-lang-dropdown-item @(_selectedLanguage == Language.Indonesian ? "selected" : "")"
-                                            @onclick="() => { _selectedLanguage = Language.Indonesian; _showLangDropdown = false; Lang.SetLanguage(_selectedLanguage, _selectedAgeMode); }">
-                                        🇮🇩 Bahasa Indonesia
-                                    </button>
-                                    <button class="an-lang-dropdown-item @(_selectedLanguage == Language.English ? "selected" : "")"
-                                            @onclick="() => { _selectedLanguage = Language.English; _showLangDropdown = false; Lang.SetLanguage(_selectedLanguage, _selectedAgeMode); }">
-                                        🇺🇸 English
-                                    </button>
-                                </div>
-                            }
-                        </div>
                     </div>
 
                     @if (_isReconnecting)
@@ -228,21 +235,6 @@
                     }
                 </div>
 
-                <!-- Stats badges -->
-                <div class="hero-stats">
-                    <div class="hero-stat">
-                        <span class="hero-stat-value">15</span>
-                        <span class="hero-stat-label">Tahun Simulasi</span>
-                    </div>
-                    <div class="hero-stat">
-                        <span class="hero-stat-value">19</span>
-                        <span class="hero-stat-label">Saham IDX</span>
-                    </div>
-                    <div class="hero-stat">
-                        <span class="hero-stat-value">4</span>
-                        <span class="hero-stat-label">Multiplayer</span>
-                    </div>
-                </div>
             </div>
 
             <!-- Bottom badge -->

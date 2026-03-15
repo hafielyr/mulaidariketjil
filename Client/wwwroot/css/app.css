@@ -1230,9 +1230,27 @@ html, body {
     color: #F5F0E8;
     opacity: 0;
     line-height: 1.6;
-    margin-bottom: 1.8rem;
+    margin-bottom: 0.6rem;
     max-width: 440px;
     animation: hero-slide-up 0.6s ease-out 0.8s forwards;
+}
+
+.hero-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.9rem;
+    font-style: italic;
+    color: #C5A059;
+    opacity: 0;
+    line-height: 1.5;
+    margin-bottom: 1.8rem;
+    max-width: 440px;
+    animation: hero-slide-up 0.5s ease-out 0.95s forwards;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
 }
 
 @keyframes hero-slide-up {
@@ -1492,16 +1510,12 @@ html, body {
         font-size: 0.95rem;
     }
 
+    .hero-quote {
+        font-size: 0.8rem;
+    }
+
     .hero-cta {
         max-width: 100%;
-    }
-
-    .hero-stats {
-        gap: 1rem;
-    }
-
-    .hero-stat-value {
-        font-size: 1.3rem;
     }
 
     .hero-badge {
@@ -1545,17 +1559,17 @@ html, body {
 
     .hero-subtitle {
         font-size: 0.85rem;
-        margin-bottom: 1.2rem;
+        margin-bottom: 0.4rem;
+    }
+
+    .hero-quote {
+        font-size: 0.75rem;
+        margin-bottom: 1rem;
     }
 
     .cta-buttons {
         flex-direction: column;
         gap: 0.5rem;
-    }
-
-    .hero-stats {
-        gap: 0.8rem;
-        margin-top: 1.2rem;
     }
 
     .landing-nav {

@@ -3333,7 +3333,7 @@ html, body {
 .tut-slide {
     animation: tut-slide-in 0.35s ease-out;
     text-align: center;
-    min-height: 380px;
+    min-height: 420px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -3592,7 +3592,7 @@ html, body {
     }
 
     .tut-slide {
-        min-height: 340px;
+        min-height: 380px;
     }
 
     .tut-title {
@@ -3617,7 +3617,7 @@ html, body {
 
 @media (max-width: 400px) {
     .tut-slide {
-        min-height: 320px;
+        min-height: 360px;
     }
 }
 

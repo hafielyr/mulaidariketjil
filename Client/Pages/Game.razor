@@ -1642,9 +1642,6 @@
                             <div class="slide-content">
                                 @if (_introSlide == 0)
                                 {
-                                    <p class="intro-desc">
-                                        @Lang.T("INTRO_CONGRATS", new Dictionary<string, object>{{"name", _gameState.PlayerId}})
-                                    </p>
                                     <div class="info-section">
                                         <h4>@Icon(introAsset.Type) @GetAssetDisplayName(introAsset, introAsset.DisplayName)</h4>
                                         <p><strong>@Lang.T("INTRO_WHAT_IS_IT")</strong> @GetAssetWhatIsIt(introAsset)</p>
@@ -1936,12 +1933,6 @@
                             <div class="slide-content">
                                 @if (_mpUnlockSlide == 0)
                                 {
-                                    <p class="intro-desc">
-                                        @GetText("Instrumen investasi baru kini tersedia untuk semua pemain!",
-                                                 "Instrumen investasi baru kini tersedia untuk semua pemain!",
-                                                 "A new investment instrument is now available for all players!",
-                                                 "A new investment instrument is now available for all players!")
-                                    </p>
                                     <div class="info-section">
                                         <h4>@Icon(mpUnlockAsset.Type) @GetAssetDisplayName(mpUnlockAsset, mpUnlockAsset.DisplayName)</h4>
                                         <p><strong>@GetText("Apa sih ini?", "Apa itu?", "What is it?", "What is it?")</strong> @GetAssetWhatIsIt(mpUnlockAsset)</p>

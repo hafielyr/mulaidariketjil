@@ -3333,7 +3333,7 @@ html, body {
 .tut-slide {
     animation: tut-slide-in 0.35s ease-out;
     text-align: center;
-    min-height: 320px;
+    min-height: 380px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -3592,7 +3592,7 @@ html, body {
     }
 
     .tut-slide {
-        min-height: 260px;
+        min-height: 340px;
     }
 
     .tut-title {
@@ -3617,7 +3617,7 @@ html, body {
 
 @media (max-width: 400px) {
     .tut-slide {
-        min-height: 240px;
+        min-height: 320px;
     }
 }
 
@@ -3910,7 +3910,7 @@ html, body {
 
 .slide-content {
     animation: slide-fade 0.3s ease-out;
-    min-height: 280px;
+    min-height: 320px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -3973,7 +3973,7 @@ html, body {
 /* Slide responsive */
 @media (max-width: 600px) {
     .slide-content {
-        min-height: 220px;
+        min-height: 280px;
     }
 
     .slide-nav-btn {
@@ -4016,7 +4016,7 @@ html, body {
 
 @media (max-width: 400px) {
     .slide-content {
-        min-height: 200px;
+        min-height: 260px;
     }
 
     .modal-content.intro-modal,

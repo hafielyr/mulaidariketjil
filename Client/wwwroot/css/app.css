@@ -1954,10 +1954,10 @@ html, body {
     position: relative;
 }
 
-/* Decorative clouds */
+/* Decorative coins */
 .game-screen::before,
 .game-screen::after {
-    content: '☁️';
+    content: '🪙';
     position: absolute;
     font-size: 3rem;
     opacity: 0.5;
@@ -2490,7 +2490,7 @@ html, body {
     font-family: 'Cinzel', 'Georgia', serif;
     font-size: 1.5rem;
     font-weight: 700;
-    margin-bottom: 1rem;
+    margin-bottom: 0.6rem;
     color: var(--ayam-red);
     text-align: center;
     display: flex;
@@ -2516,8 +2516,8 @@ html, body {
     background: linear-gradient(135deg, #FFFFFF, var(--sky-blue-light));
     border: 3px solid var(--stroke-color);
     border-radius: 12px;
-    padding: 1rem;
-    margin-bottom: 1.5rem;
+    padding: 0.8rem;
+    margin-bottom: 0.8rem;
     animation: pop-in 0.5s ease-out;
     box-shadow: 6px 6px 0 rgba(0,0,0,0.12);
 }
@@ -2527,7 +2527,7 @@ html, body {
     font-size: 1.1rem;
     font-weight: 700;
     color: var(--money-green-dark);
-    margin-bottom: 1rem;
+    margin-bottom: 0.6rem;
     text-align: center;
 }
 
@@ -2586,7 +2586,7 @@ html, body {
 .deposito-amount-input {
     display: flex;
     gap: 0.5rem;
-    margin-top: 1rem;
+    margin-top: 0.6rem;
     align-items: center;
 }
 
@@ -2608,8 +2608,8 @@ html, body {
 
 /* Auto-rollover checkbox */
 .deposito-auto-rollover {
-    margin-top: 0.8rem;
-    padding: 0.6rem;
+    margin-top: 0.5rem;
+    padding: 0.4rem;
     background: rgba(122, 147, 104, 0.08);
     border-radius: 8px;
     border: 2px dashed var(--money-green);
@@ -2853,17 +2853,17 @@ html, body {
 
 .crowdfunding-desc {
     font-size: 0.8rem;
-    line-height: 1.4;
-    min-height: 50px;
-    margin: 0.5rem 0;
+    line-height: 1.3;
+    min-height: 40px;
+    margin: 0.3rem 0;
 }
 
 .crowdfunding-stats {
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
-    margin: 0.5rem 0;
-    padding: 0.5rem;
+    gap: 0.3rem;
+    margin: 0.3rem 0;
+    padding: 0.4rem;
     background: rgba(122, 147, 104, 0.05);
     border-radius: 8px;
 }
@@ -2894,7 +2894,7 @@ html, body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.6rem;
+    margin-bottom: 0.3rem;
 }
 
 .card-actions {
@@ -2943,7 +2943,7 @@ html, body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.3rem;
 }
 
 .price {
@@ -2981,14 +2981,14 @@ html, body {
 .card-desc {
     font-size: 0.75rem;
     color: var(--text-muted);
-    margin-bottom: 0.6rem;
-    line-height: 1.4;
+    margin-bottom: 0.3rem;
+    line-height: 1.3;
 }
 
 /* ===== LOCKED SECTION ===== */
 .locked-section {
-    margin-top: 1.5rem;
-    padding-top: 1rem;
+    margin-top: 0.8rem;
+    padding-top: 0.6rem;
     border-top: 3px dashed var(--ayam-gold);
 }
 
@@ -2997,7 +2997,7 @@ html, body {
     font-size: 1rem;
     font-weight: 700;
     color: var(--text-muted);
-    margin-bottom: 1rem;
+    margin-bottom: 0.6rem;
     text-align: center;
 }
 
@@ -3007,15 +3007,15 @@ html, body {
 
 .locked-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 0.5rem;
 }
 
 .locked-card {
     background: rgba(0, 0, 0, 0.05);
     border: 3px dashed var(--stroke-color);
     border-radius: 8px;
-    padding: 1rem;
+    padding: 0.6rem;
     text-align: center;
     opacity: 0.7;
     transition: all 0.3s;
@@ -4884,8 +4884,8 @@ html, body {
     background: linear-gradient(135deg, #FFFFFF, var(--sky-blue-light));
     border: 3px solid var(--stroke-color);
     border-radius: 12px;
-    padding: 1rem;
-    margin-bottom: 1.5rem;
+    padding: 0.8rem;
+    margin-bottom: 0.8rem;
     animation: pop-in 0.5s ease-out;
     box-shadow: 6px 6px 0 rgba(0,0,0,0.12);
 }
@@ -4894,7 +4894,7 @@ html, body {
     font-family: 'Cinzel', 'Georgia', serif;
     font-size: 1.1rem;
     color: var(--money-green-dark);
-    margin-bottom: 1rem;
+    margin-bottom: 0.6rem;
     text-align: center;
 }
 
@@ -4983,7 +4983,7 @@ html, body {
 .bond-amount-input {
     display: flex;
     gap: 0.5rem;
-    margin-top: 1rem;
+    margin-top: 0.6rem;
     align-items: center;
 }
 
@@ -5021,8 +5021,8 @@ html, body {
     font-size: 0.85rem;
     font-weight: 700;
     color: var(--dark-brown);
-    margin: 0.8rem 0 0.4rem;
-    padding: 0.3rem 0.6rem;
+    margin: 0.5rem 0 0.3rem;
+    padding: 0.25rem 0.5rem;
     border-left: 3px solid var(--money-green);
     background: rgba(0, 128, 0, 0.05);
 }
@@ -5090,8 +5090,8 @@ html, body {
     background: linear-gradient(135deg, #FFFFFF, rgba(233, 196, 106, 0.2));
     border: 3px solid var(--stroke-color);
     border-radius: 12px;
-    padding: 1rem;
-    margin-bottom: 1.5rem;
+    padding: 0.8rem;
+    margin-bottom: 0.8rem;
     animation: pop-in 0.5s ease-out;
     box-shadow: 6px 6px 0 rgba(0,0,0,0.12);
 }
@@ -5108,14 +5108,14 @@ html, body {
 .stocks-list {
     display: flex;
     flex-direction: column;
-    gap: 0.8rem;
+    gap: 0.5rem;
 }
 
 .stock-row {
     background: white;
     border: 3px solid var(--stroke-color);
     border-radius: 12px;
-    padding: 1rem;
+    padding: 0.7rem;
     transition: all 0.3s;
     box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
 }
@@ -5129,9 +5129,9 @@ html, body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.5rem;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 0.6rem;
 }
 
 .stock-main {
@@ -5214,10 +5214,10 @@ html, body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-top: 0.8rem;
+    padding-top: 0.5rem;
     border-top: 2px dashed var(--ayam-gold);
     flex-wrap: wrap;
-    gap: 0.8rem;
+    gap: 0.5rem;
 }
 
 .lot-price {
@@ -6935,11 +6935,12 @@ html, body {
 @media (max-width: 768px) {
     .market-grid {
         grid-template-columns: 1fr 1fr;
-        gap: 0.4rem;
+        gap: 0.3rem;
     }
 
     .market-card {
-        padding: 0.5rem;
+        padding: 0.4rem 0.5rem;
+        border-radius: 8px;
     }
 
     .market-card .asset-name {
@@ -6950,14 +6951,22 @@ html, body {
         font-size: 0.85rem;
     }
 
+    .market-card .card-price {
+        margin-bottom: 0.2rem;
+    }
+
     .market-card .btn-buy {
-        padding: 0.4rem;
+        padding: 0.35rem;
         font-size: 0.7rem;
+    }
+
+    .gold-buy-buttons {
+        gap: 0.3rem;
     }
 
     /* Crypto horizontal scroll on mobile */
     .crypto-group-container {
-        padding: 0.5rem;
+        padding: 0.4rem;
     }
 
     .crypto-coins-row {
@@ -6965,27 +6974,52 @@ html, body {
         justify-content: flex-start;
         padding-bottom: 0.3rem;
         -webkit-overflow-scrolling: touch;
+        gap: 0.3rem;
     }
 
     .crypto-coin-card {
         min-width: 100px;
         flex-shrink: 0;
+        padding: 0.5rem;
+    }
+
+    .crypto-coin-card .crypto-buy-controls {
+        flex-direction: row;
+        gap: 0.3rem;
+        margin-top: 0.3rem;
+    }
+
+    .crypto-coin-card .crypto-input {
+        flex: 1;
+        min-width: 0;
+        padding: 0.4rem 0.3rem;
+        font-size: 0.9rem;
+    }
+
+    .crypto-coin-card .crypto-buy-btn {
+        width: auto;
+        flex-shrink: 0;
+        padding: 0.4rem 0.6rem;
+        font-size: 0.75rem;
+        min-width: 45px;
     }
 
     /* Crowdfunding horizontal scroll on mobile */
     .crowdfunding-group-container {
-        padding: 0.5rem;
+        padding: 0.4rem;
     }
 
     .crowdfunding-projects-row {
         flex-wrap: nowrap;
         overflow-x: auto;
         justify-content: flex-start;
+        gap: 0.3rem;
     }
 
     .crowdfunding-project-card {
         min-width: 100px;
         flex-shrink: 0;
+        padding: 0.5rem;
     }
 
     .cf-investments-row {
@@ -6996,18 +7030,9 @@ html, body {
         max-width: 100%;
     }
 
-    .crypto-coin-card .crypto-buy-controls {
-        flex-direction: row;
-    }
-
-    .crypto-coin-card .crypto-input {
-        flex: 1;
-        min-width: 0;
-    }
-
-    .crypto-coin-card .crypto-buy-btn {
-        width: auto;
-        flex-shrink: 0;
+    .crowdfunding-buy-controls {
+        gap: 0.3rem;
+        margin-top: 0.3rem;
     }
 }
 
@@ -7171,8 +7196,17 @@ html, body {
     }
 
     .spin-btn {
-        min-width: 44px;
-        min-height: 44px;
+        min-width: 40px;
+        min-height: 40px;
+    }
+
+    .btn-quick-lot {
+        min-height: 36px;
+    }
+
+    .deposito-rate-card,
+    .bond-rate-card {
+        min-height: 36px;
     }
 }
 
@@ -7253,15 +7287,34 @@ html, body {
 }
 
 /* Room Lobby */
+.lobby-frame {
+    max-width: 480px;
+}
+
+.lobby-coin-emblem {
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.lobby-coin-emblem img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 3px solid var(--ayam-gold, #D4C89A);
+    box-shadow: 0 4px 20px rgba(212, 200, 154, 0.3);
+}
+
 .room-code-display {
     text-align: center;
-    margin: 1rem 0;
+    margin: 0.75rem 0;
 }
 
 .room-code-label {
     display: block;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: var(--ayam-brown-light, #A68968);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
     margin-bottom: 0.25rem;
 }
 
@@ -7274,6 +7327,23 @@ html, body {
     font-family: monospace;
 }
 
+.room-settings-chips {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.settings-chip {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 12px;
+    background: rgba(212, 200, 154, 0.12);
+    border: 1px solid rgba(212, 200, 154, 0.25);
+    color: var(--ayam-brown-light, #A68968);
+}
+
 .room-settings {
     text-align: center;
     font-size: 0.8rem;
@@ -7281,21 +7351,54 @@ html, body {
     margin-bottom: 1rem;
 }
 
+.lobby-player-count {
+    text-align: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--ayam-gold, #D4C89A);
+    margin-bottom: 0.5rem;
+}
+
 .player-list {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    margin: 1rem 0;
+    margin: 0.5rem 0 1rem;
 }
 
 .player-item {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    gap: 0.75rem;
     padding: 0.75rem 1rem;
     background: rgba(245, 240, 232, 0.6);
-    border-radius: 8px;
+    border-radius: 10px;
     border: 1px solid rgba(212, 200, 154, 0.3);
+    transition: border-color 0.3s, background 0.3s;
+}
+
+.player-item.player-is-ready {
+    border-color: var(--ayam-gold, #D4C89A);
+    background: rgba(232, 216, 158, 0.12);
+}
+
+.player-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--ayam-gold, #D4C89A), var(--ayam-brown, #8B6F47));
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.player-avatar-empty {
+    background: rgba(212, 200, 154, 0.2);
+    color: var(--ayam-brown-light, #A68968);
 }
 
 .player-host {
@@ -7309,6 +7412,7 @@ html, body {
 }
 
 .player-name-lobby {
+    flex: 1;
     font-weight: 600;
     color: var(--ayam-brown, #8B6F47);
 }
@@ -7326,8 +7430,9 @@ html, body {
 }
 
 .player-ready {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     font-weight: 700;
+    flex-shrink: 0;
 }
 
 .player-ready.ready {
@@ -7678,15 +7783,15 @@ html, body {
 
 .host-portfolio-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 0.75rem;
 }
 
 .host-portfolio-card {
     background: rgba(245, 240, 232, 0.06);
     border: 1px solid rgba(212, 200, 154, 0.15);
-    border-radius: 8px;
-    padding: 0.75rem;
+    border-radius: 10px;
+    padding: 0.85rem;
     font-size: 0.8rem;
 }
 
@@ -7698,7 +7803,7 @@ html, body {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.25rem;
 }
 
 .portfolio-player-name {
@@ -7709,22 +7814,82 @@ html, body {
 .portfolio-networth {
     font-weight: 600;
     color: var(--money-green, #8BAE79);
+    font-size: 0.85rem;
+}
+
+.portfolio-card-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.6rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(212, 200, 154, 0.1);
 }
 
 .portfolio-year-month {
     font-size: 0.7rem;
     color: rgba(212, 200, 154, 0.5);
-    margin-bottom: 0.3rem;
 }
 
 .portfolio-gainloss {
     font-size: 0.75rem;
     font-weight: 600;
-    margin-bottom: 0.5rem;
 }
 
 .portfolio-gainloss.gain { color: var(--money-green, #8BAE79); }
 .portfolio-gainloss.loss { color: #e07070; }
+
+/* Host Portfolio Pie Chart */
+.host-pie-chart-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.host-pie-chart {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.host-pie-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    flex: 1;
+    min-width: 0;
+}
+
+.host-pie-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.7rem;
+}
+
+.host-pie-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.host-pie-label {
+    flex: 1;
+    color: rgba(212, 200, 154, 0.7);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.host-pie-pct {
+    color: rgba(212, 200, 154, 0.9);
+    font-weight: 600;
+    min-width: 28px;
+    text-align: right;
+}
 
 .portfolio-breakdown {
     display: flex;

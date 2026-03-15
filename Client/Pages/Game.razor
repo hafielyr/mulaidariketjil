@@ -611,9 +611,9 @@
                         <div class="lb-entries">
                             @foreach (var entry in _leaderboard)
                             {
-                                <div class="mp-lb-entry @(entry.PlayerName == _playerName ? "mp-lb-self" : "") @(entry.IsBot ? "mp-lb-bot" : "") @(!entry.IsConnected ? "mp-lb-disconnected" : "")">
+                                <div class="mp-lb-entry mp-lb-rank-@entry.Rank @(entry.PlayerName == _playerName ? "mp-lb-self" : "") @(entry.IsBot ? "mp-lb-bot" : "") @(!entry.IsConnected ? "mp-lb-disconnected" : "")">
                                     <span class="mp-lb-rank">#@entry.Rank</span>
-                                    <span class="mp-lb-name">@(entry.IsBot ? "Bot" : entry.PlayerName)</span>
+                                    <span class="mp-lb-name">@(entry.IsBot ? "🤖" : entry.PlayerName)</span>
                                     <span class="mp-lb-worth">Rp @entry.NetWorth.ToString("N0")</span>
                                 </div>
                             }

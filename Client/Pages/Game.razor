@@ -1676,17 +1676,12 @@
 
                             <div class="slide-nav">
                                 <button class="slide-nav-btn" @onclick="() => _introSlide--" disabled="@(_introSlide == 0)">&#9664;</button>
-                                @if (_introSlide == 3)
-                                {
-                                    <button class="btn-primary" @onclick="DismissIntro">
-                                        @Lang.T("BTN_GOT_IT")
-                                    </button>
-                                }
-                                else
-                                {
-                                    <button class="slide-nav-btn slide-nav-btn--next" @onclick="() => _introSlide++">&#9654;</button>
-                                }
+                                <button class="slide-nav-btn slide-nav-btn--next" @onclick="() => _introSlide++" disabled="@(_introSlide == 3)">&#9654;</button>
                             </div>
+
+                            <button class="btn-primary" @onclick="DismissIntro">
+                                @Lang.T("BTN_GOT_IT")
+                            </button>
                         }
                     </div>
                 </div>
@@ -1812,9 +1807,9 @@
             <!-- Asset Info Modal -->
             @if (_showAssetInfo && _selectedAsset != null)
             {
-                @{
+                
                     var infoMaxSlide = (!_isLightMode && !string.IsNullOrEmpty(_selectedAsset.RealRules)) ? 4 : 3;
-                }
+                
                 <div class="modal-overlay" @onclick="CloseAssetInfo">
                     <div class="modal-content info-modal" @onclick:stopPropagation="true">
                         <button class="modal-close" @onclick="CloseAssetInfo">&#x2715;</button>
@@ -1870,15 +1865,9 @@
 
                         <div class="slide-nav">
                             <button class="slide-nav-btn" @onclick="() => _infoSlide--" disabled="@(_infoSlide == 0)">&#9664;</button>
-                            @if (_infoSlide == infoMaxSlide)
-                            {
-                                <button class="btn-primary" @onclick="CloseAssetInfo">@Lang.T("BTN_UNDERSTOOD")</button>
-                            }
-                            else
-                            {
-                                <button class="slide-nav-btn slide-nav-btn--next" @onclick="() => _infoSlide++">&#9654;</button>
-                            }
+                            <button class="slide-nav-btn slide-nav-btn--next" @onclick="() => _infoSlide++" disabled="@(_infoSlide == infoMaxSlide)">&#9654;</button>
                         </div>
+                        <button class="btn-primary" @onclick="CloseAssetInfo">@Lang.T("BTN_UNDERSTOOD")</button>
                     </div>
                 </div>
             }
@@ -1984,22 +1973,15 @@
 
                             <div class="slide-nav">
                                 <button class="slide-nav-btn" @onclick="() => _mpUnlockSlide--" disabled="@(_mpUnlockSlide == 0)">&#9664;</button>
-                                @if (_mpUnlockSlide == 3)
-                                {
-                                    <div style="text-align: center;">
-                                        <p class="mp-unlock-waiting">
-                                            @GetText("⏳ Tutup popup ini untuk memberitahu host kamu siap.", "⏳ Tutup popup ini untuk memberitahu host kamu siap.", "⏳ Close this popup to signal that you are ready.", "⏳ Close this popup to signal that you are ready.")
-                                        </p>
-                                        <button class="btn-primary" @onclick="DismissMpUnlockPopup">
-                                            @GetText("Oke, Siap!", "Siap!", "Got it, Ready!", "Ready!")
-                                        </button>
-                                    </div>
-                                }
-                                else
-                                {
-                                    <button class="slide-nav-btn slide-nav-btn--next" @onclick="() => _mpUnlockSlide++">&#9654;</button>
-                                }
+                                <button class="slide-nav-btn slide-nav-btn--next" @onclick="() => _mpUnlockSlide++" disabled="@(_mpUnlockSlide == 3)">&#9654;</button>
                             </div>
+
+                            <p class="mp-unlock-waiting">
+                                @GetText("⏳ Tutup popup ini untuk memberitahu host kamu siap.", "⏳ Tutup popup ini untuk memberitahu host kamu siap.", "⏳ Close this popup to signal that you are ready.", "⏳ Close this popup to signal that you are ready.")
+                            </p>
+                            <button class="btn-primary" @onclick="DismissMpUnlockPopup">
+                                @GetText("Oke, Siap!", "Siap!", "Got it, Ready!", "Ready!")
+                            </button>
                         }
                         else
                         {

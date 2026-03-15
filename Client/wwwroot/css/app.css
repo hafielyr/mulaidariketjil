@@ -3896,7 +3896,11 @@ html, body {
 
 .slide-content {
     animation: slide-fade 0.3s ease-out;
-    min-height: 120px;
+    height: 200px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 @keyframes slide-fade {

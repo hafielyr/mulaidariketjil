@@ -3333,6 +3333,10 @@ html, body {
 .tut-slide {
     animation: tut-slide-in 0.35s ease-out;
     text-align: center;
+    min-height: 320px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 @keyframes tut-slide-in {
@@ -3587,6 +3591,10 @@ html, body {
         padding: 1.3rem 1.2rem 1.2rem;
     }
 
+    .tut-slide {
+        min-height: 260px;
+    }
+
     .tut-title {
         font-size: 1.25rem;
     }
@@ -3604,6 +3612,12 @@ html, body {
     .tut-tl-year {
         min-width: 90px;
         font-size: 0.7rem;
+    }
+}
+
+@media (max-width: 400px) {
+    .tut-slide {
+        min-height: 240px;
     }
 }
 
@@ -3954,6 +3968,70 @@ html, body {
 
 .slide-nav .btn-primary {
     flex: 1;
+}
+
+/* Slide responsive */
+@media (max-width: 600px) {
+    .slide-content {
+        min-height: 220px;
+    }
+
+    .slide-nav-btn {
+        width: 38px;
+        height: 38px;
+        font-size: 0.95rem;
+    }
+
+    .slide-dots {
+        margin: 0.6rem 0;
+    }
+
+    .slide-dot {
+        width: 8px;
+        height: 8px;
+    }
+
+    .modal-content.intro-modal,
+    .modal-content.info-modal {
+        padding: 1.2rem;
+    }
+
+    .modal-content h2 {
+        font-size: 1.3rem;
+    }
+
+    .info-section {
+        padding: 0.7rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .info-section h4 {
+        font-size: 0.9rem;
+    }
+
+    .info-section p {
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 400px) {
+    .slide-content {
+        min-height: 200px;
+    }
+
+    .modal-content.intro-modal,
+    .modal-content.info-modal {
+        padding: 1rem;
+        width: 95%;
+    }
+
+    .modal-content h2 {
+        font-size: 1.1rem;
+    }
+
+    .slide-nav {
+        margin-top: 0.8rem;
+    }
 }
 
 /* ===== GAME OVER MODAL ===== */

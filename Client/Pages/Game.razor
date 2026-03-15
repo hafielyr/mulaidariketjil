@@ -13,7 +13,7 @@
     {
         <!-- Tutorial Modal - Art Nouveau themed -->
         <div class="tut-overlay" @onclick="SkipTutorial">
-            <div class="tut-modal" @onclick:stopPropagation="true">
+            <div class="tut-modal" @onclick:stopPropagation="true" @ontouchstart="HandleTouchStart" @ontouchend="HandleSwipeTutorial">
                 <!-- Skip button -->
                 <button class="tut-skip" @onclick="SkipTutorial">
                     @Lang.T("TUT_SKIP")
@@ -1639,7 +1639,7 @@
                                 }
                             </div>
 
-                            <div class="slide-content">
+                            <div class="slide-content" @ontouchstart="HandleTouchStart" @ontouchend="HandleSwipeIntro">
                                 @if (_introSlide == 0)
                                 {
                                     <div class="info-section">
@@ -1821,7 +1821,7 @@
                             }
                         </div>
 
-                        <div class="slide-content">
+                        <div class="slide-content" @ontouchstart="HandleTouchStart" @ontouchend="HandleSwipeInfo">
                             @if (_infoSlide == 0)
                             {
                                 <div class="info-section">
@@ -1930,7 +1930,7 @@
                                 }
                             </div>
 
-                            <div class="slide-content">
+                            <div class="slide-content" @ontouchstart="HandleTouchStart" @ontouchend="HandleSwipeMpUnlock">
                                 @if (_mpUnlockSlide == 0)
                                 {
                                     <div class="info-section">
@@ -2444,6 +2444,7 @@
     private int _introSlide = 0;
     private int _infoSlide = 0;
     private int _mpUnlockSlide = 0;
+    private double _touchStartX = 0;
 
     // Multiplayer state
     private string _multiplayerScreen = "none"; // none, create-join, create, join, lobby, host-dashboard
@@ -2887,6 +2888,46 @@
     {
         if (_currentTutorialSlide > 0)
             _currentTutorialSlide--;
+    }
+
+    // Swipe handling
+    private void HandleTouchStart(TouchEventArgs e)
+    {
+        if (e.ChangedTouches.Length > 0)
+            _touchStartX = e.ChangedTouches[0].ClientX;
+    }
+
+    private void HandleSwipeTutorial(TouchEventArgs e)
+    {
+        if (e.ChangedTouches.Length == 0) return;
+        var delta = e.ChangedTouches[0].ClientX - _touchStartX;
+        if (delta < -50) NextTutorialSlide();
+        else if (delta > 50) PreviousTutorialSlide();
+    }
+
+    private void HandleSwipeIntro(TouchEventArgs e)
+    {
+        if (e.ChangedTouches.Length == 0) return;
+        var delta = e.ChangedTouches[0].ClientX - _touchStartX;
+        if (delta < -50 && _introSlide < 3) _introSlide++;
+        else if (delta > 50 && _introSlide > 0) _introSlide--;
+    }
+
+    private void HandleSwipeInfo(TouchEventArgs e)
+    {
+        if (e.ChangedTouches.Length == 0) return;
+        var infoMax = (!_isLightMode && _selectedAsset != null && !string.IsNullOrEmpty(_selectedAsset.RealRules)) ? 4 : 3;
+        var delta = e.ChangedTouches[0].ClientX - _touchStartX;
+        if (delta < -50 && _infoSlide < infoMax) _infoSlide++;
+        else if (delta > 50 && _infoSlide > 0) _infoSlide--;
+    }
+
+    private void HandleSwipeMpUnlock(TouchEventArgs e)
+    {
+        if (e.ChangedTouches.Length == 0) return;
+        var delta = e.ChangedTouches[0].ClientX - _touchStartX;
+        if (delta < -50 && _mpUnlockSlide < 3) _mpUnlockSlide++;
+        else if (delta > 50 && _mpUnlockSlide > 0) _mpUnlockSlide--;
     }
 
     private void StartGameAfterTutorial()

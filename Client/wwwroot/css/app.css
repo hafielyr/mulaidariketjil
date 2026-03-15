@@ -7369,37 +7369,62 @@ html, body {
 .mp-lb-entry {
     display: flex;
     align-items: center;
-    gap: 0.3rem;
-    padding: 0.2rem 0.5rem;
-    border-radius: 4px;
+    gap: 0.35rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 5px;
     font-size: 0.75rem;
     white-space: nowrap;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(212, 200, 154, 0.15);
 }
 
 .mp-lb-self {
-    background: rgba(212, 200, 154, 0.2);
-    border: 1px solid rgba(212, 200, 154, 0.4);
+    background: rgba(212, 200, 154, 0.22);
+    border: 1px solid rgba(212, 200, 154, 0.6);
 }
 
 .mp-lb-bot {
-    opacity: 0.7;
+    opacity: 0.75;
     font-style: italic;
+}
+
+/* Rank-based highlights */
+.mp-lb-rank-1 {
+    background: rgba(255, 215, 0, 0.18);
+    border: 1px solid rgba(255, 215, 0, 0.5);
+}
+
+.mp-lb-rank-2 {
+    background: rgba(192, 192, 192, 0.18);
+    border: 1px solid rgba(192, 192, 192, 0.45);
+}
+
+.mp-lb-rank-3 {
+    background: rgba(205, 127, 50, 0.18);
+    border: 1px solid rgba(205, 127, 50, 0.45);
 }
 
 .mp-lb-rank {
     font-weight: 700;
-    color: rgba(212, 200, 154, 0.2);
+    color: rgba(212, 200, 154, 0.95);
     min-width: 1.5rem;
 }
 
+.mp-lb-rank-1 .mp-lb-rank { color: #FFD700; }
+.mp-lb-rank-2 .mp-lb-rank { color: #C8C8C8; }
+.mp-lb-rank-3 .mp-lb-rank { color: #CD7F32; }
+
 .mp-lb-name {
-    color: rgba(212, 200, 154, 0.2);
+    color: rgba(245, 240, 232, 0.92);
+}
+
+.mp-lb-self .mp-lb-name {
+    font-weight: 700;
 }
 
 .mp-lb-worth {
     font-weight: 600;
-    color: rgba(212, 200, 154, 0.2);
+    color: #8BC98A;
 }
 
 /* Final Leaderboard (game over) */

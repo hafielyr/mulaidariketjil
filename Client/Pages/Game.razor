@@ -404,7 +404,7 @@
                                 </span>
                             </div>
                         }
-                        @for (int i = _currentRoom.Players.Count; i < _currentRoom.MaxPlayers; i++)
+                        @if (_currentRoom.Players.Count == 0)
                         {
                             <div class="player-item player-empty">
                                 <div class="player-avatar player-avatar-empty">?</div>

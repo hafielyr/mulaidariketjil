@@ -3896,8 +3896,7 @@ html, body {
 
 .slide-content {
     animation: slide-fade 0.3s ease-out;
-    height: 200px;
-    overflow-y: auto;
+    min-height: 280px;
     display: flex;
     flex-direction: column;
     justify-content: center;

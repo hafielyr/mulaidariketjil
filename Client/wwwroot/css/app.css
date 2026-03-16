@@ -7374,13 +7374,13 @@ html, body {
     border-radius: 5px;
     font-size: 0.75rem;
     white-space: nowrap;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(212, 200, 154, 0.15);
+    background: #1B5E20;
+    border: 1px solid rgba(136, 198, 135, 0.25);
 }
 
 .mp-lb-self {
-    background: rgba(212, 200, 154, 0.22);
-    border: 1px solid rgba(212, 200, 154, 0.6);
+    background: #1B5E20;
+    border: 1px solid #88c687;
 }
 
 .mp-lb-bot {
@@ -7390,23 +7390,23 @@ html, body {
 
 /* Rank-based highlights */
 .mp-lb-rank-1 {
-    background: rgba(255, 215, 0, 0.18);
-    border: 1px solid rgba(255, 215, 0, 0.5);
+    background: #1B5E20;
+    border: 1px solid rgba(255, 215, 0, 0.6);
 }
 
 .mp-lb-rank-2 {
-    background: rgba(192, 192, 192, 0.18);
-    border: 1px solid rgba(192, 192, 192, 0.45);
+    background: #1B5E20;
+    border: 1px solid rgba(192, 192, 192, 0.5);
 }
 
 .mp-lb-rank-3 {
-    background: rgba(205, 127, 50, 0.18);
-    border: 1px solid rgba(205, 127, 50, 0.45);
+    background: #1B5E20;
+    border: 1px solid rgba(205, 127, 50, 0.5);
 }
 
 .mp-lb-rank {
     font-weight: 700;
-    color: rgba(212, 200, 154, 0.95);
+    color: rgba(255, 255, 255, 0.85);
     min-width: 1.5rem;
 }
 
@@ -7415,7 +7415,7 @@ html, body {
 .mp-lb-rank-3 .mp-lb-rank { color: #CD7F32; }
 
 .mp-lb-name {
-    color: rgba(245, 240, 232, 0.92);
+    color: #88c687;
 }
 
 .mp-lb-self .mp-lb-name {

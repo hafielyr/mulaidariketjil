@@ -7778,37 +7778,62 @@ html, body {
 .mp-lb-entry {
     display: flex;
     align-items: center;
-    gap: 0.3rem;
-    padding: 0.2rem 0.5rem;
-    border-radius: 4px;
+    gap: 0.35rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 5px;
     font-size: 0.75rem;
     white-space: nowrap;
-    background: rgba(255, 255, 255, 0.05);
+    background: #1B5E20;
+    border: 1px solid rgba(136, 198, 135, 0.25);
 }
 
 .mp-lb-self {
-    background: rgba(212, 200, 154, 0.2);
-    border: 1px solid rgba(212, 200, 154, 0.4);
+    background: #1B5E20;
+    border: 1px solid #88c687;
 }
 
 .mp-lb-bot {
-    opacity: 0.7;
+    opacity: 0.75;
     font-style: italic;
+}
+
+/* Rank-based highlights */
+.mp-lb-rank-1 {
+    background: #1B5E20;
+    border: 1px solid rgba(255, 215, 0, 0.6);
+}
+
+.mp-lb-rank-2 {
+    background: #1B5E20;
+    border: 1px solid rgba(192, 192, 192, 0.5);
+}
+
+.mp-lb-rank-3 {
+    background: #1B5E20;
+    border: 1px solid rgba(205, 127, 50, 0.5);
 }
 
 .mp-lb-rank {
     font-weight: 700;
-    color: rgba(212, 200, 154, 0.2);
+    color: rgba(255, 255, 255, 0.85);
     min-width: 1.5rem;
 }
 
+.mp-lb-rank-1 .mp-lb-rank { color: #FFD700; }
+.mp-lb-rank-2 .mp-lb-rank { color: #C8C8C8; }
+.mp-lb-rank-3 .mp-lb-rank { color: #CD7F32; }
+
 .mp-lb-name {
-    color: rgba(212, 200, 154, 0.2);
+    color: #88c687;
+}
+
+.mp-lb-self .mp-lb-name {
+    font-weight: 700;
 }
 
 .mp-lb-worth {
     font-weight: 600;
-    color: rgba(212, 200, 154, 0.2);
+    color: #8BC98A;
 }
 
 /* Final Leaderboard (game over) */
@@ -7878,37 +7903,49 @@ html, body {
     50% { opacity: 0.5; }
 }
 
-/* ===== MULTIPLAYER LEADERBOARD SIDEBAR (collapsible) ===== */
-.mp-leaderboard-sidebar {
-    position: relative;
-    border-bottom: 1px solid rgba(212, 200, 154, 0.2);
+/* ===== MULTIPLAYER RANK PANEL (inside panel-right) ===== */
+.mp-rank-panel {
+    margin: 0;
 }
 
-.lb-toggle-btn {
-    width: 100%;
-    padding: 0.35rem 0.75rem;
-    background: rgba(30, 25, 18, 0.5);
-    border: none;
-    color: rgba(212, 200, 154, 0.8);
-    font-size: 0.75rem;
-    cursor: pointer;
-    text-align: left;
+.mp-rank-header {
     display: flex;
-    gap: 0.5rem;
     align-items: center;
-}
-
-.lb-toggle-btn:hover {
-    background: rgba(212, 200, 154, 0.1);
-}
-
-.lb-entries {
-    display: flex;
     gap: 0.5rem;
-    padding: 0.4rem 0.75rem;
-    background: rgba(20, 16, 10, 0.6);
-    overflow-x: auto;
-    flex-wrap: nowrap;
+    cursor: pointer;
+    user-select: none;
+    padding: 0.1rem 0;
+}
+
+.mp-rank-header h3 {
+    flex: 1;
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--ayam-brown, #8B6F47);
+}
+
+.mp-rank-icon {
+    font-size: 1rem;
+}
+
+.mp-rank-entries {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    margin-top: 0.5rem;
+}
+
+.mp-rank-entries .mp-lb-entry {
+    width: 100%;
+    box-sizing: border-box;
+    white-space: normal;
+}
+
+.mp-rank-entries .mp-lb-name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .mp-lb-disconnected {

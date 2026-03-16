@@ -611,29 +611,6 @@
                 </div>
             </header>
 
-            <!-- Multiplayer Leaderboard Sidebar (collapsible) -->
-            @if (_gameState.IsMultiplayer && _leaderboard != null && _leaderboard.Count > 0)
-            {
-                <div class="mp-leaderboard-sidebar @(_showLeaderboard ? "lb-expanded" : "lb-collapsed")">
-                    <button class="lb-toggle-btn" @onclick='() => _showLeaderboard = !_showLeaderboard'>
-                        📊 @GetText("Peringkat", "Peringkat", "Ranking", "Ranking")
-                        @(_showLeaderboard ? "▲" : "▼")
-                    </button>
-                    @if (_showLeaderboard)
-                    {
-                        <div class="lb-entries">
-                            @foreach (var entry in _leaderboard)
-                            {
-                                <div class="mp-lb-entry @(entry.PlayerName == _playerName ? "mp-lb-self" : "") @(entry.IsBot ? "mp-lb-bot" : "") @(!entry.IsConnected ? "mp-lb-disconnected" : "")">
-                                    <span class="mp-lb-rank">#@entry.Rank</span>
-                                    <span class="mp-lb-name">@(entry.IsBot ? "Bot" : entry.PlayerName)</span>
-                                    <span class="mp-lb-worth">Rp @entry.NetWorth.ToString("N0")</span>
-                                </div>
-                            }
-                        </div>
-                    }
-                </div>
-            }
 
             <!-- New Unlock Banner -->
             @if (!string.IsNullOrEmpty(_gameState.NewUnlockMessage))
@@ -1583,6 +1560,31 @@
                             </div>
                         }
                     </div>
+
+                    @if (_gameState.IsMultiplayer && _leaderboard != null && _leaderboard.Count > 0)
+                    {
+                        <div class="divider"></div>
+                        <div class="mp-rank-panel">
+                            <div class="mp-rank-header" @onclick='() => _showLeaderboard = !_showLeaderboard'>
+                                <span class="mp-rank-icon">📊</span>
+                                <h3>@GetText("Peringkat", "Peringkat", "Ranking", "Ranking")</h3>
+                                <span class="log-toggle @(_showLeaderboard ? "expanded" : "")">&#9660;</span>
+                            </div>
+                            @if (_showLeaderboard)
+                            {
+                                <div class="mp-rank-entries">
+                                    @foreach (var entry in _leaderboard)
+                                    {
+                                        <div class="mp-lb-entry mp-lb-rank-@entry.Rank @(entry.PlayerName == _playerName ? "mp-lb-self" : "") @(entry.IsBot ? "mp-lb-bot" : "") @(!entry.IsConnected ? "mp-lb-disconnected" : "")">
+                                            <span class="mp-lb-rank">#@entry.Rank</span>
+                                            <span class="mp-lb-name">@(entry.IsBot ? "🤖" : entry.PlayerName)</span>
+                                            <span class="mp-lb-worth">Rp @entry.NetWorth.ToString("N0")</span>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
 
                     @if (_gameState.AdvisorTips != null && _gameState.AdvisorTips.Count > 0)
                     {

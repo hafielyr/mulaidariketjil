@@ -8194,7 +8194,7 @@ html, body {
 
 .host-portfolio-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
     gap: 0.85rem;
 }
 
@@ -8306,6 +8306,62 @@ html, body {
     font-weight: 600;
     min-width: 30px;
     text-align: right;
+}
+
+/* Host card body: pie chart + financial details side by side */
+.host-card-body {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+}
+
+.host-card-body .host-pie-chart-container {
+    flex: 1;
+    min-width: 0;
+}
+
+.host-financial-details {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    border-left: 1px solid rgba(212, 200, 154, 0.1);
+    padding-left: 0.65rem;
+}
+
+.fin-detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.3rem;
+    font-size: 0.65rem;
+    line-height: 1.35;
+}
+
+.fin-detail-label {
+    color: #A69878;
+    white-space: nowrap;
+}
+
+.fin-detail-value {
+    font-weight: 600;
+    white-space: nowrap;
+    text-align: right;
+}
+
+.fin-detail-value.gain {
+    color: #A4CE95;
+}
+
+.fin-detail-value.loss {
+    color: #E88E8E;
+}
+
+.fin-detail-event {
+    margin-top: 0.15rem;
+    padding-top: 0.2rem;
+    border-top: 1px solid rgba(212, 200, 154, 0.08);
 }
 
 .portfolio-breakdown {
@@ -8445,7 +8501,7 @@ html, body {
     }
 
     .host-portfolio-grid {
-        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         gap: 0.65rem;
     }
 
@@ -8553,6 +8609,18 @@ html, body {
 
     .host-pie-legend-item {
         font-size: 0.68rem;
+    }
+
+    .host-card-body {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .host-financial-details {
+        border-left: none;
+        padding-left: 0;
+        border-top: 1px solid rgba(212, 200, 154, 0.08);
+        padding-top: 0.4rem;
     }
 
     .btn-host-action {

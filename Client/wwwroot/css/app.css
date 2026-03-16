@@ -7494,37 +7494,49 @@ html, body {
     50% { opacity: 0.5; }
 }
 
-/* ===== MULTIPLAYER LEADERBOARD SIDEBAR (collapsible) ===== */
-.mp-leaderboard-sidebar {
-    position: relative;
-    border-bottom: 1px solid rgba(212, 200, 154, 0.2);
+/* ===== MULTIPLAYER RANK PANEL (inside panel-right) ===== */
+.mp-rank-panel {
+    margin: 0;
 }
 
-.lb-toggle-btn {
-    width: 100%;
-    padding: 0.35rem 0.75rem;
-    background: rgba(30, 25, 18, 0.5);
-    border: none;
-    color: rgba(212, 200, 154, 0.8);
-    font-size: 0.75rem;
-    cursor: pointer;
-    text-align: left;
+.mp-rank-header {
     display: flex;
-    gap: 0.5rem;
     align-items: center;
-}
-
-.lb-toggle-btn:hover {
-    background: rgba(212, 200, 154, 0.1);
-}
-
-.lb-entries {
-    display: flex;
     gap: 0.5rem;
-    padding: 0.4rem 0.75rem;
-    background: rgba(20, 16, 10, 0.6);
-    overflow-x: auto;
-    flex-wrap: nowrap;
+    cursor: pointer;
+    user-select: none;
+    padding: 0.1rem 0;
+}
+
+.mp-rank-header h3 {
+    flex: 1;
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--ayam-brown, #8B6F47);
+}
+
+.mp-rank-icon {
+    font-size: 1rem;
+}
+
+.mp-rank-entries {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    margin-top: 0.5rem;
+}
+
+.mp-rank-entries .mp-lb-entry {
+    width: 100%;
+    box-sizing: border-box;
+    white-space: normal;
+}
+
+.mp-rank-entries .mp-lb-name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .mp-lb-disconnected {

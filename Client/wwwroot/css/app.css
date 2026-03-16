@@ -5738,15 +5738,15 @@ html, body {
     flex-shrink: 0;
 }
 
-.legend-color.cash { background: #4CAF50; }
-.legend-color.savings { background: #2196F3; }
-.legend-color.deposito { background: #9C27B0; }
-.legend-color.bonds { background: #FF9800; }
-.legend-color.portfolio { background: #E91E63; }
-.legend-color.index { background: #00BCD4; }
-.legend-color.gold { background: #FFD700; }
-.legend-color.crypto { background: #F7931A; }
-.legend-color.crowdfunding { background: #795548; }
+.legend-color.cash { background: #8CB88C; }
+.legend-color.savings { background: #6BA5D7; }
+.legend-color.deposito { background: #A88BC7; }
+.legend-color.bonds { background: #D4A854; }
+.legend-color.portfolio { background: #C97878; }
+.legend-color.index { background: #5BC0C0; }
+.legend-color.gold { background: #E8C84A; }
+.legend-color.crypto { background: #D4943A; }
+.legend-color.crowdfunding { background: #A08060; }
 
 /* === ADVISOR TIPS PANEL === */
 .advisor-tips-panel {

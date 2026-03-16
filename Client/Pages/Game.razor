@@ -3388,27 +3388,27 @@
 
         if (cash > 0)
         {
-            segments.Add($"#4CAF50 {cumulative}% {cumulative + cash}%");
+            segments.Add($"#8CB88C {cumulative}% {cumulative + cash}%");
             cumulative += cash;
         }
         if (savings > 0)
         {
-            segments.Add($"#2196F3 {cumulative}% {cumulative + savings}%");
+            segments.Add($"#6BA5D7 {cumulative}% {cumulative + savings}%");
             cumulative += savings;
         }
         if (deposito > 0)
         {
-            segments.Add($"#9C27B0 {cumulative}% {cumulative + deposito}%");
+            segments.Add($"#A88BC7 {cumulative}% {cumulative + deposito}%");
             cumulative += deposito;
         }
         if (bonds > 0)
         {
-            segments.Add($"#FF9800 {cumulative}% {cumulative + bonds}%");
+            segments.Add($"#D4A854 {cumulative}% {cumulative + bonds}%");
             cumulative += bonds;
         }
         if (portfolio > 0)
         {
-            segments.Add($"#E91E63 {cumulative}% {cumulative + portfolio}%");
+            segments.Add($"#C97878 {cumulative}% {cumulative + portfolio}%");
             cumulative += portfolio;
         }
 
@@ -3438,47 +3438,47 @@
 
         if (cash > 0)
         {
-            segments.Add($"#4CAF50 {cumulative}% {cumulative + cash}%");
+            segments.Add($"#8CB88C {cumulative}% {cumulative + cash}%");
             cumulative += cash;
         }
         if (savings > 0)
         {
-            segments.Add($"#2196F3 {cumulative}% {cumulative + savings}%");
+            segments.Add($"#6BA5D7 {cumulative}% {cumulative + savings}%");
             cumulative += savings;
         }
         if (deposito > 0)
         {
-            segments.Add($"#9C27B0 {cumulative}% {cumulative + deposito}%");
+            segments.Add($"#A88BC7 {cumulative}% {cumulative + deposito}%");
             cumulative += deposito;
         }
         if (bonds > 0)
         {
-            segments.Add($"#FF9800 {cumulative}% {cumulative + bonds}%");
+            segments.Add($"#D4A854 {cumulative}% {cumulative + bonds}%");
             cumulative += bonds;
         }
         if (index > 0)
         {
-            segments.Add($"#00BCD4 {cumulative}% {cumulative + index}%");
+            segments.Add($"#5BC0C0 {cumulative}% {cumulative + index}%");
             cumulative += index;
         }
         if (stock > 0)
         {
-            segments.Add($"#E91E63 {cumulative}% {cumulative + stock}%");
+            segments.Add($"#C97878 {cumulative}% {cumulative + stock}%");
             cumulative += stock;
         }
         if (gold > 0)
         {
-            segments.Add($"#FFD700 {cumulative}% {cumulative + gold}%");
+            segments.Add($"#E8C84A {cumulative}% {cumulative + gold}%");
             cumulative += gold;
         }
         if (crypto > 0)
         {
-            segments.Add($"#F7931A {cumulative}% {cumulative + crypto}%");
+            segments.Add($"#D4943A {cumulative}% {cumulative + crypto}%");
             cumulative += crypto;
         }
         if (crowdfunding > 0)
         {
-            segments.Add($"#795548 {cumulative}% {cumulative + crowdfunding}%");
+            segments.Add($"#A08060 {cumulative}% {cumulative + crowdfunding}%");
             cumulative += crowdfunding;
         }
 
@@ -3489,12 +3489,12 @@
 
     private static readonly Dictionary<string, string> _breakdownColors = new()
     {
-        ["Cash"] = "#4CAF50",
-        ["Savings"] = "#2196F3",
-        ["Deposito"] = "#9C27B0",
-        ["Bond"] = "#FF9800",
-        ["Portfolio"] = "#E91E63",
-        ["Crowdfunding"] = "#795548"
+        ["Cash"] = "#8CB88C",
+        ["Savings"] = "#6BA5D7",
+        ["Deposito"] = "#A88BC7",
+        ["Bond"] = "#D4A854",
+        ["Portfolio"] = "#C97878",
+        ["Crowdfunding"] = "#A08060"
     };
 
     private string GetBreakdownColor(string key)
@@ -3507,17 +3507,19 @@
         if (ps.PortfolioBreakdown == null || !ps.PortfolioBreakdown.Any())
             return "background: rgba(212, 200, 154, 0.15);";
 
+        var total = ps.PortfolioBreakdown.Values.Sum();
+        if (total <= 0) return "background: rgba(212, 200, 154, 0.15);";
+
         var segments = new List<string>();
         decimal cumulative = 0;
 
         foreach (var kvp in ps.PortfolioBreakdown)
         {
+            var normalized = (kvp.Value / total) * 100m;
             var color = GetBreakdownColor(kvp.Key);
-            segments.Add($"{color} {cumulative}% {cumulative + kvp.Value}%");
-            cumulative += kvp.Value;
+            segments.Add($"{color} {cumulative:F2}% {(cumulative + normalized):F2}%");
+            cumulative += normalized;
         }
-
-        if (!segments.Any()) return "background: rgba(212, 200, 154, 0.15);";
 
         return $"background: conic-gradient({string.Join(", ", segments)});";
     }

@@ -13,7 +13,7 @@
     {
         <!-- Tutorial Modal - Art Nouveau themed -->
         <div class="tut-overlay" @onclick="SkipTutorial">
-            <div class="tut-modal" @onclick:stopPropagation="true">
+            <div class="tut-modal" @onclick:stopPropagation="true" @ontouchstart="HandleTouchStart" @ontouchend="HandleSwipeTutorial">
                 <!-- Skip button -->
                 <button class="tut-skip" @onclick="SkipTutorial">
                     @Lang.T("TUT_SKIP")
@@ -1642,18 +1642,51 @@
                         @if (introAsset != null)
                         {
                             <h2>@UIIcon("unlock") @Lang.T("INTRO_NEW_UNLOCK")</h2>
-                            <p class="intro-desc">
-                                @Lang.T("INTRO_CONGRATS", new Dictionary<string, object>{{"name", _gameState.PlayerId}})
-                            </p>
 
-                            <div class="intro-cards">
-                                <div class="intro-card @GetRiskClass(introAsset.RiskLevel)">
-                                    <h3>@Icon(introAsset.Type) @GetAssetDisplayName(introAsset, introAsset.DisplayName)</h3>
-                                    <p><strong>@Lang.T("INTRO_WHAT_IS_IT")</strong> @GetAssetWhatIsIt(introAsset)</p>
-                                    <p><strong>@Lang.T("INTRO_RISK_LEVEL")</strong> @GetAssetRiskExplanation(introAsset)</p>
-                                    <p><strong>@Lang.T("INTRO_BEST_FOR")</strong> @GetAssetBestFor(introAsset)</p>
-                                    <p><strong>@Lang.T("INTRO_EXPECTED_RETURN")</strong> @GetAssetExpectedReturn(introAsset)</p>
-                                </div>
+                            <!-- Slide dots -->
+                            <div class="slide-dots">
+                                @for (int i = 0; i < 4; i++)
+                                {
+                                    var idx = i;
+                                    <span class="slide-dot @(idx == _introSlide ? "active" : "")" @onclick="() => _introSlide = idx"></span>
+                                }
+                            </div>
+
+                            <div class="slide-content" @ontouchstart="HandleTouchStart" @ontouchend="HandleSwipeIntro">
+                                @if (_introSlide == 0)
+                                {
+                                    <div class="info-section">
+                                        <h4>@Icon(introAsset.Type) @GetAssetDisplayName(introAsset, introAsset.DisplayName)</h4>
+                                        <p><strong>@Lang.T("INTRO_WHAT_IS_IT")</strong> @GetAssetWhatIsIt(introAsset)</p>
+                                    </div>
+                                }
+                                else if (_introSlide == 1)
+                                {
+                                    <div class="info-section">
+                                        <h4>@Lang.T("INTRO_RISK_LEVEL")</h4>
+                                        <span class="risk-badge large @GetRiskClass(introAsset.RiskLevel)">@introAsset.RiskLevel</span>
+                                        <p>@GetAssetRiskExplanation(introAsset)</p>
+                                    </div>
+                                }
+                                else if (_introSlide == 2)
+                                {
+                                    <div class="info-section">
+                                        <h4>@Lang.T("INTRO_BEST_FOR")</h4>
+                                        <p>@GetAssetBestFor(introAsset)</p>
+                                    </div>
+                                }
+                                else if (_introSlide == 3)
+                                {
+                                    <div class="info-section">
+                                        <h4>@Lang.T("INTRO_EXPECTED_RETURN")</h4>
+                                        <p>@GetAssetExpectedReturn(introAsset)</p>
+                                    </div>
+                                }
+                            </div>
+
+                            <div class="slide-nav">
+                                <button class="slide-nav-btn" @onclick="() => _introSlide--" disabled="@(_introSlide == 0)">&#9664;</button>
+                                <button class="slide-nav-btn slide-nav-btn--next" @onclick="() => _introSlide++" disabled="@(_introSlide == 3)">&#9654;</button>
                             </div>
 
                             <button class="btn-primary" @onclick="DismissIntro">
@@ -1784,34 +1817,66 @@
             <!-- Asset Info Modal -->
             @if (_showAssetInfo && _selectedAsset != null)
             {
+                
+                    var infoMaxSlide = (!_isLightMode && !string.IsNullOrEmpty(_selectedAsset.RealRules)) ? 4 : 3;
+                
                 <div class="modal-overlay" @onclick="CloseAssetInfo">
                     <div class="modal-content info-modal" @onclick:stopPropagation="true">
                         <button class="modal-close" @onclick="CloseAssetInfo">&#x2715;</button>
                         <h2>@Icon(_selectedAsset.Type) @GetAssetDisplayName(_selectedAsset, _selectedAsset.DisplayName)</h2>
-                        <div class="info-section">
-                            <h4>@Lang.T("INFO_WHAT_IS") @GetAssetDisplayName(_selectedAsset, _selectedAsset.DisplayName)?</h4>
-                            <p>@GetAssetWhatIsIt(_selectedAsset)</p>
+
+                        <!-- Slide dots -->
+                        <div class="slide-dots">
+                            @for (int i = 0; i <= infoMaxSlide; i++)
+                            {
+                                var idx = i;
+                                <span class="slide-dot @(idx == _infoSlide ? "active" : "")" @onclick="() => _infoSlide = idx"></span>
+                            }
                         </div>
-                        <div class="info-section">
-                            <h4>@Lang.T("INFO_RISK_LEVEL")</h4>
-                            <span class="risk-badge large @GetRiskClass(_selectedAsset.RiskLevel)">@_selectedAsset.RiskLevel</span>
-                            <p>@GetAssetRiskExplanation(_selectedAsset)</p>
+
+                        <div class="slide-content" @ontouchstart="HandleTouchStart" @ontouchend="HandleSwipeInfo">
+                            @if (_infoSlide == 0)
+                            {
+                                <div class="info-section">
+                                    <h4>@Lang.T("INFO_WHAT_IS") @GetAssetDisplayName(_selectedAsset, _selectedAsset.DisplayName)?</h4>
+                                    <p>@GetAssetWhatIsIt(_selectedAsset)</p>
+                                </div>
+                            }
+                            else if (_infoSlide == 1)
+                            {
+                                <div class="info-section">
+                                    <h4>@Lang.T("INFO_RISK_LEVEL")</h4>
+                                    <span class="risk-badge large @GetRiskClass(_selectedAsset.RiskLevel)">@_selectedAsset.RiskLevel</span>
+                                    <p>@GetAssetRiskExplanation(_selectedAsset)</p>
+                                </div>
+                            }
+                            else if (_infoSlide == 2)
+                            {
+                                <div class="info-section">
+                                    <h4>@Lang.T("INFO_BEST_FOR")</h4>
+                                    <p>@GetAssetBestFor(_selectedAsset)</p>
+                                </div>
+                            }
+                            else if (_infoSlide == 3)
+                            {
+                                <div class="info-section">
+                                    <h4>@Lang.T("INFO_EXPECTED_RETURNS")</h4>
+                                    <p>@GetAssetExpectedReturn(_selectedAsset)</p>
+                                </div>
+                            }
+                            else if (_infoSlide == 4)
+                            {
+                                <div class="info-section">
+                                    <h4>@Lang.T("INFO_REGULATIONS")</h4>
+                                    <p style="white-space: pre-line;">@_selectedAsset.RealRules</p>
+                                </div>
+                            }
                         </div>
-                        <div class="info-section">
-                            <h4>@Lang.T("INFO_BEST_FOR")</h4>
-                            <p>@GetAssetBestFor(_selectedAsset)</p>
+
+                        <div class="slide-nav">
+                            <button class="slide-nav-btn" @onclick="() => _infoSlide--" disabled="@(_infoSlide == 0)">&#9664;</button>
+                            <button class="slide-nav-btn slide-nav-btn--next" @onclick="() => _infoSlide++" disabled="@(_infoSlide == infoMaxSlide)">&#9654;</button>
                         </div>
-                        <div class="info-section">
-                            <h4>@Lang.T("INFO_EXPECTED_RETURNS")</h4>
-                            <p>@GetAssetExpectedReturn(_selectedAsset)</p>
-                        </div>
-                        @if (!_isLightMode && !string.IsNullOrEmpty(_selectedAsset.RealRules))
-                        {
-                            <div class="info-section">
-                                <h4>@Lang.T("INFO_REGULATIONS")</h4>
-                                <p style="white-space: pre-line;">@_selectedAsset.RealRules</p>
-                            </div>
-                        }
                         <button class="btn-primary" @onclick="CloseAssetInfo">@Lang.T("BTN_UNDERSTOOD")</button>
                     </div>
                 </div>
@@ -1868,27 +1933,56 @@
                         @if (mpUnlockAsset != null)
                         {
                             <h2>@UIIcon("unlock") @GetText("Investasi Baru Terbuka!", "Investasi Baru Terbuka!", "New Investment Unlocked!", "New Investment Unlocked!")</h2>
-                            <p class="intro-desc">
-                                @GetText("Instrumen investasi baru kini tersedia untuk semua pemain!",
-                                         "Instrumen investasi baru kini tersedia untuk semua pemain!",
-                                         "A new investment instrument is now available for all players!",
-                                         "A new investment instrument is now available for all players!")
-                            </p>
 
-                            <div class="intro-cards">
-                                <div class="intro-card @GetRiskClass(mpUnlockAsset.RiskLevel)">
-                                    <h3>@Icon(mpUnlockAsset.Type) @GetAssetDisplayName(mpUnlockAsset, mpUnlockAsset.DisplayName)</h3>
-                                    <p><strong>@GetText("Apa sih ini?", "Apa itu?", "What is it?", "What is it?")</strong> @GetAssetWhatIsIt(mpUnlockAsset)</p>
-                                    <p><strong>@GetText("Risikonya:", "Tingkat Risiko:", "Risk Level:", "Risk Level:")</strong> @GetAssetRiskExplanation(mpUnlockAsset)</p>
-                                    <p><strong>@GetText("Cocok untuk:", "Cocok untuk:", "Best for:", "Best for:")</strong> @GetAssetBestFor(mpUnlockAsset)</p>
-                                    <p><strong>@GetText("Untungnya:", "Potensi Keuntungan:", "Expected Return:", "Expected Return:")</strong> @GetAssetExpectedReturn(mpUnlockAsset)</p>
-                                </div>
+                            <!-- Slide dots -->
+                            <div class="slide-dots">
+                                @for (int i = 0; i < 4; i++)
+                                {
+                                    var idx = i;
+                                    <span class="slide-dot @(idx == _mpUnlockSlide ? "active" : "")" @onclick="() => _mpUnlockSlide = idx"></span>
+                                }
+                            </div>
+
+                            <div class="slide-content" @ontouchstart="HandleTouchStart" @ontouchend="HandleSwipeMpUnlock">
+                                @if (_mpUnlockSlide == 0)
+                                {
+                                    <div class="info-section">
+                                        <h4>@Icon(mpUnlockAsset.Type) @GetAssetDisplayName(mpUnlockAsset, mpUnlockAsset.DisplayName)</h4>
+                                        <p><strong>@GetText("Apa sih ini?", "Apa itu?", "What is it?", "What is it?")</strong> @GetAssetWhatIsIt(mpUnlockAsset)</p>
+                                    </div>
+                                }
+                                else if (_mpUnlockSlide == 1)
+                                {
+                                    <div class="info-section">
+                                        <h4>@GetText("Risikonya:", "Tingkat Risiko:", "Risk Level:", "Risk Level:")</h4>
+                                        <span class="risk-badge large @GetRiskClass(mpUnlockAsset.RiskLevel)">@mpUnlockAsset.RiskLevel</span>
+                                        <p>@GetAssetRiskExplanation(mpUnlockAsset)</p>
+                                    </div>
+                                }
+                                else if (_mpUnlockSlide == 2)
+                                {
+                                    <div class="info-section">
+                                        <h4>@GetText("Cocok untuk:", "Cocok untuk:", "Best for:", "Best for:")</h4>
+                                        <p>@GetAssetBestFor(mpUnlockAsset)</p>
+                                    </div>
+                                }
+                                else if (_mpUnlockSlide == 3)
+                                {
+                                    <div class="info-section">
+                                        <h4>@GetText("Untungnya:", "Potensi Keuntungan:", "Expected Return:", "Expected Return:")</h4>
+                                        <p>@GetAssetExpectedReturn(mpUnlockAsset)</p>
+                                    </div>
+                                }
+                            </div>
+
+                            <div class="slide-nav">
+                                <button class="slide-nav-btn" @onclick="() => _mpUnlockSlide--" disabled="@(_mpUnlockSlide == 0)">&#9664;</button>
+                                <button class="slide-nav-btn slide-nav-btn--next" @onclick="() => _mpUnlockSlide++" disabled="@(_mpUnlockSlide == 3)">&#9654;</button>
                             </div>
 
                             <p class="mp-unlock-waiting">
                                 @GetText("⏳ Tutup popup ini untuk memberitahu host kamu siap.", "⏳ Tutup popup ini untuk memberitahu host kamu siap.", "⏳ Close this popup to signal that you are ready.", "⏳ Close this popup to signal that you are ready.")
                             </p>
-
                             <button class="btn-primary" @onclick="DismissMpUnlockPopup">
                                 @GetText("Oke, Siap!", "Siap!", "Got it, Ready!", "Ready!")
                             </button>
@@ -2358,6 +2452,12 @@
     // Tutorial state
     private bool _showTutorial = false;
     private int _currentTutorialSlide = 0;
+
+    // Slide state for modals
+    private int _introSlide = 0;
+    private int _infoSlide = 0;
+    private int _mpUnlockSlide = 0;
+    private double _touchStartX = 0;
 
     // Multiplayer state
     private string _multiplayerScreen = "none"; // none, create-join, create, join, lobby, host-dashboard
@@ -2832,6 +2932,46 @@
             _currentTutorialSlide--;
     }
 
+    // Swipe handling
+    private void HandleTouchStart(TouchEventArgs e)
+    {
+        if (e.ChangedTouches.Length > 0)
+            _touchStartX = e.ChangedTouches[0].ClientX;
+    }
+
+    private void HandleSwipeTutorial(TouchEventArgs e)
+    {
+        if (e.ChangedTouches.Length == 0) return;
+        var delta = e.ChangedTouches[0].ClientX - _touchStartX;
+        if (delta < -50) NextTutorialSlide();
+        else if (delta > 50) PreviousTutorialSlide();
+    }
+
+    private void HandleSwipeIntro(TouchEventArgs e)
+    {
+        if (e.ChangedTouches.Length == 0) return;
+        var delta = e.ChangedTouches[0].ClientX - _touchStartX;
+        if (delta < -50 && _introSlide < 3) _introSlide++;
+        else if (delta > 50 && _introSlide > 0) _introSlide--;
+    }
+
+    private void HandleSwipeInfo(TouchEventArgs e)
+    {
+        if (e.ChangedTouches.Length == 0) return;
+        var infoMax = (!_isLightMode && _selectedAsset != null && !string.IsNullOrEmpty(_selectedAsset.RealRules)) ? 4 : 3;
+        var delta = e.ChangedTouches[0].ClientX - _touchStartX;
+        if (delta < -50 && _infoSlide < infoMax) _infoSlide++;
+        else if (delta > 50 && _infoSlide > 0) _infoSlide--;
+    }
+
+    private void HandleSwipeMpUnlock(TouchEventArgs e)
+    {
+        if (e.ChangedTouches.Length == 0) return;
+        var delta = e.ChangedTouches[0].ClientX - _touchStartX;
+        if (delta < -50 && _mpUnlockSlide < 3) _mpUnlockSlide++;
+        else if (delta > 50 && _mpUnlockSlide > 0) _mpUnlockSlide--;
+    }
+
     private void StartGameAfterTutorial()
     {
         _showTutorial = false;
@@ -3194,6 +3334,7 @@
         _selectedAsset = _assets.GetValueOrDefault(assetType);
         if (_selectedAsset != null)
         {
+            _infoSlide = 0;
             _showAssetInfo = true;
             if (!_isPaused && _gameState != null && !_gameState.IsGameOver && !_gameState.IsEventPending)
             {
@@ -3243,9 +3384,16 @@
 
     private void HandleGameStateUpdated(GameState state)
     {
+        var wasShowingIntro = _gameState?.ShowIntro ?? false;
         var wasEventPending = _gameState?.IsEventPending ?? false;
         _gameState = state;
         Lang.SetLanguage(state.Language, state.AgeMode);
+
+        // Reset intro slide when intro becomes visible
+        if (state.ShowIntro && !wasShowingIntro)
+        {
+            _introSlide = 0;
+        }
 
         // Multiplayer event countdown: start timer when event becomes pending
         if (state.IsMultiplayer && state.IsEventPending && !wasEventPending)
@@ -3817,6 +3965,7 @@
     private void HandleAssetUnlocked(string assetType)
     {
         _mpUnlockAssetType = assetType;
+        _mpUnlockSlide = 0;
         _showMpUnlockPopup = true;
         _waitingForUnlockSync = true;
         InvokeAsync(StateHasChanged);

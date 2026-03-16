@@ -309,10 +309,7 @@
                         <option value="@Language.English">🇺🇸 English</option>
                     </select>
 
-                    <div class="an-toggle-row">
-                        <span class="an-toggle-label">@Lang.T("MP_MAX_PLAYERS"): @_maxPlayers</span>
-                        <input type="range" min="2" max="4" @bind="_maxPlayers" class="an-slider" />
-                    </div>
+                    @* Max player selection hidden — default 100 *@
 
                     <button class="an-btn-start" @onclick="CreateRoom" disabled="@_isCreatingRoom">
                         @(_isCreatingRoom ? Lang.T("MP_CREATING") : Lang.T("MP_CREATE_ROOM"))
@@ -376,7 +373,7 @@
                     <div class="room-settings-chips">
                         <span class="settings-chip">@(_currentRoom.AgeMode == AgeMode.Kids ? Lang.T("START_LIGHT_MODE") : Lang.T("MP_NORMAL"))</span>
                         <span class="settings-chip">@(_currentRoom.Language == Language.Indonesian ? "🇮🇩 ID" : "🇺🇸 EN")</span>
-                        <span class="settings-chip">@_currentRoom.MaxPlayers @Lang.T("MP_PLAYERS")</span>
+                        @* Max players chip hidden — always 100 *@
                     </div>
 
                     @if (_isHost)
@@ -387,7 +384,7 @@
                     }
 
                     <div class="lobby-player-count">
-                        <span>@_currentRoom.Players.Count / @_currentRoom.MaxPlayers</span>
+                        <span>@_currentRoom.Players.Count @Lang.T("MP_PLAYERS")</span>
                     </div>
 
                     <div class="player-list">
@@ -2367,7 +2364,6 @@
     private RoomInfo? _currentRoom;
     private string _roomCodeInput = "";
     private string? _roomError;
-    private int _maxPlayers = 4;
     private bool _isCreatingRoom;
     private bool _isJoiningRoom;
     private bool _isHost;

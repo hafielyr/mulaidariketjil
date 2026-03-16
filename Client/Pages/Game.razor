@@ -534,7 +534,7 @@
                                     @if (ps.PortfolioBreakdown.Any())
                                     {
                                         <div class="host-pie-chart-container">
-                                            <div class="host-pie-chart" style="@GetHostPortfolioPieChartStyle(ps)"></div>
+                                            <canvas id="pie-@ps.ConnectionId" width="68" height="68" class="host-pie-canvas"></canvas>
                                             <div class="host-pie-legend">
                                                 @foreach (var kvp in ps.PortfolioBreakdown)
                                                 {
@@ -2427,6 +2427,36 @@
         {
             await ApplyTheme();
         }
+
+        // Render Chart.js pie charts for host dashboard
+        if (_isHost && _multiplayerScreen == "host-dashboard" && _hostPortfolios.Count > 0)
+        {
+            await RenderHostPieCharts();
+        }
+    }
+
+    private async Task RenderHostPieCharts()
+    {
+        foreach (var ps in _hostPortfolios)
+        {
+            if (ps.PortfolioBreakdown == null || !ps.PortfolioBreakdown.Any()) continue;
+
+            var canvasId = $"pie-{ps.ConnectionId}";
+            var labels = ps.PortfolioBreakdown.Keys.ToList();
+            var values = ps.PortfolioBreakdown.Values.ToList();
+            var colors = labels.Select(k => GetBreakdownColor(k)).ToList();
+
+            try
+            {
+                await JSRuntime.InvokeVoidAsync("pieChartInterop.render",
+                    canvasId,
+                    System.Text.Json.JsonSerializer.Serialize(labels),
+                    System.Text.Json.JsonSerializer.Serialize(values),
+                    System.Text.Json.JsonSerializer.Serialize(colors),
+                    136); // 2x for retina: 68px display * 2
+            }
+            catch { /* canvas may not be in DOM yet */ }
+        }
     }
 
     private async Task ApplyTheme()
@@ -3501,27 +3531,6 @@
         return _breakdownColors.TryGetValue(key, out var color) ? color : "#888";
     }
 
-    private string GetHostPortfolioPieChartStyle(PlayerSummary ps)
-    {
-        if (ps.PortfolioBreakdown == null || !ps.PortfolioBreakdown.Any())
-            return "background: rgba(212, 200, 154, 0.15);";
-
-        var total = ps.PortfolioBreakdown.Values.Sum();
-        if (total <= 0) return "background: rgba(212, 200, 154, 0.15);";
-
-        var segments = new List<string>();
-        decimal cumulative = 0;
-
-        foreach (var kvp in ps.PortfolioBreakdown)
-        {
-            var normalized = (kvp.Value / total) * 100m;
-            var color = GetBreakdownColor(kvp.Key);
-            segments.Add($"{color} {cumulative:F2}% {(cumulative + normalized):F2}%");
-            cumulative += normalized;
-        }
-
-        return $"background: conic-gradient({string.Join(", ", segments)});";
-    }
 
     private decimal GetPlayerProfit()
     {

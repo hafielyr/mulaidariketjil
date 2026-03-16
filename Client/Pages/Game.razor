@@ -588,26 +588,29 @@
                     </div>
                 </div>
                 <div class="header-right">
-                    <button class="btn-icon pause-play-btn" @onclick="TogglePause"
-                            disabled="@(_gameState.IsEventPending || _gameState.IsGameOver)">
-                        @if (_isPaused)
-                        {
-                            <svg class="icon-play" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-                                <path d="M8 5v14l11-7z"/>
-                            </svg>
-                            <span class="btn-label">@Lang.T("BTN_PLAY")</span>
-                        }
-                        else
-                        {
-                            <svg class="icon-pause" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-                                <path d="M6 4h4v16H6zm8 0h4v16h-4z"/>
-                            </svg>
-                            <span class="btn-label">@Lang.T("BTN_PAUSE")</span>
-                        }
-                    </button>
-                    <button class="btn-icon" @onclick="RestartGame" title="@Lang.T("BTN_RESTART")">
-                        ↻
-                    </button>
+                    @if (!_gameState.IsMultiplayer)
+                    {
+                        <button class="btn-icon pause-play-btn" @onclick="TogglePause"
+                                disabled="@(_gameState.IsEventPending || _gameState.IsGameOver)">
+                            @if (_isPaused)
+                            {
+                                <svg class="icon-play" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                    <path d="M8 5v14l11-7z"/>
+                                </svg>
+                                <span class="btn-label">@Lang.T("BTN_PLAY")</span>
+                            }
+                            else
+                            {
+                                <svg class="icon-pause" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                    <path d="M6 4h4v16H6zm8 0h4v16h-4z"/>
+                                </svg>
+                                <span class="btn-label">@Lang.T("BTN_PAUSE")</span>
+                            }
+                        </button>
+                        <button class="btn-icon" @onclick="RestartGame" title="@Lang.T("BTN_RESTART")">
+                            ↻
+                        </button>
+                    }
                 </div>
             </header>
 

@@ -8320,29 +8320,23 @@ html, body {
     text-align: right;
 }
 
-/* Host card body: pie chart + financial details side by side */
+/* Host card body: pie chart + financial details stacked */
 .host-card-body {
     display: flex;
-    gap: 0.75rem;
-    align-items: flex-start;
-    overflow: hidden;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
 .host-card-body .host-pie-chart-container {
-    flex: 0 1 auto;
-    min-width: 0;
-    max-width: 55%;
+    width: 100%;
 }
 
 .host-financial-details {
-    flex: 1;
-    min-width: 0;
     display: flex;
     flex-direction: column;
     gap: 0.2rem;
-    border-left: 1px solid rgba(212, 200, 154, 0.1);
-    padding-left: 0.65rem;
-    overflow: hidden;
+    border-top: 1px solid rgba(212, 200, 154, 0.1);
+    padding-top: 0.4rem;
 }
 
 .fin-detail-row {
@@ -8672,17 +8666,6 @@ html, body {
         font-size: 0.68rem;
     }
 
-    .host-card-body {
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-
-    .host-financial-details {
-        border-left: none;
-        padding-left: 0;
-        border-top: 1px solid rgba(212, 200, 154, 0.08);
-        padding-top: 0.4rem;
-    }
 
     .btn-host-action {
         padding: 0.3rem 0.5rem;

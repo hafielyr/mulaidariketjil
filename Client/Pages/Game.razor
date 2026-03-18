@@ -461,10 +461,21 @@
                 </div>
             </header>
 
+            @if (_hostGameFinished)
+            {
+                <div class="host-game-finished-banner">
+                    <span class="host-finished-icon">🏁</span>
+                    <span class="host-finished-text">@(_selectedLanguage == Language.Indonesian ? "Permainan Selesai!" : "Game Finished!")</span>
+                    <span class="host-finished-sub">@(_selectedLanguage == Language.Indonesian ? "Lihat ringkasan hasil pemain di bawah" : "View player result summaries below")</span>
+                </div>
+            }
+
             <main class="host-dashboard-main">
                 <!-- Left: Leaderboard -->
                 <section class="host-lb-panel">
-                    <h3>@(_selectedLanguage == Language.Indonesian ? "Papan Peringkat" : "Leaderboard")</h3>
+                    <h3>@(_hostGameFinished
+                        ? (_selectedLanguage == Language.Indonesian ? "Peringkat Akhir" : "Final Rankings")
+                        : (_selectedLanguage == Language.Indonesian ? "Papan Peringkat" : "Leaderboard"))</h3>
                     @if (_leaderboard != null && _leaderboard.Count > 0)
                     {
                         <div class="host-lb-list">
@@ -473,9 +484,11 @@
                                 <div class="host-lb-entry @(entry.IsBot ? "lb-bot" : "") @(!entry.IsConnected ? "lb-disconnected" : "")">
                                     <span class="lb-rank">#@entry.Rank</span>
                                     <span class="lb-name">@(entry.IsBot ? "Bot" : entry.PlayerName) @(!entry.IsConnected ? "⚡" : "")</span>
-                                    <span class="lb-worth">Rp @entry.NetWorth.ToString("N0")</span>
-                                    <span class="lb-profit @(entry.TotalProfit >= 0 ? "profit-pos" : "profit-neg")">
-                                        @(entry.TotalProfit >= 0 ? "+" : "")Rp @entry.TotalProfit.ToString("N0")
+                                    <span class="lb-worth-row">
+                                        <span class="lb-worth">Rp @entry.NetWorth.ToString("N0")</span>
+                                        <span class="lb-profit @(entry.TotalProfit >= 0 ? "profit-pos" : "profit-neg")">
+                                            @(entry.TotalProfit >= 0 ? "+" : "")Rp @entry.TotalProfit.ToString("N0")
+                                        </span>
                                     </span>
                                 </div>
                             }
@@ -486,7 +499,7 @@
                         <p class="host-lb-empty">@(_selectedLanguage == Language.Indonesian ? "Menunggu data..." : "Waiting for data...")</p>
                     }
 
-                    @if (_currentRoom != null)
+                    @if (_currentRoom != null && !_hostGameFinished)
                     {
                         <div class="host-unlock-ready-status">
                             <h4>@(_selectedLanguage == Language.Indonesian ? "Status Siap Lanjut" : "Unlock Ready Status")</h4>
@@ -518,7 +531,7 @@
                         <div class="host-portfolio-grid">
                             @foreach (var ps in _hostPortfolios)
                             {
-                                <div class="host-portfolio-card @(!ps.IsConnected ? "disconnected" : "")">
+                                <div class="host-portfolio-card @(!ps.IsConnected ? "disconnected" : "") @(_hostGameFinished ? "game-finished" : "")">
                                     <div class="portfolio-card-header">
                                         <span class="portfolio-player-name">@ps.PlayerName @(!ps.IsConnected ? "⚡" : "")</span>
                                         <span class="portfolio-networth">Rp @ps.NetWorth.ToString("N0")</span>
@@ -2500,6 +2513,7 @@
     private bool _isCreatingRoom;
     private bool _isJoiningRoom;
     private bool _isHost;
+    private bool _hostGameFinished;
     private bool _isReady;
     private List<LeaderboardEntry>? _leaderboard;
     private bool _showLeaderboard = false;           // collapsible leaderboard sidebar
@@ -2554,6 +2568,8 @@
         StateHasChanged();
     }
 
+    private string _lastPieDataHash = "";
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -2561,11 +2577,29 @@
             await ApplyTheme();
         }
 
-        // Render Chart.js pie charts for host dashboard
+        // Render Chart.js pie charts for host dashboard (skip if data unchanged to prevent blipping)
         if (_isHost && _multiplayerScreen == "host-dashboard" && _hostPortfolios.Count > 0)
         {
-            await RenderHostPieCharts();
+            var currentHash = GetPieDataHash();
+            if (currentHash != _lastPieDataHash)
+            {
+                _lastPieDataHash = currentHash;
+                await RenderHostPieCharts();
+            }
         }
+    }
+
+    private string GetPieDataHash()
+    {
+        var sb = new System.Text.StringBuilder();
+        foreach (var ps in _hostPortfolios)
+        {
+            if (ps.PortfolioBreakdown == null) continue;
+            sb.Append(ps.ConnectionId);
+            foreach (var kvp in ps.PortfolioBreakdown)
+                sb.Append($"{kvp.Key}:{kvp.Value:F0}|");
+        }
+        return sb.ToString();
     }
 
     private async Task RenderHostPieCharts()
@@ -3944,6 +3978,7 @@
     private void HandleAllPlayersFinished(List<LeaderboardEntry> entries)
     {
         _leaderboard = entries;
+        _hostGameFinished = true;
         if (_gameState != null)
         {
             _gameState.AllPlayersFinished = true;

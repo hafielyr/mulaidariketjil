@@ -1734,16 +1734,16 @@ html, body {
     font-weight: 700;
     font-family: 'Lora', 'Georgia', serif;
     background: transparent;
-    color: var(--ayam-yellow);
-    border: 3px solid var(--ayam-yellow);
+    color: var(--ayam-orange);
+    border: 3px solid var(--ayam-orange);
     border-radius: 50px;
     cursor: pointer;
     transition: all 0.3s;
 }
 
 .btn-secondary:hover {
-    background: var(--ayam-yellow);
-    color: var(--text-dark);
+    background: var(--ayam-orange);
+    color: white;
     transform: scale(1.05);
 }
 
@@ -1888,7 +1888,7 @@ html, body {
 }
 
 .btn-info {
-    background: var(--sky-blue);
+    background: #7BA8B8;
     border: none;
     font-size: 1rem;
     cursor: pointer;
@@ -1907,7 +1907,7 @@ html, body {
 }
 
 .btn-info-inline {
-    background: var(--sky-blue);
+    background: #7BA8B8;
     border: 2px solid var(--stroke-color);
     font-size: 1.1rem;
     cursor: pointer;
@@ -2047,7 +2047,7 @@ html, body {
 
 .month {
     color: white;
-    background: rgba(255,255,255,0.2);
+    background: rgba(0,0,0,0.15);
     padding: 0.2rem 0.8rem;
     border-radius: 15px;
 }
@@ -2559,7 +2559,7 @@ html, body {
 
 .deposito-rate-card.selected {
     border-color: var(--money-green);
-    background: linear-gradient(135deg, var(--money-green-light), var(--money-green));
+    background: linear-gradient(135deg, var(--money-green), var(--money-green-dark));
     color: white;
     transform: scale(1.05);
 }
@@ -4964,7 +4964,7 @@ html, body {
     width: 22px;
     height: 22px;
     padding: 0;
-    background: var(--sky-blue);
+    background: #7BA8B8;
     border: 2px solid var(--stroke-color);
     border-radius: 50%;
     font-size: 0.75rem;
@@ -5245,7 +5245,7 @@ html, body {
 
 .bond-rate-card.selected {
     border-color: var(--sky-blue);
-    background: linear-gradient(135deg, var(--sky-blue-light), var(--sky-blue));
+    background: linear-gradient(135deg, var(--sky-blue), #6B9FB2);
     color: white;
     transform: scale(1.02);
 }
@@ -5367,7 +5367,7 @@ html, body {
 
 .deposito-rate-card.shariah.selected {
     border-color: #2d9c2d;
-    background: linear-gradient(135deg, #d4edda, #2d9c2d);
+    background: linear-gradient(135deg, #2d9c2d, #1f7a1f);
 }
 
 .bond-rate-card.shariah {
@@ -5376,7 +5376,7 @@ html, body {
 
 .bond-rate-card.shariah.selected {
     border-color: #2d9c2d;
-    background: linear-gradient(135deg, #d4edda, #2d9c2d);
+    background: linear-gradient(135deg, #2d9c2d, #1f7a1f);
     color: white;
 }
 
@@ -5850,7 +5850,7 @@ html, body {
     padding: 0.8rem;
     border-radius: 8px;
     margin-bottom: 0.8rem;
-    background: linear-gradient(135deg, var(--money-green-light), var(--money-green));
+    background: linear-gradient(135deg, var(--money-green), var(--money-green-dark));
     color: white;
 }
 
@@ -8711,7 +8711,7 @@ html, body {
 /* ===== MP UNLOCK POPUP waiting text ===== */
 .mp-unlock-waiting {
     font-size: 0.85rem;
-    color: rgba(212, 200, 154, 0.7);
+    color: var(--text-muted);
     font-style: italic;
     margin-top: 0.75rem;
     text-align: center;
@@ -8721,8 +8721,8 @@ html, body {
 .event-autopay-countdown {
     margin-bottom: 1rem;
     padding: 0.6rem 0.75rem;
-    background: rgba(212, 200, 154, 0.06);
-    border: 1px solid rgba(212, 200, 154, 0.15);
+    background: rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     display: flex;
     flex-direction: column;
@@ -8731,21 +8731,21 @@ html, body {
 
 .countdown-bar-bg {
     height: 8px;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.1);
     border-radius: 4px;
     overflow: hidden;
 }
 
 .countdown-bar-fill {
     height: 100%;
-    background: linear-gradient(90deg, #e07070, #D4C89A);
+    background: linear-gradient(90deg, #e07070, var(--ayam-orange));
     border-radius: 4px;
     transition: width 1s linear;
 }
 
 .countdown-text {
     font-size: 0.8rem;
-    color: rgba(212, 200, 154, 0.7);
+    color: var(--text-muted);
     text-align: center;
 }
 
@@ -8781,7 +8781,7 @@ html, body {
 }
 
 .waiting-modal p {
-    color: rgba(212, 200, 154, 0.8);
+    color: var(--text-muted);
     font-style: italic;
     margin-top: 1rem;
 }

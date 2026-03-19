@@ -270,6 +270,7 @@ public class PlayerSummary
     public decimal PortfolioGainLoss { get; set; }
     public decimal CrowdfundingGainLoss { get; set; }
     public decimal TotalEventCostPaid { get; set; }
+    public decimal ShariahPercentage { get; set; }
 }
 
 public class LeaderboardEntry
@@ -363,6 +364,9 @@ public class GameState
     public decimal PortfolioGainLoss { get; set; } // Realized + unrealized P/L from Stocks, Index, Gold, Crypto
     public decimal CrowdfundingGainLoss { get; set; } // Realized + unrealized P/L from Crowdfunding
     public decimal TotalInvestmentGainLoss { get; set; }
+
+    // Shariah compliance percentage (cumulative shariah invested / total invested)
+    public decimal ShariahPercentage { get; set; }
 }
 
 public class AssetPrice

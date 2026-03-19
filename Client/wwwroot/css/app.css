@@ -6261,6 +6261,19 @@ html, body {
     font-style: italic;
 }
 
+.breakdown-row.shariah-row {
+    border-top: 2px solid var(--stroke-color);
+    border-bottom: none;
+    padding-top: 0.6rem;
+    margin-top: 0.3rem;
+    font-size: 0.9rem;
+}
+
+.breakdown-row.shariah-row span:first-child {
+    color: var(--text-dark);
+    font-weight: 700;
+}
+
 /* Responsive pie chart */
 @media (max-width: 600px) {
     .pie-chart-container {

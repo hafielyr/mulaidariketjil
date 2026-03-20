@@ -1630,7 +1630,8 @@
                         </div>
                     }
 
-                    @if (_gameState.AdvisorTips != null && _gameState.AdvisorTips.Count > 0)
+                    @* In kids mode, advisor tips are shown via the mascot bubble chat instead *@
+                    @if (_gameState.AdvisorTips != null && _gameState.AdvisorTips.Count > 0 && _gameState.AgeMode != AgeMode.Kids)
                     {
                         <div class="divider"></div>
 
@@ -1670,6 +1671,43 @@
                     </div>
                 </section>
             </main>
+
+            <!-- Orangutan Mascot Bubble Chat (Kids/Light mode only) -->
+            @if (_gameState.AgeMode == AgeMode.Kids && !_gameState.IsGameOver && !_gameState.ShowIntro && !_gameState.IsEventPending)
+            {
+                <div class="mascot-container @(_mascotBubbleVisible ? "bubble-visible" : "")">
+                    @if (_mascotBubbleVisible)
+                    {
+                        <div class="mascot-bubble">
+                            <button class="mascot-bubble-close" @onclick="() => _mascotBubbleVisible = false">&times;</button>
+                            <p class="mascot-bubble-text">
+                                @if (!string.IsNullOrEmpty(_currentMascotTipKey))
+                                {
+                                    @Lang.T(_currentMascotTipKey)
+                                }
+                                else if (_gameState.AdvisorTips != null && _gameState.AdvisorTips.Count > 0)
+                                {
+                                    @_gameState.AdvisorTips[0].GetMessage(_gameState.Language)
+                                }
+                            </p>
+                            @if (_gameState.AdvisorTips != null && _gameState.AdvisorTips.Count > 1 && string.IsNullOrEmpty(_currentMascotTipKey))
+                            {
+                                @foreach (var tip in _gameState.AdvisorTips.Skip(1))
+                                {
+                                    <p class="mascot-bubble-text mascot-tip-extra">@tip.GetMessage(_gameState.Language)</p>
+                                }
+                            }
+                        </div>
+                    }
+                    <div class="mascot-avatar" @onclick="() => _mascotBubbleVisible = !_mascotBubbleVisible">
+                        <img src="images/orangutan-mascot.png" alt="@Lang.T("MASCOT_NAME")" />
+                        @if (!_mascotBubbleVisible && !string.IsNullOrEmpty(_currentMascotTipKey))
+                        {
+                            <span class="mascot-notify-dot"></span>
+                        }
+                    </div>
+                </div>
+            }
 
             <!-- Paused Indicator -->
             @if (_isPaused && !_gameState.IsEventPending && !_showAssetInfo && !_gameState.IsGameOver && !_gameState.ShowIntro)
@@ -2525,6 +2563,13 @@
     private System.Timers.Timer? _eventCountdownTimer;
     private List<PlayerSummary> _hostPortfolios = new();  // host dashboard portfolios
     private string _mobileActiveTab = "market"; // portfolio, market, stats
+
+    // Mascot bubble chat state (light/kids mode only)
+    private bool _mascotBubbleVisible = false;
+    private string _currentMascotTipKey = "";
+    private string _lastMascotTipKey = "";
+    private int _lastMascotYear = 0;
+    private int _lastMascotMonth = 0;
 
     protected override async Task OnInitializedAsync()
     {
@@ -3516,6 +3561,22 @@
         if (_performanceHistory.Count > 180) // Keep last 180 months (15 years)
             _performanceHistory.RemoveAt(0);
 
+        // Update mascot bubble tip (kids mode only)
+        UpdateMascotTip();
+
+        // Move advisor tips to mascot bubble in kids mode
+        if (state.AgeMode == AgeMode.Kids && state.AdvisorTips != null && state.AdvisorTips.Count > 0)
+        {
+            var tip = state.AdvisorTips[0];
+            var tipText = tip.GetMessage(state.Language);
+            if (tipText != _lastMascotTipKey)
+            {
+                _currentMascotTipKey = "";
+                _mascotBubbleVisible = true;
+                _lastMascotTipKey = tipText;
+            }
+        }
+
         InvokeAsync(StateHasChanged);
     }
 
@@ -4104,6 +4165,94 @@
         _eventCountdownTimer?.Stop();
         _eventCountdownTimer?.Dispose();
         _eventCountdownTimer = null;
+    }
+
+    private void UpdateMascotTip()
+    {
+        if (_gameState == null || _gameState.AgeMode != AgeMode.Kids) return;
+
+        var year = _gameState.CurrentYear;
+        var month = _gameState.CurrentMonth;
+
+        if (year == _lastMascotYear && month == _lastMascotMonth) return;
+        _lastMascotYear = year;
+        _lastMascotMonth = month;
+
+        var newTipKey = GetContextualMascotTipKey(year, month);
+        if (!string.IsNullOrEmpty(newTipKey) && newTipKey != _lastMascotTipKey)
+        {
+            _currentMascotTipKey = newTipKey;
+            _lastMascotTipKey = newTipKey;
+            _mascotBubbleVisible = true;
+        }
+    }
+
+    private string GetContextualMascotTipKey(int year, int month)
+    {
+        if (year == 1 && month <= 2)
+            return "MASCOT_WELCOME";
+
+        if (month == 1 && year > 1)
+            return "MASCOT_TIP_YEARLY_INCOME";
+
+        if (year == 1 && month == 3)
+            return "MASCOT_TIP_SAVE_FIRST";
+        if (year == 1 && month == 6)
+            return "MASCOT_TIP_DEPOSITO_UNLOCK";
+        if (year == 1 && month == 12)
+            return "MASCOT_TIP_BOND_UNLOCK";
+        if (year == 2 && month == 2)
+            return "MASCOT_TIP_FUND_GOLD_UNLOCK";
+        if (year == 3 && month == 2)
+            return "MASCOT_TIP_STOCK_UNLOCK";
+
+        if (year >= 2 && month == 5)
+            return "MASCOT_TIP_EMERGENCY_FUND";
+        if (year >= 2 && month == 6)
+            return "MASCOT_TIP_EVENT_COMING";
+
+        if (_gameState != null)
+        {
+            var netWorth = _gameState.NetWorth;
+            var cashRatio = netWorth > 0 ? _gameState.CashBalance / netWorth : 1m;
+
+            if (cashRatio > 0.70m && year >= 2 && month == 4)
+                return "MASCOT_TIP_TOO_MUCH_CASH";
+
+            if (_gameState.TotalPortfolioValue == 0 && _gameState.TotalDepositoValue == 0
+                && _gameState.TotalBondValue == 0 && year >= 1 && month == 8)
+                return "MASCOT_TIP_EMPTY_PORTFOLIO";
+        }
+
+        if (year == 8 && month == 1)
+            return "MASCOT_TIP_HALFWAY";
+        if (year == 13 && month == 1)
+            return "MASCOT_TIP_FINAL_YEARS";
+
+        var rotatingTips = new[]
+        {
+            "MASCOT_TIP_PATIENCE",
+            "MASCOT_TIP_DIVERSIFY",
+            "MASCOT_TIP_EARLY_INVEST",
+            "MASCOT_TIP_COMPOUND",
+            "MASCOT_TIP_RISK_REWARD",
+            "MASCOT_TIP_SAVINGS_SAFE",
+            "MASCOT_TIP_GOLD_SAFE",
+            "MASCOT_TIP_STOCK_VOLATILE",
+            "MASCOT_TIP_BONDS_STEADY",
+            "MASCOT_TIP_INDEX_FUND",
+            "MASCOT_TIP_CROWDFUNDING",
+            "MASCOT_TIP_CHECK_PORTFOLIO",
+            "MASCOT_TIP_CRYPTO_CAREFUL"
+        };
+
+        if (month == 3 || month == 9 || month == 11)
+        {
+            var idx = ((year - 1) * 3 + (month / 4)) % rotatingTips.Length;
+            return rotatingTips[idx];
+        }
+
+        return "";
     }
 
     public async ValueTask DisposeAsync()

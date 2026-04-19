@@ -3154,6 +3154,105 @@ html, body {
     font-weight: 700;
 }
 
+/* ===== FINANCIAL ADVISOR TIPS ===== */
+.advisor-tips-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.advisor-tips-header {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    user-select: none;
+}
+
+.advisor-tips-header h3 {
+    flex: 1;
+    margin: 0;
+}
+
+.advisor-tips-header .advisor-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--ayam-gold), var(--ayam-yellow));
+    color: #2a1810;
+    font-size: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.advisor-tips-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.advisor-tips-body.expanded {
+    max-height: 800px;
+    overflow-y: auto;
+}
+
+.advisor-tip {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    padding: 0.7rem 0.9rem;
+    background: white;
+    border-radius: 10px;
+    border-left: 3px solid var(--ayam-gold);
+    font-size: 0.8rem;
+    line-height: 1.4;
+    animation: slide-in-right 0.3s ease-out;
+}
+
+.advisor-tip .tip-icon {
+    flex-shrink: 0;
+    font-size: 1.1rem;
+    line-height: 1;
+}
+
+.advisor-tip .tip-text {
+    flex: 1;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.advisor-tip.warning {
+    background: rgba(230, 57, 70, 0.08);
+    border-left-color: var(--risk-extreme);
+}
+
+.advisor-tip.warning .tip-text {
+    color: var(--risk-extreme);
+}
+
+.advisor-tip.suggestion {
+    background: rgba(45, 106, 79, 0.08);
+    border-left-color: var(--money-green);
+}
+
+.advisor-tip.suggestion .tip-text {
+    color: var(--money-green);
+}
+
+.advisor-tip.info {
+    background: rgba(33, 150, 243, 0.08);
+    border-left-color: #1976D2;
+}
+
+.advisor-tip.info .tip-text {
+    color: #1976D2;
+}
+
 /* ===== PAUSED INDICATOR ===== */
 .paused-indicator {
     position: fixed;

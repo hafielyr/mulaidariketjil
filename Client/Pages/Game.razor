@@ -1638,7 +1638,7 @@
                         <div class="advisor-tips-panel">
                             <div class="advisor-tips-header" @onclick="() => _advisorExpanded = !_advisorExpanded">
                                 <span class="advisor-icon">@UIIcon("bot")</span>
-                                <h3>@(_selectedLanguage == Language.English ? "Financial Advisor" : "Penasihat Keuangan")</h3>
+                                <h3>@Lang.T("ADVISOR_TITLE")</h3>
                                 <span class="log-toggle @(_advisorExpanded ? "expanded" : "")">&#9660;</span>
                             </div>
                             <div class="advisor-tips-body @(_advisorExpanded ? "expanded" : "")">

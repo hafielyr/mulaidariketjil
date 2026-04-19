@@ -1547,6 +1547,29 @@
                         }
                     </div>
 
+                    @if (_gameState.AdvisorTips != null && _gameState.AdvisorTips.Count > 0)
+                    {
+                        <div class="divider"></div>
+
+                        <!-- Advisory Tips Panel -->
+                        <div class="advisor-tips-panel">
+                            <div class="advisor-tips-header" @onclick="() => _advisorExpanded = !_advisorExpanded">
+                                <span class="advisor-icon">@UIIcon("bot")</span>
+                                <h3>@Lang.T("ADVISOR_TITLE")</h3>
+                                <span class="log-toggle @(_advisorExpanded ? "expanded" : "")">&#9660;</span>
+                            </div>
+                            <div class="advisor-tips-body @(_advisorExpanded ? "expanded" : "")">
+                                @foreach (var tip in _gameState.AdvisorTips)
+                                {
+                                    <div class="advisor-tip @tip.Category">
+                                        <span class="tip-icon">@(tip.Category == "warning" ? "\u26A0" : tip.Category == "suggestion" ? "\U0001F4A1" : "\u2139")</span>
+                                        <span class="tip-text">@tip.GetMessage(_gameState.Language)</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+
                     <div class="divider"></div>
 
                     <!-- Game History Log -->
@@ -2236,6 +2259,7 @@
     private string _savingsAmountDisplay = "1.000.000";
     private bool _isLightMode = false;
     private bool _logExpanded = true;
+    private bool _advisorExpanded = true;
     private AgeMode _selectedAgeMode => _isLightMode ? AgeMode.Kids : AgeMode.Adult;
     private Language _selectedLanguage = Language.Indonesian;
     private bool _showLangDropdown = false;

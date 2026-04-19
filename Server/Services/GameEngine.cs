@@ -3704,13 +3704,30 @@ public class GameEngine
             {
                 var nw = s.NetWorth;
                 var breakdown = new Dictionary<string, decimal>();
+
+                // Break down Portfolio into individual asset types
+                decimal stocksValue = 0, indexValue = 0, goldValue = 0, cryptoValue = 0;
+                foreach (var p in s.Portfolio.Values)
+                {
+                    switch (p.AssetType)
+                    {
+                        case "saham": stocksValue += p.TotalValue; break;
+                        case "reksadana": indexValue += p.TotalValue; break;
+                        case "emas": goldValue += p.TotalValue; break;
+                        case "crypto": cryptoValue += p.TotalValue; break;
+                    }
+                }
+
                 if (nw > 0)
                 {
                     if (s.CashBalance > 0) breakdown["Cash"] = Math.Round((s.CashBalance / nw) * 100, 1);
                     if (s.TotalSavingsValue > 0) breakdown["Savings"] = Math.Round((s.TotalSavingsValue / nw) * 100, 1);
                     if (s.TotalDepositoValue > 0) breakdown["Deposito"] = Math.Round((s.TotalDepositoValue / nw) * 100, 1);
                     if (s.TotalBondValue > 0) breakdown["Bond"] = Math.Round((s.TotalBondValue / nw) * 100, 1);
-                    if (s.TotalPortfolioValue > 0) breakdown["Portfolio"] = Math.Round((s.TotalPortfolioValue / nw) * 100, 1);
+                    if (stocksValue > 0) breakdown["Stocks"] = Math.Round((stocksValue / nw) * 100, 1);
+                    if (indexValue > 0) breakdown["Index"] = Math.Round((indexValue / nw) * 100, 1);
+                    if (goldValue > 0) breakdown["Gold"] = Math.Round((goldValue / nw) * 100, 1);
+                    if (cryptoValue > 0) breakdown["Crypto"] = Math.Round((cryptoValue / nw) * 100, 1);
                     if (s.TotalCrowdfundingValue > 0) breakdown["Crowdfunding"] = Math.Round((s.TotalCrowdfundingValue / nw) * 100, 1);
                 }
                 var initialCapital = 5_000_000m + (s.CurrentYear - 1) * GameSession.YEARLY_INCOME;
@@ -3723,7 +3740,14 @@ public class GameEngine
                     CurrentYear = s.CurrentYear,
                     CurrentMonth = s.CurrentMonth,
                     PortfolioBreakdown = breakdown,
-                    TotalGainLoss = nw - initialCapital
+                    TotalGainLoss = nw - initialCapital,
+                    SavingsInterestEarned = s.TotalSavingsInterestEarned,
+                    DepositoInterestEarned = s.TotalDepositoInterestEarned + s.Depositos.Sum(d => d.CurrentValue - d.Principal),
+                    BondCouponEarned = s.TotalBondCouponEarned,
+                    DividendEarned = s.TotalDividendEarned,
+                    PortfolioGainLoss = s.TotalRealizedPortfolioGainLoss + s.Portfolio.Values.Sum(p => p.ProfitLoss),
+                    CrowdfundingGainLoss = s.TotalRealizedCrowdfundingGainLoss + s.CrowdfundingInvestments.Where(c => !c.HasFailed).Sum(c => c.CurrentValue - c.InvestedAmount),
+                    TotalEventCostPaid = s.PlayerTotalEventCostPaid
                 };
             }).ToList();
         }

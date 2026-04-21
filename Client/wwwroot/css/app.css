@@ -2608,8 +2608,8 @@ html, body {
 
 /* Auto-rollover checkbox */
 .deposito-auto-rollover {
-    margin-top: 0.8rem;
-    padding: 0.6rem;
+    margin-top: 0.5rem;
+    padding: 0.4rem;
     background: rgba(122, 147, 104, 0.08);
     border-radius: 8px;
     border: 2px dashed var(--money-green);
@@ -2894,7 +2894,7 @@ html, body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.6rem;
+    margin-bottom: 0.3rem;
 }
 
 .card-actions {
@@ -2943,7 +2943,7 @@ html, body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.3rem;
 }
 
 .price {
@@ -2981,8 +2981,8 @@ html, body {
 .card-desc {
     font-size: 0.75rem;
     color: var(--text-muted);
-    margin-bottom: 0.6rem;
-    line-height: 1.4;
+    margin-bottom: 0.3rem;
+    line-height: 1.3;
 }
 
 /* ===== LOCKED SECTION ===== */
@@ -8305,15 +8305,15 @@ html, body {
 
 .host-portfolio-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-    gap: 0.85rem;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 0.75rem;
 }
 
 .host-portfolio-card {
-    background: #252018;
-    border: 1px solid rgba(212, 200, 154, 0.12);
-    border-radius: 12px;
-    padding: 1rem;
+    background: rgba(245, 240, 232, 0.06);
+    border: 1px solid rgba(212, 200, 154, 0.15);
+    border-radius: 10px;
+    padding: 0.85rem;
     font-size: 0.8rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
     transition: border-color 0.2s, box-shadow 0.2s;
@@ -8332,7 +8332,7 @@ html, body {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.25rem;
 }
 
 .portfolio-player-name {
@@ -8342,23 +8342,23 @@ html, body {
 }
 
 .portfolio-networth {
-    font-weight: 700;
-    color: #A4CE95;
-    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--money-green, #8BAE79);
+    font-size: 0.85rem;
 }
 
 .portfolio-card-meta {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.65rem;
+    margin-bottom: 0.6rem;
     padding-bottom: 0.5rem;
-    border-bottom: 1px solid rgba(212, 200, 154, 0.08);
+    border-bottom: 1px solid rgba(212, 200, 154, 0.1);
 }
 
 .portfolio-year-month {
-    font-size: 0.72rem;
-    color: #A69878;
+    font-size: 0.7rem;
+    color: rgba(212, 200, 154, 0.5);
 }
 
 .portfolio-gainloss {
@@ -8507,6 +8507,58 @@ html, body {
 /* Host portfolio card game-finished state */
 .host-portfolio-card.game-finished {
     border-color: rgba(139, 174, 121, 0.3);
+}
+
+/* Host Portfolio Pie Chart */
+.host-pie-chart-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.host-pie-chart {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.host-pie-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    flex: 1;
+    min-width: 0;
+}
+
+.host-pie-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.7rem;
+}
+
+.host-pie-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.host-pie-label {
+    flex: 1;
+    color: rgba(212, 200, 154, 0.7);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.host-pie-pct {
+    color: rgba(212, 200, 154, 0.9);
+    font-weight: 600;
+    min-width: 28px;
+    text-align: right;
 }
 
 .portfolio-breakdown {

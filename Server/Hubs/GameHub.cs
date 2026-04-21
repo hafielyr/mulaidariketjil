@@ -254,6 +254,16 @@ public class GameHub : Hub
             // All players dismissed their intro popups — resume all sessions
             _gameEngine.ResumeAllInRoom(room.RoomCode);
             _roomManager.ResetUnlockReady(room.RoomCode);
+
+            // Send updated game state to each player so unlocked assets are reflected in the UI
+            var sessions = _gameEngine.GetRoomSessions(room.RoomCode);
+            foreach (var session in sessions)
+            {
+                var gameState = session.ToGameState();
+                gameState.PlayerSummaries = GetPlayerSummaries(room.RoomCode);
+                await Clients.Client(session.ConnectionId).SendAsync("GameStateUpdated", gameState);
+            }
+
             // Send updated room (all IsUnlockReady=false) to host so dashboard resets
             await Clients.Client(room.HostConnectionId).SendAsync("RoomUpdated", room);
             await Clients.Group(room.RoomCode).SendAsync("UnlockComplete");
@@ -267,6 +277,16 @@ public class GameHub : Hub
 
         _gameEngine.ResumeAllInRoom(room.RoomCode);
         _roomManager.ResetUnlockReady(room.RoomCode);
+
+        // Send updated game state to each player so unlocked assets are reflected in the UI
+        var sessions = _gameEngine.GetRoomSessions(room.RoomCode);
+        foreach (var session in sessions)
+        {
+            var gameState = session.ToGameState();
+            gameState.PlayerSummaries = GetPlayerSummaries(room.RoomCode);
+            await Clients.Client(session.ConnectionId).SendAsync("GameStateUpdated", gameState);
+        }
+
         // Send updated room (all IsUnlockReady=false) to host so dashboard resets
         await Clients.Client(room.HostConnectionId).SendAsync("RoomUpdated", room);
         await Clients.Group(room.RoomCode).SendAsync("UnlockComplete");

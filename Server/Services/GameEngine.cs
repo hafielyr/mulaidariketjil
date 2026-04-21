@@ -81,17 +81,17 @@ public class GameEngine
                 DisplayNameAdult = "Tabungan",
                 DisplayNameEN = "Savings",
                 DisplayNameAdultEN = "Savings Account",
-                // Light Mode (Kids) - Simple, no regulatory references
-                Description = "Simpanan bank yang aman seperti celengan!",
-                DescriptionEN = "A safe place to keep your money that grows!",
-                WhatIsIt = "Tabungan itu seperti celengan digital di bank! Kamu taruh uang, lalu bank kasih bonus kecil setiap bulan. Uangmu AMAN BANGET dan bisa diambil kapan saja!",
-                WhatIsItEN = "Think of a savings account like a piggy bank at the bank! You put money in, and the bank gives you a small bonus each month. Your money is super safe and you can take it out anytime!",
-                RiskExplanation = "SUPER AMAN! Kayak simpan uang di brankas. Uangnya dijamin bertambah terus!",
-                RiskExplanationEN = "Super safe! Just like keeping money in a vault. Your money will definitely grow!",
-                BestFor = "Buat pemula dan uang darurat!",
-                BestForEN = "For beginners and emergency money!",
-                ExpectedReturn = "Uangmu pasti nambah sedikit-sedikit setiap bulan!",
-                ExpectedReturnEN = "Your money grows a little each month!",
+                // Light Mode (Kids) - Stoic Orangutan voice
+                Description = "Tempat aman untuk simpan uang. Seperti celengan!",
+                DescriptionEN = "A safe place to keep money. Like a piggy bank!",
+                WhatIsIt = "Tabungan itu celengan di bank. Kamu taruh uang, bank kasih bonus kecil tiap bulan. Uangmu aman. Bisa diambil kapan saja. Orangutan bilang: mulai dari sini dulu!",
+                WhatIsItEN = "Savings is a piggy bank at the bank. You put money in. The bank gives a small bonus each month. Your money is safe. Take it out anytime. Orangutan says: start here first!",
+                RiskExplanation = "Sangat aman. Seperti simpan pisang di tempat yang dijaga. Uangmu pasti bertambah pelan-pelan.",
+                RiskExplanationEN = "Very safe. Like keeping bananas in a guarded place. Your money grows slowly but surely.",
+                BestFor = "Untuk pemula dan uang cadangan!",
+                BestForEN = "For beginners and backup money!",
+                ExpectedReturn = "Uangmu tumbuh sedikit-sedikit tiap bulan. Pelan tapi pasti!",
+                ExpectedReturnEN = "Your money grows a little each month. Slow but steady!",
                 // Normal Mode (Adult) - Full details with regulations
                 DescriptionAdult = "Simpanan bank dengan jaminan keamanan dari pemerintah",
                 DescriptionAdultEN = "Bank savings account with government-backed safety guarantee",
@@ -125,17 +125,17 @@ public class GameEngine
                 DisplayNameAdult = "Deposito Berjangka",
                 DisplayNameEN = "Fixed Deposit",
                 DisplayNameAdultEN = "Certificate of Deposit",
-                // Light Mode (Kids) - Simple, no regulatory references
-                Description = "Tabungan terkunci dengan bunga lebih tinggi!",
-                DescriptionEN = "A locked savings account that earns more interest!",
-                WhatIsIt = "Deposito itu kayak menabung tapi dikunci! Kamu taruh uang untuk waktu tertentu (1-24 bulan), dan dapat bunga lebih besar dari tabungan biasa! Makin lama dikunci, makin besar hadiahnya! Ada juga Deposito Syariah yang pakai sistem bagi hasil (nisbah), bukan bunga!",
-                WhatIsItEN = "A fixed deposit is like saving in a locked box! You put money in for a specific time (1-24 months), and you get bigger bonuses than regular savings! The longer you lock it, the bigger the reward! There's also Shariah Deposits that use profit-sharing (nisbah), not interest!",
-                RiskExplanation = "AMAN! Tapi uangmu dikunci. Kalau diambil sebelum waktunya, bonus bunganya berkurang!",
-                RiskExplanationEN = "Safe! But your money is locked. If you take it early, you lose some of your bonus!",
-                BestFor = "Uang yang nggak akan dipakai dalam beberapa bulan!",
-                BestForEN = "Money you won't need for several months!",
-                ExpectedReturn = "Bunga 2.5% - 6% per tahun, lebih besar dari tabungan biasa!",
-                ExpectedReturnEN = "Interest 2.5% - 6% per year, more than regular savings!",
+                // Light Mode (Kids) - Stoic Orangutan voice
+                Description = "Tabungan yang dikunci. Bonusnya lebih besar!",
+                DescriptionEN = "Locked savings. Bigger bonus!",
+                WhatIsIt = "Deposito itu menabung tapi dikunci. Taruh uang untuk waktu tertentu. Makin lama dikunci, makin besar hadiahnya. Orangutan bilang: yang sabar, hasilnya lebih manis!",
+                WhatIsItEN = "A deposit is saving but locked. Put money in for a set time. The longer you wait, the bigger the reward. Orangutan says: patience makes it sweeter!",
+                RiskExplanation = "Aman. Tapi uangmu dikunci. Ambil sebelum waktunya? Bonusnya berkurang.",
+                RiskExplanationEN = "Safe. But your money is locked. Take it out early? You lose some bonus.",
+                BestFor = "Uang yang tidak akan dipakai dalam beberapa bulan.",
+                BestForEN = "Money you won't need for a few months.",
+                ExpectedReturn = "Bonus 2.5% - 6% per tahun. Lebih besar dari tabungan biasa!",
+                ExpectedReturnEN = "Bonus 2.5% - 6% per year. More than regular savings!",
                 // Normal Mode (Adult) - Full details with regulations
                 DescriptionAdult = "Deposito berjangka dengan bunga tetap yang dijamin",
                 DescriptionAdultEN = "Fixed-term deposit offering guaranteed interest returns",
@@ -169,17 +169,17 @@ public class GameEngine
                 DisplayNameAdult = "Reksa Dana Indeks",
                 DisplayNameEN = "Index Fund",
                 DisplayNameAdultEN = "Index Fund (Mutual Fund)",
-                // Light Mode (Kids) - Simple, no regulatory references
-                Description = "Investasi yang mengikuti pasar saham!",
-                DescriptionEN = "An investment that follows the stock market!",
-                WhatIsIt = "Reksa Dana Indeks itu kayak beli sedikit-sedikit dari BANYAK perusahaan sekaligus! Dikelola ahlinya, jadi kamu tinggal santai! Seperti beli sepotong pizza daripada satu pizza utuh!",
-                WhatIsItEN = "An index fund is like buying a little bit of LOTS of companies at the same time! Experts manage it for you, so you can relax! It's like buying a pizza slice instead of the whole pizza!",
-                RiskExplanation = "Bisa naik-turun, tapi lebih stabil karena terdiri dari banyak perusahaan! Berbeda dari tabungan, nilainya bisa turun kadang-kadang.",
-                RiskExplanationEN = "Goes up and down, but more stable because it has many companies! Unlike savings, the value can go down sometimes.",
-                BestFor = "Kamu yang mau investasi tapi nggak mau pusing pilih saham satu-satu!",
-                BestForEN = "You who want to invest but don't want to pick individual stocks!",
-                ExpectedReturn = "Rata-rata naik 8-12% per tahun mengikuti pasar, tapi kadang turun juga!",
-                ExpectedReturnEN = "Usually grows 8-12% per year with the market, but sometimes goes down too!",
+                // Light Mode (Kids) - Stoic Orangutan voice
+                Description = "Beli sedikit dari banyak perusahaan sekaligus!",
+                DescriptionEN = "Buy a little bit of many companies at once!",
+                WhatIsIt = "Reksa Dana itu seperti beli sepotong dari banyak perusahaan. Ahlinya yang pilih. Kamu tinggal duduk santai. Orangutan suka ini karena tidak perlu pusing memilih satu-satu.",
+                WhatIsItEN = "An index fund is like buying a slice of many companies. Experts pick for you. You just sit back. Orangutan likes this because no need to pick one by one.",
+                RiskExplanation = "Bisa naik dan turun. Tapi lebih tenang karena banyak perusahaan. Kadang turun, tapi biasanya naik lagi.",
+                RiskExplanationEN = "Can go up and down. But calmer because many companies. Sometimes dips, but usually comes back.",
+                BestFor = "Kamu yang mau investasi tapi tidak mau pusing pilih sendiri.",
+                BestForEN = "You who want to invest but don't want to pick by yourself.",
+                ExpectedReturn = "Biasanya tumbuh 8-12% per tahun. Tapi kadang turun juga. Sabar ya!",
+                ExpectedReturnEN = "Usually grows 8-12% per year. But sometimes dips too. Be patient!",
                 // Normal Mode (Adult) - Full details with regulations
                 DescriptionAdult = "Investasi pasif yang mengikuti pergerakan indeks pasar saham",
                 DescriptionAdultEN = "Low-cost passive investment tracking market index performance",
@@ -213,17 +213,17 @@ public class GameEngine
                 DisplayNameAdult = "Surat Berharga Negara",
                 DisplayNameEN = "Government Bonds",
                 DisplayNameAdultEN = "Government Bonds (Retail SBN)",
-                // Light Mode (Kids) - Simple, no regulatory references
-                Description = "Pinjamkan uangmu ke negara, dapat bunga tiap bulan!",
-                DescriptionEN = "Lend money to the government, earn interest every month!",
-                WhatIsIt = "Bayangin kamu minjemin uang ke Pak Presiden buat bangun jalan & sekolah! Tiap bulan, negara kasih kamu uang terima kasih (namanya kupon)! Ada juga Sukuk (obligasi syariah) yang pakai aset nyata, bukan utang — jadi halal!",
-                WhatIsItEN = "Imagine lending money to the President to build roads and schools! Every month, the government gives you thank-you money (called coupons)! There's also Sukuk (shariah bonds) that use real assets, not debt — so it's halal!",
-                RiskExplanation = "AMAN BANGET! Pemerintah Indonesia yang bayar, dan pemerintah SELALU membayar kembali!",
-                RiskExplanationEN = "Super safe! The Indonesian government pays it, and the government ALWAYS pays back!",
-                BestFor = "Kamu yang mau dapat uang jajan bulanan dari investasi!",
-                BestForEN = "You who want to get monthly pocket money from investing!",
-                ExpectedReturn = "Dapat bonus 5-7% per tahun, dibayar tiap bulan dari pemerintah!",
-                ExpectedReturnEN = "Get 5-7% bonus per year, paid monthly from the government!",
+                // Light Mode (Kids) - Stoic Orangutan voice
+                Description = "Pinjamkan uang ke negara. Dapat hadiah tiap bulan!",
+                DescriptionEN = "Lend money to the country. Get a reward every month!",
+                WhatIsIt = "Obligasi itu meminjamkan uang ke negara. Negara pakai untuk bangun jalan dan sekolah. Tiap bulan, kamu dapat hadiah. Orangutan bilang: ini cara yang tenang untuk dapat uang bulanan.",
+                WhatIsItEN = "Bonds mean lending money to the country. They build roads and schools. Every month, you get a reward. Orangutan says: a calm way to earn monthly money.",
+                RiskExplanation = "Sangat aman. Negara yang bayar. Negara selalu bayar kembali.",
+                RiskExplanationEN = "Very safe. The country pays. The country always pays back.",
+                BestFor = "Kamu yang mau dapat uang bulanan dari investasi.",
+                BestForEN = "You who want monthly money from investing.",
+                ExpectedReturn = "Dapat hadiah 5-7% per tahun. Dibayar tiap bulan!",
+                ExpectedReturnEN = "Get 5-7% reward per year. Paid every month!",
                 // Normal Mode (Adult) - Full details with regulations
                 DescriptionAdult = "Surat utang negara dengan kupon tetap yang dijamin 100% oleh pemerintah",
                 DescriptionAdultEN = "Government debt securities with fixed coupons, 100% government guaranteed",
@@ -257,17 +257,17 @@ public class GameEngine
                 DisplayNameAdult = "Saham",
                 DisplayNameEN = "Stocks",
                 DisplayNameAdultEN = "Individual Stocks",
-                // Light Mode (Kids) - Simple, no regulatory references
-                Description = "Jadi pemilik perusahaan besar Indonesia!",
-                DescriptionEN = "Become a part-owner of a big company!",
-                WhatIsIt = "Saham itu kayak BELI SEBAGIAN PERUSAHAAN! Misal beli saham BCA, kamu jadi pemilik kecil Bank BCA! Kalau BCA untung, kamu dapat bagian (dividen)! Seperti naik roller coaster - bisa naik tinggi, bisa turun cepat!",
-                WhatIsItEN = "Stocks are like buying a small piece of a big company! If you buy BCA stocks, you become a tiny owner of Bank BCA! When the company makes money, you get a share (dividend)! It's like a roller coaster - can go way up or down fast!",
-                RiskExplanation = "HATI-HATI BANGET! Harganya bisa NAIK TINGGI atau TURUN CEPAT dalam sehari! Seperti roller coaster!",
-                RiskExplanationEN = "Be super careful! Prices can jump way up or drop really fast in just one day! Like a roller coaster!",
-                BestFor = "Buat yang udah paham investasi dan siap deg-degan naik roller coaster!",
-                BestForEN = "For people who understand investing and are ready for the roller coaster ride!",
-                ExpectedReturn = "Bisa dapat BANYAK (bahkan 2x lipat), tapi bisa juga rugi setengahnya! Plus dapat dividen kalau perusahaan untung!",
-                ExpectedReturnEN = "Can make a LOT (even double), but can also lose half! Plus get dividends if company is profitable!",
+                // Light Mode (Kids) - Stoic Orangutan voice
+                Description = "Jadi pemilik kecil perusahaan besar!",
+                DescriptionEN = "Become a tiny owner of a big company!",
+                WhatIsIt = "Saham itu beli sebagian perusahaan. Kalau perusahaan untung, kamu dapat bagian. Harganya naik-turun seperti ombak laut. Orangutan bilang: hati-hati, tapi jangan takut.",
+                WhatIsItEN = "Stocks mean buying a piece of a company. When the company earns, you get a share. Prices go up and down like ocean waves. Orangutan says: be careful, but don't be afraid.",
+                RiskExplanation = "Hati-hati. Harga bisa naik tinggi atau turun cepat. Kadang turun, tapi itu normal. Tetap tenang.",
+                RiskExplanationEN = "Be careful. Prices can go way up or drop fast. Sometimes it dips. That's normal. Stay calm.",
+                BestFor = "Untuk yang sudah paham dan siap menghadapi naik-turun.",
+                BestForEN = "For those who understand and are ready for ups and downs.",
+                ExpectedReturn = "Bisa untung banyak, tapi bisa rugi juga. Plus dapat bonus tahunan dari perusahaan!",
+                ExpectedReturnEN = "Can earn a lot, but can lose too. Plus yearly bonus from the company!",
                 // Normal Mode (Adult) - Full details with regulations
                 DescriptionAdult = "Kepemilikan ekuitas di perusahaan publik yang terdaftar di bursa",
                 DescriptionAdultEN = "Equity ownership in publicly traded companies for capital appreciation and dividends",
@@ -301,17 +301,17 @@ public class GameEngine
                 DisplayNameAdult = "Investasi Emas",
                 DisplayNameEN = "Gold",
                 DisplayNameAdultEN = "Gold Investment",
-                // Light Mode (Kids) - Simple, no regulatory references
-                Description = "Beli emas yang berkilau dan berharga!",
-                DescriptionEN = "Buy shiny gold that's valuable!",
-                WhatIsIt = "Emas itu logam kuning berkilau yang SEMUA ORANG DI DUNIA mau! Dari zaman nenek moyang, raja dan ratu pakai emas. Sampai sekarang, emas selalu berharga! Seperti harta karun yang nilainya bertahan ribuan tahun!",
-                WhatIsItEN = "Gold is a shiny yellow metal that EVERYONE in the world wants! Since ancient kings and queens wore it. Even today, gold is always valuable! Like a treasure that has kept its value for thousands of years!",
-                RiskExplanation = "Cukup aman! Harga emas bisa naik-turun, tapi lebih stabil dari saham. Seperti perosotan pelan, bukan roller coaster.",
-                RiskExplanationEN = "Pretty safe! Gold prices can go up and down, but more stable than stocks. Like a gentle slide, not a roller coaster.",
-                BestFor = "Buat yang SABAR! Emas cocok disimpan lama seperti kata nenek: 'Simpan emas untuk hari hujan!'",
-                BestForEN = "For patient people! Gold is great to save for a long time, like grandma says: 'Save gold for rainy days!'",
-                ExpectedReturn = "Bisa naik 8-15% per tahun kalau sabar, tapi kadang turun sedikit juga!",
-                ExpectedReturnEN = "Can go up 8-15% per year if you're patient, but sometimes goes down a little too!",
+                // Light Mode (Kids) - Stoic Orangutan voice
+                Description = "Harta karun yang nilainya bertahan lama!",
+                DescriptionEN = "Treasure that keeps its value for a long time!",
+                WhatIsIt = "Emas itu logam berkilau yang selalu berharga. Dari zaman dulu sampai sekarang. Orangutan bilang: emas itu untuk yang sabar. Simpan lama, nilainya biasanya naik.",
+                WhatIsItEN = "Gold is a shiny metal that's always been valuable. From ancient times until now. Orangutan says: gold is for the patient. Keep it long, the value usually grows.",
+                RiskExplanation = "Cukup aman. Harga naik-turun pelan. Lebih tenang dari saham. Seperti sungai yang mengalir, bukan ombak besar.",
+                RiskExplanationEN = "Pretty safe. Price moves slowly. Calmer than stocks. Like a flowing river, not big waves.",
+                BestFor = "Untuk yang sabar! Simpan lama, hasilnya manis.",
+                BestForEN = "For patient ones! Save long, sweet results.",
+                ExpectedReturn = "Bisa naik 8-15% per tahun kalau sabar. Kadang turun sedikit juga.",
+                ExpectedReturnEN = "Can grow 8-15% per year if patient. Sometimes dips a little too.",
                 // Normal Mode (Adult) - Full details with regulations
                 DescriptionAdult = "Investasi emas fisik atau digital sebagai lindung nilai inflasi",
                 DescriptionAdultEN = "Physical or digital gold investment for inflation hedging and wealth preservation",
@@ -345,17 +345,17 @@ public class GameEngine
                 DisplayNameAdult = "Aset Kripto",
                 DisplayNameEN = "Crypto",
                 DisplayNameAdultEN = "Cryptocurrency",
-                // Light Mode (Kids) - Simple, no regulatory references
-                Description = "Uang digital masa depan - sangat berisiko!",
-                DescriptionEN = "Digital money of the future - very risky!",
-                WhatIsIt = "Crypto itu UANG DIGITAL yang hidup di internet! Bitcoin, Ethereum, dll. Bisa trading 24 jam nonstop! Seperti mengumpulkan kartu trading digital langka yang nilainya bisa berubah SUPER cepat!",
-                WhatIsItEN = "Crypto is DIGITAL MONEY that lives on the internet! Bitcoin, Ethereum, and more. You can trade 24/7! Like collecting rare digital trading cards whose value can change SUPER fast!",
-                RiskExplanation = "⚠️ BAHAYA LEVEL MAX! Bisa NAIK 2x lipat atau TURUN 80% dalam sebulan! Seperti roller coaster paling menyeramkan! TIDAK ADA perlindungan kalau hilang!",
-                RiskExplanationEN = "⚠️ MAXIMUM DANGER! Can go up 2x or drop 80% in just one month! Like the scariest roller coaster! NO protection if you lose money!",
-                BestFor = "⚠️ HANYA buat yang punya UANG LEBIH yang SIAP HILANG SEPENUHNYA! Banyak orang dewasa kehilangan segalanya di crypto!",
-                BestForEN = "⚠️ ONLY for people with EXTRA money they're ready to COMPLETELY LOSE! Many adults have lost everything in crypto!",
-                ExpectedReturn = "GILA-GILAAN! Bisa untung 10x lipat, bisa juga rugi semuanya!",
-                ExpectedReturnEN = "Crazy! Can make 10x profit, or lose everything!",
+                // Light Mode (Kids) - Stoic Orangutan voice
+                Description = "Uang digital di internet. Sangat liar!",
+                DescriptionEN = "Digital money on the internet. Very wild!",
+                WhatIsIt = "Kripto itu uang digital di internet. Nilainya berubah sangat cepat. Orangutan bilang: ini seperti cuaca di gunung — bisa cerah, bisa badai dalam sekejap. Hati-hati ya.",
+                WhatIsItEN = "Crypto is digital money on the internet. Its value changes very fast. Orangutan says: it's like mountain weather — sunny then stormy in a blink. Be careful.",
+                RiskExplanation = "Sangat liar. Bisa naik banyak atau turun banyak dalam sebulan. Tidak ada yang melindungi kalau hilang.",
+                RiskExplanationEN = "Very wild. Can go way up or way down in a month. No protection if you lose.",
+                BestFor = "Hanya untuk uang lebih yang siap hilang. Orangutan bilang: jangan taruh semua pisang di sini.",
+                BestForEN = "Only for extra money you're ready to lose. Orangutan says: don't put all your bananas here.",
+                ExpectedReturn = "Bisa untung besar, bisa rugi semuanya. Sangat tidak pasti!",
+                ExpectedReturnEN = "Can win big, can lose everything. Very unpredictable!",
                 // Normal Mode (Adult) - Full details with regulations
                 DescriptionAdult = "Aset keuangan digital berbasis teknologi blockchain - risiko sangat tinggi",
                 DescriptionAdultEN = "Digital financial assets based on blockchain technology - very high risk",
@@ -389,17 +389,17 @@ public class GameEngine
                 DisplayNameAdult = "Securities Crowdfunding",
                 DisplayNameEN = "Crowdfunding",
                 DisplayNameAdultEN = "Equity Crowdfunding",
-                // Light Mode (Kids) - Simple, no regulatory references
-                Description = "Patungan modal untuk bisnis UMKM!",
-                DescriptionEN = "Pooling money together to help small businesses!",
-                WhatIsIt = "Crowd Funding itu patungan banyak orang untuk modal bisnis kecil! Kamu bisa jadi pemilik bagian dari bisnis mereka! Seperti jadi pendukung awal warung es temanmu - kalau sukses, kamu dapat bagian keuntungan!",
-                WhatIsItEN = "Crowdfunding is when many people pool money to help small businesses grow! You become a part-owner! Like being an early supporter of your friend's lemonade stand - if it succeeds, you share the profits!",
-                RiskExplanation = "⚠️ BERISIKO TINGGI! Kebanyakan bisnis baru GAGAL. Uangmu bisa hilang semuanya! Tapi kadang-kadang, hanya kadang-kadang, kamu menemukan berlian!",
-                RiskExplanationEN = "⚠️ VERY RISKY! Most new businesses FAIL. You can lose ALL your money! But sometimes, just sometimes, you find a diamond!",
-                BestFor = "Kamu yang mau dukung bisnis lokal dan SIAP kehilangan semua uang investasi!",
-                BestForEN = "For people who want to support local businesses and are READY to lose all invested money!",
-                ExpectedReturn = "Kalau bisnisnya sukses besar, bisa untung 10x lipat! Tapi kebanyakan gagal, uangmu hilang.",
-                ExpectedReturnEN = "If business is super successful, can make 10x profit! But most fail, and you lose your money.",
+                // Light Mode (Kids) - Stoic Orangutan voice
+                Description = "Patungan untuk bantu bisnis kecil tumbuh!",
+                DescriptionEN = "Pool money to help small businesses grow!",
+                WhatIsIt = "Urun Dana itu patungan banyak orang untuk modal bisnis kecil. Kalau bisnisnya sukses, kamu dapat bagian. Orangutan bilang: ini seperti menanam bibit — tidak semua tumbuh, tapi yang tumbuh bisa jadi pohon besar.",
+                WhatIsItEN = "Crowdfunding means many people pool money for a small business. If it succeeds, you get a share. Orangutan says: it's like planting seeds — not all grow, but the ones that do can become big trees.",
+                RiskExplanation = "Berisiko tinggi. Banyak bisnis baru gagal. Uangmu bisa hilang. Tapi kadang ada yang berhasil besar.",
+                RiskExplanationEN = "High risk. Many new businesses fail. You can lose money. But sometimes one succeeds big.",
+                BestFor = "Untuk yang mau bantu bisnis kecil dan siap kehilangan uangnya.",
+                BestForEN = "For those who want to help small businesses and are ready to lose the money.",
+                ExpectedReturn = "Kalau sukses, bisa untung besar. Tapi banyak yang gagal. Hati-hati ya.",
+                ExpectedReturnEN = "If successful, can earn big. But many fail. Be careful.",
                 // Normal Mode (Adult) - Full details with regulations
                 DescriptionAdult = "Investasi ekuitas di startup dan UMKM melalui platform urun dana",
                 DescriptionAdultEN = "Equity investment in startups and SMEs through securities crowdfunding platforms",
@@ -1218,6 +1218,8 @@ public class GameEngine
             };
 
             session.Depositos.Add(deposito);
+            session.TotalAmountInvested += amount;
+            if (rate.IsShariah) session.TotalShariahAmountInvested += amount;
             var bankLabel = rate.IsShariah ? "Syariah" : "Konvensional";
             session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Buka Deposito {bankLabel} {rate.PeriodName} Rp {amount:N0} ({(rate.IsShariah ? "bagi hasil" : "bunga")} {rate.AnnualRate * 100:F2}%/tahun)"
@@ -1318,6 +1320,8 @@ public class GameEngine
             };
 
             session.Bonds.Add(bond);
+            session.TotalAmountInvested += amount;
+            if (rate.IsShariah) session.TotalShariahAmountInvested += amount;
             var seriesLabel = rate.SeriesName != null ? $" ({rate.SeriesName})" : "";
             session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Beli {rate.PeriodName}{seriesLabel} Rp {amount:N0} (kupon {rate.CouponRate * 100:F2}%/tahun)"
@@ -1383,6 +1387,8 @@ public class GameEngine
             session.Portfolio[key].Units += lots * 100;
             session.Portfolio[key].TotalCost += totalCost;
             session.Portfolio[key].PricePerUnit = stock.CurrentPrice;
+            session.TotalAmountInvested += totalCost;
+            if (stock.IsShariahCompliant) session.TotalShariahAmountInvested += totalCost;
 
             session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Beli {lots} lot saham {ticker}"
@@ -1471,6 +1477,10 @@ public class GameEngine
             session.Portfolio[assetType].Units += unitsToBuy;
             session.Portfolio[assetType].TotalCost += GameSession.UNIT_COST;
             session.Portfolio[assetType].PricePerUnit = currentPrice;
+            session.TotalAmountInvested += GameSession.UNIT_COST;
+            // Gold, crypto, crowdfunding are always shariah-compliant
+            if (asset.Category is "gold" or "crypto" or "crowdfunding")
+                session.TotalShariahAmountInvested += GameSession.UNIT_COST;
 
             session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Beli {asset.DisplayName} Rp 1.000.000"
@@ -1515,6 +1525,8 @@ public class GameEngine
             session.Portfolio[assetType].Units += (int)Math.Floor(grams); // Store grams as units
             session.Portfolio[assetType].TotalCost += totalCost;
             session.Portfolio[assetType].PricePerUnit = currentPrice;
+            session.TotalAmountInvested += totalCost;
+            session.TotalShariahAmountInvested += totalCost; // Gold is always shariah
 
             session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Beli {grams}g Emas (Rp {totalCost:N0})"
@@ -1563,6 +1575,8 @@ public class GameEngine
             session.Portfolio[portfolioKey].Units += units;
             session.Portfolio[portfolioKey].TotalCost += amount;
             session.Portfolio[portfolioKey].PricePerUnit = idx.CurrentPrice;
+            session.TotalAmountInvested += amount;
+            if (idx.IsShariah) session.TotalShariahAmountInvested += amount;
 
             session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Beli RD Indeks {indexId} Rp {amount:N0} ({units:F4} unit)"
@@ -1736,6 +1750,8 @@ public class GameEngine
 
             session.CrowdfundingInvestments.Add(investment);
             session.TotalCrowdfundingInvested += amount;
+            session.TotalAmountInvested += amount;
+            session.TotalShariahAmountInvested += amount; // Crowdfunding is always shariah
 
             session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Investasi di {project.ProjectName} Rp {amount:N0} (terkunci {project.LockUpMonths} bulan)"
@@ -1783,6 +1799,8 @@ public class GameEngine
             session.Portfolio[key].Units += units; // Store fractional units directly
             session.Portfolio[key].TotalCost += amount;
             session.Portfolio[key].PricePerUnit = crypto.CurrentPrice;
+            session.TotalAmountInvested += amount;
+            session.TotalShariahAmountInvested += amount; // Crypto is always shariah
 
             session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Beli {units:F4} {crypto.Symbol} (Rp {amount:N0})"
@@ -2043,6 +2061,8 @@ public class GameEngine
                         deposito.StartYear = session.CurrentYear;
                         deposito.StartMonth = session.CurrentMonth;
                         deposito.MonthsRemaining = deposito.PeriodMonths;
+                        session.TotalAmountInvested += maturityValue;
+                        if (deposito.IsShariah) session.TotalShariahAmountInvested += maturityValue;
 
                         session.AddLogEntry(session.Language == Language.Indonesian
                             ? $"🔄 Deposito di-roll over otomatis! Principal baru: Rp {maturityValue:N0}"
@@ -3751,7 +3771,8 @@ public class GameEngine
                     DividendEarned = s.TotalDividendEarned,
                     PortfolioGainLoss = s.TotalRealizedPortfolioGainLoss + s.Portfolio.Values.Sum(p => p.ProfitLoss),
                     CrowdfundingGainLoss = s.TotalRealizedCrowdfundingGainLoss + s.CrowdfundingInvestments.Where(c => !c.HasFailed).Sum(c => c.CurrentValue - c.InvestedAmount),
-                    TotalEventCostPaid = s.PlayerTotalEventCostPaid
+                    TotalEventCostPaid = s.PlayerTotalEventCostPaid,
+                    ShariahPercentage = s.TotalAmountInvested > 0 ? (s.TotalShariahAmountInvested / s.TotalAmountInvested) * 100 : 0
                 };
             }).ToList();
         }

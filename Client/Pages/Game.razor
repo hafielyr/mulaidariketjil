@@ -13,7 +13,7 @@
     {
         <!-- Tutorial Modal - Art Nouveau themed -->
         <div class="tut-overlay" @onclick="SkipTutorial">
-            <div class="tut-modal" @onclick:stopPropagation="true">
+            <div class="tut-modal" @onclick:stopPropagation="true" @ontouchstart="HandleTouchStart" @ontouchend="HandleSwipeTutorial">
                 <!-- Skip button -->
                 <button class="tut-skip" @onclick="SkipTutorial">
                     @Lang.T("TUT_SKIP")
@@ -309,10 +309,7 @@
                         <option value="@Language.English">🇺🇸 English</option>
                     </select>
 
-                    <div class="an-toggle-row">
-                        <span class="an-toggle-label">@Lang.T("MP_MAX_PLAYERS"): @_maxPlayers</span>
-                        <input type="range" min="2" max="4" @bind="_maxPlayers" class="an-slider" />
-                    </div>
+                    @* Max player selection hidden — default 100 *@
 
                     <button class="an-btn-start" @onclick="CreateRoom" disabled="@_isCreatingRoom">
                         @(_isCreatingRoom ? Lang.T("MP_CREATING") : Lang.T("MP_CREATE_ROOM"))
@@ -361,8 +358,10 @@
     {
         <!-- Room Lobby -->
         <div class="start-screen">
-            <div class="an-start-frame" style="max-width: 500px;">
-                <h1 class="an-start-title">@Lang.T("MP_LOBBY")</h1>
+            <div class="an-start-frame lobby-frame">
+                <div class="lobby-coin-emblem">
+                    <img src="images/coin-front.jpg" alt="Tjoean" />
+                </div>
 
                 @if (_currentRoom != null)
                 {
@@ -371,8 +370,10 @@
                         <span class="room-code-value">@_currentRoom.RoomCode</span>
                     </div>
 
-                    <div class="room-settings">
-                        <span>@(_currentRoom.AgeMode == AgeMode.Kids ? Lang.T("START_LIGHT_MODE") : Lang.T("MP_NORMAL")) | @(_currentRoom.Language == Language.Indonesian ? "ID" : "EN") | @_currentRoom.MaxPlayers @Lang.T("MP_PLAYERS")</span>
+                    <div class="room-settings-chips">
+                        <span class="settings-chip">@(_currentRoom.AgeMode == AgeMode.Kids ? Lang.T("START_LIGHT_MODE") : Lang.T("MP_NORMAL"))</span>
+                        <span class="settings-chip">@(_currentRoom.Language == Language.Indonesian ? "🇮🇩 ID" : "🇺🇸 EN")</span>
+                        @* Max players chip hidden — always 100 *@
                     </div>
 
                     @if (_isHost)
@@ -382,10 +383,15 @@
                         </div>
                     }
 
+                    <div class="lobby-player-count">
+                        <span>@_currentRoom.Players.Count @Lang.T("MP_PLAYERS")</span>
+                    </div>
+
                     <div class="player-list">
                         @foreach (var player in _currentRoom.Players)
                         {
-                            <div class="player-item">
+                            <div class="player-item @(player.IsReady ? "player-is-ready" : "")">
+                                <div class="player-avatar">@player.PlayerName.Substring(0, 1).ToUpper()</div>
                                 <span class="player-name-lobby">
                                     @player.PlayerName
                                     @if (!player.IsConnected) { <span class="disconnected-badge">@(_selectedLanguage == Language.Indonesian ? "Terputus" : "Disconnected")</span> }
@@ -398,6 +404,7 @@
                         @if (_currentRoom.Players.Count == 0)
                         {
                             <div class="player-item player-empty">
+                                <div class="player-avatar player-avatar-empty">?</div>
                                 <span class="player-name-lobby">@Lang.T("MP_WAITING_PLAYER")</span>
                             </div>
                         }
@@ -454,10 +461,21 @@
                 </div>
             </header>
 
+            @if (_hostGameFinished)
+            {
+                <div class="host-game-finished-banner">
+                    <span class="host-finished-icon">🏁</span>
+                    <span class="host-finished-text">@(_selectedLanguage == Language.Indonesian ? "Permainan Selesai!" : "Game Finished!")</span>
+                    <span class="host-finished-sub">@(_selectedLanguage == Language.Indonesian ? "Lihat ringkasan hasil pemain di bawah" : "View player result summaries below")</span>
+                </div>
+            }
+
             <main class="host-dashboard-main">
                 <!-- Left: Leaderboard -->
                 <section class="host-lb-panel">
-                    <h3>@(_selectedLanguage == Language.Indonesian ? "Papan Peringkat" : "Leaderboard")</h3>
+                    <h3>@(_hostGameFinished
+                        ? (_selectedLanguage == Language.Indonesian ? "Peringkat Akhir" : "Final Rankings")
+                        : (_selectedLanguage == Language.Indonesian ? "Papan Peringkat" : "Leaderboard"))</h3>
                     @if (_leaderboard != null && _leaderboard.Count > 0)
                     {
                         <div class="host-lb-list">
@@ -466,9 +484,11 @@
                                 <div class="host-lb-entry @(entry.IsBot ? "lb-bot" : "") @(!entry.IsConnected ? "lb-disconnected" : "")">
                                     <span class="lb-rank">#@entry.Rank</span>
                                     <span class="lb-name">@(entry.IsBot ? "Bot" : entry.PlayerName) @(!entry.IsConnected ? "⚡" : "")</span>
-                                    <span class="lb-worth">Rp @entry.NetWorth.ToString("N0")</span>
-                                    <span class="lb-profit @(entry.TotalProfit >= 0 ? "profit-pos" : "profit-neg")">
-                                        @(entry.TotalProfit >= 0 ? "+" : "")Rp @entry.TotalProfit.ToString("N0")
+                                    <span class="lb-worth-row">
+                                        <span class="lb-worth">Rp @entry.NetWorth.ToString("N0")</span>
+                                        <span class="lb-profit @(entry.TotalProfit >= 0 ? "profit-pos" : "profit-neg")">
+                                            @(entry.TotalProfit >= 0 ? "+" : "")Rp @entry.TotalProfit.ToString("N0")
+                                        </span>
                                     </span>
                                 </div>
                             }
@@ -479,7 +499,7 @@
                         <p class="host-lb-empty">@(_selectedLanguage == Language.Indonesian ? "Menunggu data..." : "Waiting for data...")</p>
                     }
 
-                    @if (_currentRoom != null)
+                    @if (_currentRoom != null && !_hostGameFinished)
                     {
                         <div class="host-unlock-ready-status">
                             <h4>@(_selectedLanguage == Language.Indonesian ? "Status Siap Lanjut" : "Unlock Ready Status")</h4>
@@ -511,32 +531,66 @@
                         <div class="host-portfolio-grid">
                             @foreach (var ps in _hostPortfolios)
                             {
-                                <div class="host-portfolio-card @(!ps.IsConnected ? "disconnected" : "")">
+                                <div class="host-portfolio-card @(!ps.IsConnected ? "disconnected" : "") @(_hostGameFinished ? "game-finished" : "")">
                                     <div class="portfolio-card-header">
                                         <span class="portfolio-player-name">@ps.PlayerName @(!ps.IsConnected ? "⚡" : "")</span>
                                         <span class="portfolio-networth">Rp @ps.NetWorth.ToString("N0")</span>
                                     </div>
-                                    <div class="portfolio-year-month">
-                                        @(_selectedLanguage == Language.Indonesian ? "Tahun" : "Year") @ps.CurrentYear / @MonthAbbr(ps.CurrentMonth)
+                                    <div class="portfolio-card-meta">
+                                        <span class="portfolio-year-month">
+                                            @(_selectedLanguage == Language.Indonesian ? "Tahun" : "Year") @ps.CurrentYear / @MonthAbbr(ps.CurrentMonth)
+                                        </span>
+                                        <span class="portfolio-gainloss @(ps.TotalGainLoss >= 0 ? "gain" : "loss")">
+                                            @(ps.TotalGainLoss >= 0 ? "+" : "")Rp @ps.TotalGainLoss.ToString("N0")
+                                        </span>
                                     </div>
-                                    <div class="portfolio-gainloss @(ps.TotalGainLoss >= 0 ? "gain" : "loss")">
-                                        @(ps.TotalGainLoss >= 0 ? "+" : "")Rp @ps.TotalGainLoss.ToString("N0")
-                                    </div>
-                                    @if (ps.PortfolioBreakdown.Any())
-                                    {
-                                        <div class="portfolio-breakdown">
-                                            @foreach (var kvp in ps.PortfolioBreakdown)
+                                    <div class="host-card-body">
+                                        @if (ps.PortfolioBreakdown.Any())
+                                        {
+                                            <div class="host-pie-chart-container">
+                                                <canvas id="pie-@ps.ConnectionId" width="68" height="68" class="host-pie-canvas"></canvas>
+                                                <div class="host-pie-legend">
+                                                    @foreach (var kvp in ps.PortfolioBreakdown)
+                                                    {
+                                                        <div class="host-pie-legend-item">
+                                                            <span class="host-pie-dot" style="background: @GetBreakdownColor(kvp.Key)"></span>
+                                                            <span class="host-pie-label">@kvp.Key</span>
+                                                            <span class="host-pie-pct">@kvp.Value.ToString("F0")%</span>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                        }
+                                        <div class="host-financial-details">
+                                            @{
+                                                var details = new List<(string label, decimal value, bool isLoss)>
+                                                {
+                                                    ("Savings Int.", ps.SavingsInterestEarned, false),
+                                                    ("CD Interest", ps.DepositoInterestEarned, false),
+                                                    ("Bond Coupon", ps.BondCouponEarned, false),
+                                                    ("Dividends", ps.DividendEarned, false),
+                                                    ("Invest. P/L", ps.PortfolioGainLoss, ps.PortfolioGainLoss < 0),
+                                                    ("Crowdfund.", ps.CrowdfundingGainLoss, ps.CrowdfundingGainLoss < 0),
+                                                };
+                                            }
+                                            @foreach (var d in details.Where(d => d.value != 0))
                                             {
-                                                <div class="breakdown-bar-row">
-                                                    <span class="breakdown-label">@kvp.Key</span>
-                                                    <div class="breakdown-bar-bg">
-                                                        <div class="breakdown-bar-fill" style="width: @kvp.Value.ToString("F0")%"></div>
-                                                    </div>
-                                                    <span class="breakdown-pct">@kvp.Value.ToString("F0")%</span>
+                                                <div class="fin-detail-row">
+                                                    <span class="fin-detail-label">@d.label</span>
+                                                    <span class="fin-detail-value @(d.isLoss ? "loss" : "gain")">
+                                                        @(d.value >= 0 ? "+" : "")Rp @d.value.ToString("N0")
+                                                    </span>
+                                                </div>
+                                            }
+                                            @if (ps.TotalEventCostPaid > 0)
+                                            {
+                                                <div class="fin-detail-row fin-detail-event">
+                                                    <span class="fin-detail-label">Events</span>
+                                                    <span class="fin-detail-value loss">-Rp @ps.TotalEventCostPaid.ToString("N0")</span>
                                                 </div>
                                             }
                                         </div>
-                                    }
+                                    </div>
                                 </div>
                             }
                         </div>
@@ -575,52 +629,32 @@
                     </div>
                 </div>
                 <div class="header-right">
-                    <button class="btn-icon pause-play-btn" @onclick="TogglePause"
-                            disabled="@(_gameState.IsEventPending || _gameState.IsGameOver)">
-                        @if (_isPaused)
-                        {
-                            <svg class="icon-play" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-                                <path d="M8 5v14l11-7z"/>
-                            </svg>
-                            <span class="btn-label">@Lang.T("BTN_PLAY")</span>
-                        }
-                        else
-                        {
-                            <svg class="icon-pause" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-                                <path d="M6 4h4v16H6zm8 0h4v16h-4z"/>
-                            </svg>
-                            <span class="btn-label">@Lang.T("BTN_PAUSE")</span>
-                        }
-                    </button>
-                    <button class="btn-icon" @onclick="RestartGame" title="@Lang.T("BTN_RESTART")">
-                        ↻
-                    </button>
+                    @if (!_gameState.IsMultiplayer)
+                    {
+                        <button class="btn-icon pause-play-btn" @onclick="TogglePause"
+                                disabled="@(_gameState.IsEventPending || _gameState.IsGameOver)">
+                            @if (_isPaused)
+                            {
+                                <svg class="icon-play" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                    <path d="M8 5v14l11-7z"/>
+                                </svg>
+                                <span class="btn-label">@Lang.T("BTN_PLAY")</span>
+                            }
+                            else
+                            {
+                                <svg class="icon-pause" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                    <path d="M6 4h4v16H6zm8 0h4v16h-4z"/>
+                                </svg>
+                                <span class="btn-label">@Lang.T("BTN_PAUSE")</span>
+                            }
+                        </button>
+                        <button class="btn-icon" @onclick="RestartGame" title="@Lang.T("BTN_RESTART")">
+                            ↻
+                        </button>
+                    }
                 </div>
             </header>
 
-            <!-- Multiplayer Leaderboard Sidebar (collapsible) -->
-            @if (_gameState.IsMultiplayer && _leaderboard != null && _leaderboard.Count > 0)
-            {
-                <div class="mp-leaderboard-sidebar @(_showLeaderboard ? "lb-expanded" : "lb-collapsed")">
-                    <button class="lb-toggle-btn" @onclick='() => _showLeaderboard = !_showLeaderboard'>
-                        📊 @GetText("Peringkat", "Peringkat", "Ranking", "Ranking")
-                        @(_showLeaderboard ? "▲" : "▼")
-                    </button>
-                    @if (_showLeaderboard)
-                    {
-                        <div class="lb-entries">
-                            @foreach (var entry in _leaderboard)
-                            {
-                                <div class="mp-lb-entry @(entry.PlayerName == _playerName ? "mp-lb-self" : "") @(entry.IsBot ? "mp-lb-bot" : "") @(!entry.IsConnected ? "mp-lb-disconnected" : "")">
-                                    <span class="mp-lb-rank">#@entry.Rank</span>
-                                    <span class="mp-lb-name">@(entry.IsBot ? "Bot" : entry.PlayerName)</span>
-                                    <span class="mp-lb-worth">Rp @entry.NetWorth.ToString("N0")</span>
-                                </div>
-                            }
-                        </div>
-                    }
-                </div>
-            }
 
             <!-- New Unlock Banner -->
             @if (!string.IsNullOrEmpty(_gameState.NewUnlockMessage))
@@ -1571,6 +1605,31 @@
                         }
                     </div>
 
+                    @if (_gameState.IsMultiplayer && _leaderboard != null && _leaderboard.Count > 0)
+                    {
+                        <div class="divider"></div>
+                        <div class="mp-rank-panel">
+                            <div class="mp-rank-header" @onclick='() => _showLeaderboard = !_showLeaderboard'>
+                                <span class="mp-rank-icon">📊</span>
+                                <h3>@GetText("Peringkat", "Peringkat", "Ranking", "Ranking")</h3>
+                                <span class="log-toggle @(_showLeaderboard ? "expanded" : "")">&#9660;</span>
+                            </div>
+                            @if (_showLeaderboard)
+                            {
+                                <div class="mp-rank-entries">
+                                    @foreach (var entry in _leaderboard)
+                                    {
+                                        <div class="mp-lb-entry mp-lb-rank-@entry.Rank @(entry.PlayerName == _playerName ? "mp-lb-self" : "") @(entry.IsBot ? "mp-lb-bot" : "") @(!entry.IsConnected ? "mp-lb-disconnected" : "")">
+                                            <span class="mp-lb-rank">#@entry.Rank</span>
+                                            <span class="mp-lb-name">@(entry.IsBot ? "🤖" : entry.PlayerName)</span>
+                                            <span class="mp-lb-worth">Rp @entry.NetWorth.ToString("N0")</span>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+
                     @if (_gameState.AdvisorTips != null && _gameState.AdvisorTips.Count > 0)
                     {
                         <div class="divider"></div>
@@ -1579,7 +1638,7 @@
                         <div class="advisor-tips-panel">
                             <div class="advisor-tips-header" @onclick="() => _advisorExpanded = !_advisorExpanded">
                                 <span class="advisor-icon">@UIIcon("bot")</span>
-                                <h3>@(_selectedLanguage == Language.English ? "Financial Advisor" : "Penasihat Keuangan")</h3>
+                                <h3>@Lang.T("ADVISOR_TITLE")</h3>
                                 <span class="log-toggle @(_advisorExpanded ? "expanded" : "")">&#9660;</span>
                             </div>
                             <div class="advisor-tips-body @(_advisorExpanded ? "expanded" : "")">
@@ -1629,18 +1688,51 @@
                         @if (introAsset != null)
                         {
                             <h2>@UIIcon("unlock") @Lang.T("INTRO_NEW_UNLOCK")</h2>
-                            <p class="intro-desc">
-                                @Lang.T("INTRO_CONGRATS", new Dictionary<string, object>{{"name", _gameState.PlayerId}})
-                            </p>
 
-                            <div class="intro-cards">
-                                <div class="intro-card @GetRiskClass(introAsset.RiskLevel)">
-                                    <h3>@Icon(introAsset.Type) @GetAssetDisplayName(introAsset, introAsset.DisplayName)</h3>
-                                    <p><strong>@Lang.T("INTRO_WHAT_IS_IT")</strong> @GetAssetWhatIsIt(introAsset)</p>
-                                    <p><strong>@Lang.T("INTRO_RISK_LEVEL")</strong> @GetAssetRiskExplanation(introAsset)</p>
-                                    <p><strong>@Lang.T("INTRO_BEST_FOR")</strong> @GetAssetBestFor(introAsset)</p>
-                                    <p><strong>@Lang.T("INTRO_EXPECTED_RETURN")</strong> @GetAssetExpectedReturn(introAsset)</p>
-                                </div>
+                            <!-- Slide dots -->
+                            <div class="slide-dots">
+                                @for (int i = 0; i < 4; i++)
+                                {
+                                    var idx = i;
+                                    <span class="slide-dot @(idx == _introSlide ? "active" : "")" @onclick="() => _introSlide = idx"></span>
+                                }
+                            </div>
+
+                            <div class="slide-content" @ontouchstart="HandleTouchStart" @ontouchend="HandleSwipeIntro">
+                                @if (_introSlide == 0)
+                                {
+                                    <div class="info-section">
+                                        <h4>@Icon(introAsset.Type) @GetAssetDisplayName(introAsset, introAsset.DisplayName)</h4>
+                                        <p><strong>@Lang.T("INTRO_WHAT_IS_IT")</strong> @GetAssetWhatIsIt(introAsset)</p>
+                                    </div>
+                                }
+                                else if (_introSlide == 1)
+                                {
+                                    <div class="info-section">
+                                        <h4>@Lang.T("INTRO_RISK_LEVEL")</h4>
+                                        <span class="risk-badge large @GetRiskClass(introAsset.RiskLevel)">@introAsset.RiskLevel</span>
+                                        <p>@GetAssetRiskExplanation(introAsset)</p>
+                                    </div>
+                                }
+                                else if (_introSlide == 2)
+                                {
+                                    <div class="info-section">
+                                        <h4>@Lang.T("INTRO_BEST_FOR")</h4>
+                                        <p>@GetAssetBestFor(introAsset)</p>
+                                    </div>
+                                }
+                                else if (_introSlide == 3)
+                                {
+                                    <div class="info-section">
+                                        <h4>@Lang.T("INTRO_EXPECTED_RETURN")</h4>
+                                        <p>@GetAssetExpectedReturn(introAsset)</p>
+                                    </div>
+                                }
+                            </div>
+
+                            <div class="slide-nav">
+                                <button class="slide-nav-btn" @onclick="() => _introSlide--" disabled="@(_introSlide == 0)">&#9664;</button>
+                                <button class="slide-nav-btn slide-nav-btn--next" @onclick="() => _introSlide++" disabled="@(_introSlide == 3)">&#9654;</button>
                             </div>
 
                             <button class="btn-primary" @onclick="DismissIntro">
@@ -1771,34 +1863,66 @@
             <!-- Asset Info Modal -->
             @if (_showAssetInfo && _selectedAsset != null)
             {
+                
+                    var infoMaxSlide = (!_isLightMode && !string.IsNullOrEmpty(_selectedAsset.RealRules)) ? 4 : 3;
+                
                 <div class="modal-overlay" @onclick="CloseAssetInfo">
                     <div class="modal-content info-modal" @onclick:stopPropagation="true">
                         <button class="modal-close" @onclick="CloseAssetInfo">&#x2715;</button>
                         <h2>@Icon(_selectedAsset.Type) @GetAssetDisplayName(_selectedAsset, _selectedAsset.DisplayName)</h2>
-                        <div class="info-section">
-                            <h4>@Lang.T("INFO_WHAT_IS") @GetAssetDisplayName(_selectedAsset, _selectedAsset.DisplayName)?</h4>
-                            <p>@GetAssetWhatIsIt(_selectedAsset)</p>
+
+                        <!-- Slide dots -->
+                        <div class="slide-dots">
+                            @for (int i = 0; i <= infoMaxSlide; i++)
+                            {
+                                var idx = i;
+                                <span class="slide-dot @(idx == _infoSlide ? "active" : "")" @onclick="() => _infoSlide = idx"></span>
+                            }
                         </div>
-                        <div class="info-section">
-                            <h4>@Lang.T("INFO_RISK_LEVEL")</h4>
-                            <span class="risk-badge large @GetRiskClass(_selectedAsset.RiskLevel)">@_selectedAsset.RiskLevel</span>
-                            <p>@GetAssetRiskExplanation(_selectedAsset)</p>
+
+                        <div class="slide-content" @ontouchstart="HandleTouchStart" @ontouchend="HandleSwipeInfo">
+                            @if (_infoSlide == 0)
+                            {
+                                <div class="info-section">
+                                    <h4>@Lang.T("INFO_WHAT_IS") @GetAssetDisplayName(_selectedAsset, _selectedAsset.DisplayName)?</h4>
+                                    <p>@GetAssetWhatIsIt(_selectedAsset)</p>
+                                </div>
+                            }
+                            else if (_infoSlide == 1)
+                            {
+                                <div class="info-section">
+                                    <h4>@Lang.T("INFO_RISK_LEVEL")</h4>
+                                    <span class="risk-badge large @GetRiskClass(_selectedAsset.RiskLevel)">@_selectedAsset.RiskLevel</span>
+                                    <p>@GetAssetRiskExplanation(_selectedAsset)</p>
+                                </div>
+                            }
+                            else if (_infoSlide == 2)
+                            {
+                                <div class="info-section">
+                                    <h4>@Lang.T("INFO_BEST_FOR")</h4>
+                                    <p>@GetAssetBestFor(_selectedAsset)</p>
+                                </div>
+                            }
+                            else if (_infoSlide == 3)
+                            {
+                                <div class="info-section">
+                                    <h4>@Lang.T("INFO_EXPECTED_RETURNS")</h4>
+                                    <p>@GetAssetExpectedReturn(_selectedAsset)</p>
+                                </div>
+                            }
+                            else if (_infoSlide == 4)
+                            {
+                                <div class="info-section">
+                                    <h4>@Lang.T("INFO_REGULATIONS")</h4>
+                                    <p style="white-space: pre-line;">@_selectedAsset.RealRules</p>
+                                </div>
+                            }
                         </div>
-                        <div class="info-section">
-                            <h4>@Lang.T("INFO_BEST_FOR")</h4>
-                            <p>@GetAssetBestFor(_selectedAsset)</p>
+
+                        <div class="slide-nav">
+                            <button class="slide-nav-btn" @onclick="() => _infoSlide--" disabled="@(_infoSlide == 0)">&#9664;</button>
+                            <button class="slide-nav-btn slide-nav-btn--next" @onclick="() => _infoSlide++" disabled="@(_infoSlide == infoMaxSlide)">&#9654;</button>
                         </div>
-                        <div class="info-section">
-                            <h4>@Lang.T("INFO_EXPECTED_RETURNS")</h4>
-                            <p>@GetAssetExpectedReturn(_selectedAsset)</p>
-                        </div>
-                        @if (!_isLightMode && !string.IsNullOrEmpty(_selectedAsset.RealRules))
-                        {
-                            <div class="info-section">
-                                <h4>@Lang.T("INFO_REGULATIONS")</h4>
-                                <p style="white-space: pre-line;">@_selectedAsset.RealRules</p>
-                            </div>
-                        }
                         <button class="btn-primary" @onclick="CloseAssetInfo">@Lang.T("BTN_UNDERSTOOD")</button>
                     </div>
                 </div>
@@ -1855,27 +1979,56 @@
                         @if (mpUnlockAsset != null)
                         {
                             <h2>@UIIcon("unlock") @GetText("Investasi Baru Terbuka!", "Investasi Baru Terbuka!", "New Investment Unlocked!", "New Investment Unlocked!")</h2>
-                            <p class="intro-desc">
-                                @GetText("Instrumen investasi baru kini tersedia untuk semua pemain!",
-                                         "Instrumen investasi baru kini tersedia untuk semua pemain!",
-                                         "A new investment instrument is now available for all players!",
-                                         "A new investment instrument is now available for all players!")
-                            </p>
 
-                            <div class="intro-cards">
-                                <div class="intro-card @GetRiskClass(mpUnlockAsset.RiskLevel)">
-                                    <h3>@Icon(mpUnlockAsset.Type) @GetAssetDisplayName(mpUnlockAsset, mpUnlockAsset.DisplayName)</h3>
-                                    <p><strong>@GetText("Apa sih ini?", "Apa itu?", "What is it?", "What is it?")</strong> @GetAssetWhatIsIt(mpUnlockAsset)</p>
-                                    <p><strong>@GetText("Risikonya:", "Tingkat Risiko:", "Risk Level:", "Risk Level:")</strong> @GetAssetRiskExplanation(mpUnlockAsset)</p>
-                                    <p><strong>@GetText("Cocok untuk:", "Cocok untuk:", "Best for:", "Best for:")</strong> @GetAssetBestFor(mpUnlockAsset)</p>
-                                    <p><strong>@GetText("Untungnya:", "Potensi Keuntungan:", "Expected Return:", "Expected Return:")</strong> @GetAssetExpectedReturn(mpUnlockAsset)</p>
-                                </div>
+                            <!-- Slide dots -->
+                            <div class="slide-dots">
+                                @for (int i = 0; i < 4; i++)
+                                {
+                                    var idx = i;
+                                    <span class="slide-dot @(idx == _mpUnlockSlide ? "active" : "")" @onclick="() => _mpUnlockSlide = idx"></span>
+                                }
+                            </div>
+
+                            <div class="slide-content" @ontouchstart="HandleTouchStart" @ontouchend="HandleSwipeMpUnlock">
+                                @if (_mpUnlockSlide == 0)
+                                {
+                                    <div class="info-section">
+                                        <h4>@Icon(mpUnlockAsset.Type) @GetAssetDisplayName(mpUnlockAsset, mpUnlockAsset.DisplayName)</h4>
+                                        <p><strong>@GetText("Apa sih ini?", "Apa itu?", "What is it?", "What is it?")</strong> @GetAssetWhatIsIt(mpUnlockAsset)</p>
+                                    </div>
+                                }
+                                else if (_mpUnlockSlide == 1)
+                                {
+                                    <div class="info-section">
+                                        <h4>@GetText("Risikonya:", "Tingkat Risiko:", "Risk Level:", "Risk Level:")</h4>
+                                        <span class="risk-badge large @GetRiskClass(mpUnlockAsset.RiskLevel)">@mpUnlockAsset.RiskLevel</span>
+                                        <p>@GetAssetRiskExplanation(mpUnlockAsset)</p>
+                                    </div>
+                                }
+                                else if (_mpUnlockSlide == 2)
+                                {
+                                    <div class="info-section">
+                                        <h4>@GetText("Cocok untuk:", "Cocok untuk:", "Best for:", "Best for:")</h4>
+                                        <p>@GetAssetBestFor(mpUnlockAsset)</p>
+                                    </div>
+                                }
+                                else if (_mpUnlockSlide == 3)
+                                {
+                                    <div class="info-section">
+                                        <h4>@GetText("Untungnya:", "Potensi Keuntungan:", "Expected Return:", "Expected Return:")</h4>
+                                        <p>@GetAssetExpectedReturn(mpUnlockAsset)</p>
+                                    </div>
+                                }
+                            </div>
+
+                            <div class="slide-nav">
+                                <button class="slide-nav-btn" @onclick="() => _mpUnlockSlide--" disabled="@(_mpUnlockSlide == 0)">&#9664;</button>
+                                <button class="slide-nav-btn slide-nav-btn--next" @onclick="() => _mpUnlockSlide++" disabled="@(_mpUnlockSlide == 3)">&#9654;</button>
                             </div>
 
                             <p class="mp-unlock-waiting">
                                 @GetText("⏳ Tutup popup ini untuk memberitahu host kamu siap.", "⏳ Tutup popup ini untuk memberitahu host kamu siap.", "⏳ Close this popup to signal that you are ready.", "⏳ Close this popup to signal that you are ready.")
                             </p>
-
                             <button class="btn-primary" @onclick="DismissMpUnlockPopup">
                                 @GetText("Oke, Siap!", "Siap!", "Got it, Ready!", "Ready!")
                             </button>
@@ -2346,15 +2499,21 @@
     private bool _showTutorial = false;
     private int _currentTutorialSlide = 0;
 
+    // Slide state for modals
+    private int _introSlide = 0;
+    private int _infoSlide = 0;
+    private int _mpUnlockSlide = 0;
+    private double _touchStartX = 0;
+
     // Multiplayer state
     private string _multiplayerScreen = "none"; // none, create-join, create, join, lobby, host-dashboard
     private RoomInfo? _currentRoom;
     private string _roomCodeInput = "";
     private string? _roomError;
-    private int _maxPlayers = 4;
     private bool _isCreatingRoom;
     private bool _isJoiningRoom;
     private bool _isHost;
+    private bool _hostGameFinished;
     private bool _isReady;
     private List<LeaderboardEntry>? _leaderboard;
     private bool _showLeaderboard = false;           // collapsible leaderboard sidebar
@@ -2409,11 +2568,61 @@
         StateHasChanged();
     }
 
+    private string _lastPieDataHash = "";
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             await ApplyTheme();
+        }
+
+        // Render Chart.js pie charts for host dashboard (skip if data unchanged to prevent blipping)
+        if (_isHost && _multiplayerScreen == "host-dashboard" && _hostPortfolios.Count > 0)
+        {
+            var currentHash = GetPieDataHash();
+            if (currentHash != _lastPieDataHash)
+            {
+                _lastPieDataHash = currentHash;
+                await RenderHostPieCharts();
+            }
+        }
+    }
+
+    private string GetPieDataHash()
+    {
+        var sb = new System.Text.StringBuilder();
+        foreach (var ps in _hostPortfolios)
+        {
+            if (ps.PortfolioBreakdown == null) continue;
+            sb.Append(ps.ConnectionId);
+            foreach (var kvp in ps.PortfolioBreakdown)
+                sb.Append($"{kvp.Key}:{kvp.Value:F0}|");
+        }
+        return sb.ToString();
+    }
+
+    private async Task RenderHostPieCharts()
+    {
+        foreach (var ps in _hostPortfolios)
+        {
+            if (ps.PortfolioBreakdown == null || !ps.PortfolioBreakdown.Any()) continue;
+
+            var canvasId = $"pie-{ps.ConnectionId}";
+            var labels = ps.PortfolioBreakdown.Keys.ToList();
+            var values = ps.PortfolioBreakdown.Values.ToList();
+            var colors = labels.Select(k => GetBreakdownColor(k)).ToList();
+
+            try
+            {
+                await JSRuntime.InvokeVoidAsync("pieChartInterop.render",
+                    canvasId,
+                    System.Text.Json.JsonSerializer.Serialize(labels),
+                    System.Text.Json.JsonSerializer.Serialize(values),
+                    System.Text.Json.JsonSerializer.Serialize(colors),
+                    136); // 2x for retina: 68px display * 2
+            }
+            catch { /* canvas may not be in DOM yet */ }
         }
     }
 
@@ -2790,6 +2999,46 @@
             _currentTutorialSlide--;
     }
 
+    // Swipe handling
+    private void HandleTouchStart(TouchEventArgs e)
+    {
+        if (e.ChangedTouches.Length > 0)
+            _touchStartX = e.ChangedTouches[0].ClientX;
+    }
+
+    private void HandleSwipeTutorial(TouchEventArgs e)
+    {
+        if (e.ChangedTouches.Length == 0) return;
+        var delta = e.ChangedTouches[0].ClientX - _touchStartX;
+        if (delta < -50) NextTutorialSlide();
+        else if (delta > 50) PreviousTutorialSlide();
+    }
+
+    private void HandleSwipeIntro(TouchEventArgs e)
+    {
+        if (e.ChangedTouches.Length == 0) return;
+        var delta = e.ChangedTouches[0].ClientX - _touchStartX;
+        if (delta < -50 && _introSlide < 3) _introSlide++;
+        else if (delta > 50 && _introSlide > 0) _introSlide--;
+    }
+
+    private void HandleSwipeInfo(TouchEventArgs e)
+    {
+        if (e.ChangedTouches.Length == 0) return;
+        var infoMax = (!_isLightMode && _selectedAsset != null && !string.IsNullOrEmpty(_selectedAsset.RealRules)) ? 4 : 3;
+        var delta = e.ChangedTouches[0].ClientX - _touchStartX;
+        if (delta < -50 && _infoSlide < infoMax) _infoSlide++;
+        else if (delta > 50 && _infoSlide > 0) _infoSlide--;
+    }
+
+    private void HandleSwipeMpUnlock(TouchEventArgs e)
+    {
+        if (e.ChangedTouches.Length == 0) return;
+        var delta = e.ChangedTouches[0].ClientX - _touchStartX;
+        if (delta < -50 && _mpUnlockSlide < 3) _mpUnlockSlide++;
+        else if (delta > 50 && _mpUnlockSlide > 0) _mpUnlockSlide--;
+    }
+
     private void StartGameAfterTutorial()
     {
         _showTutorial = false;
@@ -3152,6 +3401,7 @@
         _selectedAsset = _assets.GetValueOrDefault(assetType);
         if (_selectedAsset != null)
         {
+            _infoSlide = 0;
             _showAssetInfo = true;
             if (!_isPaused && _gameState != null && !_gameState.IsGameOver && !_gameState.IsEventPending)
             {
@@ -3201,9 +3451,16 @@
 
     private void HandleGameStateUpdated(GameState state)
     {
+        var wasShowingIntro = _gameState?.ShowIntro ?? false;
         var wasEventPending = _gameState?.IsEventPending ?? false;
         _gameState = state;
         Lang.SetLanguage(state.Language, state.AgeMode);
+
+        // Reset intro slide when intro becomes visible
+        if (state.ShowIntro && !wasShowingIntro)
+        {
+            _introSlide = 0;
+        }
 
         // Multiplayer event countdown: start timer when event becomes pending
         if (state.IsMultiplayer && state.IsEventPending && !wasEventPending)
@@ -3375,27 +3632,27 @@
 
         if (cash > 0)
         {
-            segments.Add($"#4CAF50 {cumulative}% {cumulative + cash}%");
+            segments.Add($"#8CB88C {cumulative}% {cumulative + cash}%");
             cumulative += cash;
         }
         if (savings > 0)
         {
-            segments.Add($"#2196F3 {cumulative}% {cumulative + savings}%");
+            segments.Add($"#6BA5D7 {cumulative}% {cumulative + savings}%");
             cumulative += savings;
         }
         if (deposito > 0)
         {
-            segments.Add($"#9C27B0 {cumulative}% {cumulative + deposito}%");
+            segments.Add($"#A88BC7 {cumulative}% {cumulative + deposito}%");
             cumulative += deposito;
         }
         if (bonds > 0)
         {
-            segments.Add($"#FF9800 {cumulative}% {cumulative + bonds}%");
+            segments.Add($"#D4A854 {cumulative}% {cumulative + bonds}%");
             cumulative += bonds;
         }
         if (portfolio > 0)
         {
-            segments.Add($"#E91E63 {cumulative}% {cumulative + portfolio}%");
+            segments.Add($"#C97878 {cumulative}% {cumulative + portfolio}%");
             cumulative += portfolio;
         }
 
@@ -3425,47 +3682,47 @@
 
         if (cash > 0)
         {
-            segments.Add($"#4CAF50 {cumulative}% {cumulative + cash}%");
+            segments.Add($"#8CB88C {cumulative}% {cumulative + cash}%");
             cumulative += cash;
         }
         if (savings > 0)
         {
-            segments.Add($"#2196F3 {cumulative}% {cumulative + savings}%");
+            segments.Add($"#6BA5D7 {cumulative}% {cumulative + savings}%");
             cumulative += savings;
         }
         if (deposito > 0)
         {
-            segments.Add($"#9C27B0 {cumulative}% {cumulative + deposito}%");
+            segments.Add($"#A88BC7 {cumulative}% {cumulative + deposito}%");
             cumulative += deposito;
         }
         if (bonds > 0)
         {
-            segments.Add($"#FF9800 {cumulative}% {cumulative + bonds}%");
+            segments.Add($"#D4A854 {cumulative}% {cumulative + bonds}%");
             cumulative += bonds;
         }
         if (index > 0)
         {
-            segments.Add($"#00BCD4 {cumulative}% {cumulative + index}%");
+            segments.Add($"#5BC0C0 {cumulative}% {cumulative + index}%");
             cumulative += index;
         }
         if (stock > 0)
         {
-            segments.Add($"#E91E63 {cumulative}% {cumulative + stock}%");
+            segments.Add($"#C97878 {cumulative}% {cumulative + stock}%");
             cumulative += stock;
         }
         if (gold > 0)
         {
-            segments.Add($"#FFD700 {cumulative}% {cumulative + gold}%");
+            segments.Add($"#E8C84A {cumulative}% {cumulative + gold}%");
             cumulative += gold;
         }
         if (crypto > 0)
         {
-            segments.Add($"#F7931A {cumulative}% {cumulative + crypto}%");
+            segments.Add($"#D4943A {cumulative}% {cumulative + crypto}%");
             cumulative += crypto;
         }
         if (crowdfunding > 0)
         {
-            segments.Add($"#795548 {cumulative}% {cumulative + crowdfunding}%");
+            segments.Add($"#A08060 {cumulative}% {cumulative + crowdfunding}%");
             cumulative += crowdfunding;
         }
 
@@ -3473,6 +3730,25 @@
 
         return $"background: conic-gradient({string.Join(", ", segments)});";
     }
+
+    private static readonly Dictionary<string, string> _breakdownColors = new()
+    {
+        ["Cash"] = "#8CB88C",
+        ["Savings"] = "#6BA5D7",
+        ["Deposito"] = "#A88BC7",
+        ["Bond"] = "#D4A854",
+        ["Stocks"] = "#C97878",
+        ["Index"] = "#E8A87C",
+        ["Gold"] = "#E8D06C",
+        ["Crypto"] = "#7CC8E8",
+        ["Crowdfunding"] = "#A08060"
+    };
+
+    private string GetBreakdownColor(string key)
+    {
+        return _breakdownColors.TryGetValue(key, out var color) ? color : "#888";
+    }
+
 
     private decimal GetPlayerProfit()
     {
@@ -3702,6 +3978,7 @@
     private void HandleAllPlayersFinished(List<LeaderboardEntry> entries)
     {
         _leaderboard = entries;
+        _hostGameFinished = true;
         if (_gameState != null)
         {
             _gameState.AllPlayersFinished = true;
@@ -3759,6 +4036,7 @@
     private void HandleAssetUnlocked(string assetType)
     {
         _mpUnlockAssetType = assetType;
+        _mpUnlockSlide = 0;
         _showMpUnlockPopup = true;
         _waitingForUnlockSync = true;
         InvokeAsync(StateHasChanged);

@@ -261,6 +261,15 @@ public class PlayerSummary
     public int CurrentMonth { get; set; }
     public Dictionary<string, decimal> PortfolioBreakdown { get; set; } = new();  // % per asset type
     public decimal TotalGainLoss { get; set; }
+
+    // Financial details for host dashboard
+    public decimal SavingsInterestEarned { get; set; }
+    public decimal DepositoInterestEarned { get; set; }
+    public decimal BondCouponEarned { get; set; }
+    public decimal DividendEarned { get; set; }
+    public decimal PortfolioGainLoss { get; set; }
+    public decimal CrowdfundingGainLoss { get; set; }
+    public decimal TotalEventCostPaid { get; set; }
 }
 
 public class LeaderboardEntry

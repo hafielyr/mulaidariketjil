@@ -48,8 +48,9 @@ public class GameEngine
     private readonly DepositoDataService _depositoData;
     private readonly BondDataService _bondData;
     private readonly CryptoDataService _cryptoData;
+    private readonly BehaviorLogService _behaviorLog;
 
-    public GameEngine(ILogger<GameEngine> logger, StockDataService stockData, GoldDataService goldData, IndexDataService indexData, DepositoDataService depositoData, BondDataService bondData, CryptoDataService cryptoData)
+    public GameEngine(ILogger<GameEngine> logger, StockDataService stockData, GoldDataService goldData, IndexDataService indexData, DepositoDataService depositoData, BondDataService bondData, CryptoDataService cryptoData, BehaviorLogService behaviorLog)
     {
         _logger = logger;
         _stockData = stockData;
@@ -58,6 +59,7 @@ public class GameEngine
         _depositoData = depositoData;
         _bondData = bondData;
         _cryptoData = cryptoData;
+        _behaviorLog = behaviorLog;
         _assets = InitializeAssets();
         _events = InitializeEvents();
         _depositoRates = RefreshDepositoRates(1); // Game year 1 = 2006
@@ -803,6 +805,24 @@ public class GameEngine
     public List<DepositoRate> GetDepositoRates() => _depositoRates;
     public List<BondRate> GetBondRates() => _bondRates;
 
+    // Allocation % of an asset-class value against total net worth after a trade
+    private static decimal AllocationPct(GameSession s, decimal classValue)
+    {
+        var nw = s.NetWorth;
+        return nw > 0 ? classValue / nw * 100m : 0m;
+    }
+
+    private static decimal ComputeTotalProfitLoss(GameSession s)
+    {
+        return s.TotalSavingsInterestEarned
+            + s.TotalDepositoInterestEarned + s.Depositos.Sum(d => d.CurrentValue - d.Principal)
+            + s.TotalBondCouponEarned
+            + s.TotalDividendEarned
+            + s.TotalRealizedPortfolioGainLoss + s.Portfolio.Values.Sum(p => p.ProfitLoss)
+            + s.TotalRealizedCrowdfundingGainLoss
+            + s.CrowdfundingInvestments.Where(c => !c.HasFailed).Sum(c => c.CurrentValue - c.InvestedAmount);
+    }
+
     public GameSession CreateSession(string playerId, string connectionId, AgeMode ageMode, Language language = Language.Indonesian)
     {
         lock (_lock)
@@ -869,6 +889,7 @@ public class GameEngine
             session.BotCashBalance -= initialSavings;
 
             _sessions[connectionId] = session;
+            _behaviorLog.StartSession(connectionId, playerId);
             return session;
         }
     }
@@ -1037,6 +1058,7 @@ public class GameEngine
             session.BotCashBalance -= initialSavings;
 
             _sessions[connectionId] = session;
+            _behaviorLog.StartSession(connectionId, playerId);
             return session;
         }
     }
@@ -1218,6 +1240,7 @@ public class GameEngine
             };
 
             session.Depositos.Add(deposito);
+            _behaviorLog.LogAction(connectionId, "deposito", "BUY", amount, rate.IsShariah, AllocationPct(session, session.TotalDepositoValue));
             var bankLabel = rate.IsShariah ? "Syariah" : "Konvensional";
             session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Buka Deposito {bankLabel} {rate.PeriodName} Rp {amount:N0} ({(rate.IsShariah ? "bagi hasil" : "bunga")} {rate.AnnualRate * 100:F2}%/tahun)"
@@ -1261,6 +1284,7 @@ public class GameEngine
 
             session.CashBalance += withdrawAmount;
             session.Depositos.Remove(deposito);
+            _behaviorLog.LogAction(connectionId, "deposito", "SELL", withdrawAmount, deposito.IsShariah, AllocationPct(session, session.TotalDepositoValue));
             return true;
         }
     }
@@ -1318,6 +1342,7 @@ public class GameEngine
             };
 
             session.Bonds.Add(bond);
+            _behaviorLog.LogAction(connectionId, "bond", "BUY", amount, rate.IsShariah, AllocationPct(session, session.TotalBondValue));
             var seriesLabel = rate.SeriesName != null ? $" ({rate.SeriesName})" : "";
             session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Beli {rate.PeriodName}{seriesLabel} Rp {amount:N0} (kupon {rate.CouponRate * 100:F2}%/tahun)"
@@ -1340,6 +1365,7 @@ public class GameEngine
             var totalReturn = bond.Principal + bond.TotalCouponEarned;
             session.CashBalance += totalReturn;
             session.Bonds.Remove(bond);
+            _behaviorLog.LogAction(connectionId, "bond", "SELL", totalReturn, bond.IsShariah, AllocationPct(session, session.TotalBondValue));
 
             session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Obligasi jatuh tempo! Terima Rp {totalReturn:N0}"
@@ -1383,6 +1409,7 @@ public class GameEngine
             session.Portfolio[key].Units += lots * 100;
             session.Portfolio[key].TotalCost += totalCost;
             session.Portfolio[key].PricePerUnit = stock.CurrentPrice;
+            _behaviorLog.LogAction(connectionId, $"stock_{ticker}", "BUY", totalCost, stock.IsShariahCompliant, AllocationPct(session, session.Portfolio[key].TotalValue));
 
             session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Beli {lots} lot saham {ticker}"
@@ -1423,6 +1450,8 @@ public class GameEngine
 
             var profit = saleValue - costBasis;
             session.TotalRealizedPortfolioGainLoss += profit;
+            var keyValueAfter = session.Portfolio.TryGetValue(key, out var pfAfter) ? pfAfter.TotalValue : 0m;
+            _behaviorLog.LogAction(connectionId, $"stock_{ticker}", "SELL", saleValue, stock.IsShariahCompliant, AllocationPct(session, keyValueAfter));
             var profitText = profit >= 0 ? $"untung Rp {profit:N0}" : $"rugi Rp {Math.Abs(profit):N0}";
             session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Jual {lots} lot saham {ticker} ({profitText})"
@@ -1471,6 +1500,9 @@ public class GameEngine
             session.Portfolio[assetType].Units += unitsToBuy;
             session.Portfolio[assetType].TotalCost += GameSession.UNIT_COST;
             session.Portfolio[assetType].PricePerUnit = currentPrice;
+            // Gold, crypto, crowdfunding are shariah-compliant; others on this path inherit from unlocked assets
+            var isShariah = asset.Category is "gold" or "crypto" or "crowdfunding";
+            _behaviorLog.LogAction(connectionId, assetType, "BUY", GameSession.UNIT_COST, isShariah, AllocationPct(session, session.Portfolio[assetType].TotalValue));
 
             session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Beli {asset.DisplayName} Rp 1.000.000"
@@ -1515,6 +1547,7 @@ public class GameEngine
             session.Portfolio[assetType].Units += (int)Math.Floor(grams); // Store grams as units
             session.Portfolio[assetType].TotalCost += totalCost;
             session.Portfolio[assetType].PricePerUnit = currentPrice;
+            _behaviorLog.LogAction(connectionId, "emas", "BUY", totalCost, true, AllocationPct(session, session.Portfolio[assetType].TotalValue));
 
             session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Beli {grams}g Emas (Rp {totalCost:N0})"
@@ -1563,6 +1596,7 @@ public class GameEngine
             session.Portfolio[portfolioKey].Units += units;
             session.Portfolio[portfolioKey].TotalCost += amount;
             session.Portfolio[portfolioKey].PricePerUnit = idx.CurrentPrice;
+            _behaviorLog.LogAction(connectionId, $"index_{indexId}", "BUY", amount, idx.IsShariah, AllocationPct(session, session.Portfolio[portfolioKey].TotalValue));
 
             session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Beli RD Indeks {indexId} Rp {amount:N0} ({units:F4} unit)"
@@ -1603,6 +1637,8 @@ public class GameEngine
             if (portfolio.Units <= 0)
                 session.Portfolio.Remove(portfolioKey);
 
+            var indexValueAfter = session.Portfolio.TryGetValue(portfolioKey, out var pfAfter) ? pfAfter.TotalValue : 0m;
+            _behaviorLog.LogAction(connectionId, $"index_{indexId}", "SELL", saleValue, idx.IsShariah, AllocationPct(session, indexValueAfter));
             session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Jual RD Indeks {indexId} ({units:F4} unit, {(profit >= 0 ? "untung" : "rugi")} Rp {Math.Abs(profit):N0})"
                 : $"Sold Index Fund {indexId} ({units:F4} units, P/L: {(profit >= 0 ? "+" : "")}Rp {profit:N0})");
@@ -1658,6 +1694,9 @@ public class GameEngine
             var profit = saleValue - costBasis;
             session.TotalRealizedPortfolioGainLoss += profit;
             var asset = _assets[assetType];
+            var isShariah = asset.Category is "gold" or "crypto" or "crowdfunding";
+            var valueAfter = session.Portfolio.TryGetValue(assetType, out var pfA) ? pfA.TotalValue : 0m;
+            _behaviorLog.LogAction(connectionId, assetType, "SELL", saleValue, isShariah, AllocationPct(session, valueAfter));
             var profitText = profit >= 0 ? $"untung Rp {profit:N0}" : $"rugi Rp {Math.Abs(profit):N0}";
             session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Jual {asset.DisplayName} ({profitText})"
@@ -1690,6 +1729,8 @@ public class GameEngine
             var profit = saleValue - costBasis;
             session.TotalRealizedPortfolioGainLoss += profit;
             var asset = _assets[assetType];
+            var isShariahSell = asset.Category is "gold" or "crypto" or "crowdfunding";
+            _behaviorLog.LogAction(connectionId, assetType, "SELL", saleValue, isShariahSell, 0m);
             var profitText = profit >= 0 ? $"untung Rp {profit:N0}" : $"rugi Rp {Math.Abs(profit):N0}";
             session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Jual semua {asset.DisplayName} ({profitText})"
@@ -1736,6 +1777,7 @@ public class GameEngine
 
             session.CrowdfundingInvestments.Add(investment);
             session.TotalCrowdfundingInvested += amount;
+            _behaviorLog.LogAction(connectionId, $"crowdfunding_{projectId}", "BUY", amount, true, AllocationPct(session, session.TotalCrowdfundingValue));
 
             session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Investasi di {project.ProjectName} Rp {amount:N0} (terkunci {project.LockUpMonths} bulan)"
@@ -1783,6 +1825,7 @@ public class GameEngine
             session.Portfolio[key].Units += units; // Store fractional units directly
             session.Portfolio[key].TotalCost += amount;
             session.Portfolio[key].PricePerUnit = crypto.CurrentPrice;
+            _behaviorLog.LogAction(connectionId, $"crypto_{symbol}", "BUY", amount, true, AllocationPct(session, session.Portfolio[key].TotalValue));
 
             session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Beli {units:F4} {crypto.Symbol} (Rp {amount:N0})"
@@ -1823,6 +1866,8 @@ public class GameEngine
 
             var profit = amount - costBasis;
             session.TotalRealizedPortfolioGainLoss += profit;
+            var cryptoValueAfter = session.Portfolio.TryGetValue(key, out var pfAfter) ? pfAfter.TotalValue : 0m;
+            _behaviorLog.LogAction(connectionId, $"crypto_{symbol}", "SELL", amount, true, AllocationPct(session, cryptoValueAfter));
             session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Jual {unitsToSell:F4} {crypto.Symbol} ({(profit >= 0 ? "untung" : "rugi")} Rp {Math.Abs(profit):N0})"
                 : $"Sold {unitsToSell:F4} {crypto.Symbol} (P/L: {(profit >= 0 ? "+" : "")}Rp {profit:N0})");
@@ -2196,6 +2241,7 @@ public class GameEngine
             session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Permainan selesai! Kekayaan akhir: Rp {session.NetWorth:N0}"
                 : $"Game complete! Final net worth: Rp {session.NetWorth:N0}");
+            _behaviorLog.EndSession(session.ConnectionId, ComputeTotalProfitLoss(session));
         }
 
         // Process bot month end (same month as player)
@@ -3517,6 +3563,7 @@ public class GameEngine
                 ? $"Tidak mampu membayar {evtLogTitle}. Total aset Rp {totalAssets:N0} tidak cukup untuk Rp {randomizedCost:N0}."
                 : $"Unable to pay {evtLogTitle}. Total assets Rp {totalAssets:N0} insufficient for Rp {randomizedCost:N0}.";
             session.AddLogEntry($"GAME OVER: {session.GameOverReason}");
+            _behaviorLog.EndSession(session.ConnectionId, ComputeTotalProfitLoss(session));
         }
     }
 
@@ -3673,6 +3720,7 @@ public class GameEngine
             ? $"Tidak mampu membayar {eventTitle}. Total aset Rp {totalAssets:N0} tidak cukup untuk Rp {cost:N0}."
             : $"Unable to pay {eventTitle}. Total assets Rp {totalAssets:N0} insufficient for Rp {cost:N0}.";
         session.AddLogEntry($"GAME OVER: {session.GameOverReason}");
+        _behaviorLog.EndSession(session.ConnectionId, ComputeTotalProfitLoss(session));
         ClearEvent(session);
         return false;
     }

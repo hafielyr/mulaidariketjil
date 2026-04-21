@@ -1,5 +1,7 @@
+using InvestmentGame.Server.Data;
 using InvestmentGame.Server.Hubs;
 using InvestmentGame.Server.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +23,12 @@ builder.Services.AddSingleton<BondDataService>();
 builder.Services.AddSingleton<CryptoDataService>();
 builder.Services.AddSingleton<GameEngine>();
 builder.Services.AddSingleton<RoomManager>();
+
+// Player behavior logging (EF Core + SQLite, async write-behind)
+builder.Services.AddDbContext<BehaviorDbContext>(opts =>
+    opts.UseSqlite("Data Source=player_behavior.db"));
+builder.Services.AddSingleton<BehaviorLogService>();
+builder.Services.AddHostedService(sp => sp.GetRequiredService<BehaviorLogService>());
 
 // Configure CORS for development
 builder.Services.AddCors(options =>

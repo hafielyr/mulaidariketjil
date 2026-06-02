@@ -1,0 +1,396 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <!-- Color palette from 1992 500 Rupiah banknote -->
+    <radialGradient id="bg" cx="50%" cy="45%" r="55%">
+      <stop offset="0%" stop-color="#1B4D3E"/>
+      <stop offset="80%" stop-color="#0F2E25"/>
+      <stop offset="100%" stop-color="#091A14"/>
+    </radialGradient>
+
+    <radialGradient id="halo" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#C5A059" stop-opacity="0.35"/>
+      <stop offset="60%" stop-color="#C5A059" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#C5A059" stop-opacity="0"/>
+    </radialGradient>
+
+    <linearGradient id="goldFrame" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#D4AF60"/>
+      <stop offset="30%" stop-color="#C5A059"/>
+      <stop offset="50%" stop-color="#E8C870"/>
+      <stop offset="70%" stop-color="#C5A059"/>
+      <stop offset="100%" stop-color="#8B7340"/>
+    </linearGradient>
+
+    <linearGradient id="goldFrameInner" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#D4AF60"/>
+      <stop offset="40%" stop-color="#C5A059"/>
+      <stop offset="60%" stop-color="#E8C870"/>
+      <stop offset="100%" stop-color="#8B7340"/>
+    </linearGradient>
+
+    <linearGradient id="furBase" x1="30%" y1="0%" x2="70%" y2="100%">
+      <stop offset="0%" stop-color="#CD853F"/>
+      <stop offset="40%" stop-color="#8B4513"/>
+      <stop offset="100%" stop-color="#4A3728"/>
+    </linearGradient>
+
+    <linearGradient id="furHighlight" x1="20%" y1="0%" x2="80%" y2="100%">
+      <stop offset="0%" stop-color="#CD853F"/>
+      <stop offset="50%" stop-color="#A0692B"/>
+      <stop offset="100%" stop-color="#8B4513"/>
+    </linearGradient>
+
+    <linearGradient id="faceGrad" x1="40%" y1="20%" x2="60%" y2="80%">
+      <stop offset="0%" stop-color="#6B5B4E"/>
+      <stop offset="50%" stop-color="#4A3F35"/>
+      <stop offset="100%" stop-color="#3A302A"/>
+    </linearGradient>
+
+    <linearGradient id="leafGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4A5D23"/>
+      <stop offset="100%" stop-color="#2F4F4F"/>
+    </linearGradient>
+
+    <!-- Security thread pattern -->
+    <pattern id="securityThread" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse" patternTransform="rotate(-35)">
+      <line x1="0" y1="0" x2="0" y2="20" stroke="#C5A059" stroke-width="0.5" opacity="0.08"/>
+    </pattern>
+
+    <!-- Banknote micro text pattern -->
+    <pattern id="microText" x="0" y="0" width="60" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(5)">
+      <text x="0" y="12" font-family="Georgia, serif" font-size="8" fill="#C5A059" opacity="0.04">500 500 500</text>
+    </pattern>
+
+    <clipPath id="circleClip">
+      <circle cx="512" cy="512" r="460"/>
+    </clipPath>
+
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Base circle background -->
+  <circle cx="512" cy="512" r="500" fill="#091A14"/>
+  <circle cx="512" cy="512" r="490" fill="url(#bg)"/>
+
+  <!-- Security thread overlay -->
+  <circle cx="512" cy="512" r="490" fill="url(#securityThread)"/>
+  <circle cx="512" cy="512" r="490" fill="url(#microText)"/>
+
+  <!-- Outer gold frame ring -->
+  <circle cx="512" cy="512" r="485" fill="none" stroke="url(#goldFrame)" stroke-width="8"/>
+  <circle cx="512" cy="512" r="478" fill="none" stroke="#C5A059" stroke-width="1" opacity="0.4"/>
+
+  <!-- Decorative bead border (banknote style) -->
+  <g opacity="0.6">
+    <!-- Generate beads around the circle -->
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(0,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(7.5,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(15,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(22.5,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(30,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(37.5,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(45,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(52.5,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(60,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(67.5,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(75,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(82.5,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(90,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(97.5,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(105,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(112.5,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(120,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(127.5,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(135,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(142.5,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(150,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(157.5,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(165,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(172.5,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(180,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(187.5,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(195,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(202.5,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(210,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(217.5,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(225,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(232.5,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(240,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(247.5,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(255,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(262.5,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(270,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(277.5,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(285,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(292.5,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(300,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(307.5,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(315,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(322.5,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(330,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(337.5,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(345,512,512)"/>
+    <circle cx="512" cy="38" r="5" fill="#C5A059" transform="rotate(352.5,512,512)"/>
+  </g>
+
+  <!-- Inner decorative ring -->
+  <circle cx="512" cy="512" r="460" fill="none" stroke="url(#goldFrameInner)" stroke-width="3"/>
+
+  <!-- Art Nouveau vine decorations around the frame -->
+  <g fill="none" stroke="#C5A059" stroke-width="2.5" opacity="0.5">
+    <!-- Top vine arch -->
+    <path d="M 300,120 Q 350,80 410,95 Q 460,105 512,90 Q 564,105 614,95 Q 674,80 724,120" stroke-linecap="round"/>
+    <!-- Bottom vine arch -->
+    <path d="M 300,904 Q 350,944 410,929 Q 460,919 512,934 Q 564,919 614,929 Q 674,944 724,904" stroke-linecap="round"/>
+    <!-- Left vine -->
+    <path d="M 100,350 Q 70,400 80,460 Q 85,512 75,564 Q 70,624 100,674" stroke-linecap="round"/>
+    <!-- Right vine -->
+    <path d="M 924,350 Q 954,400 944,460 Q 939,512 949,564 Q 954,624 924,674" stroke-linecap="round"/>
+  </g>
+
+  <!-- Art Nouveau leaf/fern corner ornaments -->
+  <g fill="#C5A059" opacity="0.35">
+    <!-- Top-left fern -->
+    <path d="M 180,160 Q 200,130 230,140 Q 210,155 220,175 Q 195,165 180,160 Z"/>
+    <path d="M 165,180 Q 175,150 195,155 Q 180,170 185,185 Q 170,180 165,180 Z"/>
+    <!-- Top-right fern -->
+    <path d="M 844,160 Q 824,130 794,140 Q 814,155 804,175 Q 829,165 844,160 Z"/>
+    <path d="M 859,180 Q 849,150 829,155 Q 844,170 839,185 Q 854,180 859,180 Z"/>
+    <!-- Bottom-left fern -->
+    <path d="M 180,864 Q 200,894 230,884 Q 210,869 220,849 Q 195,859 180,864 Z"/>
+    <path d="M 165,844 Q 175,874 195,869 Q 180,854 185,839 Q 170,844 165,844 Z"/>
+    <!-- Bottom-right fern -->
+    <path d="M 844,864 Q 824,894 794,884 Q 814,869 804,849 Q 829,859 844,864 Z"/>
+    <path d="M 859,844 Q 849,874 829,869 Q 844,854 839,839 Q 854,844 859,844 Z"/>
+  </g>
+
+  <!-- Rafflesia corner motifs (stylized) -->
+  <g opacity="0.2">
+    <circle cx="155" cy="155" r="18" fill="none" stroke="#8B0000" stroke-width="2"/>
+    <circle cx="155" cy="155" r="8" fill="#8B0000"/>
+    <circle cx="869" cy="155" r="18" fill="none" stroke="#8B0000" stroke-width="2"/>
+    <circle cx="869" cy="155" r="8" fill="#8B0000"/>
+    <circle cx="155" cy="869" r="18" fill="none" stroke="#8B0000" stroke-width="2"/>
+    <circle cx="155" cy="869" r="8" fill="#8B0000"/>
+    <circle cx="869" cy="869" r="18" fill="none" stroke="#8B0000" stroke-width="2"/>
+    <circle cx="869" cy="869" r="8" fill="#8B0000"/>
+  </g>
+
+  <!-- Halo / nimbus behind orangutan head (Mucha style) -->
+  <circle cx="512" cy="420" r="250" fill="url(#halo)"/>
+  <circle cx="512" cy="420" r="200" fill="none" stroke="#C5A059" stroke-width="1" opacity="0.15"/>
+  <circle cx="512" cy="420" r="220" fill="none" stroke="#C5A059" stroke-width="0.5" opacity="0.1"/>
+
+  <!-- ===== ORANGUTAN PORTRAIT ===== -->
+  <g clip-path="url(#circleClip)">
+
+    <!-- Fur body/shoulders - flowing Art Nouveau curves -->
+    <path d="M 280,750 Q 300,650 340,580 Q 370,530 400,500 Q 430,480 460,475
+             Q 490,470 512,470 Q 534,470 564,475 Q 594,480 624,500
+             Q 654,530 684,580 Q 724,650 744,750 Q 760,830 770,950
+             L 254,950 Q 264,830 280,750 Z"
+          fill="url(#furBase)"/>
+
+    <!-- Fur texture strands on shoulders - Art Nouveau flowing lines -->
+    <g fill="none" stroke="#CD853F" stroke-width="2" opacity="0.5" stroke-linecap="round">
+      <path d="M 310,700 Q 330,650 360,610"/>
+      <path d="M 320,720 Q 345,665 375,620"/>
+      <path d="M 295,740 Q 315,685 345,640"/>
+      <path d="M 714,700 Q 694,650 664,610"/>
+      <path d="M 704,720 Q 679,665 649,620"/>
+      <path d="M 729,740 Q 709,685 679,640"/>
+    </g>
+
+    <!-- Head shape - main oval -->
+    <ellipse cx="512" cy="390" rx="150" ry="170" fill="url(#furHighlight)"/>
+
+    <!-- Cheek pads (flanges) - adult male orangutan -->
+    <path d="M 340,350 Q 330,310 345,280 Q 360,250 390,240 Q 370,280 365,320
+             Q 360,370 370,410 Q 355,400 345,380 Q 335,370 340,350 Z"
+          fill="#A0692B"/>
+    <path d="M 684,350 Q 694,310 679,280 Q 664,250 634,240 Q 654,280 659,320
+             Q 664,370 654,410 Q 669,400 679,380 Q 689,370 684,350 Z"
+          fill="#A0692B"/>
+
+    <!-- Cheek pad detail lines -->
+    <g fill="none" stroke="#8B4513" stroke-width="1.5" opacity="0.4">
+      <path d="M 355,280 Q 360,310 362,350"/>
+      <path d="M 365,270 Q 368,305 369,340"/>
+      <path d="M 669,280 Q 664,310 662,350"/>
+      <path d="M 659,270 Q 656,305 655,340"/>
+    </g>
+
+    <!-- Forehead/crown fur -->
+    <path d="M 390,250 Q 420,220 460,210 Q 490,205 512,205 Q 534,205 564,210
+             Q 604,220 634,250 Q 610,235 580,225 Q 550,218 512,215
+             Q 474,218 444,225 Q 414,235 390,250 Z"
+          fill="#CD853F"/>
+
+    <!-- Art Nouveau fur strands on top of head -->
+    <g fill="none" stroke="#CD853F" stroke-width="2.5" opacity="0.6" stroke-linecap="round">
+      <path d="M 420,240 Q 430,210 450,195 Q 470,185 490,182"/>
+      <path d="M 440,235 Q 455,210 475,198"/>
+      <path d="M 512,230 Q 512,200 512,180"/>
+      <path d="M 604,240 Q 594,210 574,195 Q 554,185 534,182"/>
+      <path d="M 584,235 Q 569,210 549,198"/>
+    </g>
+
+    <!-- Face (darker area around eyes, nose, mouth) -->
+    <path d="M 420,310 Q 430,280 460,265 Q 490,255 512,255 Q 534,255 564,265
+             Q 594,280 604,310 Q 615,345 612,380 Q 608,420 595,450
+             Q 575,485 550,500 Q 530,510 512,512 Q 494,510 474,500
+             Q 449,485 429,450 Q 416,420 412,380 Q 409,345 420,310 Z"
+          fill="url(#faceGrad)"/>
+
+    <!-- Brow ridge -->
+    <path d="M 430,305 Q 450,290 480,285 Q 500,283 512,283 Q 524,283 544,285
+             Q 574,290 594,305"
+          fill="none" stroke="#3A302A" stroke-width="4" stroke-linecap="round"/>
+
+    <!-- Eyes -->
+    <g>
+      <!-- Left eye socket -->
+      <ellipse cx="470" cy="340" rx="30" ry="22" fill="#2A2420"/>
+      <!-- Left eye white -->
+      <ellipse cx="472" cy="340" rx="18" ry="14" fill="#4A4038"/>
+      <!-- Left iris -->
+      <circle cx="475" cy="339" r="10" fill="#3A2510"/>
+      <!-- Left pupil -->
+      <circle cx="476" cy="338" r="5" fill="#1A1008"/>
+      <!-- Left eye highlight -->
+      <circle cx="479" cy="335" r="2.5" fill="#F5F5DC" opacity="0.7"/>
+
+      <!-- Right eye socket -->
+      <ellipse cx="554" cy="340" rx="30" ry="22" fill="#2A2420"/>
+      <!-- Right eye white -->
+      <ellipse cx="552" cy="340" rx="18" ry="14" fill="#4A4038"/>
+      <!-- Right iris -->
+      <circle cx="549" cy="339" r="10" fill="#3A2510"/>
+      <!-- Right pupil -->
+      <circle cx="548" cy="338" r="5" fill="#1A1008"/>
+      <!-- Right eye highlight -->
+      <circle cx="545" cy="335" r="2.5" fill="#F5F5DC" opacity="0.7"/>
+    </g>
+
+    <!-- Nose -->
+    <path d="M 498,370 Q 495,385 498,400 Q 502,410 512,412 Q 522,410 526,400
+             Q 529,385 526,370"
+          fill="#3A302A" opacity="0.8"/>
+    <!-- Nostrils -->
+    <ellipse cx="502" cy="400" rx="6" ry="4" fill="#2A2018"/>
+    <ellipse cx="522" cy="400" rx="6" ry="4" fill="#2A2018"/>
+
+    <!-- Mouth area / muzzle -->
+    <path d="M 465,420 Q 475,430 490,440 Q 505,448 512,450 Q 519,448 534,440
+             Q 549,430 559,420"
+          fill="none" stroke="#3A302A" stroke-width="2.5" stroke-linecap="round"/>
+
+    <!-- Subtle smile line -->
+    <path d="M 480,445 Q 496,455 512,458 Q 528,455 544,445"
+          fill="none" stroke="#4A3F35" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+
+    <!-- Chin tuft -->
+    <path d="M 490,470 Q 500,485 512,490 Q 524,485 534,470"
+          fill="#8B4513" opacity="0.6"/>
+
+    <!-- Side fur flowing down (Art Nouveau whiplash curves) -->
+    <g fill="none" stroke="#CD853F" stroke-width="3" opacity="0.4" stroke-linecap="round">
+      <path d="M 370,370 Q 355,420 350,480 Q 348,530 355,570"/>
+      <path d="M 380,360 Q 365,410 362,465 Q 360,520 365,560"/>
+      <path d="M 654,370 Q 669,420 674,480 Q 676,530 669,570"/>
+      <path d="M 644,360 Q 659,410 662,465 Q 664,520 659,560"/>
+    </g>
+
+    <!-- Ear hints -->
+    <ellipse cx="370" cy="350" rx="15" ry="20" fill="#6B4520" opacity="0.6"/>
+    <ellipse cx="654" cy="350" rx="15" ry="20" fill="#6B4520" opacity="0.6"/>
+
+  </g>
+
+  <!-- ===== DECORATIVE BOTANICAL FRAME ELEMENTS ===== -->
+
+  <!-- Strangler fig vines framing the portrait - left side -->
+  <g fill="none" stroke="#4A5D23" stroke-width="4" opacity="0.4" stroke-linecap="round">
+    <path d="M 120,500 Q 100,400 130,300 Q 160,220 220,160"/>
+    <path d="M 130,520 Q 115,430 140,340 Q 165,260 215,200"/>
+  </g>
+
+  <!-- Strangler fig vines - right side -->
+  <g fill="none" stroke="#4A5D23" stroke-width="4" opacity="0.4" stroke-linecap="round">
+    <path d="M 904,500 Q 924,400 894,300 Q 864,220 804,160"/>
+    <path d="M 894,520 Q 909,430 884,340 Q 859,260 809,200"/>
+  </g>
+
+  <!-- Small fern leaves along vines -->
+  <g fill="#4A5D23" opacity="0.3">
+    <!-- Left vine leaves -->
+    <path d="M 115,400 Q 95,390 85,370 Q 100,375 115,385 Z"/>
+    <path d="M 125,350 Q 105,335 100,315 Q 112,325 125,340 Z"/>
+    <path d="M 145,290 Q 130,270 130,250 Q 140,265 148,280 Z"/>
+    <!-- Right vine leaves -->
+    <path d="M 909,400 Q 929,390 939,370 Q 924,375 909,385 Z"/>
+    <path d="M 899,350 Q 919,335 924,315 Q 912,325 899,340 Z"/>
+    <path d="M 879,290 Q 894,270 894,250 Q 884,265 876,280 Z"/>
+  </g>
+
+  <!-- ===== TEXT: "ORANG UTAN" curved at top ===== -->
+  <defs>
+    <path id="textArcTop" d="M 200,512 A 312,312 0 0 1 824,512" fill="none"/>
+    <path id="textArcBottom" d="M 240,512 A 272,272 0 0 0 784,512" fill="none"/>
+  </defs>
+
+  <text font-family="'Playfair Display', Georgia, serif" font-size="52" font-weight="700"
+        fill="#C5A059" letter-spacing="16" filter="url(#glow)">
+    <textPath href="#textArcTop" startOffset="50%" text-anchor="middle">
+      ORANG UTAN
+    </textPath>
+  </text>
+
+  <!-- Text: "CAPITAL" at bottom -->
+  <text font-family="'Playfair Display', Georgia, serif" font-size="40" font-weight="400"
+        fill="#C5A059" letter-spacing="20" opacity="0.8">
+    <textPath href="#textArcBottom" startOffset="50%" text-anchor="middle">
+      CAPITAL
+    </textPath>
+  </text>
+
+  <!-- "500" denomination in vintage style -->
+  <text x="512" y="780" text-anchor="middle"
+        font-family="Georgia, serif" font-size="36" font-weight="700"
+        fill="#C5A059" opacity="0.25" letter-spacing="8">500</text>
+
+  <!-- Decorative line separators -->
+  <g stroke="#C5A059" stroke-width="1" opacity="0.3">
+    <line x1="380" y1="760" x2="440" y2="760"/>
+    <line x1="584" y1="760" x2="644" y2="760"/>
+    <line x1="380" y1="800" x2="440" y2="800"/>
+    <line x1="584" y1="800" x2="644" y2="800"/>
+  </g>
+
+  <!-- Small stars/firefly accents -->
+  <g fill="#FFD700" opacity="0.3">
+    <circle cx="200" cy="250" r="2"/>
+    <circle cx="824" cy="250" r="2"/>
+    <circle cx="170" cy="500" r="1.5"/>
+    <circle cx="854" cy="500" r="1.5"/>
+    <circle cx="200" cy="750" r="2"/>
+    <circle cx="824" cy="750" r="2"/>
+  </g>
+
+  <!-- Brass compass pendant hint on chest -->
+  <g transform="translate(512,580)" opacity="0.5">
+    <circle cx="0" cy="0" r="12" fill="none" stroke="#B87333" stroke-width="2"/>
+    <circle cx="0" cy="0" r="3" fill="#B87333"/>
+    <line x1="0" y1="-9" x2="0" y2="9" stroke="#B87333" stroke-width="1"/>
+    <line x1="-9" y1="0" x2="9" y2="0" stroke="#B87333" stroke-width="1"/>
+  </g>
+
+  <!-- Final outer subtle shadow ring -->
+  <circle cx="512" cy="512" r="498" fill="none" stroke="#000000" stroke-width="4" opacity="0.3"/>
+</svg>

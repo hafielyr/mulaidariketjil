@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <radialGradient id="fbg" cx="50%" cy="45%" r="55%">
+      <stop offset="0%" stop-color="#1B4D3E"/>
+      <stop offset="100%" stop-color="#0F2E25"/>
+    </radialGradient>
+    <linearGradient id="fgold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#D4AF60"/>
+      <stop offset="50%" stop-color="#C5A059"/>
+      <stop offset="100%" stop-color="#8B7340"/>
+    </linearGradient>
+    <linearGradient id="ffur" x1="30%" y1="0%" x2="70%" y2="100%">
+      <stop offset="0%" stop-color="#CD853F"/>
+      <stop offset="100%" stop-color="#8B4513"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <circle cx="32" cy="32" r="31" fill="url(#fbg)"/>
+  <circle cx="32" cy="32" r="30" fill="none" stroke="url(#fgold)" stroke-width="2"/>
+
+  <!-- Simplified orangutan head -->
+  <!-- Head shape -->
+  <ellipse cx="32" cy="27" rx="14" ry="16" fill="url(#ffur)"/>
+
+  <!-- Cheek pads -->
+  <ellipse cx="18" cy="25" rx="5" ry="8" fill="#A0692B"/>
+  <ellipse cx="46" cy="25" rx="5" ry="8" fill="#A0692B"/>
+
+  <!-- Face -->
+  <ellipse cx="32" cy="28" rx="9" ry="11" fill="#4A3F35"/>
+
+  <!-- Eyes -->
+  <circle cx="28" cy="25" r="2.5" fill="#2A2018"/>
+  <circle cx="36" cy="25" r="2.5" fill="#2A2018"/>
+  <circle cx="28.5" cy="24.5" r="1" fill="#F5F5DC" opacity="0.6"/>
+  <circle cx="36.5" cy="24.5" r="1" fill="#F5F5DC" opacity="0.6"/>
+
+  <!-- Nose -->
+  <ellipse cx="32" cy="30" rx="3" ry="2" fill="#3A302A"/>
+
+  <!-- Mouth -->
+  <path d="M 29,33 Q 32,35 35,33" fill="none" stroke="#3A302A" stroke-width="1" stroke-linecap="round"/>
+
+  <!-- Body/shoulders -->
+  <path d="M 16,50 Q 18,42 24,38 Q 28,36 32,35 Q 36,36 40,38 Q 46,42 48,50 L 48,64 L 16,64 Z"
+        fill="#8B4513"/>
+
+  <!-- Gold halo hint -->
+  <circle cx="32" cy="26" r="18" fill="none" stroke="#C5A059" stroke-width="0.5" opacity="0.3"/>
+</svg>

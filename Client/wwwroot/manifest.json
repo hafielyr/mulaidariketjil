@@ -1,0 +1,23 @@
+{
+  "name": "Tjoean - Orang Utan Capital",
+  "short_name": "Tjoean",
+  "description": "Game Edukasi Investasi - Indonesian Investment Education Game",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0F2E25",
+  "theme_color": "#1B4D3E",
+  "icons": [
+    {
+      "src": "images/game-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "images/orangutan-icon.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}

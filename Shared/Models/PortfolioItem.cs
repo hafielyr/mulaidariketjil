@@ -87,6 +87,23 @@ public class StockInfo
     public bool PaysDividend => AnnualDividendPerShare > 0;
     public bool IsShariahCompliant { get; set; } // Whether the stock is shariah-compliant
     public List<decimal> PriceHistory { get; set; } = new(); // Last 7 prices for mini chart
+
+    // === Historical-failure stocks (see Data/Stocks/13_failed_stock_monthly_prices.json) ===
+
+    /// <summary>True for the one stock per session that really failed on IDX (suspended and/or delisted).</summary>
+    public bool IsHighRisk { get; set; }
+
+    /// <summary>False before the company's IPO — the stock is not on the exchange yet (BORN listed in Nov 2010).</summary>
+    public bool IsListed { get; set; } = true;
+
+    /// <summary>Trading halted by the exchange — the position can no longer be bought or sold.</summary>
+    public bool IsSuspended { get; set; }
+
+    /// <summary>Removed from the exchange — holdings are written down to the residual value.</summary>
+    public bool IsDelisted { get; set; }
+
+    /// <summary>Shares can only change hands while the stock is listed, not suspended and not delisted.</summary>
+    public bool IsTradable => IsListed && !IsSuspended && !IsDelisted;
 }
 
 public class IndexInfo
@@ -308,6 +325,7 @@ public class GameState
     public decimal TotalCrowdfundingValue { get; set; }
     public decimal NetWorth { get; set; }
     public string? CrowdfundingFailureMessage { get; set; }
+    public string? StockDelistingMessage { get; set; }
     public bool IsGameOver { get; set; }
     public string? GameOverReason { get; set; }
     public string? ActiveEvent { get; set; }

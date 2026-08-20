@@ -95,6 +95,36 @@ Diurutkan sesuai jadwal unlock. Kolom volatilitas adalah rentang perubahan nilai
 > volatilitas, dan jadwal unlock ada di `InitializeAssets()` pada
 > `Server/Services/GameEngine.cs`. Kalau salah satu berubah, perbarui README ini di PR yang sama.
 
+### Saham: 4 blue chip + 1 saham yang benar-benar gagal
+
+Setiap sesi permainan mendapat **5 saham**: 3 syariah + 1 konvensional dari 20 blue chip yang
+bertahan 2006-2021, ditambah **tepat 1 saham yang benar-benar gagal di BEI** (dipilih acak dari 5).
+Tanpa saham terakhir ini, daftar saham hanya berisi perusahaan yang selamat (*survivorship bias*)
+dan pemain belajar bahwa "saham selalu pulih".
+
+| Ticker | Perusahaan | Yang terjadi | Akhir |
+|---|---|---|---|
+| BUMI | Bumi Resources | Utang akuisisi + jatuhnya harga batu bara | Rp 8.750 (2008) → Rp 50 (2015), tetap tercatat |
+| INVS | Inovisi Infracom | Laporan keuangan bermasalah | Disuspensi 13 Feb 2015, delisting 23 Okt 2017 |
+| DAVO | Davomas Abadi | Gagal bayar kupon obligasi USD | Disuspensi 9 Mar 2012, delisting 21 Jan 2015 |
+| SIAP | Sekawan Intipratama | Cerita tambang batu bara yang tak pernah produksi | Disuspensi 9 Nov 2015, delisting 17 Jun 2019 |
+| BORN | Borneo Lumbung Energi & Metal | Utang USD 1 miliar untuk masuk Bumi Plc | IPO Rp 1.170 (2010), delisting 20 Jan 2020 |
+
+Mekanisme di dalam permainan:
+
+- Saham yang **disuspensi** tidak bisa dibeli maupun dijual (termasuk untuk membayar kejadian acak) —
+  posisinya terkunci di harga terakhir, persis seperti di bursa.
+- Saat **delisting**, kepemilikan dihapus dari portofolio dengan nilai sisa (`residual_value_per_share`,
+  nol untuk empat dari lima saham) dan selisihnya dicatat sebagai kerugian terealisasi, sehingga P/L
+  dan kekayaan bersih ikut turun.
+- INVS dan BORN baru muncul di pasar pada bulan IPO-nya (Juli 2009 dan November 2010).
+- Bot pembanding tidak pernah membeli saham berisiko tinggi ini.
+
+Harga bulanan dan metadata kegagalan ada di `Data/Stocks/13_failed_stock_monthly_prices.json`.
+Harga BUMI adalah data riil (Yahoo Finance); empat lainnya **direkonstruksi** dari tanggal dan harga
+yang terdokumentasi publik karena feed gratis tidak lagi menyediakan riwayat saham yang sudah
+delisting — lihat `data_quality_notes` dan `sources` di file tersebut.
+
 ## Struktur Project
 
 ```

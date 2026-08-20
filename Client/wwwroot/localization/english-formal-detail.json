@@ -136,7 +136,7 @@
   "MARKET_BUY_BOND": "Government Bonds",
   "MARKET_BOND_TIP": "\ud83d\udca1 Low risk with monthly coupon payments",
   "MARKET_STOCKS_TITLE": "Individual Stocks",
-  "MARKET_STOCKS_TIP": "\ud83d\udca1 Stock prices update every 2 months. Dividends paid annually!",
+  "MARKET_STOCKS_TIP": "\ud83d\udca1 Stock prices update every 2 months and dividends are paid at year end. One stock on this list genuinely failed in the historical record \u2014 note the High Risk tag.",
   "MARKET_CRYPTO_TITLE": "Crypto Assets",
   "MARKET_CRYPTO_WARNING": "EXTREMELY RISKY!",
   "MARKET_CF_TITLE": "Securities Crowdfunding",
@@ -256,5 +256,19 @@
   "ERR_SELL_ALL": "Failed to sell all.",
   "ERR_PAY_CASH": "Failed to pay from cash.",
   "ERR_PAY_SAVINGS": "Failed to pay from savings.",
-  "ERR_PAY_PORTFOLIO": "Investment insufficient to pay."
+  "ERR_PAY_PORTFOLIO": "Investment insufficient to pay.",
+
+  "STOCK_HIGH_RISK_BADGE": "High Risk",
+  "STOCK_HIGH_RISK_TIP": "This issuer genuinely failed during the historical period: its share price fell to almost zero.",
+  "STOCK_SUSPENDED_BADGE": "Suspended",
+  "STOCK_DELISTED_BADGE": "Delisted",
+  "STOCK_SUSPENDED_NOTE": "\u26a0\ufe0f Trading has been halted by the exchange. The stock can be neither bought nor sold.",
+  "STOCK_DELISTED_NOTE": "\u26a0\ufe0f The listing has been removed from the exchange. The holding is worth zero.",
+  "STOCK_HALTED_HOLDING": "\u26a0\ufe0f This position is locked: it cannot be sold while trading is suspended.",
+  "STOCK_DELISTED_TITLE": "Stock Removed From the Exchange",
+  "STOCK_NOTE_BUMI": "Bumi Resources: acquisition debt plus the coal price collapse. Rp 8,750 (June 2008) \u2192 Rp 50 (July 2015).",
+  "STOCK_NOTE_INVS": "Inovisi Infracom: IPO at Rp 125 (July 2009), peaked at Rp 2,575 (June 2013), suspended on 13 February 2015 at Rp 117 over misstated accounts, and force-delisted on 23 October 2017.",
+  "STOCK_NOTE_DAVO": "Davomas Abadi: defaulted on a USD bond coupon (March 2012), was suspended, and force-delisted on 21 January 2015.",
+  "STOCK_NOTE_SIAP": "Sekawan Intipratama: a 2014 coal story that never produced a tonne; suspended on 9 November 2015 and force-delisted on 17 June 2019.",
+  "STOCK_NOTE_BORN": "Borneo Lumbung Energi & Metal: IPO on 26 November 2010 at Rp 1,170, sunk by a USD 1 billion loan and the coking-coal price collapse; suspended in 2015 and delisted on 20 January 2020."
 }

@@ -746,6 +746,10 @@
                             <div class="portfolio-list">
                                 @foreach (var item in _gameState.Portfolio.OrderBy(p => p.AssetType == "obligasi" ? 1 : 0))
                                 {
+                                    var heldStock = item.AssetType == "saham"
+                                        ? _gameState.AvailableStocks.FirstOrDefault(s => s.Ticker == item.Ticker)
+                                        : null;
+                                    var stockHalted = heldStock != null && !heldStock.IsTradable;
                                     <div class="portfolio-item">
                                         <div class="item-header">
                                             <span class="item-name">@Icon(item.AssetType) @item.DisplayName @(string.IsNullOrEmpty(item.Ticker) ? "" : $"({item.Ticker})")</span>
@@ -783,20 +787,24 @@
                                             <div class="item-avg-cost">
                                                 <span>@Lang.T("LABEL_AVG_COST"): Rp @((item.TotalCost / Math.Max(item.Units, 1)).ToString("N0"))/@Lang.T("LABEL_SHARE")</span>
                                             </div>
+                                            @if (stockHalted)
+                                            {
+                                                <div class="item-halted-note">@Lang.T("STOCK_HALTED_HOLDING")</div>
+                                            }
                                         }
                                         <div class="item-buttons">
                                             @if (item.AssetType == "saham")
                                             {
                                                 <button class="btn-sell" @onclick="() => SellStock(item.Ticker, 1)"
-                                                        disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || item.Units < 100)">
+                                                        disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || stockHalted || item.Units < 100)">
                                                     @Lang.T("BTN_SELL_1_LOT")
                                                 </button>
                                                 <button class="btn-sell" @onclick="() => SellStock(item.Ticker, 5)"
-                                                        disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || item.Units < 500)">
+                                                        disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || stockHalted || item.Units < 500)">
                                                     @Lang.T("BTN_SELL_5_LOT")
                                                 </button>
                                                 <button class="btn-sell-all" @onclick="() => SellAllStock(item.Ticker)"
-                                                        disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || item.Units < 100)">
+                                                        disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || stockHalted || item.Units < 100)">
                                                     @Lang.T("BTN_SELL_ALL")
                                                 </button>
                                             }
@@ -1123,7 +1131,8 @@
                                 @Lang.T("MARKET_STOCKS_TIP")
                             </p>
                             <div class="stocks-list">
-                                @foreach (var stock in _gameState.AvailableStocks)
+                                @* A stock that has not had its IPO yet is not on the exchange board *@
+                                @foreach (var stock in _gameState.AvailableStocks.Where(s => s.IsListed))
                                 {
                                     <div class="stock-row compact">
                                         <div class="stock-info">
@@ -1132,9 +1141,25 @@
                                                 <span class="@(stock.IsShariahCompliant ? "shariah-badge" : "conventional-badge")">
                                                     @(stock.IsShariahCompliant ? "Syariah" : "Konvensional")
                                                 </span>
+                                                @if (stock.IsDelisted)
+                                                {
+                                                    <span class="delisted-badge">@Lang.T("STOCK_DELISTED_BADGE")</span>
+                                                }
+                                                else if (stock.IsSuspended)
+                                                {
+                                                    <span class="suspended-badge">@Lang.T("STOCK_SUSPENDED_BADGE")</span>
+                                                }
+                                                else if (stock.IsHighRisk)
+                                                {
+                                                    <span class="risk-badge" title="@Lang.T("STOCK_HIGH_RISK_TIP")">@Lang.T("STOCK_HIGH_RISK_BADGE")</span>
+                                                }
                                                 <div class="stock-details">
                                                     <span class="stock-name">@stock.CompanyName</span>
                                                     <span class="stock-meta">@stock.Sector @if(stock.PaysDividend) { <span class="dividend-badge" title="@GetText("Dividen tahunan per lembar", "Dividen tahunan per lembar", "Annual dividend per share", "Annual dividend per share")">@UIIcon("coin") Rp @stock.AnnualDividendPerShare.ToString("N0")/shr</span> } @if(stock.DividendType != "None" && stock.PaysDividend) { <span class="dividend-type-badge @(stock.DividendType == "Interim" ? "interim" : stock.DividendType == "Final+Interim" ? "final-interim" : "final")">@stock.DividendType</span> }</span>
+                                                    @if (stock.IsHighRisk)
+                                                    {
+                                                        <span class="stock-risk-note">@Lang.T($"STOCK_NOTE_{stock.Ticker}")</span>
+                                                    }
                                                 </div>
                                             </div>
                                             @if (stock.PriceHistory != null && stock.PriceHistory.Count >= 2)
@@ -1158,24 +1183,31 @@
                                         </div>
                                         <div class="stock-actions-row compact">
                                             <span class="lot-price">1 Lot = Rp @((stock.CurrentPrice * 100).ToString("N0"))</span>
-                                            <div class="quick-buy-buttons">
-                                                <button class="btn-quick-lot" @onclick="() => BuyStock(stock.Ticker, 5)"
-                                                        disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || (stock.CurrentPrice * 100 * 5) > _gameState.CashBalance)">
-                                                    5 @Lang.T("LABEL_LOT")
-                                                </button>
-                                                <button class="btn-quick-lot" @onclick="() => BuyStock(stock.Ticker, 25)"
-                                                        disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || (stock.CurrentPrice * 100 * 25) > _gameState.CashBalance)">
-                                                    25 @Lang.T("LABEL_LOT")
-                                                </button>
-                                                <button class="btn-quick-lot" @onclick="() => BuyStock(stock.Ticker, 100)"
-                                                        disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || (stock.CurrentPrice * 100 * 100) > _gameState.CashBalance)">
-                                                    100 @Lang.T("LABEL_LOT")
-                                                </button>
-                                                <button class="btn-quick-lot" @onclick="() => BuyStock(stock.Ticker, 500)"
-                                                        disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || (stock.CurrentPrice * 100 * 500) > _gameState.CashBalance)">
-                                                    500 @Lang.T("LABEL_LOT")
-                                                </button>
-                                            </div>
+                                            @if (!stock.IsTradable)
+                                            {
+                                                <span class="stock-halted-note">@Lang.T(stock.IsDelisted ? "STOCK_DELISTED_NOTE" : "STOCK_SUSPENDED_NOTE")</span>
+                                            }
+                                            else
+                                            {
+                                                <div class="quick-buy-buttons">
+                                                    <button class="btn-quick-lot" @onclick="() => BuyStock(stock.Ticker, 5)"
+                                                            disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || (stock.CurrentPrice * 100 * 5) > _gameState.CashBalance)">
+                                                        5 @Lang.T("LABEL_LOT")
+                                                    </button>
+                                                    <button class="btn-quick-lot" @onclick="() => BuyStock(stock.Ticker, 25)"
+                                                            disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || (stock.CurrentPrice * 100 * 25) > _gameState.CashBalance)">
+                                                        25 @Lang.T("LABEL_LOT")
+                                                    </button>
+                                                    <button class="btn-quick-lot" @onclick="() => BuyStock(stock.Ticker, 100)"
+                                                            disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || (stock.CurrentPrice * 100 * 100) > _gameState.CashBalance)">
+                                                        100 @Lang.T("LABEL_LOT")
+                                                    </button>
+                                                    <button class="btn-quick-lot" @onclick="() => BuyStock(stock.Ticker, 500)"
+                                                            disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending || (stock.CurrentPrice * 100 * 500) > _gameState.CashBalance)">
+                                                        500 @Lang.T("LABEL_LOT")
+                                                    </button>
+                                                </div>
+                                            }
                                         </div>
                                     </div>
                                 }
@@ -2483,6 +2515,23 @@
     }
 </div>
 
+@* Stock Delisting Notification *@
+@if (_gameState != null && !string.IsNullOrEmpty(_gameState.StockDelistingMessage))
+{
+    <div class="modal-overlay">
+        <div class="crowdfunding-failure-notification" role="dialog" aria-modal="true" aria-labelledby="stock-delisting-title">
+            <div class="cf-failure-header">
+                <span class="cf-failure-icon">@UIIcon("down")</span>
+                <span class="cf-failure-title" id="stock-delisting-title">@Lang.T("STOCK_DELISTED_TITLE")</span>
+            </div>
+            <div class="cf-failure-message">@_gameState.StockDelistingMessage</div>
+            <button class="cf-failure-dismiss" @onclick="DismissStockDelisting">
+                @Lang.T("BTN_I_UNDERSTAND")
+            </button>
+        </div>
+    </div>
+}
+
 @* Crowdfunding Failure Notification *@
 @if (_gameState != null && !string.IsNullOrEmpty(_gameState.CrowdfundingFailureMessage))
 {
@@ -3446,6 +3495,15 @@
         if (_gameState != null)
         {
             _gameState.CrowdfundingFailureMessage = null;
+            StateHasChanged();
+        }
+    }
+
+    private void DismissStockDelisting()
+    {
+        if (_gameState != null)
+        {
+            _gameState.StockDelistingMessage = null;
             StateHasChanged();
         }
     }

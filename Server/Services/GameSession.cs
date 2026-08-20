@@ -105,6 +105,20 @@ public class GameSession
     // Player event tracking
     public decimal PlayerTotalEventCostPaid { get; set; } = 0;
 
+    // === EMERGENCY LOAN (DEBT) ===
+    // Taken automatically when a random event cannot be covered even after liquidating every
+    // sellable asset. Deliberately punitive so borrowing is never a comfortable strategy —
+    // but it replaces the old instant game-over, so a single unlucky event can't end the run.
+    public decimal DebtPrincipal { get; set; } = 0;
+    public decimal TotalDebtBorrowed { get; set; } = 0;
+    public decimal TotalDebtInterestAccrued { get; set; } = 0;
+    public decimal TotalDebtRepaid { get; set; } = 0;
+    public bool HasDebt => DebtPrincipal > 0;
+
+    // Bot carries the same emergency loan so the end-of-game comparison stays fair
+    public decimal BotDebtPrincipal { get; set; } = 0;
+    public decimal BotTotalDebtInterestAccrued { get; set; } = 0;
+
     // Track cumulative investment returns
     public decimal TotalSavingsInterestEarned { get; set; } = 0;
     public decimal TotalDepositoInterestEarned { get; set; } = 0;
@@ -120,6 +134,7 @@ public class GameSession
     public static readonly HashSet<int> EventYears = new() { 2, 3, 5, 6, 8, 10, 11, 12, 14, 15 };
     public const int MONTHS_PER_YEAR = 12;
     public const decimal YEARLY_INCOME = 10_000_000; // Reduced for tighter budgeting
+    public const decimal DEBT_MONTHLY_INTEREST_RATE = 0.03m; // 3% per month (~36% p.a.), compounding
 
     public int TotalGameMonths => (CurrentYear - 1) * MONTHS_PER_YEAR + CurrentMonth;
 
@@ -128,7 +143,7 @@ public class GameSession
     public decimal TotalDepositoValue => Depositos.Sum(d => d.CurrentValue);
     public decimal TotalBondValue => Bonds.Sum(b => b.CurrentValue);
     public decimal TotalCrowdfundingValue => CrowdfundingInvestments.Where(c => !c.HasFailed).Sum(c => c.CurrentValue);
-    public decimal NetWorth => CashBalance + TotalSavingsValue + TotalPortfolioValue + TotalDepositoValue + TotalBondValue + TotalCrowdfundingValue;
+    public decimal NetWorth => CashBalance + TotalSavingsValue + TotalPortfolioValue + TotalDepositoValue + TotalBondValue + TotalCrowdfundingValue - DebtPrincipal;
 
     // Bot calculated values
     public decimal BotIndexFundValue => BotIndexFundUnits * GetBotIndexPrice();
@@ -150,7 +165,7 @@ public class GameSession
     }
     public decimal BotTotalDepositoValue => BotDepositos.Sum(d => d.CurrentValue);
     public decimal BotTotalBondValue => BotBonds.Sum(b => b.CurrentValue);
-    public decimal BotNetWorth => BotCashBalance + BotSavingsBalance + BotIndexFundValue + BotGoldValue + BotTotalDepositoValue + BotTotalBondValue + BotStockValue + BotCryptoValue + BotCrowdfundingValue;
+    public decimal BotNetWorth => BotCashBalance + BotSavingsBalance + BotIndexFundValue + BotGoldValue + BotTotalDepositoValue + BotTotalBondValue + BotStockValue + BotCryptoValue + BotCrowdfundingValue - BotDebtPrincipal;
 
     public void InitializePrices(Dictionary<string, AssetDefinition> assets)
     {
@@ -251,6 +266,12 @@ public class GameSession
             PlayerPortfolioPercent = playerPortfolioPct,
             // Event cost tracking
             PlayerTotalEventCostPaid = PlayerTotalEventCostPaid,
+            // Emergency loan
+            DebtPrincipal = DebtPrincipal,
+            DebtMonthlyInterestRate = DEBT_MONTHLY_INTEREST_RATE,
+            TotalDebtBorrowed = TotalDebtBorrowed,
+            TotalDebtInterestAccrued = TotalDebtInterestAccrued,
+            TotalDebtRepaid = TotalDebtRepaid,
             // Investment performance breakdown (realized + unrealized)
             SavingsInterestEarned = TotalSavingsInterestEarned,
             DepositoInterestEarned = TotalDepositoInterestEarned + Depositos.Sum(d => d.CurrentValue - d.Principal),
@@ -356,6 +377,8 @@ public class GameSession
             EventsPaidFromSavings = BotEventsPaidFromSavings,
             EventsPaidFromPortfolio = BotEventsPaidFromPortfolio,
             TotalEventCostPaid = BotTotalEventCostPaid,
+            DebtPrincipal = BotDebtPrincipal,
+            TotalDebtInterestAccrued = BotTotalDebtInterestAccrued,
             TargetAllocation = "40% Stocks, 20% Deposito, 10% Index Fund, 10% Crypto, 5% Bonds, 5% Gold, 5% CrowdFunding, 5% Savings"
         };
     }

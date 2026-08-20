@@ -678,6 +678,16 @@
                             <span class="label">@UIIcon("trophy") @Lang.T("LABEL_NET_WORTH")</span>
                             <span class="amount">Rp @_gameState.NetWorth.ToString("N0")</span>
                         </div>
+                        @if (_gameState.DebtPrincipal > 0)
+                        {
+                            <div class="balance-row debt-row" title="@Lang.T("DEBT_AUTO_REPAY_NOTE")">
+                                <span class="label">@UIIcon("warning") @Lang.T("LABEL_EMERGENCY_DEBT")</span>
+                                <span class="amount debt-amount">
+                                    -Rp @_gameState.DebtPrincipal.ToString("N0")
+                                    <small class="debt-rate">@Lang.T("DEBT_INTEREST_BADGE", new Dictionary<string, object> { ["monthly"] = (_gameState.DebtMonthlyInterestRate * 100).ToString("0.#") })</small>
+                                </span>
+                            </div>
+                        }
                         <div class="breakdown-grid">
                             <div class="breakdown-item" title="@Lang.T("LABEL_SAVINGS")">
                                 <span class="icon">@UIIcon("savings")</span>
@@ -1603,6 +1613,13 @@
                                 <span class="perf-value negative">-Rp @_gameState.PlayerTotalEventCostPaid.ToString("N0")</span>
                             </div>
                         }
+                        @if (_gameState.TotalDebtInterestAccrued > 0)
+                        {
+                            <div class="performance-stat sub-stat">
+                                <span class="perf-label">@UIIcon("warning") @Lang.T("PERF_DEBT_INTEREST")</span>
+                                <span class="perf-value negative">-Rp @_gameState.TotalDebtInterestAccrued.ToString("N0")</span>
+                            </div>
+                        }
                     </div>
 
                     @if (_gameState.IsMultiplayer && _leaderboard != null && _leaderboard.Count > 0)
@@ -1846,14 +1863,26 @@
                         </div>
 
                         @{
-                            var totalAssets = _gameState.CashBalance + _gameState.TotalPortfolioValue + _gameState.TotalSavingsValue;
-                            var canPay = totalAssets >= (_gameState.EventCost ?? 0);
+                            var evtCost = _gameState.EventCost ?? 0;
+                            // True when at least one payment button above is enabled
+                            var canPayFromSingleSource = _gameState.CashBalance >= evtCost
+                                || (_gameState.SavingsAccount?.Balance ?? 0) >= evtCost
+                                || _gameState.Portfolio.Any(p => p.TotalValue >= evtCost);
+                            var debtRateVars = new Dictionary<string, object>
+                            {
+                                ["monthly"] = (_gameState.DebtMonthlyInterestRate * 100).ToString("0.#"),
+                                ["annual"] = (_gameState.DebtAnnualInterestRate * 100).ToString("0.#")
+                            };
                         }
 
-                        @if (!canPay)
+                        @if (!canPayFromSingleSource)
                         {
-                            <div class="game-over-warning">
-                                @Lang.T("EVENT_GAME_OVER")
+                            <div class="event-fallback">
+                                <p class="event-fallback-note">@Lang.T("EVENT_NO_SINGLE_SOURCE")</p>
+                                <button class="btn-primary event-fallback-btn" @onclick="PayEventWithAutoLiquidation">
+                                    @UIIcon("sell") @Lang.T("EVENT_AUTO_LIQUIDATE_BTN")
+                                </button>
+                                <p class="event-fallback-loan">@UIIcon("warning") @Lang.T("EVENT_EMERGENCY_LOAN_NOTE", debtRateVars)</p>
                             </div>
                         }
                     </div>
@@ -2138,6 +2167,13 @@
                                                 <span class="negative">-Rp @_gameState.PlayerTotalEventCostPaid.ToString("N0")</span>
                                             </div>
                                         }
+                                        @if (_gameState.DebtPrincipal > 0)
+                                        {
+                                            <div class="breakdown-item event-cost-row">
+                                                <span>@UIIcon("warning") @Lang.T("LABEL_EMERGENCY_DEBT")</span>
+                                                <span class="negative">-Rp @_gameState.DebtPrincipal.ToString("N0")</span>
+                                            </div>
+                                        }
                                     </div>
                                 </div>
 
@@ -2340,6 +2376,13 @@
                                         <div class="breakdown-row event-row">
                                             <span>@UIIcon("warning") @Lang.T("PERF_TOTAL_EVENT_COSTS")</span>
                                             <span class="negative">-Rp @_gameState.PlayerTotalEventCostPaid.ToString("N0")</span>
+                                        </div>
+                                    }
+                                    @if (_gameState.TotalDebtInterestAccrued > 0)
+                                    {
+                                        <div class="breakdown-row event-row">
+                                            <span>@UIIcon("warning") @Lang.T("PERF_DEBT_INTEREST")</span>
+                                            <span class="negative">-Rp @_gameState.TotalDebtInterestAccrued.ToString("N0")</span>
                                         </div>
                                     }
                                 </div>
@@ -3373,6 +3416,18 @@
         StopEventCountdownTimer();
 
         var result = await GameClient.PayEventFromPortfolioAsync(assetType);
+        if (!result)
+        {
+            ShowError(Lang.T("ERR_PAY_PORTFOLIO"));
+        }
+    }
+
+    private async Task PayEventWithAutoLiquidation()
+    {
+        if (_gameState == null) return;
+        StopEventCountdownTimer();
+
+        var result = await GameClient.PayEventWithAutoLiquidationAsync();
         if (!result)
         {
             ShowError(Lang.T("ERR_PAY_PORTFOLIO"));

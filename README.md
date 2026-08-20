@@ -60,6 +60,13 @@ Tahun 12 = 2017 — tahun saat data historis crypto mulai tersedia.
 - **Modal awal**: Rp 5.000.000 (`CashBalance`)
 - **Gaji tahunan**: Rp 10.000.000 (`YEARLY_INCOME`)
 - **Pembelian**: Rp 1.000.000 per klik (`UNIT_COST`)
+- **Random event**: terjadi di tahun-tahun tertentu (`EventYears`) dengan biaya 20%-45% dari gaji
+  tahunan (dibatasi Rp 2.000.000 - Rp 4.500.000)
+- **Tidak bisa bayar event?** Aset dijual otomatis (portofolio → obligasi → deposito). Jika masih
+  kurang, sisanya menjadi **Utang Darurat** dengan bunga 3% per bulan (~36% per tahun, berbunga
+  majemuk, `DEBT_MONTHLY_INTEREST_RATE`). Utang dikurangi dari kekayaan bersih dan dilunasi
+  otomatis dari kas serta gaji tahunan. Event **tidak lagi** mengakhiri permainan.
+- **Game over**: hanya saat permainan mencapai akhir 15 tahun
 
 ## Jenis Investasi
 

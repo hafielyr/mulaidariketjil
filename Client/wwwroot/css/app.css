@@ -3915,16 +3915,35 @@ html, body {
     font-style: italic;
 }
 
-.game-over-warning {
-    background: rgba(230, 57, 70, 0.2);
-    border: 2px solid var(--risk-extreme);
+/* Fallback shown when no single funding source covers the event cost */
+.event-fallback {
+    background: rgba(200, 113, 55, 0.15);
+    border: 2px solid var(--risk-medium);
     padding: 1rem;
     border-radius: 12px;
-    color: var(--risk-extreme);
-    font-weight: 700;
     margin-top: 1rem;
-    animation: shake 0.5s infinite;
+    text-align: center;
 }
+
+.event-fallback-note {
+    font-size: 0.85rem;
+    color: var(--text-dark);
+    font-weight: 600;
+    margin: 0 0 0.75rem;
+}
+
+.event-fallback-btn {
+    width: 100%;
+}
+
+.event-fallback-loan {
+    font-size: 0.75rem;
+    color: var(--risk-high);
+    font-style: italic;
+    margin: 0.75rem 0 0;
+}
+
+.event-fallback-loan .an-ui-icon { stroke: var(--risk-high); }
 
 /* ===== INTRO MODAL ===== */
 .intro-desc {
@@ -4990,6 +5009,26 @@ html, body {
 
 .balance-row.networth-total {
     font-weight: 700;
+}
+
+.balance-row.debt-row {
+    border-bottom: 1px dashed var(--risk-high);
+}
+
+.balance-row.debt-row .an-ui-icon { stroke: var(--risk-high); }
+
+.balance-row .debt-amount {
+    color: var(--risk-high);
+    font-weight: 700;
+    text-align: right;
+}
+
+.debt-rate {
+    display: block;
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    font-style: italic;
 }
 
 .balance-row .label {

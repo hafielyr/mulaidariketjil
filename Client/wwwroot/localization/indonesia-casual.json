@@ -39,6 +39,7 @@
   "BTN_RESTART": "Mulai Ulang",
   "BTN_DEPOSIT": "Setor",
   "BTN_WITHDRAW": "Tarik",
+  "BTN_WITHDRAW_AMOUNT": "Tarik",
   "BTN_SELL_1_LOT": "Jual 1 Lot",
   "BTN_SELL_5_LOT": "Jual 5 Lot",
   "BTN_SELL_ALL": "Jual Semua",

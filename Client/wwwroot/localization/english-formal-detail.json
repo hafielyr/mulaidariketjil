@@ -39,6 +39,7 @@
   "BTN_RESTART": "Restart",
   "BTN_DEPOSIT": "Deposit",
   "BTN_WITHDRAW": "Withdraw",
+  "BTN_WITHDRAW_AMOUNT": "Withdraw",
   "BTN_SELL_1_LOT": "Sell 1 Lot",
   "BTN_SELL_5_LOT": "Sell 5 Lot",
   "BTN_SELL_ALL": "Sell All",

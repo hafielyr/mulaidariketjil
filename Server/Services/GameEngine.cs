@@ -1964,6 +1964,206 @@ public class GameEngine
     }
 
     /// <summary>
+    /// Player-triggered fallback for a pending event: auto-sell assets and, if the proceeds are
+    /// still not enough, take a punitive emergency loan. Always resolves the event.
+    /// </summary>
+    public bool PayEventWithAutoLiquidation(string connectionId)
+    {
+        lock (_lock)
+        {
+            var session = GetSession(connectionId);
+            if (session == null || !session.IsEventPending || session.ActiveEvent == null)
+                return false;
+
+            SettleEventWithLiquidation(session, session.EventCost ?? 0);
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Resolve the current market price for a portfolio holding (index/stock/crypto are priced by
+    /// ticker, everything else falls back to the generic asset price table).
+    /// </summary>
+    private decimal GetPortfolioPrice(GameSession session, string key, PortfolioItem item)
+    {
+        if (key.StartsWith("index_") && !string.IsNullOrEmpty(item.Ticker))
+            return session.AvailableIndices.FirstOrDefault(i => i.IndexId == item.Ticker)?.CurrentPrice ?? 1_000_000m;
+        if (key.StartsWith("stock_") && !string.IsNullOrEmpty(item.Ticker))
+            return session.AvailableStocks.FirstOrDefault(st => st.Ticker == item.Ticker)?.CurrentPrice ?? 1_000_000m;
+        if (key.StartsWith("crypto_") && !string.IsNullOrEmpty(item.Ticker))
+            return session.AvailableCryptos.FirstOrDefault(c => c.Symbol == item.Ticker)?.CurrentPrice ?? 1_000_000m;
+
+        return session.AssetPrices.GetValueOrDefault(key, _assets.GetValueOrDefault(key)?.BasePrice ?? 1_000_000m);
+    }
+
+    /// <summary>
+    /// Sell just enough of one holding to raise <paramref name="needed"/>, or the whole position if
+    /// it is worth less than that. Returns the gross sale proceeds.
+    /// </summary>
+    private decimal LiquidateHolding(GameSession session, string key, PortfolioItem item, decimal needed)
+    {
+        var price = GetPortfolioPrice(session, key, item);
+        if (price <= 0 || item.Units <= 0) return 0;
+
+        // Index funds and crypto trade in fractional units; everything else in whole units
+        decimal unitsToSell = (key.StartsWith("index_") || key.StartsWith("crypto_"))
+            ? Math.Ceiling(needed / price * 10_000m) / 10_000m
+            : Math.Ceiling(needed / price);
+        if (unitsToSell > item.Units) unitsToSell = item.Units;
+
+        var proceeds = unitsToSell * price;
+        var costBasis = (item.TotalCost / item.Units) * unitsToSell;
+        item.Units -= unitsToSell;
+        item.TotalCost -= costBasis;
+        if (item.Units <= 0.0001m) session.Portfolio.Remove(key);
+
+        session.TotalRealizedPortfolioGainLoss += proceeds - costBasis;
+        return proceeds;
+    }
+
+    /// <summary>
+    /// Settle the pending event by draining cash, savings and then every sellable holding
+    /// (portfolio → bonds → depositos). Anything still outstanding becomes an emergency loan
+    /// instead of a game over, so no single unlucky event can end the run.
+    /// </summary>
+    /// <param name="remaining">Amount still owed — callers that already drained cash/savings pass the balance.</param>
+    private void SettleEventWithLiquidation(GameSession session, decimal remaining)
+    {
+        var cost = session.EventCost ?? 0;
+        var isId = session.Language == Language.Indonesian;
+        var eventTitle = session.ActiveEvent?.GetTitle(session.AgeMode, session.Language)
+            ?? (isId ? "kejadian tak terduga" : "unexpected event");
+        var sold = new List<string>();
+
+        // 1. Cash
+        if (remaining > 0 && session.CashBalance > 0)
+        {
+            var take = Math.Min(session.CashBalance, remaining);
+            session.CashBalance -= take;
+            remaining -= take;
+        }
+
+        // 2. Savings
+        if (remaining > 0 && session.SavingsAccount != null && session.SavingsAccount.Balance > 0)
+        {
+            var take = Math.Min(session.SavingsAccount.Balance, remaining);
+            session.SavingsAccount.Balance -= take;
+            if (session.SavingsAccount.Balance <= 0) session.SavingsAccount = null;
+            remaining -= take;
+        }
+
+        // 3. Portfolio — most valuable position first, so the fewest holdings get broken up
+        foreach (var (key, item) in session.Portfolio.OrderByDescending(p => p.Value.TotalValue).ToList())
+        {
+            if (remaining <= 0) break;
+
+            var proceeds = LiquidateHolding(session, key, item, remaining);
+            if (proceeds <= 0) continue;
+
+            sold.Add(item.DisplayName);
+            if (proceeds > remaining) session.CashBalance += proceeds - remaining;
+            remaining = Math.Max(0, remaining - proceeds);
+        }
+
+        // 4. Bonds — early redemption returns principal + 50% of the coupon earned so far
+        foreach (var bond in session.Bonds.ToList())
+        {
+            if (remaining <= 0) break;
+
+            var value = bond.Principal + (bond.TotalCouponEarned * 0.5m);
+            session.Bonds.Remove(bond);
+            sold.Add(bond.BondName);
+            if (value > remaining) session.CashBalance += value - remaining;
+            remaining = Math.Max(0, remaining - value);
+        }
+
+        // 5. Depositos — early withdrawal with the product's interest penalty
+        foreach (var deposito in session.Depositos.ToList())
+        {
+            if (remaining <= 0) break;
+
+            var penaltyRate = session.CurrentDepositoRates
+                .FirstOrDefault(r => r.PeriodMonths == deposito.PeriodMonths)?.PenaltyRate ?? 0.5m;
+            var earnedInterest = deposito.CurrentValue - deposito.Principal;
+            var value = deposito.Principal + earnedInterest - (earnedInterest * penaltyRate);
+
+            session.TotalDepositoInterestEarned += value - deposito.Principal;
+            session.Depositos.Remove(deposito);
+            sold.Add(deposito.ProductName);
+            if (value > remaining) session.CashBalance += value - remaining;
+            remaining = Math.Max(0, remaining - value);
+        }
+
+        // 6. Everything is gone and the bill is still not paid — borrow the rest.
+        if (remaining > 0.01m)
+        {
+            var loan = Math.Ceiling(remaining / 1_000m) * 1_000m;
+            session.DebtPrincipal += loan;
+            session.TotalDebtBorrowed += loan;
+            if (loan > remaining) session.CashBalance += loan - remaining;
+            remaining = 0;
+
+            var monthlyPct = GameSession.DEBT_MONTHLY_INTEREST_RATE * 100;
+            var annualPct = GameSession.DEBT_MONTHLY_INTEREST_RATE * 12 * 100;
+            session.AddLogEntry(isId
+                ? $"UTANG DARURAT: Pinjam Rp {loan:N0} untuk menutupi {eventTitle}. Bunga {monthlyPct:0.#}% per bulan (~{annualPct:0}% per tahun) dan berbunga majemuk — dipotong otomatis dari kas dan gaji sampai lunas."
+                : $"EMERGENCY LOAN: Borrowed Rp {loan:N0} to cover {eventTitle}. Interest {monthlyPct:0.#}% per month (~{annualPct:0}% p.a.), compounding — auto-deducted from cash and salary until repaid.");
+        }
+
+        session.PlayerTotalEventCostPaid += cost;
+        var soldNote = sold.Count > 0
+            ? (isId ? $" (jual otomatis: {string.Join(", ", sold.Distinct())})" : $" (auto-sold: {string.Join(", ", sold.Distinct())})")
+            : string.Empty;
+        session.AddLogEntry(isId
+            ? $"Bayar {eventTitle}: Rp {cost:N0}{soldNote}"
+            : $"Paid {eventTitle}: Rp {cost:N0}{soldNote}");
+
+        ClearEvent(session);
+    }
+
+    /// <summary>
+    /// Accrue compounding interest on the emergency loan, then sweep whatever cash is on hand
+    /// into repaying it. Runs once per month-end.
+    /// </summary>
+    private void ProcessDebtMonthEnd(GameSession session)
+    {
+        if (session.DebtPrincipal <= 0) return;
+
+        var interest = session.DebtPrincipal * GameSession.DEBT_MONTHLY_INTEREST_RATE;
+        session.DebtPrincipal += interest;
+        session.TotalDebtInterestAccrued += interest;
+
+        session.AddLogEntry(session.Language == Language.Indonesian
+            ? $"Bunga utang darurat: +Rp {interest:N0} (total utang Rp {session.DebtPrincipal:N0})"
+            : $"Emergency loan interest: +Rp {interest:N0} (total debt Rp {session.DebtPrincipal:N0})");
+
+        RepayDebtFromCash(session);
+    }
+
+    /// <summary>
+    /// Put any positive cash flow (salary, coupons, matured products) toward the emergency loan.
+    /// </summary>
+    private void RepayDebtFromCash(GameSession session)
+    {
+        if (session.DebtPrincipal <= 0 || session.CashBalance <= 0) return;
+
+        var payment = Math.Min(session.CashBalance, session.DebtPrincipal);
+        session.CashBalance -= payment;
+        session.DebtPrincipal -= payment;
+        session.TotalDebtRepaid += payment;
+        if (session.DebtPrincipal < 1m) session.DebtPrincipal = 0;
+
+        var cleared = session.DebtPrincipal <= 0;
+        session.AddLogEntry(session.Language == Language.Indonesian
+            ? (cleared
+                ? $"Utang darurat LUNAS! Cicilan terakhir Rp {payment:N0}."
+                : $"Cicilan utang darurat otomatis: -Rp {payment:N0}, sisa Rp {session.DebtPrincipal:N0}")
+            : (cleared
+                ? $"Emergency loan CLEARED! Final payment Rp {payment:N0}."
+                : $"Auto-repaid emergency loan: -Rp {payment:N0}, remaining Rp {session.DebtPrincipal:N0}"));
+    }
+
+    /// <summary>
     /// Process one game tick. Returns (unlockOccurred, unlockAssetType, autoPayOccurred).
     /// </summary>
     public (bool UnlockOccurred, string? UnlockAssetType, bool AutoPayOccurred) ProcessTick(string connectionId)
@@ -2021,6 +2221,9 @@ public class GameEngine
             session.SavingsAccount.Balance += monthlyInterest;
             session.TotalSavingsInterestEarned += monthlyInterest;
         }
+
+        // Emergency loan interest + automatic repayment from cash
+        ProcessDebtMonthEnd(session);
 
         // Update depositos
         foreach (var deposito in session.Depositos.ToList())
@@ -2154,6 +2357,9 @@ public class GameEngine
             session.AddLogEntry(session.Language == Language.Indonesian
                 ? $"Terima gaji tahunan: Rp {GameSession.YEARLY_INCOME:N0}"
                 : $"Annual income received: Rp {GameSession.YEARLY_INCOME:N0}");
+
+            // Salary goes to the emergency loan first, if there is one
+            RepayDebtFromCash(session);
 
             // Refresh dividend data for the year just completed (CurrentYear-1),
             // since UpdateStockPrices' month==1 refresh doesn't trigger (month goes 13→wrap→1, never seen by UpdateStockPrices)
@@ -2354,6 +2560,19 @@ public class GameEngine
     /// Bot uses aggressive stock-heavy strategy with future data advantage:
     /// 5% Savings, 20% Deposito, 5% Bonds, 10% Index Fund, 40% Stocks, 5% Gold, 10% Crypto, 5% CrowdFunding
     /// </summary>
+    /// <summary>
+    /// Mirror of <see cref="RepayDebtFromCash"/> for the bot (no log entries — bot activity is not logged).
+    /// </summary>
+    private static void RepayBotDebtFromCash(GameSession session)
+    {
+        if (session.BotDebtPrincipal <= 0 || session.BotCashBalance <= 0) return;
+
+        var payment = Math.Min(session.BotCashBalance, session.BotDebtPrincipal);
+        session.BotCashBalance -= payment;
+        session.BotDebtPrincipal -= payment;
+        if (session.BotDebtPrincipal < 1m) session.BotDebtPrincipal = 0;
+    }
+
     private void ProcessBotMonthEnd(GameSession session)
     {
         // Apply savings interest (1% annually = 0.0833% monthly)
@@ -2361,6 +2580,15 @@ public class GameEngine
         {
             var monthlyInterest = session.BotSavingsBalance * (0.01m / 12);
             session.BotSavingsBalance += monthlyInterest;
+        }
+
+        // Emergency loan interest + automatic repayment (mirrors the player's rules)
+        if (session.BotDebtPrincipal > 0)
+        {
+            var debtInterest = session.BotDebtPrincipal * GameSession.DEBT_MONTHLY_INTEREST_RATE;
+            session.BotDebtPrincipal += debtInterest;
+            session.BotTotalDebtInterestAccrued += debtInterest;
+            RepayBotDebtFromCash(session);
         }
 
         // Grow bot stock value using real price changes
@@ -2636,6 +2864,7 @@ public class GameEngine
         if (session.CurrentMonth == 1 && session.CurrentYear > 1)
         {
             session.BotCashBalance += GameSession.YEARLY_INCOME;
+            RepayBotDebtFromCash(session);
 
             // Pay bot stock dividends (same as player)
             if (session.BotStockValue > 0 && !string.IsNullOrEmpty(session.BotStockTicker))
@@ -3302,6 +3531,10 @@ public class GameEngine
             remaining -= withdrawValue;
             session.BotEventsPaidFromPortfolio++;
         }
+
+        // Nothing left to sell — the bot takes the same emergency loan the player would
+        if (remaining > 0)
+            session.BotDebtPrincipal += remaining;
     }
 
     /// <summary>
@@ -3509,14 +3742,14 @@ public class GameEngine
         // Bot experiences the same event and pays automatically
         ProcessBotEventPayment(session, randomizedCost);
 
+        // An event the player cannot cover is no longer fatal: assets get liquidated and any
+        // remaining shortfall becomes a punitive emergency loan (see SettleEventWithLiquidation).
         var totalAssets = session.CashBalance + session.TotalSavingsValue + session.TotalPortfolioValue;
         if (totalAssets < randomizedCost)
         {
-            session.IsGameOver = true;
-            session.GameOverReason = session.Language == Language.Indonesian
-                ? $"Tidak mampu membayar {evtLogTitle}. Total aset Rp {totalAssets:N0} tidak cukup untuk Rp {randomizedCost:N0}."
-                : $"Unable to pay {evtLogTitle}. Total assets Rp {totalAssets:N0} insufficient for Rp {randomizedCost:N0}.";
-            session.AddLogEntry($"GAME OVER: {session.GameOverReason}");
+            session.AddLogEntry(session.Language == Language.Indonesian
+                ? $"Aset Rp {totalAssets:N0} tidak cukup untuk {evtLogTitle} (Rp {randomizedCost:N0}) — aset akan dijual otomatis, sisanya jadi utang darurat."
+                : $"Assets Rp {totalAssets:N0} cannot cover {evtLogTitle} (Rp {randomizedCost:N0}) — assets will be auto-sold and any shortfall becomes an emergency loan.");
         }
     }
 
@@ -3666,15 +3899,10 @@ public class GameEngine
             }
         }
 
-        // Cannot pay — game over
-        var totalAssets = session.CashBalance + session.TotalSavingsValue + session.TotalPortfolioValue;
-        session.IsGameOver = true;
-        session.GameOverReason = session.Language == Language.Indonesian
-            ? $"Tidak mampu membayar {eventTitle}. Total aset Rp {totalAssets:N0} tidak cukup untuk Rp {cost:N0}."
-            : $"Unable to pay {eventTitle}. Total assets Rp {totalAssets:N0} insufficient for Rp {cost:N0}.";
-        session.AddLogEntry($"GAME OVER: {session.GameOverReason}");
-        ClearEvent(session);
-        return false;
+        // No single source covers the cost — liquidate everything sellable and, if still short,
+        // take an emergency loan. Never a game over.
+        SettleEventWithLiquidation(session, remaining);
+        return true;
     }
 
     /// <summary>

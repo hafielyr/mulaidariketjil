@@ -579,6 +579,18 @@ public class GameHub : Hub
         return result;
     }
 
+    /// <summary>
+    /// Last-resort settlement: auto-sell assets and, if still short, take an emergency loan.
+    /// </summary>
+    public async Task<bool> PayEventWithAutoLiquidation()
+    {
+        var result = _gameEngine.PayEventWithAutoLiquidation(Context.ConnectionId);
+        var session = _gameEngine.GetSession(Context.ConnectionId);
+        if (session != null)
+            await Clients.Caller.SendAsync("GameStateUpdated", session.ToGameState());
+        return result;
+    }
+
     // === GAME CONTROL ===
     public async Task ProcessTick()
     {

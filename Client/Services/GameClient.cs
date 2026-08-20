@@ -461,6 +461,12 @@ public class GameClient : IAsyncDisposable
         return await _hubConnection.InvokeAsync<bool>("PayEventFromPortfolio", assetType);
     }
 
+    public async Task<bool> PayEventWithAutoLiquidationAsync()
+    {
+        if (_hubConnection == null) return false;
+        return await _hubConnection.InvokeAsync<bool>("PayEventWithAutoLiquidation");
+    }
+
     // === GAME CONTROL ===
     public async Task ProcessTickAsync()
     {

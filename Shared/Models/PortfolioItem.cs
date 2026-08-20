@@ -355,6 +355,16 @@ public class GameState
     // Player event cost tracking (for excluding from investment performance)
     public decimal PlayerTotalEventCostPaid { get; set; }
 
+    // Emergency loan taken when a random event could not be covered by any asset.
+    // Already subtracted from NetWorth by the server.
+    public decimal DebtPrincipal { get; set; }
+    public decimal DebtMonthlyInterestRate { get; set; }
+    public decimal TotalDebtBorrowed { get; set; }
+    public decimal TotalDebtInterestAccrued { get; set; }
+    public decimal TotalDebtRepaid { get; set; }
+    public bool HasDebt => DebtPrincipal > 0;
+    public decimal DebtAnnualInterestRate => DebtMonthlyInterestRate * 12;
+
     // Investment performance breakdown for summary
     public decimal SavingsInterestEarned { get; set; }
     public decimal DepositoInterestEarned { get; set; }
@@ -493,6 +503,10 @@ public class BotState
     public int EventsPaidFromSavings { get; set; }
     public int EventsPaidFromPortfolio { get; set; }
     public decimal TotalEventCostPaid { get; set; }
+
+    // Emergency loan (same mechanic as the player, for a fair comparison)
+    public decimal DebtPrincipal { get; set; }
+    public decimal TotalDebtInterestAccrued { get; set; }
 
     // Target allocation for display
     public string TargetAllocation { get; set; } = "40% Stocks, 20% Deposito, 10% Index Fund, 10% Crypto, 5% Bonds, 5% Gold, 5% CrowdFunding, 5% Savings";

@@ -51,6 +51,9 @@ public class GameSession
     // Pending notification for failed crowdfunding project
     public string? CrowdfundingFailureMessage { get; set; }
 
+    // Pending notification for a stock that was just delisted from the exchange
+    public string? StockDelistingMessage { get; set; }
+
     // Asset prices for fluctuating assets
     public Dictionary<string, decimal> AssetPrices { get; set; } = new();
     public Dictionary<string, decimal> PreviousPrices { get; set; } = new();
@@ -257,6 +260,7 @@ public class GameSession
             TotalCrowdfundingValue = TotalCrowdfundingValue,
             NetWorth = NetWorth,
             CrowdfundingFailureMessage = CrowdfundingFailureMessage,
+            StockDelistingMessage = StockDelistingMessage,
             IsGameOver = IsGameOver,
             GameOverReason = GameOverReason,
             ActiveEvent = ActiveEvent?.GetTitle(AgeMode, Language),

@@ -1,5 +1,5 @@
 {
-  "description": "Shariah compliance status of 20 Indonesian blue-chip stocks",
+  "description": "Shariah compliance status of the 20 Indonesian blue-chip stocks and the 5 historically-failed stocks",
   "source": "OJK Daftar Efek Syariah (DES), IDX Islamic indices",
   "note": "Conventional banks are automatically excluded from DES due to riba. Status reviewed by OJK twice yearly (May & Nov). Tobacco stocks included per Indonesian DES criteria.",
   "data": {
@@ -82,6 +82,26 @@
     "ANTM": {
       "shariah_compliant": true,
       "reason": "Mining (nickel/gold) - listed in JII/ISSI"
+    },
+    "BUMI": {
+      "shariah_compliant": false,
+      "reason": "Coal miner - interest-bearing debt far above the DES 45% threshold"
+    },
+    "DAVO": {
+      "shariah_compliant": false,
+      "reason": "Cocoa processor - USD notes pushed interest-bearing debt above the DES threshold"
+    },
+    "SIAP": {
+      "shariah_compliant": true,
+      "reason": "Small manufacturer - low interest-bearing debt, listed in ISSI"
+    },
+    "INVS": {
+      "shariah_compliant": true,
+      "reason": "Telecom infrastructure - was listed in ISSI before its 2015 suspension"
+    },
+    "BORN": {
+      "shariah_compliant": false,
+      "reason": "Coal miner - USD 1 billion loan pushed interest-bearing debt above the DES threshold"
     }
   }
 }

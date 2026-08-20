@@ -136,7 +136,7 @@
   "MARKET_BUY_BOND": "Government Bonds",
   "MARKET_BOND_TIP": "\ud83d\udca1 Low risk with monthly coupon payments",
   "MARKET_STOCKS_TITLE": "Individual Stocks",
-  "MARKET_STOCKS_TIP": "\ud83d\udca1 Stock prices update every 2 months. Dividends paid annually!",
+  "MARKET_STOCKS_TIP": "\ud83d\udca1 Stock prices update every 2 months. Dividends paid annually. One stock on this list really failed \u2014 look for the High Risk tag!",
   "MARKET_CRYPTO_TITLE": "Crypto Assets",
   "MARKET_CRYPTO_WARNING": "EXTREMELY RISKY! Can make huge gains or lose everything!",
   "MARKET_CF_TITLE": "Crowdfunding",
@@ -256,5 +256,19 @@
   "ERR_SELL_ALL": "Failed to sell all.",
   "ERR_PAY_CASH": "Failed to pay from cash.",
   "ERR_PAY_SAVINGS": "Failed to pay from savings.",
-  "ERR_PAY_PORTFOLIO": "Investment insufficient to pay."
+  "ERR_PAY_PORTFOLIO": "Investment insufficient to pay.",
+
+  "STOCK_HIGH_RISK_BADGE": "High Risk",
+  "STOCK_HIGH_RISK_TIP": "This company really did fail. Its shares fell to almost nothing.",
+  "STOCK_SUSPENDED_BADGE": "Suspended",
+  "STOCK_DELISTED_BADGE": "Delisted",
+  "STOCK_SUSPENDED_NOTE": "\u26a0\ufe0f The exchange halted trading. You cannot buy or sell this stock.",
+  "STOCK_DELISTED_NOTE": "\u26a0\ufe0f Removed from the exchange. These shares are worth nothing.",
+  "STOCK_HALTED_HOLDING": "\u26a0\ufe0f You cannot sell while trading is halted.",
+  "STOCK_DELISTED_TITLE": "Stock Delisted!",
+  "STOCK_NOTE_BUMI": "Coal giant sunk by debt: Rp 8,750 (2008) \u2192 Rp 50 (2015).",
+  "STOCK_NOTE_INVS": "Ran from Rp 125 to Rp 2,575, then its accounts turned out to be wrong and it was thrown off the exchange.",
+  "STOCK_NOTE_DAVO": "Missed a bond coupon in 2012, was suspended, then kicked off the exchange in 2015.",
+  "STOCK_NOTE_SIAP": "Pumped on a 2014 coal story; the mine never produced anything.",
+  "STOCK_NOTE_BORN": "The hottest IPO of 2010 at Rp 1,170, sunk by a USD 1 billion loan, delisted in 2020."
 }

@@ -1,3 +1,4 @@
+using InvestmentGame.Shared;
 using InvestmentGame.Shared.Models;
 using Microsoft.Extensions.Logging;
 
@@ -35,6 +36,7 @@ public class GameEngine
     private List<DepositoRate> _depositoRates;
     private List<BondRate> _bondRates;
     private readonly List<StockInfo> _allStocks;
+    private readonly List<StockInfo> _allFailedStocks;
     private readonly List<CryptoInfo> _allCryptos;
     private readonly List<CrowdfundingProject> _allCrowdfundingProjects;
     private readonly Random _random = new();
@@ -63,6 +65,7 @@ public class GameEngine
         _depositoRates = RefreshDepositoRates(1); // Game year 1 = 2006
         _bondRates = RefreshBondRates(1);
         _allStocks = InitializeStocks();
+        _allFailedStocks = InitializeFailedStocks();
         _allCryptos = InitializeCryptos();
         _allCrowdfundingProjects = InitializeCrowdfundingProjects();
     }
@@ -575,27 +578,75 @@ public class GameEngine
     }
 
     /// <summary>
-    /// Randomly select 4 stocks from the pool: 3 shariah + 1 non-shariah.
+    /// The five IDX stocks that really failed (suspended and/or delisted) between 2009 and 2020.
+    /// Metadata and monthly prices come from Data/Stocks/13_failed_stock_monthly_prices.json.
+    /// </summary>
+    private List<StockInfo> InitializeFailedStocks()
+    {
+        // Same anchor month as the blue chips: game Y4M1 = calendar Jan 2009, when stocks unlock
+        const int y = 4;
+        const int m = 1;
+
+        return _stockData.FailedStocks.Select(f =>
+        {
+            // Stocks that IPO'd later (BORN, Nov 2010) open at their listing price and stay hidden until then
+            var listed = f.IsListedAt(GameConfig.ToCalendarYear(y), m);
+            var price = (listed
+                ? _stockData.GetPrice(f.Ticker, y, m)
+                : _stockData.GetPrice(f.Ticker, f.FirstListedMonth.year - GameConfig.BaseCalendarYear + 1, f.FirstListedMonth.month))
+                ?? f.FallbackPrice;
+            var div = _stockData.GetDividend(f.Ticker, y);
+            return new StockInfo
+            {
+                Ticker = f.Ticker,
+                CompanyName = f.CompanyName,
+                Sector = f.Sector,
+                CurrentPrice = price,
+                PreviousPrice = price,
+                AnnualDividendPerShare = div?.amount ?? 0,
+                DividendType = div?.type ?? "None",
+                IsShariahCompliant = f.IsShariahCompliant,
+                IsHighRisk = true,
+                IsListed = listed
+            };
+        }).ToList();
+    }
+
+    /// <summary>
+    /// Randomly select 5 stocks: 3 shariah + 1 non-shariah survivor, plus exactly one of the
+    /// historically-failed stocks. Without that last one the pool would be pure survivorship bias.
     /// Clones the StockInfo objects so each session has its own copies.
     /// </summary>
     private List<StockInfo> SelectRandomStocks(Random rng)
     {
         var shariah = _allStocks.Where(s => s.IsShariahCompliant).OrderBy(_ => rng.Next()).Take(3);
         var nonShariah = _allStocks.Where(s => !s.IsShariahCompliant).OrderBy(_ => rng.Next()).Take(1);
+        var failed = _allFailedStocks.OrderBy(_ => rng.Next()).Take(1);
 
-        return shariah.Concat(nonShariah).Select(s => new StockInfo
-        {
-            Ticker = s.Ticker,
-            CompanyName = s.CompanyName,
-            Sector = s.Sector,
-            CurrentPrice = s.CurrentPrice,
-            PreviousPrice = s.PreviousPrice,
-            LastPriceUpdateMonth = 0,
-            AnnualDividendPerShare = s.AnnualDividendPerShare,
-            DividendType = s.DividendType,
-            IsShariahCompliant = s.IsShariahCompliant
-        }).ToList();
+        return shariah.Concat(nonShariah).Concat(failed).Select(CloneStock).ToList();
     }
+
+    /// <summary>
+    /// Copy a stock definition into a fresh per-session instance (prices and failure state are
+    /// then advanced independently for every player).
+    /// </summary>
+    private static StockInfo CloneStock(StockInfo s) => new StockInfo
+    {
+        Ticker = s.Ticker,
+        CompanyName = s.CompanyName,
+        Sector = s.Sector,
+        CurrentPrice = s.CurrentPrice,
+        PreviousPrice = s.PreviousPrice,
+        LastPriceUpdateMonth = 0,
+        AnnualDividendPerShare = s.AnnualDividendPerShare,
+        DividendType = s.DividendType,
+        IsShariahCompliant = s.IsShariahCompliant,
+        IsHighRisk = s.IsHighRisk,
+        IsListed = s.IsListed,
+        IsSuspended = s.IsSuspended,
+        IsDelisted = s.IsDelisted,
+        PriceHistory = new List<decimal>(s.PriceHistory)
+    };
 
     /// <summary>
     /// Randomly select 2 index funds: 1 conventional (from IHSG/LQ45) + 1 shariah (JII).
@@ -900,7 +951,7 @@ public class GameEngine
 
             var state = new RoomMarketState { SharedSeed = seed };
 
-            // Randomly select 4 stocks: 3 shariah + 1 non-shariah (shared for all room players)
+            // Randomly select 5 stocks: 3 shariah + 1 non-shariah + 1 historical failure (shared for all room players)
             state.AvailableStocks = SelectRandomStocks(rng);
 
             // Shared index funds (1 conventional + 1 shariah)
@@ -989,13 +1040,7 @@ public class GameEngine
             session.EventOccurredThisYear = false;
 
             // Clone shared stocks for this player
-            session.InitializeStocks(marketState.AvailableStocks.Select(s => new StockInfo
-            {
-                Ticker = s.Ticker, CompanyName = s.CompanyName, Sector = s.Sector,
-                CurrentPrice = s.CurrentPrice, PreviousPrice = s.PreviousPrice,
-                LastPriceUpdateMonth = 0, AnnualDividendPerShare = s.AnnualDividendPerShare,
-                DividendType = s.DividendType, IsShariahCompliant = s.IsShariahCompliant
-            }).ToList());
+            session.InitializeStocks(marketState.AvailableStocks.Select(CloneStock).ToList());
 
             // Clone shared indices
             session.AvailableIndices = marketState.AvailableIndices.Select(i => new IndexInfo
@@ -1360,6 +1405,9 @@ public class GameEngine
             var stock = session.AvailableStocks.FirstOrDefault(s => s.Ticker == ticker);
             if (stock == null) return false;
 
+            // Suspended/delisted stocks cannot change hands on the exchange
+            if (!stock.IsTradable) return false;
+
             var totalCost = stock.CurrentPrice * lots * 100; // 1 lot = 100 shares
             if (session.CashBalance < totalCost)
                 return false;
@@ -1410,6 +1458,9 @@ public class GameEngine
 
             var stock = session.AvailableStocks.FirstOrDefault(s => s.Ticker == ticker);
             if (stock == null) return false;
+
+            // Once the exchange halts a stock there is no way out of the position
+            if (!stock.IsTradable) return false;
 
             var saleValue = stock.CurrentPrice * sharesToSell;
             var costBasis = (portfolio.TotalCost / portfolio.Units) * sharesToSell;
@@ -1903,6 +1954,8 @@ public class GameEngine
                 else if (assetType.StartsWith("stock_") && !string.IsNullOrEmpty(portfolio.Ticker))
                 {
                     var stock = session.AvailableStocks.FirstOrDefault(s => s.Ticker == portfolio.Ticker);
+                    // A suspended/delisted holding cannot be sold to pay for an event
+                    if (stock != null && !stock.IsTradable) return false;
                     currentPrice = stock?.CurrentPrice ?? 1_000_000m;
                 }
                 else if (assetType.StartsWith("crypto_") && !string.IsNullOrEmpty(portfolio.Ticker))
@@ -1989,7 +2042,12 @@ public class GameEngine
         if (key.StartsWith("index_") && !string.IsNullOrEmpty(item.Ticker))
             return session.AvailableIndices.FirstOrDefault(i => i.IndexId == item.Ticker)?.CurrentPrice ?? 1_000_000m;
         if (key.StartsWith("stock_") && !string.IsNullOrEmpty(item.Ticker))
-            return session.AvailableStocks.FirstOrDefault(st => st.Ticker == item.Ticker)?.CurrentPrice ?? 1_000_000m;
+        {
+            var stock = session.AvailableStocks.FirstOrDefault(st => st.Ticker == item.Ticker);
+            // 0 means "cannot be liquidated": a suspended holding is stuck until the exchange decides
+            if (stock != null && !stock.IsTradable) return 0m;
+            return stock?.CurrentPrice ?? 1_000_000m;
+        }
         if (key.StartsWith("crypto_") && !string.IsNullOrEmpty(item.Ticker))
             return session.AvailableCryptos.FirstOrDefault(c => c.Symbol == item.Ticker)?.CurrentPrice ?? 1_000_000m;
 
@@ -2307,6 +2365,9 @@ public class GameEngine
         // Update portfolio values
         UpdatePortfolioValues(session);
 
+        // Write off holdings in any stock the exchange delisted this month
+        ProcessStockDelistings(session);
+
         // Process crowdfunding investments (check maturity and failures)
         ProcessCrowdfundingMonthEnd(session);
 
@@ -2443,6 +2504,82 @@ public class GameEngine
             {
                 portfolio.PricePerUnit = session.AssetPrices[portfolio.AssetType];
             }
+        }
+    }
+
+    /// <summary>
+    /// Settle any holding in a stock whose listing has been removed. The shares stop existing as a
+    /// tradable asset: the holder only receives <c>ResidualValuePerShare</c> (0 for a wipe-out), and
+    /// the difference against the cost basis is booked as a realized loss.
+    ///
+    /// Driven by the stock's state rather than by an exact month, because month 1 of a game year is
+    /// never observed here (the month counter goes 13 → wrap → 1 later in ProcessMonthEnd).
+    /// </summary>
+    private void ProcessStockDelistings(GameSession session)
+    {
+        // Clear any previous delisting notification
+        session.StockDelistingMessage = null;
+
+        var calendarYear = GameConfig.ToCalendarYear(session.CurrentYear);
+        var isId = session.Language == Language.Indonesian;
+
+        foreach (var stock in session.AvailableStocks.Where(s => s.IsHighRisk && !s.IsDelisted))
+        {
+            var failure = _stockData.GetFailedStock(stock.Ticker);
+            if (failure == null || !failure.IsDelistedAt(calendarYear, session.CurrentMonth)) continue;
+
+            var lastMarketPrice = stock.CurrentPrice;
+
+            // The listing is gone: no price, no dividends, no chart
+            stock.IsDelisted = true;
+            stock.IsSuspended = false;
+            stock.PreviousPrice = lastMarketPrice;
+            stock.CurrentPrice = failure.ResidualValuePerShare;
+            stock.AnnualDividendPerShare = 0;
+            stock.DividendType = "None";
+            stock.PriceHistory = new List<decimal>();
+
+            // The bot is not supposed to hold these, but never leave a phantom position behind
+            if (session.BotStockTicker == stock.Ticker)
+            {
+                session.BotCashBalance += session.BotStockValue > 0 && lastMarketPrice > 0
+                    ? session.BotStockValue / lastMarketPrice * failure.ResidualValuePerShare
+                    : 0;
+                session.BotStockValue = 0;
+                session.BotStockCost = 0;
+                session.BotStockTicker = string.Empty;
+            }
+
+            var key = $"stock_{stock.Ticker}";
+            if (!session.Portfolio.TryGetValue(key, out var holding) || holding.Units <= 0)
+            {
+                session.AddLogEntry(isId
+                    ? $"{stock.Ticker} ({stock.CompanyName}) resmi delisting dari bursa."
+                    : $"{stock.Ticker} ({stock.CompanyName}) was delisted from the exchange.");
+                continue;
+            }
+
+            var residual = holding.Units * failure.ResidualValuePerShare;
+            var loss = residual - holding.TotalCost;
+
+            session.CashBalance += residual;
+            session.TotalRealizedPortfolioGainLoss += loss;
+            session.Portfolio.Remove(key);
+
+            session.AddLogEntry(isId
+                ? $"{stock.Ticker} delisting! {holding.Units:N0} lembar saham hangus, rugi Rp {Math.Abs(loss):N0}."
+                : $"{stock.Ticker} delisted! {holding.Units:N0} shares written off, loss of Rp {Math.Abs(loss):N0}.");
+
+            session.StockDelistingMessage = isId
+                ? $"Saham {stock.Ticker} ({stock.CompanyName}) dihapus dari Bursa Efek Indonesia. "
+                  + $"Investasimu senilai Rp {holding.TotalCost:N0} kini tinggal Rp {residual:N0}. "
+                  + "Perusahaan bisa gagal — itulah sebabnya kita tidak menaruh semua uang di satu saham."
+                : $"{stock.Ticker} ({stock.CompanyName}) has been removed from the Indonesia Stock Exchange. "
+                  + $"Your Rp {holding.TotalCost:N0} position is now worth Rp {residual:N0}. "
+                  + "Companies really do fail — which is why no single stock should hold all your money.";
+
+            _logger.LogInformation("Session {ConnectionId}: {Ticker} delisted at {Year}-{Month}, realized loss {Loss:N0}",
+                session.ConnectionId, stock.Ticker, calendarYear, session.CurrentMonth, loss);
         }
     }
 
@@ -2912,7 +3049,8 @@ public class GameEngine
     {
         var candidates = new List<(StockInfo stock, decimal forwardReturn)>();
 
-        foreach (var stock in session.AvailableStocks)
+        // The bot sticks to the survivor pool — the failure stock is the player's lesson, not a bot trade
+        foreach (var stock in session.AvailableStocks.Where(s => !s.IsHighRisk && s.IsTradable))
         {
             var currentPrice = _stockData.GetPrice(stock.Ticker, session.CurrentYear, session.CurrentMonth);
             if (!currentPrice.HasValue || currentPrice.Value <= 0) continue;
@@ -2943,7 +3081,7 @@ public class GameEngine
         if (candidates.Count > 0)
             return candidates.OrderByDescending(c => c.forwardReturn).First().stock;
 
-        return session.AvailableStocks.OrderByDescending(s => s.AnnualDividendPerShare).First();
+        return session.AvailableStocks.Where(s => !s.IsHighRisk).OrderByDescending(s => s.AnnualDividendPerShare).First();
     }
 
     /// <summary>
@@ -3088,8 +3226,25 @@ public class GameEngine
             }
         }
 
-        // Tip 3: Stock 12-month momentum >20%
-        foreach (var stock in session.AvailableStocks)
+        // Tip 3a: The player is holding the historical-failure stock while it is still tradable
+        foreach (var stock in session.AvailableStocks.Where(s => s.IsHighRisk && s.IsTradable))
+        {
+            var holding = session.Portfolio.GetValueOrDefault($"stock_{stock.Ticker}");
+            if (holding == null || holding.Units <= 0) continue;
+
+            var concentration = netWorth > 0 ? holding.TotalValue / netWorth : 0;
+            session.AdvisorTips.Add(new AdvisorTip
+            {
+                Message = $"Saham {stock.Ticker} berisiko tinggi: perusahaannya punya masalah utang/tata kelola. "
+                          + $"Sekarang {(concentration * 100):F0}% kekayaanmu ada di sana — pertimbangkan mengurangi posisi.",
+                MessageEN = $"{stock.Ticker} is a high-risk stock: the company has debt/governance problems. "
+                            + $"It is now {(concentration * 100):F0}% of your net worth — consider trimming the position.",
+                Category = "warning"
+            });
+        }
+
+        // Tip 3: Stock 12-month momentum >20% (never for the historical-failure stock)
+        foreach (var stock in session.AvailableStocks.Where(s => !s.IsHighRisk))
         {
             var currentPrice = _stockData.GetPrice(stock.Ticker, session.CurrentYear, session.CurrentMonth);
             var price12MAgo = _stockData.GetPrice(stock.Ticker, session.CurrentYear - 1, session.CurrentMonth);
@@ -3671,8 +3826,30 @@ public class GameEngine
 
     private void UpdateStockPrices(GameSession session)
     {
+        var calendarYear = GameConfig.ToCalendarYear(session.CurrentYear);
+
         foreach (var stock in session.AvailableStocks)
         {
+            var failure = stock.IsHighRisk ? _stockData.GetFailedStock(stock.Ticker) : null;
+
+            // A delisted stock has no market price any more (ProcessStockDelistings froze it at
+            // its residual value and wrote off the holding)
+            if (stock.IsDelisted) continue;
+
+            if (failure != null)
+            {
+                stock.IsListed = failure.IsListedAt(calendarYear, session.CurrentMonth);
+                stock.IsSuspended = failure.IsSuspendedAt(calendarYear, session.CurrentMonth);
+
+                // Nothing to show for a company that has not had its IPO yet
+                if (!stock.IsListed)
+                {
+                    stock.PreviousPrice = stock.CurrentPrice;
+                    stock.PriceHistory = new List<decimal>();
+                    continue;
+                }
+            }
+
             var newPrice = _stockData.GetPrice(stock.Ticker, session.CurrentYear, session.CurrentMonth);
             if (newPrice.HasValue)
             {

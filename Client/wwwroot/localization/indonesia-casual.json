@@ -136,7 +136,7 @@
   "MARKET_BUY_BOND": "Beli Obligasi Negara",
   "MARKET_BOND_TIP": "\ud83d\udca1 Obligasi adalah surat utang negara - aman dan dapat kupon tiap bulan!",
   "MARKET_STOCKS_TITLE": "Saham Individual",
-  "MARKET_STOCKS_TIP": "\ud83d\udca1 Harga saham berubah setiap 2 bulan. Dividen dibayar setiap akhir tahun!",
+  "MARKET_STOCKS_TIP": "\ud83d\udca1 Harga saham berubah setiap 2 bulan. Dividen dibayar setiap akhir tahun. Satu saham di daftar ini pernah gagal beneran \u2014 cek label Risiko Tinggi!",
   "MARKET_CRYPTO_TITLE": "Aset Kripto",
   "MARKET_CRYPTO_WARNING": "SANGAT BERISIKO! Bisa untung besar atau kehilangan segalanya!",
   "MARKET_CF_TITLE": "Urun Dana / Crowdfunding",
@@ -256,5 +256,19 @@
   "ERR_SELL_ALL": "Gagal jual semua.",
   "ERR_PAY_CASH": "Gagal bayar dari kas.",
   "ERR_PAY_SAVINGS": "Gagal bayar dari tabungan.",
-  "ERR_PAY_PORTFOLIO": "Investasi tidak cukup untuk bayar."
+  "ERR_PAY_PORTFOLIO": "Investasi tidak cukup untuk bayar.",
+
+  "STOCK_HIGH_RISK_BADGE": "Risiko Tinggi",
+  "STOCK_HIGH_RISK_TIP": "Perusahaan ini benar-benar bermasalah di masa lalu. Sahamnya bisa jatuh sampai hampir nol.",
+  "STOCK_SUSPENDED_BADGE": "Disuspensi",
+  "STOCK_DELISTED_BADGE": "Delisting",
+  "STOCK_SUSPENDED_NOTE": "\u26a0\ufe0f Perdagangan dihentikan bursa. Saham ini tidak bisa dibeli atau dijual.",
+  "STOCK_DELISTED_NOTE": "\u26a0\ufe0f Saham dihapus dari bursa. Nilainya nol.",
+  "STOCK_HALTED_HOLDING": "\u26a0\ufe0f Sahammu tidak bisa dijual selama disuspensi.",
+  "STOCK_DELISTED_TITLE": "Saham Delisting!",
+  "STOCK_NOTE_BUMI": "Raja batu bara yang tenggelam utang: Rp 8.750 (2008) \u2192 Rp 50 (2015).",
+  "STOCK_NOTE_INVS": "Digoreng dari Rp 125 ke Rp 2.575, lalu ketahuan laporan keuangannya bermasalah dan dihapus dari bursa.",
+  "STOCK_NOTE_DAVO": "Gagal bayar kupon obligasi 2012, disuspensi, lalu didepak dari bursa 2015.",
+  "STOCK_NOTE_SIAP": "Digoreng dengan cerita tambang batu bara 2014, tambangnya tidak pernah produksi.",
+  "STOCK_NOTE_BORN": "IPO terpanas 2010 di Rp 1.170, tenggelam utang USD 1 miliar, delisting 2020."
 }

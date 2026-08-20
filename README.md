@@ -57,8 +57,11 @@ Tahun 12 = 2017 — tahun saat data historis crypto mulai tersedia.
 
 - **Durasi**: 15 tahun dalam game (`MAX_YEARS`) = sekitar 15 menit real time
 - **1 tahun game** = 60 detik (12 bulan x 5 detik per bulan)
-- **Modal awal**: Rp 5.000.000 (`CashBalance`)
-- **Gaji tahunan**: Rp 10.000.000 (`YEARLY_INCOME`)
+- **Modal awal**: Rp 20.000.000 (`CashBalance`, sama untuk pemain dan bot)
+- **Gaji tahunan**: Rp 12.000.000 di tahun 1 (`YEARLY_INCOME`), naik **10% majemuk setiap tahun**.
+  Rumus: `gaji(tahun N) = 12.000.000 x 1,10^(N-1)` -> tahun 1 = Rp 12.000.000, tahun 2 =
+  Rp 13.200.000, tahun 3 = Rp 14.520.000, dst. (`GameSession.GetYearlySalary`). Gaji tahun N
+  dibayarkan saat tahun N berakhir.
 - **Pembelian**: Rp 1.000.000 per klik (`UNIT_COST`)
 - **Random event**: terjadi di tahun-tahun tertentu (`EventYears`) dengan biaya 20%-45% dari gaji
   tahunan (dibatasi Rp 2.000.000 - Rp 4.500.000)
@@ -86,7 +89,9 @@ Diurutkan sesuai jadwal unlock. Kolom volatilitas adalah rentang perubahan nilai
 
 > **Jaga agar tetap sinkron:** semua angka di dua bagian di atas berasal langsung dari kode.
 > Durasi, modal awal, gaji, dan harga per unit ada di `Server/Services/GameSession.cs`
-> (`MAX_YEARS`, `CashBalance`, `YEARLY_INCOME`, `UNIT_COST`). Daftar aset, tingkat risiko,
+> (`MAX_YEARS`, `CashBalance`, `YEARLY_INCOME`, `GetYearlySalary()`, `UNIT_COST`); nilai
+> ekonominya berasal dari `Shared/GameConfig.cs` (`StartingCapital`, `BaseYearlyIncome`,
+> `AnnualRaiseRate`). Daftar aset, tingkat risiko,
 > volatilitas, dan jadwal unlock ada di `InitializeAssets()` pada
 > `Server/Services/GameEngine.cs`. Kalau salah satu berubah, perbarui README ini di PR yang sama.
 

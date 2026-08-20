@@ -1,3 +1,4 @@
+using InvestmentGame.Shared;
 using InvestmentGame.Shared.Models;
 
 namespace InvestmentGame.Server.Services;
@@ -15,7 +16,7 @@ public class GameSession
     public int CurrentYear { get; set; } = 1;
     public int CurrentMonth { get; set; } = 1;
     public int MonthProgress { get; set; } = 0;
-    public decimal CashBalance { get; set; } = 5_000_000;
+    public decimal CashBalance { get; set; } = GameConfig.StartingCapital;
 
     // Savings Account (always available, no percentage shown)
     public SavingsAccount? SavingsAccount { get; set; }
@@ -77,7 +78,7 @@ public class GameSession
     // === BOT STATE ===
     // Bot uses aggressive stock-heavy strategy with future data advantage:
     // 40% Stocks, 20% Deposito, 10% Index Fund, 10% Crypto, 5% Bonds, 5% Gold, 5% CrowdFunding, 5% Savings
-    public decimal BotCashBalance { get; set; } = 5_000_000;
+    public decimal BotCashBalance { get; set; } = GameConfig.StartingCapital;
     public decimal BotSavingsBalance { get; set; } = 0;
     public List<DepositoItem> BotDepositos { get; set; } = new();
     public List<BondItem> BotBonds { get; set; } = new();
@@ -133,7 +134,19 @@ public class GameSession
     public const int MAX_YEARS = 15;
     public static readonly HashSet<int> EventYears = new() { 2, 3, 5, 6, 8, 10, 11, 12, 14, 15 };
     public const int MONTHS_PER_YEAR = 12;
-    public const decimal YEARLY_INCOME = 10_000_000; // Reduced for tighter budgeting
+    public const decimal STARTING_CAPITAL = GameConfig.StartingCapital;
+    public const decimal YEARLY_INCOME = GameConfig.BaseYearlyIncome; // Year 1 salary; grows 10% per year (see GetYearlySalary)
+
+    /// <summary>
+    /// Salary earned in <paramref name="gameYear"/>: YEARLY_INCOME * 1.10^(gameYear - 1).
+    /// Year 1 = 12,000,000, year 2 = 13,200,000, year 3 = 14,520,000, ...
+    /// </summary>
+    public static decimal GetYearlySalary(int gameYear) => GameConfig.GetYearlySalary(gameYear);
+
+    /// <summary>
+    /// Total salary credited across game years 1..<paramref name="throughYear"/>.
+    /// </summary>
+    public static decimal GetCumulativeSalary(int throughYear) => GameConfig.GetCumulativeSalary(throughYear);
     public const decimal DEBT_MONTHLY_INTEREST_RATE = 0.03m; // 3% per month (~36% p.a.), compounding
 
     public int TotalGameMonths => (CurrentYear - 1) * MONTHS_PER_YEAR + CurrentMonth;
@@ -301,7 +314,7 @@ public class GameSession
 
     private BotState ToBotState()
     {
-        var totalInvested = 5_000_000m; // Initial cash (matched to player starting amount)
+        var totalInvested = STARTING_CAPITAL; // Initial cash (matched to player starting amount)
         var indexFundValue = BotIndexFundValue;
         var goldValue = BotGoldValue;
         var stockValue = BotStockValue;
@@ -326,7 +339,7 @@ public class GameSession
         var cryptoPct = botNetWorth > 0 ? (cryptoValue / botNetWorth) * 100 : 0;
         var crowdfundingPct = botNetWorth > 0 ? (crowdfundingValue / botNetWorth) * 100 : 0;
 
-        var totalIncomeReceived = totalInvested + (CurrentYear - 1) * YEARLY_INCOME;
+        var totalIncomeReceived = totalInvested + GetCumulativeSalary(CurrentYear - 1);
 
         return new BotState
         {

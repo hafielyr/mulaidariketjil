@@ -1063,7 +1063,7 @@ public class GameEngine
                     PlayerName = s.PlayerId,
                     NetWorth = s.NetWorth,
                     IsBot = false,
-                    TotalProfit = s.NetWorth - 5_000_000 - (s.CurrentYear - 1) * GameSession.YEARLY_INCOME
+                    TotalProfit = s.NetWorth - GameSession.STARTING_CAPITAL - GameSession.GetCumulativeSalary(s.CurrentYear - 1)
                 });
             }
 
@@ -1078,7 +1078,7 @@ public class GameEngine
                     PlayerName = "Financial Advisor Bot",
                     NetWorth = botDisplayNW,
                     IsBot = true,
-                    TotalProfit = botDisplayNW - 5_000_000 - (firstSession.CurrentYear - 1) * GameSession.YEARLY_INCOME
+                    TotalProfit = botDisplayNW - GameSession.STARTING_CAPITAL - GameSession.GetCumulativeSalary(firstSession.CurrentYear - 1)
                 });
             }
 
@@ -2353,10 +2353,15 @@ public class GameEngine
             }
             session.EventOccurredThisYear = false;
 
-            session.CashBalance += GameSession.YEARLY_INCOME;
+            // CurrentYear was just incremented, so the salary paid out is the one earned
+            // during the year that ended: 12M in year 1, +10% compounding every year after.
+            var yearlySalary = GameSession.GetYearlySalary(session.CurrentYear - 1);
+            session.CashBalance += yearlySalary;
             session.AddLogEntry(session.Language == Language.Indonesian
-                ? $"Terima gaji tahunan: Rp {GameSession.YEARLY_INCOME:N0}"
-                : $"Annual income received: Rp {GameSession.YEARLY_INCOME:N0}");
+                ? $"Terima gaji tahunan: Rp {yearlySalary:N0}"
+                : $"Annual income received: Rp {yearlySalary:N0}");
+            _logger.LogInformation("Session {ConnectionId}: annual salary credited for game year {Year}: {Salary:N0}",
+                session.ConnectionId, session.CurrentYear - 1, yearlySalary);
 
             // Salary goes to the emergency loan first, if there is one
             RepayDebtFromCash(session);
@@ -2863,7 +2868,10 @@ public class GameEngine
         // On year end (when player receives income), bot also receives and reinvests
         if (session.CurrentMonth == 1 && session.CurrentYear > 1)
         {
-            session.BotCashBalance += GameSession.YEARLY_INCOME;
+            var botYearlySalary = GameSession.GetYearlySalary(session.CurrentYear - 1);
+            session.BotCashBalance += botYearlySalary;
+            _logger.LogInformation("Session {ConnectionId}: bot annual salary credited for game year {Year}: {Salary:N0}",
+                session.ConnectionId, session.CurrentYear - 1, botYearlySalary);
             RepayBotDebtFromCash(session);
 
             // Pay bot stock dividends (same as player)
@@ -3962,7 +3970,7 @@ public class GameEngine
                     if (cryptoValue > 0) breakdown["Crypto"] = Math.Round((cryptoValue / nw) * 100, 1);
                     if (s.TotalCrowdfundingValue > 0) breakdown["Crowdfunding"] = Math.Round((s.TotalCrowdfundingValue / nw) * 100, 1);
                 }
-                var initialCapital = 5_000_000m + (s.CurrentYear - 1) * GameSession.YEARLY_INCOME;
+                var initialCapital = GameSession.STARTING_CAPITAL + GameSession.GetCumulativeSalary(s.CurrentYear - 1);
                 return new PlayerSummary
                 {
                     ConnectionId = s.ConnectionId,
@@ -4022,7 +4030,7 @@ public class GameEngine
                 session.CurrentYear = 1;
                 session.CurrentMonth = 1;
                 session.MonthProgress = 0;
-                session.CashBalance = 5_000_000; // Reduced starting amount for tighter early game
+                session.CashBalance = GameSession.STARTING_CAPITAL;
                 session.SavingsAccount = null;
                 session.Portfolio.Clear();
                 session.Depositos.Clear();
@@ -4078,7 +4086,7 @@ public class GameEngine
                 session.InitializePrices(_assets);
 
                 // Reset bot state
-                session.BotCashBalance = 5_000_000;
+                session.BotCashBalance = GameSession.STARTING_CAPITAL;
                 session.BotSavingsBalance = 0;
                 session.BotDepositos.Clear();
                 session.BotBonds.Clear();

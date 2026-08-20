@@ -1,4 +1,5 @@
 @page "/"
+@using InvestmentGame.Shared
 @using InvestmentGame.Shared.Models
 @inject GameClient GameClient
 @inject NavigationManager NavigationManager
@@ -3808,8 +3809,8 @@
     private decimal GetPlayerProfit()
     {
         if (_gameState == null) return 0;
-        var initialCapital = 5_000_000m;
-        var yearlyIncome = 10_000_000m * (_gameState.CurrentYear - 1);
+        var initialCapital = GameConfig.StartingCapital;
+        var yearlyIncome = GameConfig.GetCumulativeSalary(_gameState.CurrentYear - 1);
         var totalInvested = initialCapital + yearlyIncome;
         return _gameState.NetWorth - totalInvested;
     }
@@ -3817,8 +3818,8 @@
     private decimal GetPlayerProfitPercent()
     {
         if (_gameState == null) return 0;
-        var initialCapital = 5_000_000m;
-        var yearlyIncome = 10_000_000m * (_gameState.CurrentYear - 1);
+        var initialCapital = GameConfig.StartingCapital;
+        var yearlyIncome = GameConfig.GetCumulativeSalary(_gameState.CurrentYear - 1);
         var totalInvested = initialCapital + yearlyIncome;
         if (totalInvested <= 0) return 0;
         return ((_gameState.NetWorth - totalInvested) / totalInvested) * 100;

@@ -21,9 +21,21 @@ Buka browser dan akses: http://localhost:5000
 ## Fitur Baru
 
 ### Progressive Learning System
-- **Tahun 1**: Hanya investasi risiko rendah (Tabungan, Deposito, Obligasi)
-- **Tahun 2**: Unlock investasi risiko sedang (Emas, ETF/Reksa Dana)
-- **Tahun 3+**: Unlock investasi risiko tinggi (Saham, Equity Crowdfunding)
+Instrumen investasi terbuka bertahap sesuai jadwal unlock (`UnlockYear` / `UnlockMonth`):
+
+| Instrumen | Terbuka pada |
+|---|---|
+| Tabungan | Tahun 1, Bulan 1 |
+| Deposito | Tahun 1, Bulan 6 |
+| Reksa Dana Indeks | Tahun 2, Bulan 1 |
+| Obligasi Negara | Tahun 3, Bulan 1 |
+| Saham | Tahun 4, Bulan 1 |
+| Emas | Tahun 5, Bulan 1 |
+| Urun Dana (Securities Crowdfunding) | Tahun 6, Bulan 6 |
+| Crypto | Tahun 12, Bulan 1 |
+
+Tahun 1 permainan setara tahun kalender 2006 (`GameConfig.BaseCalendarYear`), sehingga
+Tahun 12 = 2017 — tahun saat data historis crypto mulai tersedia.
 
 ### Educational Features
 - Info button pada setiap investasi dengan penjelasan lengkap:
@@ -31,6 +43,7 @@ Buka browser dan akses: http://localhost:5000
   - Tingkat risiko dan penjelasannya
   - Cocok untuk siapa
   - Ekspektasi return
+- Mode Kids dan Mode Dewasa dengan penjelasan yang disesuaikan
 - Intro screen sebelum bermain dengan penjelasan investasi dasar
 - Auto-pause saat membuka info
 
@@ -42,23 +55,33 @@ Buka browser dan akses: http://localhost:5000
 
 ## Aturan Permainan
 
-- **Durasi**: 20 tahun dalam game = 20-30 menit real time
+- **Durasi**: 15 tahun dalam game (`MAX_YEARS`) = sekitar 15 menit real time
 - **1 tahun game** = 60 detik (12 bulan x 5 detik per bulan)
-- **Modal awal**: Rp 10.000.000
-- **Gaji tahunan**: Rp 12.000.000
-- **Pembelian**: Rp 1.000.000 per klik
+- **Modal awal**: Rp 5.000.000 (`CashBalance`)
+- **Gaji tahunan**: Rp 10.000.000 (`YEARLY_INCOME`)
+- **Pembelian**: Rp 1.000.000 per klik (`UNIT_COST`)
 
 ## Jenis Investasi
 
-| Aset | Risiko | Unlock | Volatilitas |
-|------|--------|--------|-------------|
-| Tabungan | Sangat Rendah | Tahun 1 | ~0.1-0.3% |
-| Deposito | Rendah | Tahun 1 | ~0.2-0.5% |
-| Obligasi | Rendah | Tahun 1 | ~0.3-0.8% |
-| Emas | Sedang | Tahun 2 | ~0.8-2.5% |
-| ETF/Reksa Dana | Sedang | Tahun 2 | ~1-3.5% |
-| Saham | Tinggi | Tahun 3 | ~2-8% |
-| Equity Crowdfunding | Sangat Tinggi | Tahun 3 | ~5-15% |
+Diurutkan sesuai jadwal unlock. Kolom volatilitas adalah rentang perubahan nilai per bulan
+(`MinReturn` / `MaxReturn`).
+
+| Aset | Risiko | Unlock | Volatilitas per bulan |
+|------|--------|--------|-----------------------|
+| Tabungan | Sangat Rendah | Tahun 1, Bulan 1 | +0.04% s/d +0.5% (selalu positif) |
+| Deposito | Rendah | Tahun 1, Bulan 6 | Bunga tetap sesuai tenor (2.5%-6% per tahun) |
+| Reksa Dana Indeks | Sedang | Tahun 2, Bulan 1 | -3% s/d +4% |
+| Obligasi Negara | Rendah | Tahun 3, Bulan 1 | Kupon tetap sesuai seri ORI/SR |
+| Saham | Tinggi | Tahun 4, Bulan 1 | -10% s/d +15% |
+| Emas | Sedang | Tahun 5, Bulan 1 | -0.2% s/d +1.2% |
+| Urun Dana | Tinggi | Tahun 6, Bulan 6 | -10% s/d +8% |
+| Crypto | Sangat Tinggi | Tahun 12, Bulan 1 | -20% s/d +30% |
+
+> **Jaga agar tetap sinkron:** semua angka di dua bagian di atas berasal langsung dari kode.
+> Durasi, modal awal, gaji, dan harga per unit ada di `Server/Services/GameSession.cs`
+> (`MAX_YEARS`, `CashBalance`, `YEARLY_INCOME`, `UNIT_COST`). Daftar aset, tingkat risiko,
+> volatilitas, dan jadwal unlock ada di `InitializeAssets()` pada
+> `Server/Services/GameEngine.cs`. Kalau salah satu berubah, perbarui README ini di PR yang sama.
 
 ## Struktur Project
 
@@ -78,6 +101,7 @@ InvestmentGame/
 │   └── Services/
 │       └── GameClient.cs   # SignalR client
 └── Shared/
+    ├── GameConfig.cs       # Calendar-year mapping (Year 1 = 2006)
     └── Models/
         └── PortfolioItem.cs # Shared models
 ```

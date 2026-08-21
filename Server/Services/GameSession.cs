@@ -115,6 +115,10 @@ public class GameSession
     public decimal TotalCrowdfundingInvested { get; set; } = 0;
     public decimal TotalRealizedCrowdfundingGainLoss { get; set; } = 0; // P/L from matured/failed crowdfunding
 
+    // Track shariah investment for percentage calculation
+    public decimal TotalAmountInvested { get; set; } = 0; // Cumulative total invested (excl. savings/cash)
+    public decimal TotalShariahAmountInvested { get; set; } = 0; // Cumulative shariah-compliant invested
+
     public const decimal UNIT_COST = 1_000_000;
     public const int MAX_YEARS = 15;
     public static readonly HashSet<int> EventYears = new() { 2, 3, 5, 6, 8, 10, 11, 12, 14, 15 };
@@ -274,7 +278,9 @@ public class GameSession
                 : null,
             // Per-session rates
             AvailableDepositoRates = CurrentDepositoRates.ToList(),
-            AvailableBondRates = CurrentBondRates.ToList()
+            AvailableBondRates = CurrentBondRates.ToList(),
+            // Shariah percentage
+            ShariahPercentage = TotalAmountInvested > 0 ? (TotalShariahAmountInvested / TotalAmountInvested) * 100 : 0
         };
     }
 

@@ -22,6 +22,13 @@ builder.Services.AddSingleton<CryptoDataService>();
 builder.Services.AddSingleton<GameEngine>();
 builder.Services.AddSingleton<RoomManager>();
 
+// Tax simulation toggle: appsettings.json "InvestmentGame:TaxEnabled" or env INVESTMENTGAME_TAX_ENABLED.
+var taxEnabled = builder.Configuration.GetValue<bool>("InvestmentGame:TaxEnabled");
+var envTax = Environment.GetEnvironmentVariable("INVESTMENTGAME_TAX_ENABLED");
+if (!string.IsNullOrEmpty(envTax) && bool.TryParse(envTax, out var envTaxVal))
+    taxEnabled = envTaxVal;
+builder.Services.AddSingleton(new TaxSettings { Enabled = taxEnabled });
+
 // Configure CORS for development
 builder.Services.AddCors(options =>
 {

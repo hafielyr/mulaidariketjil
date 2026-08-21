@@ -1022,6 +1022,10 @@ public class GameEngine
                 ExpectedReturn = p.ExpectedReturn, RiskLevel = p.RiskLevel, IsActive = true
             }).ToList());
 
+            // Set per-session rates for game year 1
+            session.CurrentDepositoRates = RefreshDepositoRates(1);
+            session.CurrentBondRates = RefreshBondRates(1);
+
             session.UnlockedAssets.Add("tabungan");
             session.AddLogEntry(ageMode == AgeMode.Kids
                 ? "Selamat datang di Tjoean! Mari belajar investasi!"

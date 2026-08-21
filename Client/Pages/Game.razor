@@ -191,7 +191,7 @@
                 </p>
                 <!-- Form -->
                 <div class="hero-cta">
-                    <input type="text" @bind="_playerName" @bind:event="oninput" placeholder="@Lang.T("START_NAME_PLACEHOLDER")" maxlength="20" class="an-input" />
+                    <input type="text" @bind="_playerName" @bind:event="oninput" placeholder="@Lang.T("START_NAME_PLACEHOLDER")" aria-label="@Lang.T("START_NAME_PLACEHOLDER")" maxlength="20" class="an-input" />
 
                     <div class="cta-buttons">
                         <button class="cta-btn cta-btn--primary" @onclick="ShowTutorial" disabled="@(string.IsNullOrWhiteSpace(_playerName) || !_isConnected)" title="Solo Game">
@@ -214,7 +214,7 @@
 
                     <div class="cta-options-row">
                         <label class="toggle-switch">
-                            <input type="checkbox" @bind="_isLightMode" />
+                            <input type="checkbox" @bind="_isLightMode" aria-label="@Lang.T("START_LIGHT_MODE")" />
                             <span class="an-toggle-slider"></span>
                         </label>
                         <span class="cta-option-label">@Lang.T("START_LIGHT_MODE")</span>
@@ -297,7 +297,7 @@
                 <div class="an-start-form">
                     <div class="an-toggle-row">
                         <label class="toggle-switch">
-                            <input type="checkbox" @bind="_isLightMode" />
+                            <input type="checkbox" @bind="_isLightMode" aria-label="@Lang.T("START_LIGHT_MODE")" />
                             <span class="an-toggle-slider"></span>
                         </label>
                         <div class="an-toggle-info">
@@ -305,7 +305,7 @@
                         </div>
                     </div>
 
-                    <select class="an-input an-lang-select" @bind="_selectedLanguage">
+                    <select class="an-input an-lang-select" @bind="_selectedLanguage" aria-label="Language">
                         <option value="@Language.Indonesian">🇮🇩 Bahasa Indonesia</option>
                         <option value="@Language.English">🇺🇸 English</option>
                     </select>
@@ -335,7 +335,7 @@
             <div class="an-start-frame">
                 <h1 class="an-start-title">@Lang.T("MP_JOIN_ROOM")</h1>
                 <div class="an-start-form">
-                    <input type="text" @bind="_roomCodeInput" @bind:event="oninput"
+                    <input type="text" @bind="_roomCodeInput" @bind:event="oninput" aria-label="@Lang.T("MP_ROOM_CODE_PLACEHOLDER")"
                            placeholder="@Lang.T("MP_ROOM_CODE_PLACEHOLDER")"
                            maxlength="6" class="an-input room-code-input" style="text-transform: uppercase; text-align: center; font-size: 1.5rem; letter-spacing: 0.3rem;" />
 
@@ -723,7 +723,7 @@
                             <div class="savings-controls">
                                 <div class="numeric-spin-group">
                                     <button class="spin-btn spin-down" @onclick="() => SpinSavings(-1_000_000)" disabled="@(_savingsAmount <= 0)">−</button>
-                                    <input type="text" inputmode="numeric" value="@_savingsAmountDisplay" @oninput="OnSavingsInput" placeholder="Rp 1.000.000" class="savings-input-compact" />
+                                    <input type="text" inputmode="numeric" value="@_savingsAmountDisplay" @oninput="OnSavingsInput" placeholder="Rp 1.000.000" aria-label="@Lang.T("LABEL_SAVINGS")" class="savings-input-compact" />
                                     <button class="spin-btn spin-up" @onclick="() => SpinSavings(1_000_000)">+</button>
                                 </div>
                                 <button class="btn-action-compact deposit" @onclick="DepositToSavings"
@@ -880,7 +880,7 @@
                                         </div>
                                         <div class="deposito-aro-toggle">
                                             <label class="aro-checkbox-label" title="@Lang.T("DEPOSITO_ARO_TOOLTIP")">
-                                                <input type="checkbox" checked="@deposito.AutoRollOver"
+                                                <input type="checkbox" checked="@deposito.AutoRollOver" aria-label="@Lang.T("DEPOSITO_ARO")"
                                                        @onchange="() => ToggleDepositoAutoRollOver(deposito.Id)"
                                                        disabled="@(_isPaused || _gameState.IsGameOver || _gameState.IsEventPending)" />
                                                 <span class="aro-label">@UIIcon("coin") @Lang.T("DEPOSITO_ARO")</span>
@@ -1019,17 +1019,17 @@
 
                             <div class="deposito-auto-rollover">
                                 <label class="auto-rollover-checkbox" title="@Lang.T("DEPOSITO_ARO_COMPOUND_TOOLTIP")">
-                                    <input type="checkbox" @bind="_depositoAutoRollOver" />
+                                    <input type="checkbox" @bind="_depositoAutoRollOver" aria-label="@Lang.T("DEPOSITO_ARO")" />
                                     <span class="checkbox-label">
                                         @UIIcon("coin") @Lang.T("DEPOSITO_ARO_FULL")
                                     </span>
-                                    <span class="info-icon info-icon-clickable" @onclick="() => _showAroInfo = true" @onclick:stopPropagation="true">ℹ️</span>
+                                    <span class="info-icon info-icon-clickable" role="button" tabindex="0" aria-label="@Lang.T("ARO_TITLE")" @onkeydown="(e) => ActivateOnKey(e, () => _showAroInfo = true)" @onclick="() => _showAroInfo = true" @onclick:stopPropagation="true">ℹ️</span>
                                 </label>
                             </div>
                             <div class="deposito-amount-input">
                                 <div class="numeric-spin-group">
                                     <button class="spin-btn spin-down" @onclick="() => SpinDeposito(-1_000_000)" disabled="@(_depositoAmount <= 0)">−</button>
-                                    <input type="text" inputmode="numeric" value="@_depositoAmountDisplay" @oninput="OnDepositoInput" placeholder="Min Rp 1.000.000" />
+                                    <input type="text" inputmode="numeric" value="@_depositoAmountDisplay" @oninput="OnDepositoInput" placeholder="Min Rp 1.000.000" aria-label="@Lang.T("LABEL_DEPOSITO")" />
                                     <button class="spin-btn spin-up" @onclick="() => SpinDeposito(1_000_000)">+</button>
                                 </div>
                                 <button class="btn-buy" @onclick="BuyDeposito"
@@ -1106,7 +1106,7 @@
                             <div class="bond-amount-input">
                                 <div class="numeric-spin-group">
                                     <button class="spin-btn spin-down" @onclick="() => SpinBond(-1_000_000)" disabled="@(_bondAmount <= 0)">−</button>
-                                    <input type="text" inputmode="numeric" value="@_bondAmountDisplay" @oninput="OnBondInput" placeholder="Min Rp 1.000.000" />
+                                    <input type="text" inputmode="numeric" value="@_bondAmountDisplay" @oninput="OnBondInput" placeholder="Min Rp 1.000.000" aria-label="@Lang.T("LABEL_BONDS")" />
                                     <button class="spin-btn spin-up" @onclick="() => SpinBond(1_000_000)">+</button>
                                 </div>
                                 <button class="btn-buy" @onclick="BuyBond"
@@ -1386,7 +1386,7 @@
                                             <div class="crypto-buy-controls">
                                                 <div class="numeric-spin-group">
                                                     <button class="spin-btn spin-down crypto-spin" @onclick="() => SpinCrypto(crypto.Symbol, -1_000_000)" disabled="@(GetCryptoAmount(crypto.Symbol) <= 0)">−</button>
-                                                    <input type="text" inputmode="numeric" value="@GetCryptoAmountDisplay(crypto.Symbol)" @oninput="(e) => OnCryptoInput(e, crypto.Symbol)"
+                                                    <input type="text" inputmode="numeric" value="@GetCryptoAmountDisplay(crypto.Symbol)" @oninput="(e) => OnCryptoInput(e, crypto.Symbol)" aria-label="@Lang.T("MARKET_CRYPTO_TITLE")"
                                                            placeholder="Rp 1.000.000" class="crypto-input" />
                                                     <button class="spin-btn spin-up crypto-spin" @onclick="() => SpinCrypto(crypto.Symbol, 1_000_000)">+</button>
                                                 </div>
@@ -1461,7 +1461,7 @@
                                             <div class="crowdfunding-buy-controls">
                                                 <div class="numeric-spin-group">
                                                     <button class="spin-btn spin-down" @onclick="() => SpinCrowdfunding(project.ProjectId, -100_000)" disabled="@(GetCrowdfundingAmount(project.ProjectId) <= 0)">−</button>
-                                                    <input type="text" inputmode="numeric" value="@GetCrowdfundingAmountDisplay(project.ProjectId)" @oninput="(e) => OnCrowdfundingInput(e, project.ProjectId)"
+                                                    <input type="text" inputmode="numeric" value="@GetCrowdfundingAmountDisplay(project.ProjectId)" @oninput="(e) => OnCrowdfundingInput(e, project.ProjectId)" aria-label="@Lang.T("PERF_CROWDFUNDING")"
                                                            placeholder="Min Rp 100.000" class="cf-input" />
                                                     <button class="spin-btn spin-up" @onclick="() => SpinCrowdfunding(project.ProjectId, 100_000)">+</button>
                                                 </div>
@@ -1656,7 +1656,7 @@
                     {
                         <div class="divider"></div>
                         <div class="mp-rank-panel">
-                            <div class="mp-rank-header" @onclick='() => _showLeaderboard = !_showLeaderboard'>
+                            <div class="mp-rank-header" role="button" tabindex="0" aria-expanded="@(_showLeaderboard ? "true" : "false")" @onkeydown="(e) => ActivateOnKey(e, () => _showLeaderboard = !_showLeaderboard)" @onclick='() => _showLeaderboard = !_showLeaderboard'>
                                 <span class="mp-rank-icon">📊</span>
                                 <h3>@Lang.T("TXT_RANKING")</h3>
                                 <span class="log-toggle @(_showLeaderboard ? "expanded" : "")">&#9660;</span>
@@ -1683,7 +1683,7 @@
 
                         <!-- Advisory Tips Panel -->
                         <div class="advisor-tips-panel">
-                            <div class="advisor-tips-header" @onclick="() => _advisorExpanded = !_advisorExpanded">
+                            <div class="advisor-tips-header" role="button" tabindex="0" aria-expanded="@(_advisorExpanded ? "true" : "false")" @onkeydown="(e) => ActivateOnKey(e, () => _advisorExpanded = !_advisorExpanded)" @onclick="() => _advisorExpanded = !_advisorExpanded">
                                 <span class="advisor-icon">@UIIcon("bot")</span>
                                 <h3>@Lang.T("ADVISOR_TITLE")</h3>
                                 <span class="log-toggle @(_advisorExpanded ? "expanded" : "")">&#9660;</span>
@@ -1703,7 +1703,7 @@
                     <div class="divider"></div>
 
                     <!-- Game History Log -->
-                    <div class="log-header" @onclick="() => _logExpanded = !_logExpanded">
+                    <div class="log-header" role="button" tabindex="0" aria-expanded="@(_logExpanded ? "true" : "false")" @onkeydown="(e) => ActivateOnKey(e, () => _logExpanded = !_logExpanded)" @onclick="() => _logExpanded = !_logExpanded">
                         <h3>@Lang.T("LOG_TITLE")</h3>
                         <span class="log-toggle @(_logExpanded ? "expanded" : "")">&#9660;</span>
                     </div>
@@ -1728,7 +1728,7 @@
             @if (_gameState.ShowIntro && !string.IsNullOrEmpty(_gameState.IntroAssetType))
             {
                 <div class="modal-overlay">
-                    <div class="modal-content intro-modal">
+                    <div class="modal-content intro-modal" role="dialog" aria-modal="true">
                         @{
                             var introAsset = _assets?.GetValueOrDefault(_gameState.IntroAssetType);
                         }
@@ -1741,7 +1741,7 @@
                                 @for (int i = 0; i < 4; i++)
                                 {
                                     var idx = i;
-                                    <span class="slide-dot @(idx == _introSlide ? "active" : "")" @onclick="() => _introSlide = idx"></span>
+                                    <span class="slide-dot @(idx == _introSlide ? "active" : "")" role="button" tabindex="0" aria-label="@(idx + 1)" aria-current="@(idx == _introSlide ? "true" : "false")" @onkeydown="(e) => ActivateOnKey(e, () => _introSlide = idx)" @onclick="() => _introSlide = idx"></span>
                                 }
                             </div>
 
@@ -1794,7 +1794,7 @@
             @if (_gameState.IsEventPending && !string.IsNullOrEmpty(_gameState.ActiveEvent))
             {
                 <div class="modal-overlay">
-                    <div class="modal-content event-modal">
+                    <div class="modal-content event-modal" role="dialog" aria-modal="true">
                         <h2>@Lang.T("EVENT_TITLE")</h2>
                         <p class="event-description">@_gameState.ActiveEventDescription</p>
                         <div class="event-cost-display">
@@ -1926,7 +1926,7 @@
                     var infoMaxSlide = (!_isLightMode && !string.IsNullOrEmpty(_selectedAsset.RealRules)) ? 4 : 3;
                 
                 <div class="modal-overlay" @onclick="CloseAssetInfo">
-                    <div class="modal-content info-modal" @onclick:stopPropagation="true">
+                    <div class="modal-content info-modal" role="dialog" aria-modal="true" @onclick:stopPropagation="true">
                         <button class="modal-close" @onclick="CloseAssetInfo">&#x2715;</button>
                         <h2>@Icon(_selectedAsset.Type) @GetAssetDisplayName(_selectedAsset, _selectedAsset.DisplayName)</h2>
 
@@ -1935,7 +1935,7 @@
                             @for (int i = 0; i <= infoMaxSlide; i++)
                             {
                                 var idx = i;
-                                <span class="slide-dot @(idx == _infoSlide ? "active" : "")" @onclick="() => _infoSlide = idx"></span>
+                                <span class="slide-dot @(idx == _infoSlide ? "active" : "")" role="button" tabindex="0" aria-label="@(idx + 1)" aria-current="@(idx == _infoSlide ? "true" : "false")" @onkeydown="(e) => ActivateOnKey(e, () => _infoSlide = idx)" @onclick="() => _infoSlide = idx"></span>
                             }
                         </div>
 
@@ -1991,7 +1991,7 @@
             @if (_showAroInfo)
             {
                 <div class="modal-overlay" @onclick="() => _showAroInfo = false">
-                    <div class="modal-content info-modal" @onclick:stopPropagation="true">
+                    <div class="modal-content info-modal" role="dialog" aria-modal="true" @onclick:stopPropagation="true">
                         <button class="modal-close" @onclick="() => _showAroInfo = false">&#x2715;</button>
                         <h2>@UIIcon("coin") @Lang.T("ARO_TITLE")</h2>
                         <div class="info-section">
@@ -2031,7 +2031,7 @@
             @if (_showMpUnlockPopup && !string.IsNullOrEmpty(_mpUnlockAssetType))
             {
                 <div class="modal-overlay">
-                    <div class="modal-content intro-modal">
+                    <div class="modal-content intro-modal" role="dialog" aria-modal="true">
                         @{
                             var mpUnlockAsset = _assets?.GetValueOrDefault(_mpUnlockAssetType);
                         }
@@ -2044,7 +2044,7 @@
                                 @for (int i = 0; i < 4; i++)
                                 {
                                     var idx = i;
-                                    <span class="slide-dot @(idx == _mpUnlockSlide ? "active" : "")" @onclick="() => _mpUnlockSlide = idx"></span>
+                                    <span class="slide-dot @(idx == _mpUnlockSlide ? "active" : "")" role="button" tabindex="0" aria-label="@(idx + 1)" aria-current="@(idx == _mpUnlockSlide ? "true" : "false")" @onkeydown="(e) => ActivateOnKey(e, () => _mpUnlockSlide = idx)" @onclick="() => _mpUnlockSlide = idx"></span>
                                 }
                             </div>
 
@@ -2108,7 +2108,7 @@
             @if (_waitingForUnlockSync && !_showMpUnlockPopup)
             {
                 <div class="modal-overlay waiting-overlay">
-                    <div class="modal-content waiting-modal">
+                    <div class="modal-content waiting-modal" role="dialog" aria-modal="true">
                         <div class="waiting-spinner"></div>
                         <p>@Lang.T("TXT_WAITING_FOR_OTHER_PLAYERS")</p>
                     </div>
@@ -2119,7 +2119,7 @@
             @if (_gameState.IsGameOver)
             {
                 <div class="modal-overlay">
-                    <div class="modal-content game-over-modal">
+                    <div class="modal-content game-over-modal" role="dialog" aria-modal="true">
                         <h2>@GetGameOverTitle(_gameState.NetWorth, _gameState.GameOverReason)</h2>
                         @if (!string.IsNullOrEmpty(_gameState.GameOverReason))
                         {
@@ -2533,10 +2533,10 @@
 @if (_gameState != null && !string.IsNullOrEmpty(_gameState.CrowdfundingFailureMessage))
 {
     <div class="modal-overlay">
-        <div class="crowdfunding-failure-notification">
+        <div class="crowdfunding-failure-notification" role="dialog" aria-modal="true" aria-labelledby="cf-failure-title">
             <div class="cf-failure-header">
                 <span class="cf-failure-icon">@UIIcon("down")</span>
-                <span class="cf-failure-title">@Lang.T("CF_PROJECT_FAILED")</span>
+                <span class="cf-failure-title" id="cf-failure-title">@Lang.T("CF_PROJECT_FAILED")</span>
             </div>
             <div class="cf-failure-message">@_gameState.CrowdfundingFailureMessage</div>
             <button class="cf-failure-dismiss" @onclick="DismissCrowdfundingFailure">
@@ -2727,6 +2727,13 @@
     }
 
     // (GetText() legacy helper removed — all UI text now routes through Lang.T)
+
+    // Keyboard activation for role="button" elements (Enter/Space)
+    private void ActivateOnKey(KeyboardEventArgs e, Action action)
+    {
+        if (e.Key is "Enter" or " ")
+            action();
+    }
 
     private static readonly string[] _monthAbbr = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
     private string MonthAbbr(int month) => (month >= 1 && month <= 12) ? _monthAbbr[month - 1] : month.ToString();

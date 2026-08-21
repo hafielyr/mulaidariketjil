@@ -331,7 +331,7 @@ public class GameEngine
                 MinReturn = -0.002m, // ~-2% annual / 12
                 MaxReturn = 0.012m, // ~15% annual / 12
                 AlwaysPositive = false,
-                RiskLevel = "Sedang",
+                RiskLevel = "Rendah-Menengah",
                 UnlockYear = 5,
                 UnlockMonth = 1,
                 MinimumInvestment = 50_000,

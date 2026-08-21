@@ -50,8 +50,9 @@ public class GameEngine
     private readonly DepositoDataService _depositoData;
     private readonly BondDataService _bondData;
     private readonly CryptoDataService _cryptoData;
+    private readonly TaxSettings _taxSettings;
 
-    public GameEngine(ILogger<GameEngine> logger, StockDataService stockData, GoldDataService goldData, IndexDataService indexData, DepositoDataService depositoData, BondDataService bondData, CryptoDataService cryptoData)
+    public GameEngine(ILogger<GameEngine> logger, StockDataService stockData, GoldDataService goldData, IndexDataService indexData, DepositoDataService depositoData, BondDataService bondData, CryptoDataService cryptoData, TaxSettings taxSettings)
     {
         _logger = logger;
         _stockData = stockData;
@@ -60,6 +61,7 @@ public class GameEngine
         _depositoData = depositoData;
         _bondData = bondData;
         _cryptoData = cryptoData;
+        _taxSettings = taxSettings;
         _assets = InitializeAssets();
         _events = InitializeEvents();
         _depositoRates = RefreshDepositoRates(1); // Game year 1 = 2006
@@ -69,6 +71,9 @@ public class GameEngine
         _allCryptos = InitializeCryptos();
         _allCrowdfundingProjects = InitializeCrowdfundingProjects();
     }
+
+    /// <summary>Apply tax to a gross amount when tax simulation is enabled.</summary>
+    private decimal ApplyTax(decimal gross, decimal rate) => _taxSettings.Enabled ? gross * (1m - rate) : gross;
 
     private Dictionary<string, AssetDefinition> InitializeAssets()
     {
@@ -1463,16 +1468,17 @@ public class GameEngine
             if (!stock.IsTradable) return false;
 
             var saleValue = stock.CurrentPrice * sharesToSell;
+            var netSaleValue = ApplyTax(saleValue, 0.001m); // 0.1% sell tax
             var costBasis = (portfolio.TotalCost / portfolio.Units) * sharesToSell;
 
-            session.CashBalance += saleValue;
+            session.CashBalance += netSaleValue;
             portfolio.Units -= sharesToSell;
             portfolio.TotalCost -= costBasis;
 
             if (portfolio.Units <= 0)
                 session.Portfolio.Remove(key);
 
-            var profit = saleValue - costBasis;
+            var profit = netSaleValue - costBasis;
             session.TotalRealizedPortfolioGainLoss += profit;
             var profitText = profit >= 0 ? $"untung Rp {profit:N0}" : $"rugi Rp {Math.Abs(profit):N0}";
             session.AddLogEntry(session.Language == Language.Indonesian
@@ -2275,7 +2281,8 @@ public class GameEngine
         // Update savings interest (monthly)
         if (session.SavingsAccount != null)
         {
-            var monthlyInterest = session.SavingsAccount.Balance * (session.SavingsAccount.InterestRate / 12);
+            var grossInterest = session.SavingsAccount.Balance * (session.SavingsAccount.InterestRate / 12);
+            var monthlyInterest = ApplyTax(grossInterest, 0.20m); // 20% interest tax
             session.SavingsAccount.Balance += monthlyInterest;
             session.TotalSavingsInterestEarned += monthlyInterest;
         }
@@ -2291,9 +2298,11 @@ public class GameEngine
             {
                 if (deposito.AutoRollOver)
                 {
-                    // Automatically re-invest the maturity value
-                    var maturityValue = deposito.MaturityValue;
-                    session.TotalDepositoInterestEarned += maturityValue - deposito.Principal;
+                    // Automatically re-invest the maturity value (interest taxed 20%)
+                    var grossInterest = deposito.MaturityValue - deposito.Principal;
+                    var netInterest = ApplyTax(grossInterest, 0.20m);
+                    var maturityValue = deposito.Principal + netInterest;
+                    session.TotalDepositoInterestEarned += netInterest;
                     var rate = session.CurrentDepositoRates.FirstOrDefault(r => r.PeriodMonths == deposito.PeriodMonths && r.IsShariah == deposito.IsShariah);
                     if (rate != null)
                     {
@@ -2321,12 +2330,14 @@ public class GameEngine
                 }
                 else
                 {
-                    // Normal maturity - return to cash
-                    session.TotalDepositoInterestEarned += deposito.MaturityValue - deposito.Principal;
-                    session.CashBalance += deposito.MaturityValue;
+                    // Normal maturity - return to cash (interest taxed 20%)
+                    var grossInterest = deposito.MaturityValue - deposito.Principal;
+                    var netInterest = ApplyTax(grossInterest, 0.20m);
+                    session.TotalDepositoInterestEarned += netInterest;
+                    session.CashBalance += deposito.Principal + netInterest;
                     session.AddLogEntry(session.Language == Language.Indonesian
-                        ? $"Deposito jatuh tempo! +Rp {deposito.MaturityValue:N0}"
-                        : $"CD matured! +Rp {deposito.MaturityValue:N0}");
+                        ? $"Deposito jatuh tempo! +Rp {deposito.Principal + netInterest:N0}"
+                        : $"CD matured! +Rp {deposito.Principal + netInterest:N0}");
                     session.Depositos.Remove(deposito);
                 }
             }
@@ -2335,7 +2346,8 @@ public class GameEngine
         // Update bonds - pay monthly coupon
         foreach (var bond in session.Bonds.ToList())
         {
-            var monthlyCoupon = bond.Principal * bond.CouponRate / 12;
+            var grossCoupon = bond.Principal * bond.CouponRate / 12;
+            var monthlyCoupon = ApplyTax(grossCoupon, bond.IsShariah ? 0.15m : 0.10m); // SR 15% / ORI 10% coupon tax
             session.CashBalance += monthlyCoupon;
             session.TotalBondCouponEarned += monthlyCoupon;
 
@@ -2670,7 +2682,7 @@ public class GameEngine
             if (stock != null && stock.AnnualDividendPerShare > 0)
             {
                 // Dividend = shares × annual dividend per share (from real historical data)
-                var dividend = Math.Round(portfolio.Units * stock.AnnualDividendPerShare, 0);
+                var dividend = Math.Round(ApplyTax(portfolio.Units * stock.AnnualDividendPerShare, 0.10m), 0); // 10% dividend tax
                 if (dividend > 0)
                 {
                     totalDividends += dividend;

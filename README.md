@@ -83,7 +83,7 @@ Diurutkan sesuai jadwal unlock. Kolom volatilitas adalah rentang perubahan nilai
 | Reksa Dana Indeks | Sedang | Tahun 2, Bulan 1 | -3% s/d +4% |
 | Obligasi Negara | Rendah | Tahun 3, Bulan 1 | Kupon tetap sesuai seri ORI/SR |
 | Saham | Tinggi | Tahun 4, Bulan 1 | -10% s/d +15% |
-| Emas | Sedang | Tahun 5, Bulan 1 | -0.2% s/d +1.2% |
+| Emas | Rendah-Menengah | Tahun 5, Bulan 1 | -0.2% s/d +1.2% |
 | Urun Dana | Tinggi | Tahun 6, Bulan 6 | -10% s/d +8% |
 | Crypto | Sangat Tinggi | Tahun 12, Bulan 1 | -20% s/d +30% |
 

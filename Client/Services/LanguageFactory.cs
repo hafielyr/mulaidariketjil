@@ -45,6 +45,11 @@ public class LanguageFactory
 
     public string T(string token)
     {
+        // Before the locale files finish loading, return empty rather than
+        // flashing the raw key name (e.g. "START_CONNECTING") to the user.
+        if (!_initialized)
+            return string.Empty;
+
         if (_cache.TryGetValue(_currentKey, out var currentDict) && currentDict.TryGetValue(token, out var text))
             return text;
 

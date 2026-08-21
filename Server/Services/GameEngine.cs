@@ -108,8 +108,6 @@ public class GameEngine
                 ExpectedReturnAdultEN = "Interest rate: 0.5% - 6% p.a. (after 20% tax)",
                 RealRules = "Diawasi OJK. Dijamin LPS hingga Rp 2 miliar. Bunga dihitung harian, dibayar bulanan. Pajak bunga 20%.",
                 BasePrice = 1_000_000,
-                MinReturn = 0.0004m, // ~0.5% annual / 12
-                MaxReturn = 0.005m,  // ~6% annual / 12
                 AlwaysPositive = true,
                 RiskLevel = "Sangat Rendah",
                 UnlockYear = 1,
@@ -1190,10 +1188,12 @@ public class GameEngine
 
             if (session.SavingsAccount == null)
             {
+                // Savings yield: randomized 0.5% - 6% p.a. (matches advertised ExpectedReturn)
+                var savingsRate = 0.005m + (decimal)_random.NextDouble() * 0.055m;
                 session.SavingsAccount = new SavingsAccount
                 {
                     Balance = amount,
-                    InterestRate = 0.01m // 1% annual
+                    InterestRate = savingsRate
                 };
             }
             else

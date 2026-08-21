@@ -306,5 +306,19 @@
   "MP_UNLOCK_READY_STATUS": "Unlock Ready Status",
   "MP_PLAYER_PORTFOLIOS": "Player Portfolios",
   "MP_YEAR": "Year",
-  "MP_WAITING_FOR_PORTFOLIO_DATA": "Waiting for portfolio data..."
+  "MP_WAITING_FOR_PORTFOLIO_DATA": "Waiting for portfolio data...",
+  "FA_TITLE": "Financial Analyst Report",
+  "FA_RETURN_POS": "Total return +{pct}% vs starting capital — solid performance!",
+  "FA_RETURN_NEG": "Total return -{pct}% vs starting capital — portfolio lost value.",
+  "FA_BEAT_BOT": "You beat the bot benchmark!",
+  "FA_LOST_BOT": "Trailing the bot benchmark by Rp {diff}.",
+  "FA_DIVERSIFIED": "Asset allocation is reasonably diversified.",
+  "FA_CONCENTRATED": "{pct}% concentrated in a single asset — high risk.",
+  "FA_CASH_DRAG": "{pct}% idle cash — money not working (cash drag).",
+  "FA_LOW_LIQUIDITY": "Very low liquidity — keep cash for emergencies.",
+  "FA_EMERGENCY_FUND": "Has an emergency savings fund — good!",
+  "FA_NO_EMERGENCY_FUND": "No emergency fund — set aside savings.",
+  "FA_DEBT_USED": "Used Rp {amt} in emergency loans (high interest).",
+  "FA_PORTFOLIO_GAIN": "Gained Rp {amt} from market investments.",
+  "FA_PORTFOLIO_LOSS": "Lost Rp {amt} from market investments."
 }

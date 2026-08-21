@@ -2497,6 +2497,18 @@
                         <div class="rating">
                             @GetRating(_gameState.NetWorth)
                         </div>
+
+                        <div class="financial-analyst-report">
+                            <h3>@UIIcon("chart") @Lang.T("FA_TITLE")</h3>
+                            @foreach (var f in GetFinancialAnalystFindings())
+                            {
+                                <div class="fa-finding @(f.positive ? "fa-positive" : "fa-warning")">
+                                    <span class="fa-icon">@(f.positive ? "✅" : "⚠️")</span>
+                                    <span class="fa-text">@f.text</span>
+                                </div>
+                            }
+                        </div>
+
                         @if (_gameState.IsMultiplayer)
                         {
                             <button class="btn-primary" @onclick="BackToMenu">@Lang.T("BTN_BACK_TO_MENU")</button>
@@ -3685,6 +3697,64 @@
         if (netWorth >= 100_000_000) return Lang.T("RATING_DEVELOPING");
         if (netWorth >= 50_000_000) return Lang.T("RATING_LEARNING");
         return Lang.T("RATING_TRY_AGAIN");
+    }
+
+    private List<(bool positive, string text)> GetFinancialAnalystFindings()
+    {
+        var findings = new List<(bool, string)>();
+        if (_gameState == null) return findings;
+
+        var start = GameConfig.StartingCapital;
+        var nw = _gameState.NetWorth;
+        var retPct = start > 0 ? (nw - start) / start * 100m : 0m;
+
+        // 1. Total return vs starting capital
+        if (retPct >= 0)
+            findings.Add((true, Lang.T("FA_RETURN_POS", new Dictionary<string, object> { ["pct"] = retPct.ToString("F1") })));
+        else
+            findings.Add((false, Lang.T("FA_RETURN_NEG", new Dictionary<string, object> { ["pct"] = Math.Abs(retPct).ToString("F1") })));
+
+        // 2. Beat the bot benchmark
+        var botNw = _gameState.BotState?.DisplayNetWorth ?? 0m;
+        if (botNw > 0)
+        {
+            findings.Add(nw >= botNw
+                ? (true, Lang.T("FA_BEAT_BOT"))
+                : (false, Lang.T("FA_LOST_BOT", new Dictionary<string, object> { ["diff"] = (botNw - nw).ToString("N0") })));
+        }
+
+        // 3. Diversification (concentration check)
+        var alloc = new[] { _gameState.PlayerCashPercent, _gameState.PlayerSavingsPercent, _gameState.PlayerDepositoPercent, _gameState.PlayerBondPercent, _gameState.PlayerPortfolioPercent };
+        var maxAlloc = alloc.Max();
+        if (maxAlloc > 60m)
+            findings.Add((false, Lang.T("FA_CONCENTRATED", new Dictionary<string, object> { ["pct"] = maxAlloc.ToString("F0") })));
+        else
+            findings.Add((true, Lang.T("FA_DIVERSIFIED")));
+
+        // 4. Cash drag / liquidity
+        if (_gameState.PlayerCashPercent > 50m)
+            findings.Add((false, Lang.T("FA_CASH_DRAG", new Dictionary<string, object> { ["pct"] = _gameState.PlayerCashPercent.ToString("F0") })));
+        else if (_gameState.PlayerCashPercent < 10m)
+            findings.Add((false, Lang.T("FA_LOW_LIQUIDITY")));
+
+        // 5. Emergency fund (savings)
+        if (_gameState.TotalSavingsValue > 0)
+            findings.Add((true, Lang.T("FA_EMERGENCY_FUND")));
+        else
+            findings.Add((false, Lang.T("FA_NO_EMERGENCY_FUND")));
+
+        // 6. Emergency loan (debt)
+        if (_gameState.TotalDebtBorrowed > 0)
+            findings.Add((false, Lang.T("FA_DEBT_USED", new Dictionary<string, object> { ["amt"] = _gameState.TotalDebtBorrowed.ToString("N0") })));
+
+        // 7. Market P/L (stocks/crypto/gold)
+        var pl = _gameState.Portfolio.Sum(p => p.ProfitLoss);
+        if (pl > 0)
+            findings.Add((true, Lang.T("FA_PORTFOLIO_GAIN", new Dictionary<string, object> { ["amt"] = pl.ToString("N0") })));
+        else if (pl < 0)
+            findings.Add((false, Lang.T("FA_PORTFOLIO_LOSS", new Dictionary<string, object> { ["amt"] = Math.Abs(pl).ToString("N0") })));
+
+        return findings;
     }
 
     private string GetNetWorthComparisonClass(bool isPlayer)

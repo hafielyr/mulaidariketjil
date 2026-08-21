@@ -306,5 +306,19 @@
   "MP_UNLOCK_READY_STATUS": "Status Siap Lanjut",
   "MP_PLAYER_PORTFOLIOS": "Portofolio Pemain",
   "MP_YEAR": "Tahun",
-  "MP_WAITING_FOR_PORTFOLIO_DATA": "Menunggu data portofolio..."
+  "MP_WAITING_FOR_PORTFOLIO_DATA": "Menunggu data portofolio...",
+  "FA_TITLE": "Laporan Analis Keuangan",
+  "FA_RETURN_POS": "Total return +{pct}% dari modal awal — performa solid!",
+  "FA_RETURN_NEG": "Total return -{pct}% dari modal awal — portofolio merugi.",
+  "FA_BEAT_BOT": "Kamu mengalahkan benchmark bot!",
+  "FA_LOST_BOT": "Tertinggal Rp {diff} dari benchmark bot.",
+  "FA_DIVERSIFIED": "Alokasi aset cukup terdiversifikasi.",
+  "FA_CONCENTRATED": "{pct}% terkonsentrasi di satu aset — risiko tinggi.",
+  "FA_CASH_DRAG": "{pct}% kas menganggur — uang tidak bekerja (cash drag).",
+  "FA_LOW_LIQUIDITY": "Likuiditas sangat rendah — sisakan kas untuk kebutuhan darurat.",
+  "FA_EMERGENCY_FUND": "Punya tabungan (dana darurat) — bagus!",
+  "FA_NO_EMERGENCY_FUND": "Tidak ada dana darurat — sisihkan ke tabungan.",
+  "FA_DEBT_USED": "Memakai pinjaman darurat Rp {amt} (bunga tinggi).",
+  "FA_PORTFOLIO_GAIN": "Untung Rp {amt} dari investasi pasar.",
+  "FA_PORTFOLIO_LOSS": "Rugi Rp {amt} dari investasi pasar."
 }

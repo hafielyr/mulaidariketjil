@@ -9191,3 +9191,29 @@ html, body {
     cursor: help;
     text-decoration: underline dotted rgba(139,111,71,0.5);
 }
+
+/* Financial Analyst report (post-game) */
+.financial-analyst-report {
+    margin-top: 1rem;
+    padding: 0.9rem;
+    border: 2px solid var(--stroke-color);
+    border-radius: 10px;
+    background: var(--card-bg);
+}
+.financial-analyst-report h3 {
+    font-size: 0.95rem;
+    margin-bottom: 0.6rem;
+    color: var(--text-dark);
+}
+.fa-finding {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-start;
+    padding: 0.35rem 0;
+    border-bottom: 1px dashed var(--beige-border);
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+.fa-finding:last-child { border-bottom: none; }
+.fa-positive .fa-text { color: var(--money-green-dark); }
+.fa-warning .fa-text { color: var(--ayam-red); }

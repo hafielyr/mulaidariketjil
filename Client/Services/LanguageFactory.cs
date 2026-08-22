@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using System.Text.RegularExpressions;
 using InvestmentGame.Shared.Models;
 
 namespace InvestmentGame.Client.Services;
@@ -57,6 +58,21 @@ public class LanguageFactory
             return fallback;
 
         return token;
+    }
+
+    /// <summary>
+    /// Localized sector name. Sector strings in the game data stay English because they double as
+    /// the lookup key: "Heavy Equipment" -> SECTOR_HEAVY_EQUIPMENT, "Food &amp; Beverage" -> SECTOR_FOOD_BEVERAGE.
+    /// Falls back to the raw English sector when no token exists, rather than showing the key.
+    /// </summary>
+    public string Sector(string sector)
+    {
+        if (string.IsNullOrWhiteSpace(sector))
+            return string.Empty;
+
+        var token = "SECTOR_" + Regex.Replace(sector.ToUpperInvariant(), "[^A-Z0-9]+", "_").Trim('_');
+        var text = T(token);
+        return text == token ? sector : text;
     }
 
     public string T(string token, Dictionary<string, object> vars)

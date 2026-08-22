@@ -347,7 +347,7 @@ public class GameEngine
             {
                 Type = "crypto",
                 Category = "crypto",
-                DisplayName = "Crypto",
+                DisplayName = "Kripto",
                 DisplayNameAdult = "Aset Kripto",
                 DisplayNameEN = "Crypto",
                 DisplayNameAdultEN = "Cryptocurrency",
@@ -392,7 +392,7 @@ public class GameEngine
                 Type = "crowdfunding",
                 Category = "crowdfunding",
                 DisplayName = "Urun Dana",
-                DisplayNameAdult = "Securities Crowdfunding",
+                DisplayNameAdult = "Layanan Urun Dana",
                 DisplayNameEN = "Crowdfunding",
                 DisplayNameAdultEN = "Equity Crowdfunding",
                 // Light Mode (Kids) - Stoic Orangutan voice
@@ -537,6 +537,8 @@ public class GameEngine
         var y = 4;
         var m = 1;
 
+        // Sector stays English: it is the lookup key for the SECTOR_* localization tokens
+        // (Client/wwwroot/localization/*.json), which is what the market card actually renders.
         var stocks = new List<(string ticker, string name, string sector, decimal fallback, bool shariah)>
         {
             // Non-shariah
@@ -727,20 +729,42 @@ public class GameEngine
     {
         // Real crowdfunding projects from CSV data (Data/CrowdFunding/indonesia_crowdfunding_projects.csv)
         // ROI is annualized, RiskLevel is 1-10 score mapped to failure probability 5%-25%
+        // ProjectType stays English: it is the lookup key for the SECTOR_* localization tokens.
         return new List<CrowdfundingProject>
         {
-            new() { ProjectId = "URD-001", ProjectName = "Proyek Agriculture Modal Kerja 1", ProjectType = "Agriculture", ExpectedReturn = 0.2025m, RiskLevel = 6, LockUpMonths = 6, MinimumInvestment = 100_000, IsActive = true },
-            new() { ProjectId = "URD-002", ProjectName = "Proyek Food & Beverage Modal Kerja 2", ProjectType = "Food & Beverage", ExpectedReturn = 0.0993m, RiskLevel = 1, LockUpMonths = 6, MinimumInvestment = 100_000, IsActive = true },
-            new() { ProjectId = "URD-003", ProjectName = "Proyek Retail Pengembangan 3", ProjectType = "Retail", ExpectedReturn = 0.1952m, RiskLevel = 4, LockUpMonths = 10, MinimumInvestment = 100_000, IsActive = true },
-            new() { ProjectId = "URD-004", ProjectName = "Proyek Manufacturing Ekspansi 4", ProjectType = "Manufacturing", ExpectedReturn = 0.0991m, RiskLevel = 2, LockUpMonths = 5, MinimumInvestment = 100_000, IsActive = true },
-            new() { ProjectId = "URD-005", ProjectName = "Proyek Technology Pengembangan 5", ProjectType = "Technology", ExpectedReturn = 0.1717m, RiskLevel = 4, LockUpMonths = 9, MinimumInvestment = 100_000, IsActive = true },
-            new() { ProjectId = "URD-006", ProjectName = "Proyek Logistics Investasi 6", ProjectType = "Logistics", ExpectedReturn = 0.2093m, RiskLevel = 5, LockUpMonths = 6, MinimumInvestment = 100_000, IsActive = true },
-            new() { ProjectId = "URD-007", ProjectName = "Proyek Education Modal Kerja 7", ProjectType = "Education", ExpectedReturn = 0.1231m, RiskLevel = 3, LockUpMonths = 5, MinimumInvestment = 100_000, IsActive = true },
-            new() { ProjectId = "URD-008", ProjectName = "Proyek Healthcare Modal Kerja 8", ProjectType = "Healthcare", ExpectedReturn = 0.1194m, RiskLevel = 1, LockUpMonths = 4, MinimumInvestment = 100_000, IsActive = true },
-            new() { ProjectId = "URD-009", ProjectName = "Proyek Renewable Energy Modal Kerja 9", ProjectType = "Renewable Energy", ExpectedReturn = 0.3531m, RiskLevel = 10, LockUpMonths = 21, MinimumInvestment = 100_000, IsActive = true },
-            new() { ProjectId = "URD-010", ProjectName = "Proyek Property Pengembangan 10", ProjectType = "Property", ExpectedReturn = 0.1218m, RiskLevel = 3, LockUpMonths = 4, MinimumInvestment = 100_000, IsActive = true },
+            new() { ProjectId = "URD-001", ProjectName = "Proyek Pertanian Modal Kerja 1", ProjectNameEN = "Agriculture Working Capital Project 1", ProjectType = "Agriculture", ExpectedReturn = 0.2025m, RiskLevel = 6, LockUpMonths = 6, MinimumInvestment = 100_000, IsActive = true },
+            new() { ProjectId = "URD-002", ProjectName = "Proyek Makanan & Minuman Modal Kerja 2", ProjectNameEN = "Food & Beverage Working Capital Project 2", ProjectType = "Food & Beverage", ExpectedReturn = 0.0993m, RiskLevel = 1, LockUpMonths = 6, MinimumInvestment = 100_000, IsActive = true },
+            new() { ProjectId = "URD-003", ProjectName = "Proyek Ritel Pengembangan 3", ProjectNameEN = "Retail Development Project 3", ProjectType = "Retail", ExpectedReturn = 0.1952m, RiskLevel = 4, LockUpMonths = 10, MinimumInvestment = 100_000, IsActive = true },
+            new() { ProjectId = "URD-004", ProjectName = "Proyek Manufaktur Ekspansi 4", ProjectNameEN = "Manufacturing Expansion Project 4", ProjectType = "Manufacturing", ExpectedReturn = 0.0991m, RiskLevel = 2, LockUpMonths = 5, MinimumInvestment = 100_000, IsActive = true },
+            new() { ProjectId = "URD-005", ProjectName = "Proyek Teknologi Pengembangan 5", ProjectNameEN = "Technology Development Project 5", ProjectType = "Technology", ExpectedReturn = 0.1717m, RiskLevel = 4, LockUpMonths = 9, MinimumInvestment = 100_000, IsActive = true },
+            new() { ProjectId = "URD-006", ProjectName = "Proyek Logistik Investasi 6", ProjectNameEN = "Logistics Investment Project 6", ProjectType = "Logistics", ExpectedReturn = 0.2093m, RiskLevel = 5, LockUpMonths = 6, MinimumInvestment = 100_000, IsActive = true },
+            new() { ProjectId = "URD-007", ProjectName = "Proyek Pendidikan Modal Kerja 7", ProjectNameEN = "Education Working Capital Project 7", ProjectType = "Education", ExpectedReturn = 0.1231m, RiskLevel = 3, LockUpMonths = 5, MinimumInvestment = 100_000, IsActive = true },
+            new() { ProjectId = "URD-008", ProjectName = "Proyek Kesehatan Modal Kerja 8", ProjectNameEN = "Healthcare Working Capital Project 8", ProjectType = "Healthcare", ExpectedReturn = 0.1194m, RiskLevel = 1, LockUpMonths = 4, MinimumInvestment = 100_000, IsActive = true },
+            new() { ProjectId = "URD-009", ProjectName = "Proyek Energi Terbarukan Modal Kerja 9", ProjectNameEN = "Renewable Energy Working Capital Project 9", ProjectType = "Renewable Energy", ExpectedReturn = 0.3531m, RiskLevel = 10, LockUpMonths = 21, MinimumInvestment = 100_000, IsActive = true },
+            new() { ProjectId = "URD-010", ProjectName = "Proyek Properti Pengembangan 10", ProjectNameEN = "Property Development Project 10", ProjectType = "Property", ExpectedReturn = 0.1218m, RiskLevel = 3, LockUpMonths = 4, MinimumInvestment = 100_000, IsActive = true },
         };
     }
+
+    /// <summary>
+    /// Copy of a catalogue project with its display name already resolved to the session language,
+    /// the same way <see cref="PortfolioItem.DisplayName"/> is resolved before it reaches the client.
+    /// </summary>
+    private static CrowdfundingProject ForLanguage(CrowdfundingProject p, Language language) => new()
+    {
+        ProjectId = p.ProjectId,
+        ProjectName = language == Language.Indonesian ? p.ProjectName : p.ProjectNameEN,
+        ProjectNameEN = p.ProjectNameEN,
+        ProjectType = p.ProjectType,
+        Description = p.Description,
+        FundingGoal = p.FundingGoal,
+        CurrentFunding = 0,
+        MinimumInvestment = p.MinimumInvestment,
+        DaysRemaining = p.DaysRemaining,
+        ExpectedReturn = p.ExpectedReturn,
+        RiskLevel = p.RiskLevel,
+        LockUpMonths = p.LockUpMonths,
+        IsActive = true
+    };
 
     private List<RandomEvent> InitializeEvents()
     {
@@ -896,17 +920,8 @@ public class GameEngine
             session.InitializeCryptos(cryptos);
 
             // Initialize crowdfunding projects (select 3 random projects)
-            var crowdfunding = _allCrowdfundingProjects.OrderBy(_ => _random.Next()).Take(3).Select(p => new CrowdfundingProject
-            {
-                ProjectId = p.ProjectId,
-                ProjectName = p.ProjectName,
-                ProjectType = p.ProjectType,
-                MinimumInvestment = p.MinimumInvestment,
-                ExpectedReturn = p.ExpectedReturn,
-                RiskLevel = p.RiskLevel,
-                LockUpMonths = p.LockUpMonths,
-                IsActive = true
-            }).ToList();
+            var crowdfunding = _allCrowdfundingProjects.OrderBy(_ => _random.Next()).Take(3)
+                .Select(p => ForLanguage(p, session.Language)).ToList();
             session.InitializeCrowdfunding(crowdfunding);
 
             // Savings account is unlocked from the start
@@ -970,10 +985,12 @@ public class GameEngine
             }).ToList();
 
             // Shared crowdfunding projects
+            // Room state keeps both names; each joining player gets the copy for their own language.
             state.AvailableCrowdfunding = _allCrowdfundingProjects.OrderBy(_ => rng.Next()).Take(3).Select(p => new CrowdfundingProject
             {
                 ProjectId = p.ProjectId,
                 ProjectName = p.ProjectName,
+                ProjectNameEN = p.ProjectNameEN,
                 ProjectType = p.ProjectType,
                 MinimumInvestment = p.MinimumInvestment,
                 ExpectedReturn = p.ExpectedReturn,
@@ -1062,13 +1079,8 @@ public class GameEngine
             }).ToList());
 
             // Clone shared crowdfunding
-            session.InitializeCrowdfunding(marketState.AvailableCrowdfunding.Select(p => new CrowdfundingProject
-            {
-                ProjectId = p.ProjectId, ProjectName = p.ProjectName, ProjectType = p.ProjectType,
-                Description = p.Description, FundingGoal = p.FundingGoal, CurrentFunding = 0,
-                MinimumInvestment = p.MinimumInvestment, DaysRemaining = p.DaysRemaining,
-                ExpectedReturn = p.ExpectedReturn, RiskLevel = p.RiskLevel, IsActive = true
-            }).ToList());
+            session.InitializeCrowdfunding(marketState.AvailableCrowdfunding
+                .Select(p => ForLanguage(p, session.Language)).ToList());
 
             // Set per-session rates for game year 1
             session.CurrentDepositoRates = RefreshDepositoRates(1);
@@ -1331,7 +1343,7 @@ public class GameEngine
             deposito.AutoRollOver = !deposito.AutoRollOver;
 
             session.AddLogEntry(session.Language == Language.Indonesian
-                ? $"Roll Over Otomatis: {(deposito.AutoRollOver ? "AKTIF" : "NONAKTIF")} untuk deposito {deposito.PeriodMonths} bulan"
+                ? $"Perpanjangan Otomatis: {(deposito.AutoRollOver ? "AKTIF" : "NONAKTIF")} untuk deposito {deposito.PeriodMonths} bulan"
                 : $"Auto Roll Over: {(deposito.AutoRollOver ? "ENABLED" : "DISABLED")} for {deposito.PeriodMonths}-month CD");
 
             return true;
@@ -2335,7 +2347,7 @@ public class GameEngine
                         if (deposito.IsShariah) session.TotalShariahAmountInvested += maturityValue;
 
                         session.AddLogEntry(session.Language == Language.Indonesian
-                            ? $"🔄 Deposito di-roll over otomatis! Principal baru: Rp {maturityValue:N0}"
+                            ? $"🔄 Deposito diperpanjang otomatis! Pokok baru: Rp {maturityValue:N0}"
                             : $"🔄 CD automatically rolled over! New principal: Rp {maturityValue:N0}");
                     }
                     else
@@ -3953,7 +3965,7 @@ public class GameEngine
 
         var evtLogTitle = evt.GetTitle(session.AgeMode, session.Language);
         session.AddLogEntry(session.Language == Language.Indonesian
-            ? $"EVENT BULAN {session.CurrentMonth}: {evtLogTitle}"
+            ? $"KEJADIAN BULAN {session.CurrentMonth}: {evtLogTitle}"
             : $"MONTH {session.CurrentMonth} EVENT: {evtLogTitle}");
 
         // Bot experiences the same event and pays automatically
@@ -4012,7 +4024,7 @@ public class GameEngine
             session.CashBalance -= remaining;
             session.PlayerTotalEventCostPaid += cost;
             session.AddLogEntry(session.Language == Language.Indonesian
-                ? $"[Auto] Bayar {eventTitle} dari kas: Rp {cost:N0}"
+                ? $"[Otomatis] Bayar {eventTitle} dari kas: Rp {cost:N0}"
                 : $"[Auto] Paid {eventTitle} from cash: Rp {cost:N0}");
             ClearEvent(session);
             return true;
@@ -4030,7 +4042,7 @@ public class GameEngine
             if (session.SavingsAccount.Balance <= 0) session.SavingsAccount = null;
             session.PlayerTotalEventCostPaid += cost;
             session.AddLogEntry(session.Language == Language.Indonesian
-                ? $"[Auto] Bayar {eventTitle} dari tabungan: Rp {cost:N0}"
+                ? $"[Otomatis] Bayar {eventTitle} dari tabungan: Rp {cost:N0}"
                 : $"[Auto] Paid {eventTitle} from savings: Rp {cost:N0}");
             ClearEvent(session);
             return true;
@@ -4061,7 +4073,7 @@ public class GameEngine
                 session.TotalRealizedPortfolioGainLoss += saleValue - costBasis;
                 session.PlayerTotalEventCostPaid += cost;
                 session.AddLogEntry(session.Language == Language.Indonesian
-                    ? $"[Auto] Bayar {eventTitle} dari reksa dana: Rp {cost:N0}"
+                    ? $"[Otomatis] Bayar {eventTitle} dari reksa dana: Rp {cost:N0}"
                     : $"[Auto] Paid {eventTitle} from index fund: Rp {cost:N0}");
                 ClearEvent(session);
                 return true;
@@ -4083,7 +4095,7 @@ public class GameEngine
             session.TotalRealizedPortfolioGainLoss += saleValue - costBasis;
             session.PlayerTotalEventCostPaid += cost;
             session.AddLogEntry(session.Language == Language.Indonesian
-                ? $"[Auto] Bayar {eventTitle} dari emas: Rp {cost:N0}"
+                ? $"[Otomatis] Bayar {eventTitle} dari emas: Rp {cost:N0}"
                 : $"[Auto] Paid {eventTitle} from gold: Rp {cost:N0}");
             ClearEvent(session);
             return true;
@@ -4109,7 +4121,7 @@ public class GameEngine
                 session.TotalRealizedPortfolioGainLoss += saleValue - costBasis;
                 session.PlayerTotalEventCostPaid += cost;
                 session.AddLogEntry(session.Language == Language.Indonesian
-                    ? $"[Auto] Bayar {eventTitle} dari saham: Rp {cost:N0}"
+                    ? $"[Otomatis] Bayar {eventTitle} dari saham: Rp {cost:N0}"
                     : $"[Auto] Paid {eventTitle} from stocks: Rp {cost:N0}");
                 ClearEvent(session);
                 return true;

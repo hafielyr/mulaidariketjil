@@ -12,11 +12,11 @@
   "TUT_INSTRUMENTS_TITLE": "Instrumen Investasi",
   "TUT_INSTRUMENTS_DESC": "Instrumen baru akan terbuka seiring waktu:",
   "TUT_YEAR_1": "Tahun 1",
-  "TUT_YEAR_1_INSTRUMENTS": "Tabungan, Deposito, Obligasi",
+  "TUT_YEAR_1_INSTRUMENTS": "Tabungan + Deposito",
   "TUT_YEAR_2": "Tahun 2",
-  "TUT_YEAR_2_INSTRUMENTS": "Reksa Dana Indeks + Emas",
+  "TUT_YEAR_2_INSTRUMENTS": "Reksa Dana Indeks",
   "TUT_YEAR_3": "Tahun 3",
-  "TUT_YEAR_3_INSTRUMENTS": "Saham + Kripto + Urun Dana",
+  "TUT_YEAR_3_INSTRUMENTS": "Obligasi Negara",
   "TUT_EMERGENCY_TITLE": "Kejadian Darurat",
   "TUT_EMERGENCY_DESC": "Mulai tahun kedua, kejadian darurat akan muncul secara acak setiap tahunnya. Anda akan membutuhkan dana sebesar Rp 2.000.000 hingga Rp 4.500.000 untuk mengatasinya.",
   "TUT_PAY_CASH_LABEL": "Bayar dari Kas",
@@ -153,7 +153,6 @@
   "PERF_CROWDFUNDING": "Urun Dana",
   "PERF_TOTAL_EVENT_COSTS": "Total Biaya Kejadian",
   "PERF_SHARIAH_PERCENTAGE": "Persentase Syariah",
-
   "LOG_TITLE": "Riwayat",
   "ADVISOR_TITLE": "Penasihat Keuangan",
   "INTRO_NEW_UNLOCK": "Investasi Baru Terbuka!",
@@ -359,5 +358,13 @@
   "MON_ABBR_10": "Okt",
   "MON_ABBR_11": "Nov",
   "MON_ABBR_12": "Des",
-  "START_RECONNECTING": "Menghubungkan ulang..."
+  "START_RECONNECTING": "Menghubungkan ulang...",
+  "TUT_YEAR_4_INSTRUMENTS": "Saham",
+  "TUT_YEAR_5_INSTRUMENTS": "Emas",
+  "TUT_YEAR_6_INSTRUMENTS": "Urun Dana",
+  "TUT_YEAR_12_INSTRUMENTS": "Kripto",
+  "TUT_YEAR_4": "Tahun 4",
+  "TUT_YEAR_5": "Tahun 5",
+  "TUT_YEAR_6": "Tahun 6",
+  "TUT_YEAR_12": "Tahun 12"
 }

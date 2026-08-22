@@ -911,7 +911,7 @@ public class GameEngine
 
             // Savings account is unlocked from the start
             session.UnlockedAssets.Add("tabungan");
-            session.AddLogEntry(ageMode == AgeMode.Kids
+            session.AddLogEntry(session.Language == Language.Indonesian
                 ? "Selamat datang di Tjoean! Mari belajar investasi!"
                 : "Welcome to Tjoean Investment Simulator. Let's learn to invest wisely.");
 
@@ -1075,7 +1075,7 @@ public class GameEngine
             session.CurrentBondRates = RefreshBondRates(1);
 
             session.UnlockedAssets.Add("tabungan");
-            session.AddLogEntry(ageMode == AgeMode.Kids
+            session.AddLogEntry(session.Language == Language.Indonesian
                 ? "Selamat datang di Tjoean! Mari belajar investasi!"
                 : "Welcome to Tjoean Investment Simulator. Let's learn to invest wisely.");
 
@@ -4317,7 +4317,7 @@ public class GameEngine
                 session.BotSavingsBalance = initialSavings;
                 session.BotCashBalance -= initialSavings;
 
-                session.AddLogEntry(ageMode == AgeMode.Kids
+                session.AddLogEntry(session.Language == Language.Indonesian
                     ? "Game dimulai ulang! Ayo belajar investasi lagi!"
                     : "Game restarted! Let's learn to invest wisely.");
             }

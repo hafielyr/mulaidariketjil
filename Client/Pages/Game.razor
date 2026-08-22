@@ -222,7 +222,7 @@
 
                     @if (_isReconnecting)
                     {
-                        <p style="color: #DAA520; font-size: 0.85rem; margin-top: 0.5rem; opacity: 0.9;">Reconnecting...</p>
+                        <p style="color: #DAA520; font-size: 0.85rem; margin-top: 0.5rem; opacity: 0.9;">@Lang.T("START_RECONNECTING")</p>
                     }
                     else if (_connectionError != null)
                     {
@@ -566,12 +566,12 @@
                                             @{
                                                 var details = new List<(string label, decimal value, bool isLoss)>
                                                 {
-                                                    ("Savings Int.", ps.SavingsInterestEarned, false),
-                                                    ("CD Interest", ps.DepositoInterestEarned, false),
-                                                    ("Bond Coupon", ps.BondCouponEarned, false),
-                                                    ("Dividends", ps.DividendEarned, false),
-                                                    ("Invest. P/L", ps.PortfolioGainLoss, ps.PortfolioGainLoss < 0),
-                                                    ("Crowdfund.", ps.CrowdfundingGainLoss, ps.CrowdfundingGainLoss < 0),
+                                                    (Lang.T("PERF_SAVINGS_INTEREST"), ps.SavingsInterestEarned, false),
+                                                    (Lang.T("PERF_DEPOSITO_INTEREST"), ps.DepositoInterestEarned, false),
+                                                    (Lang.T("PERF_BOND_COUPONS"), ps.BondCouponEarned, false),
+                                                    (Lang.T("PERF_STOCK_DIVIDENDS"), ps.DividendEarned, false),
+                                                    (Lang.T("PERF_PORTFOLIO"), ps.PortfolioGainLoss, ps.PortfolioGainLoss < 0),
+                                                    (Lang.T("PERF_CROWDFUNDING"), ps.CrowdfundingGainLoss, ps.CrowdfundingGainLoss < 0),
                                                 };
                                             }
                                             @foreach (var d in details.Where(d => d.value != 0))
@@ -1155,7 +1155,7 @@
                                                 }
                                                 <div class="stock-details">
                                                     <span class="stock-name">@stock.CompanyName</span>
-                                                    <span class="stock-meta">@stock.Sector @if(stock.PaysDividend) { <span class="dividend-badge" title="@Lang.T("TXT_ANNUAL_DIVIDEND_PER_SHARE")">@UIIcon("coin") Rp @stock.AnnualDividendPerShare.ToString("N0")/shr</span> } @if(stock.DividendType != "None" && stock.PaysDividend) { <span class="dividend-type-badge @(stock.DividendType == "Interim" ? "interim" : stock.DividendType == "Final+Interim" ? "final-interim" : "final")">@stock.DividendType</span> }</span>
+                                                    <span class="stock-meta">@Lang.Sector(stock.Sector) @if(stock.PaysDividend) { <span class="dividend-badge" title="@Lang.T("TXT_ANNUAL_DIVIDEND_PER_SHARE")">@UIIcon("coin") Rp @stock.AnnualDividendPerShare.ToString("N0")/shr</span> } @if(stock.DividendType != "None" && stock.PaysDividend) { <span class="dividend-type-badge @(stock.DividendType == "Interim" ? "interim" : stock.DividendType == "Final+Interim" ? "final-interim" : "final")">@stock.DividendType</span> }</span>
                                                     @if (stock.IsHighRisk)
                                                     {
                                                         <span class="stock-risk-note">@Lang.T($"STOCK_NOTE_{stock.Ticker}")</span>
@@ -1439,7 +1439,7 @@
                                                 <span class="project-icon">@projectIcon</span>
                                                 <span class="project-name">@project.ProjectName</span>
                                             </div>
-                                            <div class="project-type-badge">@project.ProjectType</div>
+                                            <div class="project-type-badge">@Lang.Sector(project.ProjectType)</div>
                                             <div class="project-stats">
                                                 <div class="stat-row">
                                                     <span>@Lang.T("LABEL_RETURN"):</span>
@@ -2292,11 +2292,11 @@
                                                 }
                                                 @if (_gameState.BotState.CryptoPercent > 0)
                                                 {
-                                                    <div class="legend-item"><span class="legend-color crypto"></span>Crypto @_gameState.BotState.CryptoPercent.ToString("F1")%</div>
+                                                    <div class="legend-item"><span class="legend-color crypto"></span>@Lang.T("LABEL_CRYPTO") @_gameState.BotState.CryptoPercent.ToString("F1")%</div>
                                                 }
                                                 @if (_gameState.BotState.CrowdfundingPercent > 0)
                                                 {
-                                                    <div class="legend-item"><span class="legend-color crowdfunding"></span>CrowdFunding @_gameState.BotState.CrowdfundingPercent.ToString("F1")%</div>
+                                                    <div class="legend-item"><span class="legend-color crowdfunding"></span>@Lang.T("LABEL_CROWDFUNDING") @_gameState.BotState.CrowdfundingPercent.ToString("F1")%</div>
                                                 }
                                             </div>
                                         </div>
@@ -2351,7 +2351,7 @@
                                             @if (_gameState.BotState.CryptoValue > 0)
                                             {
                                                 <div class="breakdown-item">
-                                                    <span>@Icon("crypto") Crypto @(!string.IsNullOrEmpty(_gameState.BotState.CryptoSymbol) ? $"({_gameState.BotState.CryptoSymbol})" : "")</span>
+                                                    <span>@Icon("crypto") @Lang.T("LABEL_CRYPTO") @(!string.IsNullOrEmpty(_gameState.BotState.CryptoSymbol) ? $"({_gameState.BotState.CryptoSymbol})" : "")</span>
                                                     <span>Rp @_gameState.BotState.CryptoValue.ToString("N0")
                                                         @{ var cryptoProfit = _gameState.BotState.CryptoValue - _gameState.BotState.CryptoCost;
                                                            var cryptoProfitPct = _gameState.BotState.CryptoCost > 0 ? (cryptoProfit / _gameState.BotState.CryptoCost * 100) : 0; }
@@ -2362,7 +2362,7 @@
                                             @if (_gameState.BotState.CrowdfundingValue > 0)
                                             {
                                                 <div class="breakdown-item">
-                                                    <span>@Icon("crowdfunding") CrowdFunding</span>
+                                                    <span>@Icon("crowdfunding") @Lang.T("LABEL_CROWDFUNDING")</span>
                                                     <span>Rp @_gameState.BotState.CrowdfundingValue.ToString("N0")
                                                         @{ var cfProfit = _gameState.BotState.CrowdfundingValue - _gameState.BotState.CrowdfundingCost;
                                                            var cfProfitPct = _gameState.BotState.CrowdfundingCost > 0 ? (cfProfit / _gameState.BotState.CrowdfundingCost * 100) : 0; }
@@ -2796,8 +2796,7 @@
             action();
     }
 
-    private static readonly string[] _monthAbbr = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
-    private string MonthAbbr(int month) => (month >= 1 && month <= 12) ? _monthAbbr[month - 1] : month.ToString();
+    private string MonthAbbr(int month) => (month >= 1 && month <= 12) ? Lang.T($"MON_ABBR_{month}") : month.ToString();
 
     // Currency formatting helper - formats with 2 decimal places
     private string FormatCurrency(decimal amount)

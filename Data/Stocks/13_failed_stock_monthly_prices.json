@@ -9,7 +9,8 @@
     "INVS, DAVO, SIAP, BORN: RECONSTRUCTED price paths. Yahoo Finance and the other free feeds no longer serve history for suspended/delisted IDX tickers, so month-end prices are interpolated between publicly documented anchors (IPO/last-traded/reopening prices, suspension and delisting dates, and the Rp 50 IDX price floor). Treat the individual monthly numbers as illustrative; the events, dates and orders of magnitude are real and sourced per stock below.",
     "Rp 50 was the IDX minimum price ('gocap') for the whole period - a stock at 50 that nobody will buy is already a total loss in practice.",
     "A suspended stock keeps its last traded price in this file, which is what the exchange screen showed while trading was halted.",
-    "INVS (3 Jul 2009) and BORN (26 Nov 2010) listed after stocks unlock in game year 4, so they only appear in the market from those months ('listed_from')."
+    "INVS (3 Jul 2009) and BORN (26 Nov 2010) listed after stocks unlock in game year 4, so they only appear in the market from those months ('listed_from').",
+    "'sector' stays English on purpose: it is the lookup key for the SECTOR_* localization tokens in Client/wwwroot/localization/*.json, which is what the UI actually renders."
   ],
   "failures": {
     "BUMI": {

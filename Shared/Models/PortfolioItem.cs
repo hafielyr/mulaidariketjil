@@ -132,8 +132,11 @@ public class CryptoInfo
 public class CrowdfundingProject
 {
     public string ProjectId { get; set; } = string.Empty;
+    /// <summary>Indonesian display name. Resolved to the session language before the client sees it.</summary>
     public string ProjectName { get; set; } = string.Empty;
-    public string ProjectType { get; set; } = string.Empty; // "Commodities", "Farm", "Tech Startup", "F&B", "Retail"
+    /// <summary>English display name, same pattern as <see cref="AssetDefinition.DisplayNameEN"/>.</summary>
+    public string ProjectNameEN { get; set; } = string.Empty;
+    public string ProjectType { get; set; } = string.Empty; // English sector key, localized via SECTOR_* on the client
     public string Description { get; set; } = string.Empty;
     public decimal FundingGoal { get; set; }
     public decimal CurrentFunding { get; set; }

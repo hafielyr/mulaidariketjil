@@ -12,11 +12,11 @@
   "TUT_INSTRUMENTS_TITLE": "Investment Instruments",
   "TUT_INSTRUMENTS_DESC": "New instruments unlock over time:",
   "TUT_YEAR_1": "Year 1",
-  "TUT_YEAR_1_INSTRUMENTS": "Savings, Fixed Deposit, Bonds",
+  "TUT_YEAR_1_INSTRUMENTS": "Savings + Fixed Deposit",
   "TUT_YEAR_2": "Year 2",
-  "TUT_YEAR_2_INSTRUMENTS": "Index Fund + Gold",
+  "TUT_YEAR_2_INSTRUMENTS": "Index Fund",
   "TUT_YEAR_3": "Year 3",
-  "TUT_YEAR_3_INSTRUMENTS": "Stocks + Crypto + Crowdfunding",
+  "TUT_YEAR_3_INSTRUMENTS": "Government Bonds",
   "TUT_EMERGENCY_TITLE": "Emergency Events",
   "TUT_EMERGENCY_DESC": "Starting from the second year, emergency events will occur randomly each year. You will need between Rp 2,000,000 and Rp 4,500,000 to handle them.",
   "TUT_PAY_CASH_LABEL": "Pay from Cash",
@@ -153,7 +153,6 @@
   "PERF_CROWDFUNDING": "Crowdfunding",
   "PERF_TOTAL_EVENT_COSTS": "Total Event Costs",
   "PERF_SHARIAH_PERCENTAGE": "Shariah Percentage",
-
   "LOG_TITLE": "History",
   "ADVISOR_TITLE": "Financial Advisor",
   "INTRO_NEW_UNLOCK": "New Investment Unlocked!",
@@ -359,5 +358,13 @@
   "MON_ABBR_10": "Oct",
   "MON_ABBR_11": "Nov",
   "MON_ABBR_12": "Dec",
-  "START_RECONNECTING": "Reconnecting..."
+  "START_RECONNECTING": "Reconnecting...",
+  "TUT_YEAR_4_INSTRUMENTS": "Stocks",
+  "TUT_YEAR_5_INSTRUMENTS": "Gold",
+  "TUT_YEAR_6_INSTRUMENTS": "Crowdfunding",
+  "TUT_YEAR_12_INSTRUMENTS": "Crypto",
+  "TUT_YEAR_4": "Year 4",
+  "TUT_YEAR_5": "Year 5",
+  "TUT_YEAR_6": "Year 6",
+  "TUT_YEAR_12": "Year 12"
 }

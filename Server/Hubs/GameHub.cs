@@ -277,6 +277,7 @@ public class GameHub : Hub
 
         _gameEngine.ResumeAllInRoom(room.RoomCode);
         _roomManager.ResetUnlockReady(room.RoomCode);
+        await Clients.Group(room.RoomCode).SendAsync("AllResumed");
 
         // Send updated game state to each player so unlocked assets are reflected in the UI
         var sessions = _gameEngine.GetRoomSessions(room.RoomCode);
